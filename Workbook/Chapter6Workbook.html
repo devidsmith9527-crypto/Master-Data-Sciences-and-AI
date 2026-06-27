@@ -1,0 +1,1016 @@
+<!DOCTYPE html>
+<html lang="km">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Workbook Chapter 6 - Graphs & Hash Tables</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Battambang:wght@400;700&family=Suwannaphum:wght@400;700;900&family=Lato:wght@400;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <style>
+        :root {
+            --bg-color: #E2E8F0;
+            --paper-white: #FFFFFF;
+            --text-main: #0F172A;
+            --text-muted: #475569;
+            --accent-blue: #0284C7; 
+            --accent-green: #059669;
+            --answer-color: #0369A1; 
+            --header-footer-bg: #F0F9FF;
+            --code-bg: #111827; 
+            --low: #059669; --mid: #D97706; --high: #DC2626;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            background-color: var(--bg-color);
+            font-family: 'Battambang', sans-serif;
+            color: var(--text-main);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 40px 20px;
+        }
+
+        /* A4 Page Layout - FIXED FLEXBOX APPROACH */
+        .a4-page {
+            width: 210mm; 
+            height: 297mm; 
+            background: var(--paper-white);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1); 
+            margin-bottom: 30px;
+            display: flex; 
+            flex-direction: column; 
+            border-radius: 8px;
+            page-break-after: always; 
+            page-break-inside: avoid;
+            overflow: hidden;
+        }
+
+        /* COVER PAGE STYLES */
+        .cover-page {
+            justify-content: center; align-items: center; text-align: center; padding: 30mm 20mm;
+            background-image: linear-gradient(to bottom, #F0F9FF, #FFFFFF);
+        }
+        .cover-logo { width: 140px; margin-bottom: 15px; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1)); }
+        .cover-uni-kh { font-family: 'Suwannaphum'; color: var(--accent-blue); font-size: 38px; margin: 0 0 5px 0; font-weight: 900; }
+        .cover-uni-en { font-family: 'Lato'; color: #475569; font-size: 18px; margin: 0 0 40px 0; letter-spacing: 1px; font-weight: bold; }
+        .cover-program { font-family: 'Suwannaphum'; font-size: 20px; color: var(--accent-green); margin-bottom: 25px; font-weight: bold; }
+        .cover-chapter-badge { background: var(--accent-blue); color: white; padding: 10px 40px; border-radius: 50px; font-size: 22px; font-weight: bold; margin-bottom: 40px; font-family: 'Suwannaphum'; box-shadow: 0 5px 15px rgba(2,132,199,0.3); display: inline-block;}
+        .cover-main-title { font-family: 'Suwannaphum'; font-size: 34px; color: var(--text-main); line-height: 1.4; margin-bottom: 10px; font-weight: 900; }
+        .cover-sub-title { font-family: 'Lato'; font-size: 22px; color: var(--accent-blue); margin-bottom: 50px; font-weight: bold; }
+        
+        .cover-author-wrapper { display: flex; flex-direction: column; align-items: center; gap: 15px; margin-bottom: 40px; }
+        .cover-author-img { width: 100px; height: 100px; border-radius: 50%; border: 4px solid var(--accent-blue); object-fit: cover; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        .cover-author-text { font-size: 20px; color: var(--text-muted); font-family: 'Suwannaphum'; }
+        .cover-author-text strong { color: var(--accent-blue); font-size: 24px; }
+
+        .cover-icons-wrapper { display: flex; gap: 60px; justify-content: center; margin-top: auto; border-top: 1px solid #E2E8F0; padding-top: 20px; width: 100%; }
+        .cover-icon-item img { height: 70px; margin-bottom: 10px; object-fit: contain; }
+        .cover-icon-item p { font-size: 16px; font-weight: bold; color: var(--accent-blue); font-family: 'Lato'; }
+
+        /* HEADER */
+        .global-header {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 12px 25px; border-bottom: 3px solid var(--accent-blue); background-color: var(--header-footer-bg);
+            height: 75px; box-sizing: border-box; flex-shrink: 0;
+        }
+        .header-item { display: flex; flex-direction: column; align-items: center; gap: 3px; width: 120px; }
+        .header-item img { height: 40px; object-fit: contain; }
+        .header-item span { font-size: 10px; font-weight: bold; color: var(--accent-blue); text-align: center; font-family: 'Suwannaphum'; }
+        .header-center { text-align: center; }
+        .header-center h1 { font-family: 'Suwannaphum'; font-size: 18px; color: var(--accent-blue); margin: 0; }
+        .header-center p { font-family: 'Battambang'; font-size: 11px; color: #64748B; margin: 0; font-weight: bold; text-transform: uppercase;}
+
+        /* CONTENT */
+        .page-content { 
+            flex-grow: 1; padding: 8mm 15mm; overflow: hidden; 
+            box-sizing: border-box; display: flex; flex-direction: column;
+        }
+        
+        .student-info {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 12px;
+            border: 1px solid #CBD5E1; padding: 10px 15px; border-radius: 8px; background: #F8FAFC; flex-shrink: 0;
+        }
+        .info-line { font-size: 14px; display: flex; align-items: flex-end; font-weight: bold;}
+        .info-line span { flex-grow: 1; border-bottom: 1px dotted #94A3B8; margin-left: 10px; height: 18px; display: inline-block;}
+
+        .case-title {
+            background: var(--header-footer-bg); border-left: 5px solid var(--accent-blue);
+            padding: 8px 15px; margin: 12px 0 10px 0; font-family: 'Suwannaphum';
+            font-size: 16px; display: flex; align-items: center; gap: 10px; font-weight: bold;
+            border-radius: 0 6px 6px 0; color: var(--accent-blue); flex-shrink: 0;
+        }
+        
+        .exercise-block { margin-bottom: 10px; border: 1px solid #E2E8F0; padding: 10px 12px; border-radius: 6px; background: white; page-break-inside: avoid; flex-shrink: 0;}
+        .exercise-block p { margin-bottom: 6px; font-size: 13.5px; font-weight: bold; color: #1E293B; display: flex; align-items: center; gap: 8px;}
+        
+        .level-badge { font-size: 11px; color: white; padding: 3px 8px; border-radius: 4px; font-weight: bold; display: inline-block; margin-right: 8px; font-family: 'Battambang';}
+        .bg-low { background-color: var(--low); }
+        .bg-mid { background-color: var(--mid); }
+        .bg-high { background-color: var(--high); }
+
+        /* CODE DISPLAY */
+        .code-container {
+            background: var(--code-bg); border-radius: 6px; padding: 10px 12px; margin: 6px 0;
+            overflow-x: auto; border: 1px solid #374151; position: relative;
+        }
+        .code-header { background: #1F2937; padding: 4px 8px; font-size: 11px; font-family: 'Battambang'; color: #38BDF8; border-bottom: 1px solid #374151; margin: -10px -12px 8px -12px; border-radius: 6px 6px 0 0; display: flex; align-items: center; gap: 8px;}
+        pre { font-family: 'Fira Code', monospace; font-size: 11.5px; line-height: 1.45; color: #f8f8f2; margin: 0; }
+        .kw { color: #ff79c6; font-weight: bold; } 
+        .fn { color: #50fa7b; } 
+        .str { color: #f1fa8c; } 
+        .com { color: #6272a4; font-style: italic; } 
+        .num { color: #bd93f9; } 
+
+        .answer-box { margin-top: 8px; font-size: 13.5px; display: flex; align-items: flex-start; }
+        .answer-box label { font-family: 'Battambang', sans-serif; font-weight: bold; margin-right: 10px; color: #475569; white-space: nowrap;}
+        
+        /* FIX: គម្លាតបន្ទាត់ឆ្លើយត្រូវបានពង្រីកធំស្រួលអាន និងសរសេរ */
+        .filled-answer { 
+            flex-grow: 1; border-bottom: 1px dotted #94A3B8; color: var(--answer-color); 
+            font-family: 'Battambang', sans-serif; line-height: 1.8; min-height: 25px; padding-bottom: 5px;
+        }
+
+        /* FIX: ប្រអប់ Note យឺតពេញចន្លោះក្រដាសដែលសល់ */
+        .note-area {
+            flex-grow: 1; border: 1px dashed #CBD5E1; background: #F8FAFC; border-radius: 8px;
+            padding: 15px; margin-top: 10px; color: #94A3B8; font-size: 13.5px; display: flex; flex-direction: column;
+        }
+
+        /* FOOTER */
+        .global-footer {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 10px 25px; border-top: 3px solid var(--accent-blue);
+            background-color: var(--header-footer-bg); 
+            height: 55px; box-sizing: border-box; flex-shrink: 0;
+        }
+        .footer-left { display: flex; align-items: center; gap: 10px; }
+        .footer-left img { border-radius: 50%; border: 2px solid var(--accent-blue); width: 30px; height: 30px; object-fit: cover; background-color: #fff; }
+        .footer-left span { font-size: 11px; font-weight: bold; color: var(--text-main); font-family: 'Suwannaphum'; }
+        .footer-right { font-size: 11px; color: var(--accent-blue); font-weight: bold; font-family: 'Battambang'; }
+
+        /* FIX: បិទ Margin និងបន្ថយកម្ពស់ 0.5mm កុំឲ្យលោតទំព័រទទេរ */
+        @page { size: A4; margin: 0; }
+        @media print {
+            body { background: white; padding: 0 !important; margin: 0 !important; }
+            .a4-page { 
+                box-shadow: none; margin: 0; width: 210mm; height: 296.5mm; 
+                border: none; border-radius: 0; 
+                page-break-after: always; page-break-inside: avoid;
+            }
+            .no-print { display: none !important; }
+            * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+        }
+    </style>
+</head>
+<body>
+
+<button class="no-print" onclick="window.print()" style="margin-bottom: 20px; padding: 12px 25px; cursor: pointer; background: var(--accent-blue); color: white; border: none; border-radius: 8px; font-family: 'Battambang'; font-weight: bold; font-size: 16px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+    <i class="fa-solid fa-print"></i> បោះពុម្ពសៀវភៅលំហាត់ (Print as PDF)
+</button>
+
+<div class="a4-page cover-page">
+    <img src="Logo.png" class="cover-logo" onerror="this.src='https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png'">
+    <h1 class="cover-uni-kh">សាកលវិទ្យាល័យអង្គរ</h1>
+    <p class="cover-uni-en">ANGKOR UNIVERSITY</p>
+
+    <div class="cover-program">
+        <i class="fa-solid fa-graduation-cap"></i> អនុបណ្ឌិតវិទ្យាសាស្ត្រទិន្នន័យ និងបញ្ញាសិប្បនិម្មិត (Master of Data Science and AI)
+    </div>
+
+    <div class="cover-chapter-badge">សៀវភៅលំហាត់អនុវត្តន៍ (Workbook) | ២០២៥-២០២៦</div>
+
+    <h1 class="cover-main-title">ជំពូកទី ៦៖ រចនាសម្ព័ន្ធទិន្នន័យ Graphs និង Hash Tables</h1>
+    <h2 class="cover-sub-title">(Graphs, Networks & Hashing)</h2>
+
+    <div class="cover-author-wrapper">
+        <img src="Lim.jpg" class="cover-author-img" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'">
+        <div class="cover-author-text">
+            សាស្ត្រាចារ្យ៖
+        </div>
+        <div class="cover-author-text">
+            <strong>សឿង លីម (Soeurng LIM)</strong>
+        </div>
+    </div>
+
+    <div class="cover-icons-wrapper">
+        <div class="cover-icon-item">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg">
+            <p>Python</p>
+        </div>
+        <div class="cover-icon-item">
+            <img src="https://cdn-icons-png.flaticon.com/512/2103/2103633.png">
+            <p>DSA in Python</p>
+        </div>
+    </div>
+</div>
+
+<!-- PAGE 1 : Graph Basics -->
+<div class="a4-page">
+    <div class="global-header">
+        <div class="header-item"><img src="Logo.png" onerror="this.src='https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png'"><span>សាកលវិទ្យាល័យអង្គរ</span></div>
+        <div class="header-center">
+            <h1>សៀវភៅលំហាត់អនុវត្តន៍ - ជំពូកទី ៦</h1>
+            <p>ADVANCED DATA STRUCTURES AND ALGORITHMS</p>
+        </div>
+        <div class="header-item"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg"><span>Python Pro</span></div>
+    </div>
+
+    <div class="page-content">
+        <div class="student-info">
+            <div class="info-line">អត្តលេខ (ID): <span></span></div>
+            <div class="info-line">ឈ្មោះ (Name): <span></span></div>
+        </div>
+
+        <div class="case-title"><i class="fa-solid fa-network-wired"></i> ១. ករណីសិក្សា៖ ការតំណាង Graph (Adjacency List)</div>
+        
+        <div class="exercise-block">
+            <p><span class="level-badge bg-low">ស្រាល ១</span> បង្កើត Graph និងភ្ជាប់ចំណុច (Add Edge)</p>
+            <div class="code-container">
+                <div class="code-header"><i class="fa-brands fa-python"></i> Copy & Run Code</div>
+<pre><span class="kw">class</span> <span class="fn">Graph</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="kw">self</span>):
+        <span class="kw">self</span>.adj_list = {}
+    <span class="kw">def</span> <span class="fn">add_edge</span>(<span class="kw">self</span>, u, v):
+        <span class="kw">if</span> u <span class="kw">not in self</span>.adj_list: <span class="kw">self</span>.adj_list[u] = []
+        <span class="kw">if</span> v <span class="kw">not in self</span>.adj_list: <span class="kw">self</span>.adj_list[v] = []
+        <span class="kw">self</span>.adj_list[u].append(v)
+        <span class="kw">self</span>.adj_list[v].append(u) <span class="com"># មានទៅមានមក (Undirected)</span>
+
+g = Graph()
+g.add_edge(<span class="str">"A"</span>, <span class="str">"B"</span>)
+<span class="fn">print</span>(<span class="str">"Adjacency List:"</span>, g.adj_list)</pre>
+            </div>
+            <div class="answer-box">
+                <label>ការពន្យល់កូដ ៖</label> 
+                <div class="filled-answer">យើងប្រើ Dictionary ដើម្បីផ្ទុក Graph។ Key ជាឈ្មោះចំណុច (Vertex) រីឯ Value ជាបញ្ជីឈ្មោះមិត្តភក្តិរបស់វា។ កូដនេះជា Undirected Graph ទើប A ស្គាល់ B ហើយ B ក៏ស្គាល់ A វិញ។</div>
+            </div>
+        </div>
+
+        <div class="exercise-block">
+            <p><span class="level-badge bg-low">ស្រាល ២</span> ការបង្ហាញ Graph (Print Graph)</p>
+            <div class="code-container">
+                <div class="code-header"><i class="fa-brands fa-python"></i> Copy & Run Code</div>
+<pre>g.add_edge(<span class="str">"A"</span>, <span class="str">"C"</span>)
+g.add_edge(<span class="str">"B"</span>, <span class="str">"C"</span>)
+
+<span class="kw">def</span> <span class="fn">print_graph</span>(graph_obj):
+    <span class="kw">for</span> node <span class="kw">in</span> graph_obj.adj_list:
+        <span class="fn">print</span>(<span class="str">f"{node} ភ្ជាប់ទៅកាន់: {graph_obj.adj_list[node]}"</span>)
+
+print_graph(g)</pre>
+            </div>
+            <div class="answer-box">
+                <label>លទ្ធផលដែលទទួលបាន ៖</label> 
+                <div class="filled-answer">កូដនេះនឹងបង្ហាញថា A ស្គាល់ [B, C], B ស្គាល់ [A, C], និង C ស្គាល់ [A, B]។ វិធីនេះចំណេញ Space Complexity ច្រើនជាងការប្រើប្រាស់ Matrix (តារាងក្រឡាចត្រង្គ)។</div>
+            </div>
+        </div>
+
+        <div class="note-area">
+            <i class="fa-solid fa-pen"></i> កន្លែងសម្រាប់កត់ត្រាបន្ថែម (Notes / Scratchpad)...
+        </div>
+    </div>
+
+    <div class="global-footer">
+        <div class="footer-left"><img src="Lim.jpg" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'"><span>សាស្ត្រាចារ្យ៖ សឿង លីម (Soeurng LIM)</span></div>
+        <div class="footer-right">ទំព័រទី ១ នៃ ១២</div>
+    </div>
+</div>
+
+<!-- PAGE 2 : Directed Graph & Edge List -->
+<div class="a4-page">
+    <div class="global-header">
+        <div class="header-item"><img src="Logo.png" onerror="this.src='https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png'"><span>សាកលវិទ្យាល័យអង្គរ</span></div>
+        <div class="header-center">
+            <h1>សៀវភៅលំហាត់អនុវត្តន៍ - ជំពូកទី ៦</h1>
+            <p>ADVANCED DATA STRUCTURES AND ALGORITHMS</p>
+        </div>
+        <div class="header-item"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg"><span>Python Pro</span></div>
+    </div>
+
+    <div class="page-content">
+        <div class="case-title"><i class="fa-solid fa-network-wired"></i> ១. ករណីសិក្សា៖ ការតំណាង Graph (ត)</div>
+        
+        <div class="exercise-block">
+            <p><span class="level-badge bg-mid">មធ្យម ១</span> បណ្តាញមានទិសដៅ (Directed Graph)</p>
+            <div class="code-container">
+                <div class="code-header"><i class="fa-brands fa-python"></i> Copy & Run Code</div>
+<pre><span class="kw">class</span> <span class="fn">DirectedGraph</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="kw">self</span>): <span class="kw">self</span>.adj_list = {}
+    <span class="kw">def</span> <span class="fn">add_edge</span>(<span class="kw">self</span>, u, v):
+        <span class="kw">if</span> u <span class="kw">not in self</span>.adj_list: <span class="kw">self</span>.adj_list[u] = []
+        <span class="kw">if</span> v <span class="kw">not in self</span>.adj_list: <span class="kw">self</span>.adj_list[v] = []
+        <span class="kw">self</span>.adj_list[u].append(v) <span class="com"># ទៅតែម្ខាង (ដូច Follow លើ Twitter)</span>
+
+dg = DirectedGraph()
+dg.add_edge(<span class="str">"Sok"</span>, <span class="str">"Lim"</span>) <span class="com"># Sok follows Lim</span>
+<span class="fn">print</span>(<span class="str">"តើ Lim ស្គាល់នរណាខ្លះ?:"</span>, dg.adj_list[<span class="str">"Lim"</span>])</pre>
+            </div>
+            <div class="answer-box">
+                <label>ការប្រៀបធៀប ៖</label> 
+                <div class="filled-answer">ក្នុង Directed Graph ខ្សែភ្ជាប់មានក្បាលព្រួញ (ទៅតែម្ខាង)។ លទ្ធផលនឹងបង្ហាញថា Lim អត់ Follow នរណាទេ (List ទទេ) ព្រោះយើងគ្រាន់តែ Add ឱ្យ Sok Follow Lim ប៉ុណ្ណោះ។</div>
+            </div>
+        </div>
+
+        <div class="exercise-block">
+            <p><span class="level-badge bg-high">ធ្ងន់ ១</span> បំប្លែង Edge List ទៅជា Adjacency List</p>
+            <div class="code-container">
+                <div class="code-header"><i class="fa-brands fa-python"></i> Copy & Run Code</div>
+<pre><span class="kw">def</span> <span class="fn">build_graph</span>(edges):
+    graph = {}
+    <span class="kw">for</span> u, v <span class="kw">in</span> edges:
+        <span class="kw">if</span> u <span class="kw">not in</span> graph: graph[u] = []
+        <span class="kw">if</span> v <span class="kw">not in</span> graph: graph[v] = []
+        graph[u].append(v)
+        graph[v].append(u)
+    <span class="kw">return</span> graph
+
+edges_data = [[<span class="num">0</span>, <span class="num">1</span>], [<span class="num">0</span>, <span class="num">2</span>], [<span class="num">1</span>, <span class="num">2</span>]]
+<span class="fn">print</span>(<span class="str">"Graph ថ្មី:"</span>, build_graph(edges_data))</pre>
+            </div>
+            <div class="answer-box">
+                <label>អត្ថប្រយោជន៍ក្នុង ការដោះស្រាយលំហាត់ ៖</label> 
+                <div class="filled-answer">នៅក្នុងលំហាត់ LeetCode ឬប្រព័ន្ធធំៗ គេតែងផ្តល់ទិន្នន័យជា Edge List មកឱ្យយើង (Array នៃ Array)។ ការចេះបំប្លែងវាទៅជា Dictionary បែបនេះជួយឱ្យយើងងាយស្រួលរុករក O(1) តាមក្រោយ។</div>
+            </div>
+        </div>
+
+        <div class="note-area">
+            <i class="fa-solid fa-pen"></i> កន្លែងសម្រាប់កត់ត្រាបន្ថែម (Notes / Scratchpad)...
+        </div>
+    </div>
+
+    <div class="global-footer">
+        <div class="footer-left"><img src="Lim.jpg" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'"><span>សាស្ត្រាចារ្យ៖ សឿង លីម (Soeurng LIM)</span></div>
+        <div class="footer-right">ទំព័រទី ២ នៃ ១២</div>
+    </div>
+</div>
+
+<!-- PAGE 3 : Graph BFS Traversal -->
+<div class="a4-page">
+    <div class="global-header">
+        <div class="header-item"><img src="Logo.png" onerror="this.src='https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png'"><span>សាកលវិទ្យាល័យអង្គរ</span></div>
+        <div class="header-center">
+            <h1>សៀវភៅលំហាត់អនុវត្តន៍ - ជំពូកទី ៦</h1>
+            <p>ADVANCED DATA STRUCTURES AND ALGORITHMS</p>
+        </div>
+        <div class="header-item"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg"><span>Python Pro</span></div>
+    </div>
+
+    <div class="page-content">
+        <div class="case-title"><i class="fa-solid fa-water"></i> ២. ករណីសិក្សា៖ ការរុករកក្នុង Graph (BFS)</div>
+        
+        <div class="exercise-block">
+            <p><span class="level-badge bg-low">ស្រាល ៣</span> ការរុករកបែបវាលរាប BFS (Breadth-First Search)</p>
+            <div class="code-container">
+                <div class="code-header"><i class="fa-brands fa-python"></i> Copy & Run Code</div>
+<pre><span class="kw">from</span> collections <span class="kw">import</span> deque
+
+<span class="kw">def</span> <span class="fn">bfs</span>(graph, start):
+    visited = <span class="fn">set</span>([start]) <span class="com"># កត់ចំណាំអ្នកដែលបានដើរដល់</span>
+    queue = deque([start]) <span class="com"># ប្រើ Queue ដើម្បីរៀបជួរអ្នកត្រូវដើរបន្ត</span>
+    
+    <span class="kw">while</span> queue:
+        node = queue.popleft()
+        <span class="fn">print</span>(node, end=<span class="str">" "</span>)
+        
+        <span class="kw">for</span> neighbor <span class="kw">in</span> graph[node]:
+            <span class="kw">if</span> neighbor <span class="kw">not in</span> visited:
+                visited.add(neighbor)
+                queue.append(neighbor)
+
+adj = {<span class="str">'A'</span>: [<span class="str">'B'</span>, <span class="str">'C'</span>], <span class="str">'B'</span>: [<span class="str">'A'</span>, <span class="str">'D'</span>], <span class="str">'C'</span>: [<span class="str">'A'</span>, <span class="str">'D'</span>], <span class="str">'D'</span>: [<span class="str">'B'</span>, <span class="str">'C'</span>]}
+<span class="fn">print</span>(<span class="str">"BFS លទ្ធផល:"</span>); bfs(adj, <span class="str">'A'</span>)</pre>
+            </div>
+            <div class="answer-box">
+                <label>លក្ខណៈនៃ BFS ៖</label> 
+                <div class="filled-answer">BFS ដើររុករកអ្នកជិតខាង (មិត្តភក្តិផ្ទាល់) ឱ្យអស់សិន ទើបទៅរុករកមិត្តរបស់មិត្តបន្តទៀត (រុករកជាជាន់ៗ) ដោយប្រើប្រាស់រចនាសម្ព័ន្ធ Queue។ ល្អសម្រាប់រកផ្លូវជិតបំផុត។</div>
+            </div>
+        </div>
+
+        <div class="exercise-block">
+            <p><span class="level-badge bg-mid">មធ្យម ២</span> រកផ្លូវខ្លីបំផុត (Shortest Path in Unweighted Graph)</p>
+            <div class="code-container">
+                <div class="code-header"><i class="fa-brands fa-python"></i> Copy & Run Code</div>
+<pre><span class="kw">def</span> <span class="fn">shortest_path_length</span>(graph, start, end):
+    q = deque([(start, <span class="num">0</span>)]) <span class="com"># (Node បច្ចុប្បន្ន, ចម្ងាយរាប់ពីដើម)</span>
+    visited = <span class="fn">set</span>([start])
+    
+    <span class="kw">while</span> q:
+        node, dist = q.popleft()
+        <span class="kw">if</span> node == end: <span class="kw">return</span> dist
+        
+        <span class="kw">for</span> neighbor <span class="kw">in</span> graph.get(node, []):
+            <span class="kw">if</span> neighbor <span class="kw">not in</span> visited:
+                visited.add(neighbor)
+                q.append((neighbor, dist + <span class="num">1</span>))
+    <span class="kw">return</span> -<span class="num">1</span>
+
+g = {<span class="str">'A'</span>:[<span class="str">'B'</span>,<span class="str">'C'</span>], <span class="str">'B'</span>:[<span class="str">'D'</span>], <span class="str">'C'</span>:[<span class="str">'D'</span>,<span class="str">'E'</span>], <span class="str">'D'</span>:[<span class="str">'E'</span>]}
+<span class="fn">print</span>(<span class="str">"ចម្ងាយខ្លីបំផុតពី A ទៅ E គឺ:"</span>, shortest_path_length(g, <span class="str">'A'</span>, <span class="str">'E'</span>))</pre>
+            </div>
+            <div class="answer-box">
+                <label>ក្បួន BFS ក្នុងផែនទី ៖</label> 
+                <div class="filled-answer">សម្រាប់ Graph ដែលគ្មានគិតគីឡូម៉ែត្រ (Unweighted) ការប្រើ BFS (Level-order) គឺធានាថារកឃើញផ្លូវដែលឆ្លងកាត់ចំណុចតិចបំផុតជានិច្ច ព្រោះវាដើរពង្រីកជាវង់ៗ។</div>
+            </div>
+        </div>
+
+        <div class="note-area">
+            <i class="fa-solid fa-pen"></i> កន្លែងសម្រាប់កត់ត្រាបន្ថែម (Notes / Scratchpad)...
+        </div>
+    </div>
+
+    <div class="global-footer">
+        <div class="footer-left"><img src="Lim.jpg" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'"><span>សាស្ត្រាចារ្យ៖ សឿង លីម (Soeurng LIM)</span></div>
+        <div class="footer-right">ទំព័រទី ៣ នៃ ១២</div>
+    </div>
+</div>
+
+<!-- PAGE 4 : Graph DFS Traversal -->
+<div class="a4-page">
+    <div class="global-header">
+        <div class="header-item"><img src="Logo.png" onerror="this.src='https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png'"><span>សាកលវិទ្យាល័យអង្គរ</span></div>
+        <div class="header-center">
+            <h1>សៀវភៅលំហាត់អនុវត្តន៍ - ជំពូកទី ៦</h1>
+            <p>ADVANCED DATA STRUCTURES AND ALGORITHMS</p>
+        </div>
+        <div class="header-item"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg"><span>Python Pro</span></div>
+    </div>
+
+    <div class="page-content">
+        <div class="case-title"><i class="fa-solid fa-route"></i> ២. ករណីសិក្សា៖ ការរុករកក្នុង Graph (DFS)</div>
+        
+        <div class="exercise-block">
+            <p><span class="level-badge bg-low">ស្រាល ៤</span> ការរុករកបែបស៊ីជម្រៅ DFS (Depth-First Search)</p>
+            <div class="code-container">
+                <div class="code-header"><i class="fa-brands fa-python"></i> Copy & Run Code</div>
+<pre><span class="kw">def</span> <span class="fn">dfs</span>(graph, node, visited=<span class="kw">None</span>):
+    <span class="kw">if</span> visited <span class="kw">is None</span>: visited = <span class="fn">set</span>()
+    visited.add(node)
+    <span class="fn">print</span>(node, end=<span class="str">" "</span>)
+    
+    <span class="kw">for</span> neighbor <span class="kw">in</span> graph[node]:
+        <span class="kw">if</span> neighbor <span class="kw">not in</span> visited:
+            dfs(graph, neighbor, visited) <span class="com"># Recursive ចុះឱ្យជ្រៅ</span>
+
+adj = {<span class="str">'A'</span>: [<span class="str">'B'</span>, <span class="str">'C'</span>], <span class="str">'B'</span>: [<span class="str">'A'</span>, <span class="str">'D'</span>], <span class="str">'C'</span>: [<span class="str">'A'</span>, <span class="str">'D'</span>], <span class="str">'D'</span>: [<span class="str">'B'</span>, <span class="str">'C'</span>]}
+<span class="fn">print</span>(<span class="str">"DFS លទ្ធផល:"</span>); dfs(adj, <span class="str">'A'</span>)</pre>
+            </div>
+            <div class="answer-box">
+                <label>លក្ខណៈនៃ DFS ៖</label> 
+                <div class="filled-answer">DFS ដើររុករកតាមខ្សែមួយឱ្យដល់ផ្លូវទាល់សិន ទើបថយក្រោយ (Backtrack) មកបំបែកផ្លូវផ្សេង។ វាប្រើប្រាស់ Call Stack របស់កុំព្យូទ័រតាមរយៈ Recursive។ ល្អសម្រាប់ដោះស្រាយល្បែងវង្កត់ (Maze)។</div>
+            </div>
+        </div>
+
+        <div class="exercise-block">
+            <p><span class="level-badge bg-mid">មធ្យម ៣</span> រាវរកផ្លូវ (Path Exists) រវាង Node ពីរ</p>
+            <div class="code-container">
+                <div class="code-header"><i class="fa-brands fa-python"></i> Copy & Run Code</div>
+<pre><span class="kw">def</span> <span class="fn">has_path</span>(graph, src, dst, visited):
+    <span class="kw">if</span> src == dst: <span class="kw">return True</span>
+    visited.add(src)
+    <span class="kw">for</span> neighbor <span class="kw">in</span> graph[src]:
+        <span class="kw">if</span> neighbor <span class="kw">not in</span> visited:
+            <span class="kw">if</span> has_path(graph, neighbor, dst, visited):
+                <span class="kw">return True</span>
+    <span class="kw">return False</span>
+
+<span class="fn">print</span>(<span class="str">"តើអាចដើរពី A ទៅ D បានទេ?"</span>, has_path(adj, <span class="str">'A'</span>, <span class="str">'D'</span>, <span class="fn">set</span>()))</pre>
+            </div>
+            <div class="answer-box">
+                <label>ការប្រើប្រាស់ ៖</label> 
+                <div class="filled-answer">នេះគឺជាការកែច្នៃក្បួន DFS ដើម្បីឆែកមើលថាតើចំណុចពីរភ្ជាប់គ្នាឬទេ (ដូចជាការឆែកមើលថាតើ IP Address មួយអាចទាក់ទងទៅ IP មួយទៀតក្នុង Network ផ្ទៃក្នុងបានឬអត់)។</div>
+            </div>
+        </div>
+
+        <div class="note-area">
+            <i class="fa-solid fa-pen"></i> កន្លែងសម្រាប់កត់ត្រាបន្ថែម (Notes / Scratchpad)...
+        </div>
+    </div>
+
+    <div class="global-footer">
+        <div class="footer-left"><img src="Lim.jpg" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'"><span>សាស្ត្រាចារ្យ៖ សឿង លីម (Soeurng LIM)</span></div>
+        <div class="footer-right">ទំព័រទី ៤ នៃ ១២</div>
+    </div>
+</div>
+
+<!-- PAGE 5 : Advanced Graph Algorithms -->
+<div class="a4-page">
+    <div class="global-header">
+        <div class="header-item"><img src="Logo.png" onerror="this.src='https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png'"><span>សាកលវិទ្យាល័យអង្គរ</span></div>
+        <div class="header-center">
+            <h1>សៀវភៅលំហាត់អនុវត្តន៍ - ជំពូកទី ៦</h1>
+            <p>ADVANCED DATA STRUCTURES AND ALGORITHMS</p>
+        </div>
+        <div class="header-item"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg"><span>Python Pro</span></div>
+    </div>
+
+    <div class="page-content">
+        <div class="case-title"><i class="fa-solid fa-diagram-project"></i> ៣. ករណីសិក្សា៖ ក្បួនដោះស្រាយកម្រិតខ្ពស់លើ Graph</div>
+        
+        <div class="exercise-block">
+            <p><span class="level-badge bg-high">ធ្ងន់ ២</span> រាប់ចំនួនបណ្តាញដាច់ពីគ្នា (Connected Components)</p>
+            <div class="code-container">
+                <div class="code-header"><i class="fa-brands fa-python"></i> Copy & Run Code</div>
+<pre><span class="kw">def</span> <span class="fn">count_components</span>(graph):
+    visited = <span class="fn">set</span>()
+    count = <span class="num">0</span>
+    <span class="kw">for</span> node <span class="kw">in</span> graph:
+        <span class="kw">if</span> node <span class="kw">not in</span> visited:
+            dfs(graph, node, visited) <span class="com"># អូសយកអ្នកជាប់ទាក់ទងទាំងអស់</span>
+            count += <span class="num">1</span> <span class="com"># រាប់ជាបណ្តាញ ១</span>
+    <span class="kw">return</span> count
+
+<span class="com"># បណ្តាញ A,B ភ្ជាប់គ្នា និង C,D ភ្ជាប់គ្នា តែអត់ភ្ជាប់ A-C ទេ</span>
+isolated_graph = {<span class="str">'A'</span>:[<span class="str">'B'</span>], <span class="str">'B'</span>:[<span class="str">'A'</span>], <span class="str">'C'</span>:[<span class="str">'D'</span>], <span class="str">'D'</span>:[<span class="str">'C'</span>]}
+<span class="fn">print</span>(<span class="str">"\nចំនួនក្រុមសរុប:"</span>, count_components(isolated_graph))</pre>
+            </div>
+            <div class="answer-box">
+                <label>តួនាទីរបស់ Algorithm នេះ ៖</label> 
+                <div class="filled-answer">មានប្រយោជន៍ខ្លាំងក្នុងការវែកញែករកមើល "ក្រុមដាច់ដោយឡែក" នៅក្នុងបណ្តាញធំៗ ដូចជារកមើលក្រុមមនុស្សដែលលេងតែគ្នាមិនទាក់ទងអ្នកក្រៅនៅក្នុង Social Network ជាដើម។</div>
+            </div>
+        </div>
+
+        <div class="exercise-block">
+            <p><span class="level-badge bg-high">ធ្ងន់ ៣</span> រាវរករង្វិលជុំ (Cycle Detection in Undirected Graph)</p>
+            <div class="code-container">
+                <div class="code-header"><i class="fa-brands fa-python"></i> Copy & Run Code</div>
+<pre><span class="kw">def</span> <span class="fn">has_cycle</span>(graph, node, visited, parent):
+    visited.add(node)
+    <span class="kw">for</span> neighbor <span class="kw">in</span> graph[node]:
+        <span class="kw">if</span> neighbor <span class="kw">not in</span> visited:
+            <span class="kw">if</span> has_cycle(graph, neighbor, visited, node): <span class="kw">return True</span>
+        <span class="kw">elif</span> neighbor != parent: <span class="com"># បើធ្លាប់ដើរដល់ហើយ តែវាមិនមែនជាអ្នកហៅយើងមក</span>
+            <span class="kw">return True</span> <span class="com"># មានន័យថាវាជារង្វិលជុំ</span>
+    <span class="kw">return False</span>
+
+g_cycle = {<span class="str">'A'</span>:[<span class="str">'B'</span>,<span class="str">'C'</span>], <span class="str">'B'</span>:[<span class="str">'A'</span>,<span class="str">'D'</span>], <span class="str">'C'</span>:[<span class="str">'A'</span>,<span class="str">'D'</span>], <span class="str">'D'</span>:[<span class="str">'B'</span>,<span class="str">'C'</span>]}
+<span class="fn">print</span>(<span class="str">"តើមាន Cycle ទេ?"</span>, has_cycle(g_cycle, <span class="str">'A'</span>, <span class="fn">set</span>(), <span class="kw">None</span>))</pre>
+            </div>
+            <div class="answer-box">
+                <label>Logic ការដោះស្រាយ ៖</label> 
+                <div class="filled-answer">យើងប្រើ DFS ដើរទៅមុខ។ បើយើងដើរទៅប៉ះចំចំណុចមួយដែលយើងធ្លាប់ដើរឆ្លងកាត់ម្តងរួចមកហើយ (ក្រៅពីចំណុចមេផ្ទាល់ដែលហៅយើងមក) នោះវាសន្និដ្ឋានបានថាបណ្តាញនោះមានរង្វិលជុំ (Cycle) ជាមិនខាន។</div>
+            </div>
+        </div>
+
+        <div class="note-area">
+            <i class="fa-solid fa-pen"></i> កន្លែងសម្រាប់កត់ត្រាបន្ថែម (Notes / Scratchpad)...
+        </div>
+    </div>
+
+    <div class="global-footer">
+        <div class="footer-left"><img src="Lim.jpg" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'"><span>សាស្ត្រាចារ្យ៖ សឿង លីម (Soeurng LIM)</span></div>
+        <div class="footer-right">ទំព័រទី ៥ នៃ ១២</div>
+    </div>
+</div>
+
+<!-- PAGE 6 : Hash Tables (Basics) -->
+<div class="a4-page">
+    <div class="global-header">
+        <div class="header-item"><img src="Logo.png" onerror="this.src='https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png'"><span>សាកលវិទ្យាល័យអង្គរ</span></div>
+        <div class="header-center">
+            <h1>សៀវភៅលំហាត់អនុវត្តន៍ - ជំពូកទី ៦</h1>
+            <p>ADVANCED DATA STRUCTURES AND ALGORITHMS</p>
+        </div>
+        <div class="header-item"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg"><span>Python Pro</span></div>
+    </div>
+
+    <div class="page-content">
+        <div class="case-title"><i class="fa-solid fa-hashtag"></i> ៤. ករណីសិក្សា៖ មូលដ្ឋានគ្រឹះនៃ Hash Tables (Dictionary)</div>
+        
+        <div class="exercise-block">
+            <p><span class="level-badge bg-low">ស្រាល ៥</span> ការបង្កើត និងទាញទិន្នន័យ (Insert & Access O(1))</p>
+            <div class="code-container">
+                <div class="code-header"><i class="fa-brands fa-python"></i> Copy & Run Code</div>
+<pre>student_scores = {} <span class="com"># បង្កើត Dictionary ទទេ (Hash Table)</span>
+
+<span class="com"># Insert (បញ្ចូលទិន្នន័យ)</span>
+student_scores[<span class="str">"Sok"</span>] = <span class="num">90</span>
+student_scores[<span class="str">"Lim"</span>] = <span class="num">95</span>
+
+<span class="com"># Access (ទាញយកទិន្នន័យ)</span>
+<span class="fn">print</span>(<span class="str">"ពិន្ទុរបស់ Lim គឺ:"</span>, student_scores[<span class="str">"Lim"</span>])</pre>
+            </div>
+            <div class="answer-box">
+                <label>ការពន្យល់ល្បឿន O(1) ៖</label> 
+                <div class="filled-answer">ការហៅ <code>student_scores["Lim"]</code> ប្រើពេល O(1) ព្រោះ Hash Function បានបំប្លែងពាក្យ "Lim" ទៅជាលេខ Index រួចលោតទៅយកពិន្ទុនោះភ្លាមៗ ដោយមិនបាច់ Loop ស្វែងរកឡើយ។</div>
+            </div>
+        </div>
+
+        <div class="exercise-block">
+            <p><span class="level-badge bg-low">ស្រាល ៦</span> ត្រួតពិនិត្យ Key ថាមានឬអត់ (Contains Key)</p>
+            <div class="code-container">
+                <div class="code-header"><i class="fa-brands fa-python"></i> Copy & Run Code</div>
+<pre>inventory = {<span class="str">"apple"</span>: <span class="num">50</span>, <span class="str">"banana"</span>: <span class="num">20</span>}
+
+<span class="com"># ការប្រើ in operator លើ Dictionary</span>
+<span class="kw">if</span> <span class="str">"apple"</span> <span class="kw">in</span> inventory:
+    <span class="fn">print</span>(<span class="str">"ផ្លែប៉ោមមានស្តុក!"</span>)
+<span class="kw">else</span>:
+    <span class="fn">print</span>(<span class="str">"ផ្លែប៉ោមអស់ស្តុកហើយ!"</span>)</pre>
+            </div>
+            <div class="answer-box">
+                <label>ភាពខុសគ្នាពី List ៖</label> 
+                <div class="filled-answer">បើប្រើ <code>in</code> លើ List ធម្មតា វាត្រូវដើររកម្តងមួយៗតាំងពីដើម (O(n))។ ប៉ុន្តែបើប្រើ <code>in</code> លើ Dictionary/Hash Table វាដើររកក្នុងល្បឿនពន្លឺ O(1)។</div>
+            </div>
+        </div>
+
+        <div class="note-area">
+            <i class="fa-solid fa-pen"></i> កន្លែងសម្រាប់កត់ត្រាបន្ថែម (Notes / Scratchpad)...
+        </div>
+    </div>
+
+    <div class="global-footer">
+        <div class="footer-left"><img src="Lim.jpg" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'"><span>សាស្ត្រាចារ្យ៖ សឿង លីម (Soeurng LIM)</span></div>
+        <div class="footer-right">ទំព័រទី ៦ នៃ ១២</div>
+    </div>
+</div>
+
+<!-- PAGE 7 : Hash Tables (Looping & Custom Hash) -->
+<div class="a4-page">
+    <div class="global-header">
+        <div class="header-item"><img src="Logo.png" onerror="this.src='https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png'"><span>សាកលវិទ្យាល័យអង្គរ</span></div>
+        <div class="header-center">
+            <h1>សៀវភៅលំហាត់អនុវត្តន៍ - ជំពូកទី ៦</h1>
+            <p>ADVANCED DATA STRUCTURES AND ALGORITHMS</p>
+        </div>
+        <div class="header-item"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg"><span>Python Pro</span></div>
+    </div>
+
+    <div class="page-content">
+        <div class="case-title"><i class="fa-solid fa-hashtag"></i> ៤. ករណីសិក្សា៖ មូលដ្ឋានគ្រឹះនៃ Hash Tables (ត)</div>
+        
+        <div class="exercise-block">
+            <p><span class="level-badge bg-mid">មធ្យម ៤</span> ការ Loop ទាញយកទាំង Key និង Value</p>
+            <div class="code-container">
+                <div class="code-header"><i class="fa-brands fa-python"></i> Copy & Run Code</div>
+<pre>capitals = {<span class="str">"Cambodia"</span>: <span class="str">"Phnom Penh"</span>, <span class="str">"Japan"</span>: <span class="str">"Tokyo"</span>}
+
+<span class="com"># ប្រើ .items() ដើម្បីយកទាំងគូ</span>
+<span class="kw">for</span> country, city <span class="kw">in</span> capitals.items():
+    <span class="fn">print</span>(<span class="str">f"រដ្ឋធានីនៃ {country} គឺ {city}"</span>)</pre>
+            </div>
+            <div class="answer-box">
+                <label>បច្ចេកទេស Dictionary ៖</label> 
+                <div class="filled-answer">អនុគមន៍ <code>.items()</code> អនុញ្ញាតឱ្យយើងទាញយកទិន្នន័យជាគូ (Tuple) ចេញពី Hash Table មកដំណើរការបានយ៉ាងងាយស្រួល ដែលវាប្រើពេល O(n) ដើម្បីបង្ហាញទាំងអស់។</div>
+            </div>
+        </div>
+
+        <div class="exercise-block">
+            <p><span class="level-badge bg-high">ធ្ងន់ ៤</span> ការសរសេរ Hash Function ខ្លួនឯង (Simple Custom Hash)</p>
+            <div class="code-container">
+                <div class="code-header"><i class="fa-brands fa-python"></i> Copy & Run Code</div>
+<pre><span class="kw">def</span> <span class="fn">simple_hash</span>(key_string, array_size):
+    total = <span class="num">0</span>
+    <span class="kw">for</span> char <span class="kw">in</span> key_string:
+        total += <span class="fn">ord</span>(char) <span class="com"># យកតម្លៃ ASCII របស់អក្សរមួួយៗមកបូកបញ្ចូលគ្នា</span>
+    <span class="kw">return</span> total % array_size <span class="com"># ចែកយកសំណល់ដើម្បីកុំឱ្យហួសទំហំ Array</span>
+
+<span class="fn">print</span>(<span class="str">"ពាក្យ Sok ធ្លាក់ចូលប្រអប់ទី:"</span>, simple_hash(<span class="str">"Sok"</span>, <span class="num">10</span>))
+<span class="fn">print</span>(<span class="str">"ពាក្យ Lim ធ្លាក់ចូលប្រអប់ទី:"</span>, simple_hash(<span class="str">"Lim"</span>, <span class="num">10</span>))</pre>
+            </div>
+            <div class="answer-box">
+                <label>ដំណើរការនៅពីក្រោយ Dictionary ៖</label> 
+                <div class="filled-answer">នេះគឺជាការធ្វើត្រាប់តាមដំណើរការដែល Python លាក់ទុកនៅពីក្រោយ។ វាយក Key បំប្លែងជាលេខ Index ដើម្បីដឹងថាត្រូវយក Value ទៅដាក់ក្នុងប្រអប់ Array ទីប៉ុន្មានដោយសុវត្ថិភាព។</div>
+            </div>
+        </div>
+
+        <div class="note-area">
+            <i class="fa-solid fa-pen"></i> កន្លែងសម្រាប់កត់ត្រាបន្ថែម (Notes / Scratchpad)...
+        </div>
+    </div>
+
+    <div class="global-footer">
+        <div class="footer-left"><img src="Lim.jpg" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'"><span>សាស្ត្រាចារ្យ៖ សឿង លីម (Soeurng LIM)</span></div>
+        <div class="footer-right">ទំព័រទី ៧ នៃ ១២</div>
+    </div>
+</div>
+
+<!-- PAGE 8 : Hash Table Applications 1 -->
+<div class="a4-page">
+    <div class="global-header">
+        <div class="header-item"><img src="Logo.png" onerror="this.src='https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png'"><span>សាកលវិទ្យាល័យអង្គរ</span></div>
+        <div class="header-center">
+            <h1>សៀវភៅលំហាត់អនុវត្តន៍ - ជំពូកទី ៦</h1>
+            <p>ADVANCED DATA STRUCTURES AND ALGORITHMS</p>
+        </div>
+        <div class="header-item"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg"><span>Python Pro</span></div>
+    </div>
+
+    <div class="page-content">
+        <div class="case-title"><i class="fa-solid fa-layer-group"></i> ៥. ករណីសិក្សា៖ ប្រតិបត្តិការកម្រិតខ្ពស់លើ Hash Tables</div>
+        
+        <div class="exercise-block">
+            <p><span class="level-badge bg-low">ស្រាល ៧</span> រាប់ចំនួនដងដែលធាតុលេចឡើង (Frequency Counter)</p>
+            <div class="code-container">
+                <div class="code-header"><i class="fa-brands fa-python"></i> Copy & Run Code</div>
+<pre>words = [<span class="str">"apple"</span>, <span class="str">"banana"</span>, <span class="str">"apple"</span>, <span class="str">"orange"</span>, <span class="str">"banana"</span>, <span class="str">"apple"</span>]
+freq = {}
+
+<span class="kw">for</span> w <span class="kw">in</span> words:
+    <span class="kw">if</span> w <span class="kw">in</span> freq: freq[w] += <span class="num">1</span>
+    <span class="kw">else</span>: freq[w] = <span class="num">1</span>
+
+<span class="fn">print</span>(<span class="str">"ចំនួនផ្លែឈើនីមួយៗ:"</span>, freq)</pre>
+            </div>
+            <div class="answer-box">
+                <label>ការប្រើប្រាស់ដ៏ពេញនិយម ៖</label> 
+                <div class="filled-answer">នេះគឺជាការប្រើប្រាស់ Hash Table ដ៏សាមញ្ញ និងមានប្រយោជន៍បំផុតក្នុង NLP និង AI។ ជំនួសឱ្យការ Loop រាប់ម្តងមួយៗ (O(n²)) យើងកត់ត្រាចូល Dictionary ក្នុងល្បឿនត្រឹម O(n) ប៉ុណ្ណោះ។</div>
+            </div>
+        </div>
+
+        <div class="exercise-block">
+            <p><span class="level-badge bg-mid">មធ្យម ៥</span> រកអក្សរទីមួយដែលមិនស្ទួនគេ (First Unique Char)</p>
+            <div class="code-container">
+                <div class="code-header"><i class="fa-brands fa-python"></i> Copy & Run Code</div>
+<pre><span class="kw">def</span> <span class="fn">first_unique</span>(s):
+    count = {}
+    <span class="kw">for</span> char <span class="kw">in</span> s:
+        count[char] = count.get(char, <span class="num">0</span>) + <span class="num">1</span> <span class="com"># .get() ជួយការពារ Error</span>
+        
+    <span class="kw">for</span> char <span class="kw">in</span> s:
+        <span class="kw">if</span> count[char] == <span class="num">1</span>: <span class="kw">return</span> char
+    <span class="kw">return</span> <span class="str">"គ្មាន"</span>
+
+<span class="fn">print</span>(<span class="str">"អក្សរមិនស្ទួនមុនគេក្នុង 'swiss' គឺ:"</span>, first_unique(<span class="str">"swiss"</span>))</pre>
+            </div>
+            <div class="answer-box">
+                <label>របៀបដោះស្រាយ O(n) ៖</label> 
+                <div class="filled-answer">យើងប្រើការរត់ Loop ២ដងដាច់ពីគ្នា។ ជុំទី១ កត់ត្រាចំនួនអក្សរចូល Hash Table។ ជុំទី២ ដើរឆែកមើលអក្សរណាដែលមានចំនួនតែ ១ គឺយកអក្សរនោះ។</div>
+            </div>
+        </div>
+
+        <div class="note-area">
+            <i class="fa-solid fa-pen"></i> កន្លែងសម្រាប់កត់ត្រាបន្ថែម (Notes / Scratchpad)...
+        </div>
+    </div>
+
+    <div class="global-footer">
+        <div class="footer-left"><img src="Lim.jpg" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'"><span>សាស្ត្រាចារ្យ៖ សឿង លីម (Soeurng LIM)</span></div>
+        <div class="footer-right">ទំព័រទី ៨ នៃ ១២</div>
+    </div>
+</div>
+
+<!-- PAGE 9 : Hash Table Applications 2 -->
+<div class="a4-page">
+    <div class="global-header">
+        <div class="header-item"><img src="Logo.png" onerror="this.src='https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png'"><span>សាកលវិទ្យាល័យអង្គរ</span></div>
+        <div class="header-center">
+            <h1>សៀវភៅលំហាត់អនុវត្តន៍ - ជំពូកទី ៦</h1>
+            <p>ADVANCED DATA STRUCTURES AND ALGORITHMS</p>
+        </div>
+        <div class="header-item"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg"><span>Python Pro</span></div>
+    </div>
+
+    <div class="page-content">
+        <div class="case-title"><i class="fa-solid fa-layer-group"></i> ៥. ករណីសិក្សា៖ ប្រតិបត្តិការកម្រិតខ្ពស់លើ Hash Tables (ត)</div>
+        
+        <div class="exercise-block">
+            <p><span class="level-badge bg-high">ធ្ងន់ ៥</span> រកលេខពីរដែលបូកចូលគ្នាស្មើ Target (Two Sum)</p>
+            <div class="code-container">
+                <div class="code-header"><i class="fa-brands fa-python"></i> Copy & Run Code</div>
+<pre><span class="kw">def</span> <span class="fn">two_sum</span>(nums, target):
+    seen = {} <span class="com"># ទុកលេខដែលបានឃើញ និងទីតាំងរបស់វា {តម្លៃ: Index}</span>
+    <span class="kw">for</span> i, num <span class="kw">in</span> <span class="fn">enumerate</span>(nums):
+        needed = target - num
+        <span class="kw">if</span> needed <span class="kw">in</span> seen:
+            <span class="kw">return</span> [seen[needed], i]
+        seen[num] = i
+    <span class="kw">return</span> []
+
+<span class="fn">print</span>(<span class="str">"ទីតាំងលេខបូកស្មើ 9:"</span>, two_sum([<span class="num">2</span>, <span class="num">7</span>, <span class="num">11</span>, <span class="num">15</span>], <span class="num">9</span>))</pre>
+            </div>
+            <div class="answer-box">
+                <label>លំហាត់ LeetCode កម្រិតកំពូល ៖</label> 
+                <div class="filled-answer">ជំនួសឱ្យការប្រើ Nested Loop O(n²) យើងប្រើ Hash Table ដើម្បីកត់ទុកលេខដែលយើងបានដើរកាត់។ ដល់ពេលជួបលេខថ្មី យើងគ្រាន់តែឆែករកលេខខ្វះ (needed) ក្នុង Hash ជាការស្រេច ល្បឿន O(n)។</div>
+            </div>
+        </div>
+
+        <div class="exercise-block">
+            <p><span class="level-badge bg-high">ធ្ងន់ ៦</span> ចាត់ក្រុមពាក្យដែលផ្សំពីអក្សរដូចគ្នា (Group Anagrams)</p>
+            <div class="code-container">
+                <div class="code-header"><i class="fa-brands fa-python"></i> Copy & Run Code</div>
+<pre><span class="kw">from</span> collections <span class="kw">import</span> defaultdict
+
+<span class="kw">def</span> <span class="fn">group_anagrams</span>(strs):
+    groups = defaultdict(<span class="kw">list</span>) <span class="com"># Dictionary ដែលមាន Value ជា List ទទេស្វ័យប្រវត្តិ</span>
+    <span class="kw">for</span> word <span class="kw">in</span> strs:
+        key = <span class="str">""</span>.join(<span class="fn">sorted</span>(word)) <span class="com"># តម្រៀបអក្សរធ្វើជា Key (ឧ. "ate" -> "aet")</span>
+        groups[key].append(word)
+    <span class="kw">return list</span>(groups.values())
+
+<span class="fn">print</span>(<span class="str">"ក្រុម:"</span>, group_anagrams([<span class="str">"eat"</span>, <span class="str">"tea"</span>, <span class="str">"tan"</span>, <span class="str">"ate"</span>, <span class="str">"nat"</span>, <span class="str">"bat"</span>]))</pre>
+            </div>
+            <div class="answer-box">
+                <label>ភាពឈ្លាសវៃនៃ Key ៖</label> 
+                <div class="filled-answer">ពាក្យ "eat" និង "tea" ពេលតម្រៀបអក្សរទៅវានឹងចេញជា "aet" ដូចគ្នា។ ដូច្នេះយើងយក "aet" ធ្វើជា Key រួចបោះពាក្យទាំងនោះចូលទៅក្នុង List របស់ Key នោះជុំគ្នាតែម្តង។</div>
+            </div>
+        </div>
+
+        <div class="note-area">
+            <i class="fa-solid fa-pen"></i> កន្លែងសម្រាប់កត់ត្រាបន្ថែម (Notes / Scratchpad)...
+        </div>
+    </div>
+
+    <div class="global-footer">
+        <div class="footer-left"><img src="Lim.jpg" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'"><span>សាស្ត្រាចារ្យ៖ សឿង លីម (Soeurng LIM)</span></div>
+        <div class="footer-right">ទំព័រទី ៩ នៃ ១២</div>
+    </div>
+</div>
+
+<!-- PAGE 10 : Sets Basics -->
+<div class="a4-page">
+    <div class="global-header">
+        <div class="header-item"><img src="Logo.png" onerror="this.src='https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png'"><span>សាកលវិទ្យាល័យអង្គរ</span></div>
+        <div class="header-center">
+            <h1>សៀវភៅលំហាត់អនុវត្តន៍ - ជំពូកទី ៦</h1>
+            <p>ADVANCED DATA STRUCTURES AND ALGORITHMS</p>
+        </div>
+        <div class="header-item"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg"><span>Python Pro</span></div>
+    </div>
+
+    <div class="page-content">
+        <div class="case-title"><i class="fa-solid fa-object-ungroup"></i> ៦. ករណីសិក្សា៖ ការប្រើប្រាស់ Set ក្នុង Python</div>
+        
+        <div class="exercise-block">
+            <p><span class="level-badge bg-low">ស្រាល ៨</span> ការប្រើប្រាស់ Set ដើម្បីលុបស្ទួន និងស្វែងរកលឿន</p>
+            <div class="code-container">
+                <div class="code-header"><i class="fa-brands fa-python"></i> Copy & Run Code</div>
+<pre>nums = [<span class="num">1</span>, <span class="num">2</span>, <span class="num">2</span>, <span class="num">3</span>, <span class="num">4</span>, <span class="num">4</span>, <span class="num">5</span>]
+unique_nums = <span class="fn">set</span>(nums) <span class="com"># Set គឺមានមូលដ្ឋានពី Hash Table ដែលមានតែ Key អត់ Value</span>
+
+<span class="fn">print</span>(<span class="str">"ទិន្នន័យមិនស្ទួន:"</span>, unique_nums)
+<span class="fn">print</span>(<span class="str">"តើមានលេខ 3 ទេ?:"</span>, <span class="num">3</span> <span class="kw">in</span> unique_nums) <span class="com"># ដើរលឿន O(1)</span></pre>
+            </div>
+            <div class="answer-box">
+                <label>Set គឺជា Hash Table កាត់កន្ទុយ ៖</label> 
+                <div class="filled-answer"><code>set</code> ដំណើរការដូច <code>dict</code> ដែរគ្រាន់តែវាផ្ទុកតែទិន្នន័យ Key ទទេប៉ុណ្ណោះ។ វាកាត់ចោលលេខស្ទួនដោយស្វ័យប្រវត្តិ និងអនុញ្ញាតឱ្យការប្រើ <code>in</code> មានល្បឿន O(1) ជានិច្ច។</div>
+            </div>
+        </div>
+
+        <div class="exercise-block">
+            <p><span class="level-badge bg-low">ស្រាល ៩</span> រកទិន្នន័យដែលដូចគ្នាពីរ Array (Intersection)</p>
+            <div class="code-container">
+                <div class="code-header"><i class="fa-brands fa-python"></i> Copy & Run Code</div>
+<pre><span class="kw">def</span> <span class="fn">intersection</span>(nums1, nums2):
+    set1 = <span class="fn">set</span>(nums1)
+    set2 = <span class="fn">set</span>(nums2)
+    <span class="kw">return list</span>(set1 & set2) <span class="com"># សញ្ញា & ប្រើសម្រាប់រក Intersection (ជាន់គ្នា)</span>
+
+<span class="fn">print</span>(<span class="str">"លេខដូចគ្នា:"</span>, intersection([<span class="num">1</span>,<span class="num">2</span>,<span class="num">2</span>,<span class="num">1</span>], [<span class="num">2</span>,<span class="num">2</span>]))</pre>
+            </div>
+            <div class="answer-box">
+                <label>អនុភាពរបស់ Set Operations ៖</label> 
+                <div class="filled-answer">Python Set មានភ្ជាប់មកជាមួយនូវប្រមាណវិធីពិសេសៗដូចជា <code>&</code> (Intersection), <code>|</code> (Union), និង <code>-</code> (Difference) ដែលដើរក្នុងល្បឿនលឿន និងសរសេរកូដខ្លីបំផុត។</div>
+            </div>
+        </div>
+
+        <div class="note-area">
+            <i class="fa-solid fa-pen"></i> កន្លែងសម្រាប់កត់ត្រាបន្ថែម (Notes / Scratchpad)...
+        </div>
+    </div>
+
+    <div class="global-footer">
+        <div class="footer-left"><img src="Lim.jpg" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'"><span>សាស្ត្រាចារ្យ៖ សឿង លីម (Soeurng LIM)</span></div>
+        <div class="footer-right">ទំព័រទី ១០ នៃ ១២</div>
+    </div>
+</div>
+
+<!-- PAGE 11 : Graphs & Set (Social Network) -->
+<div class="a4-page">
+    <div class="global-header">
+        <div class="header-item"><img src="Logo.png" onerror="this.src='https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png'"><span>សាកលវិទ្យាល័យអង្គរ</span></div>
+        <div class="header-center">
+            <h1>សៀវភៅលំហាត់អនុវត្តន៍ - ជំពូកទី ៦</h1>
+            <p>ADVANCED DATA STRUCTURES AND ALGORITHMS</p>
+        </div>
+        <div class="header-item"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg"><span>Python Pro</span></div>
+    </div>
+
+    <div class="page-content">
+        <div class="case-title"><i class="fa-solid fa-users"></i> ៧. ករណីសិក្សា៖ ការប្រើប្រាស់ Graph និង Set ក្នុងបណ្តាញសង្គម</div>
+        
+        <div class="exercise-block">
+            <p><span class="level-badge bg-mid">មធ្យម ៦</span> ស្វែងរកមិត្តរួមគ្នា (Mutual Friends) ដោយប្រើ Set</p>
+            <div class="code-container">
+                <div class="code-header"><i class="fa-brands fa-python"></i> Copy & Run Code</div>
+<pre><span class="kw">def</span> <span class="fn">mutual_friends</span>(graph, user1, user2):
+    friends1 = <span class="fn">set</span>(graph.get(user1, []))
+    friends2 = <span class="fn">set</span>(graph.get(user2, []))
+    <span class="kw">return list</span>(friends1 & friends2)
+
+g = {<span class="str">'Sok'</span>: [<span class="str">'Lim'</span>, <span class="str">'Dara'</span>, <span class="str">'Bopha'</span>], <span class="str">'Lim'</span>: [<span class="str">'Sok'</span>, <span class="str">'Dara'</span>]}
+<span class="fn">print</span>(<span class="str">"មិត្តរួមគ្នារវាង Sok និង Lim:"</span>, mutual_friends(g, <span class="str">'Sok'</span>, <span class="str">'Lim'</span>))</pre>
+            </div>
+            <div class="answer-box">
+                <label>អនុភាពនៃការរួមបញ្ចូលគ្នា ៖</label> 
+                <div class="filled-answer">យើងបានទាញយកបញ្ជីមិត្តភក្តិរបស់ពួកគេម្នាក់ៗពី Graph រួចយកវាទៅបំប្លែងជា Set ដើម្បីប្រើប្រាស់ប្រមាណវិធី Intersection រកអ្នកដែលជាន់គ្នាបានយ៉ាងលឿន។</div>
+            </div>
+        </div>
+
+        <div class="exercise-block">
+            <p><span class="level-badge bg-mid">មធ្យម ៧</span> ស្វែងរកអ្នកដែលមានមិត្តច្រើនជាងគេ (Highest Degree)</p>
+            <div class="code-container">
+                <div class="code-header"><i class="fa-brands fa-python"></i> Copy & Run Code</div>
+<pre><span class="kw">def</span> <span class="fn">most_popular</span>(graph):
+    max_friends = <span class="num">0</span>
+    popular_person = <span class="kw">None</span>
+    
+    <span class="kw">for</span> user, friends <span class="kw">in</span> graph.items():
+        <span class="kw">if</span> <span class="fn">len</span>(friends) > max_friends:
+            max_friends = <span class="fn">len</span>(friends)
+            popular_person = user
+            
+    <span class="kw">return</span> popular_person, max_friends
+
+<span class="fn">print</span>(<span class="str">"អ្នកដែលមានមិត្តច្រើនជាងគេ:"</span>, most_popular(g))</pre>
+            </div>
+            <div class="answer-box">
+                <label>Graph Degree ៖</label> 
+                <div class="filled-answer">នៅក្នុង Graph ទ្រឹស្តី "Degree" គឺជាចំនួនខ្សែដែលតភ្ជាប់ទៅកាន់ចំណុចមួយ។ អ្នកដែលមាន Degree ខ្ពស់ជាងគេ គឺជាអ្នកដែលមានឥទ្ធិពលបំផុត (Popular) ក្នុងបណ្តាញនោះ។</div>
+            </div>
+        </div>
+
+        <div class="note-area">
+            <i class="fa-solid fa-pen"></i> កន្លែងសម្រាប់កត់ត្រាបន្ថែម (Notes / Scratchpad)...
+        </div>
+    </div>
+
+    <div class="global-footer">
+        <div class="footer-left"><img src="Lim.jpg" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'"><span>សាស្ត្រាចារ្យ៖ សឿង លីម (Soeurng LIM)</span></div>
+        <div class="footer-right">ទំព័រទី ១១ នៃ ១២</div>
+    </div>
+</div>
+
+<!-- PAGE 12 : Combined Concepts -->
+<div class="a4-page">
+    <div class="global-header">
+        <div class="header-item"><img src="Logo.png" onerror="this.src='https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png'"><span>សាកលវិទ្យាល័យអង្គរ</span></div>
+        <div class="header-center">
+            <h1>សៀវភៅលំហាត់អនុវត្តន៍ - ជំពូកទី ៦</h1>
+            <p>ADVANCED DATA STRUCTURES AND ALGORITHMS</p>
+        </div>
+        <div class="header-item"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg"><span>Python Pro</span></div>
+    </div>
+
+    <div class="page-content">
+        <div class="case-title"><i class="fa-solid fa-puzzle-piece"></i> ៨. ករណីសិក្សា៖ ការប្រើប្រាស់ចំណេះដឹងចម្រុះ (Combined Concepts)</div>
+        
+        <div class="exercise-block">
+            <p><span class="level-badge bg-mid">មធ្យម ៨</span> ការប្រើប្រាស់ `defaultdict` សម្រាប់ Graph</p>
+            <div class="code-container">
+                <div class="code-header"><i class="fa-brands fa-python"></i> Copy & Run Code</div>
+<pre><span class="kw">from</span> collections <span class="kw">import</span> defaultdict
+
+<span class="com"># កំណត់ថា Value របស់ Dictionary នេះជា List ដោយស្វ័យប្រវត្តិ</span>
+graph = defaultdict(<span class="kw">list</span>)
+
+<span class="com"># មិនបាច់ឆែកលក្ខខណ្ឌ if 'A' not in graph ទៀតទេ</span>
+graph[<span class="str">'A'</span>].append(<span class="str">'B'</span>)
+graph[<span class="str">'A'</span>].append(<span class="str">'C'</span>)
+
+<span class="fn">print</span>(<span class="str">"Graph ដោយប្រើ defaultdict:"</span>, <span class="fn">dict</span>(graph))</pre>
+            </div>
+            <div class="answer-box">
+                <label>ភាពងាយស្រួល ៖</label> 
+                <div class="filled-answer">`defaultdict` ជួយកាត់បន្ថយកូដបានច្រើន ព្រោះពេលយើងហៅ Key ដែលមិនធ្លាប់មាន វានឹងបង្កើត List ទទេឱ្យយើងដោយស្វ័យប្រវត្តិ មិនបណ្តាលឱ្យមានកំហុស (KeyError) ឡើយ។</div>
+            </div>
+        </div>
+
+        <div class="exercise-block">
+            <p><span class="level-badge bg-high">ធ្ងន់ ៧</span> រកលេខស្ទួនក្នុង Array ដោយប្រើ Hash Table លឿន O(n)</p>
+            <div class="code-container">
+                <div class="code-header"><i class="fa-brands fa-python"></i> Copy & Run Code</div>
+<pre><span class="kw">def</span> <span class="fn">find_duplicate</span>(nums):
+    seen = <span class="fn">set</span>()
+    <span class="kw">for</span> num <span class="kw">in</span> nums:
+        <span class="kw">if</span> num <span class="kw">in</span> seen:
+            <span class="kw">return</span> num
+        seen.add(num)
+    <span class="kw">return None</span>
+
+<span class="fn">print</span>(<span class="str">"លេខដែលស្ទួនគឺ:"</span>, find_duplicate([<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>, <span class="num">4</span>, <span class="num">2</span>, <span class="num">5</span>]))</pre>
+            </div>
+            <div class="answer-box">
+                <label>ប្រៀបធៀបជាមួយ Nested Loop ៖</label> 
+                <div class="filled-answer">បើយើងប្រើ For Loop ត្រួតគ្នាដើម្បីធៀបលេខ វាស៊ីពេល O(n²)។ តែការប្រើប្រាស់ `set` (Hash Table) ជួយកាត់បន្ថយល្បឿនមកត្រឹមតែ O(n) ទោះបីជាត្រូវលះបង់ Space បន្តិចក៏ដោយ។</div>
+            </div>
+        </div>
+
+        <div class="note-area">
+            <i class="fa-solid fa-pen"></i> កន្លែងសម្រាប់កត់ត្រាបន្ថែម (Notes / Scratchpad)...
+        </div>
+    </div>
+
+    <div class="global-footer">
+        <div class="footer-left"><img src="Lim.jpg" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'"><span>សាស្ត្រាចារ្យ៖ សឿង លីម (Soeurng LIM)</span></div>
+        <div class="footer-right">ទំព័រទី ១២ នៃ ១២</div>
+    </div>
+</div>
+
+</body>
+</html>

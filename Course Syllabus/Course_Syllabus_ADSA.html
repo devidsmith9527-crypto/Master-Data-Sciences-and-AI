@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="km">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Course Syllabus - Advanced DSA</title>
+    <link href="https://fonts.googleapis.com/css2?family=Battambang:wght@400;700&family=Suwannaphum:wght@400;700;900&family=Lato:wght@400;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        :root {
+            --bg-dark: #0F172A; --bg-card: #F8FAFC; --text-main: #1E293B; --text-muted: #64748B;
+            --accent-blue: #0284C7; --accent-green: #059669; --accent-yellow: #D97706; --accent-red: #DC2626;
+            --accent-purple: #7C3AED;
+            --header-footer-bg: #F0F9FF;
+            --mesh-bg: radial-gradient(at 0% 0%, hsla(201,100%,94%,1) 0, transparent 50%), radial-gradient(at 100% 0%, hsla(160,100%,94%,1) 0, transparent 50%);
+        }
+        
+        * { 
+            box-sizing: border-box; 
+            margin: 0; 
+            padding: 0; 
+        }
+
+        /* ជួសជុលបញ្ហាអក្សរដាច់ឃ្លា (Khmer Text Rendering Fixes) */
+        body, p, li, h1, h2, h3, h4, td, th, span {
+            text-rendering: optimizeLegibility;
+            -webkit-font-smoothing: antialiased;
+            word-break: keep-all !important;
+            overflow-wrap: normal !important;
+        }
+
+        body { 
+            background-color: var(--bg-dark); 
+            font-family: 'Battambang', 'Suwannaphum', sans-serif; 
+            overflow: hidden; 
+            height: 100vh; 
+            width: 100vw; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+        }
+        
+        .slide-deck { width: 98vw; height: 95vh; position: relative; background: #FFFFFF; background-image: var(--mesh-bg); border-radius: 1.5vw; overflow: hidden; box-shadow: 0 40px 100px rgba(0,0,0,0.6); display: flex; flex-direction: column; }
+        .slide-wrapper { flex-grow: 1; position: relative; overflow: hidden; }
+        .slide { display: none; width: 100%; height: 100%; padding: 2vh 4vw; flex-direction: column; justify-content: flex-start; animation: slideIn 0.5s cubic-bezier(0.25, 0.8, 0.25, 1); position: absolute; top: 0; left: 0; }
+        .slide.active { display: flex; }
+        @keyframes slideIn { from { opacity: 0; transform: translateY(30px) scale(0.98); } to { opacity: 1; transform: translateY(0) scale(1); } }
+
+        /* Navigation Buttons */
+        .nav-btn {
+            position: absolute; top: 50%; transform: translateY(-50%);
+            width: 4vw; height: 4vw; border-radius: 50%;
+            background: rgba(255, 255, 255, 0.8);
+            border: 2px solid var(--accent-blue);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer; z-index: 100; color: var(--accent-blue);
+            font-size: 2vw; transition: all 0.2s ease;
+        }
+        .nav-btn:hover { background: var(--accent-blue); color: white; transform: translateY(-50%) scale(1.1); }
+        .nav-left { left: 1vw; }
+        .nav-right { right: 1vw; }
+
+        /* Header Branding */
+        .global-header { display: flex; justify-content: space-between; align-items: center; padding: 1.2vh 0; border-bottom: 2px solid #E0F2FE; background-color: rgba(255,255,255,0.9); z-index: 100; margin-bottom: 2vh;}
+        .header-item { display: flex; flex-direction: column; align-items: center; gap: 4px; width: 15vw; }
+        .header-item img { height: 3.5vw; object-fit: contain; }
+        .header-item span { font-size: 0.75vw; font-weight: bold; color: var(--text-muted); text-align: center; font-family: 'Lato';}
+        .header-center h1 { font-family: 'Suwannaphum'; font-size: 1.6vw; color: var(--accent-blue); margin: 0; font-weight: 900; text-transform: uppercase; letter-spacing: 1px;}
+        .header-center p { font-family: 'Lato'; font-size: 0.9vw; color: var(--accent-green); margin: 0; font-weight: bold; text-align: center; }
+
+        /* Typography */
+        h1.main-title { font-family: 'Suwannaphum'; font-size: 3.2vw; text-align: center; color: var(--text-main); font-weight: 900; line-height: 1.3; background: linear-gradient(90deg, var(--accent-blue), var(--accent-green)); -webkit-background-clip: text; -webkit-text-fill-color: transparent;}
+        h2.slide-title { font-family: 'Suwannaphum'; font-size: 2.2vw; font-weight: 900; border-bottom: 0.3vw solid var(--accent-blue); padding-bottom: 0.5vh; margin-bottom: 1.5vh; color: var(--text-main); display: inline-block; }
+        
+        /* បើក overflow: visible ដើម្បីការពារអក្សរកុំឱ្យដាច់ */
+        .content-body { flex-grow: 1; display: flex; flex-direction: column; justify-content: flex-start; gap: 1vh; width: 100%; overflow: visible; padding-bottom: 1vh; }
+        p, li { font-size: 1.4vw; line-height: 1.6; color: var(--text-main); text-align: left; }
+        
+        .keyword-icon { color: var(--accent-blue); margin-right: 0.5vw; width: 1.5vw; text-align: center; display: inline-block; }
+
+        /* Layouts & Cards */
+        .two-column { display: grid; grid-template-columns: 1fr 1fr; gap: 3vw; height: 100%; align-items: center; }
+        .card-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5vw; }
+        .card { background: rgba(255, 255, 255, 0.8); padding: 2vh 2.5vw; border-radius: 1vw; border-left: 0.6vw solid var(--accent-blue); box-shadow: 0 4px 15px rgba(0,0,0,0.03); display: flex; flex-direction: column; justify-content: center; border-top: 1px solid #F1F5F9; border-right: 1px solid #F1F5F9;}
+        .card h4 { font-size: 1.5vw; color: var(--accent-blue); margin-bottom: 1vh; font-family: 'Suwannaphum'; display: flex; align-items: center;}
+
+        /* Tech Badges */
+        .tech-badge { background: #E0F2FE; color: var(--accent-blue); padding: 0.3vh 0.8vw; border-radius: 2vw; font-size: 1vw; font-family: 'Lato', sans-serif; font-weight: bold; border: 1px solid #BAE6FD; display: inline-block; margin-right: 0.5vw; margin-bottom: 1vh;}
+        .tech-badge.green { background: #DCFCE7; color: var(--accent-green); border-color: #BBF7D0;}
+        .tech-badge.purple { background: #F3E8FF; color: var(--accent-purple); border-color: #E9D5FF;}
+
+        /* Tables */
+        table { width: 100%; border-collapse: separate; border-spacing: 0; background: white; border-radius: 0.8vw; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border: 1px solid #CBD5E1; }
+        th, td { padding: 0.8vh 0.8vw; border-bottom: 1px solid #E2E8F0; border-right: 1px solid #E2E8F0; text-align: left; font-size: 1.1vw; line-height: 1.4; vertical-align: top; }
+        th:last-child, td:last-child { border-right: none; }
+        tr:last-child td { border-bottom: none; }
+        th { background: linear-gradient(90deg, #0F172A, #1E293B); color: white; font-family: 'Suwannaphum'; text-align: center; font-size: 1.25vw; font-weight: bold; padding: 1.2vh 1vw; }
+        
+        tbody tr:hover td { background-color: #F8FAFC; transition: background 0.3s ease; }
+        
+        td.week-cell { text-align: center; vertical-align: middle; font-weight: 900; font-size: 2vw; color: white; background: linear-gradient(135deg, var(--accent-blue), #0369A1); text-shadow: 1px 1px 2px rgba(0,0,0,0.2); }
+        td.day-cell { font-weight: bold; color: var(--text-main); white-space: nowrap; vertical-align: middle; background: #F1F5F9; border-right: 2px solid #E2E8F0;}
+        td.clo-cell { text-align: center; vertical-align: middle; font-weight: bold; font-size: 1.3vw; color: var(--accent-blue); }
+        td.desc-cell { text-align: left; color: #334155; } 
+        
+        tr.exam-row td { background: #FFFBEB !important; }
+        tr.exam-row:hover td { background: #FEF3C7 !important; } 
+        tr.exam-row td.day-cell { color: var(--accent-red); background: #FEF3C7;}
+        tr.exam-row td.week-cell { background: linear-gradient(135deg, var(--accent-red), #991B1B); }
+
+        /* Typography Helper Classes - ធ្វើឱ្យចំណងជើងជំពូកធំជាងចំណងជើងរងច្បាស់លាស់ */
+        .topic-title { font-weight: 900; font-size: 1.3vw; display: block; margin-bottom: 0.4vh; line-height: 1.3; font-family: 'Suwannaphum';} 
+        .topic-title.blue { color: var(--accent-blue); }
+        .topic-title.green { color: var(--accent-green); }
+        .topic-title.red { color: var(--accent-red); }
+        .topic-title.dark { color: var(--text-main); }
+
+        /* Lists within Table - ចំណងជើងរងរក្សាតូចល្មម */
+        ul.sub-topics { margin: 0.2vh 0 0 1.2vw; padding: 0; font-weight: normal; font-size: 0.95vw; color: var(--text-muted); line-height: 1.35; list-style-type: square; }
+        ul.sub-topics li { margin-bottom: 0.2vh; }
+
+        ul.exe-list { margin: 0; padding: 0; list-style: none; font-size: 0.95vw; line-height: 1.4; color: var(--text-main);}
+        ul.exe-list li { margin-bottom: 0.3vh; display: flex; align-items: flex-start; gap: 0.5vw; }
+        ul.exe-list li i { color: var(--accent-blue); font-size: 0.9em; margin-top: 0.3vh; flex-shrink: 0;}
+
+        /* Visual Frame */
+        .visual-frame { background: #E2E8F0; border-radius: 1vw; overflow: hidden; height: 100%; min-height: 250px; position: relative;}
+        .visual-frame img { height: 100%; width: 100%; object-fit: cover; }
+
+        /* Chart */
+        .doughnut-chart { border-radius: 50%; height: 280px; width: 280px; margin: auto; background: conic-gradient(var(--accent-green) 0% 40%, var(--accent-blue) 40% 70%, var(--accent-yellow) 70% 90%, #CBD5E1 90% 100%); position: relative; border: 8px solid #FFF; box-shadow: 0 15px 35px rgba(0,0,0,0.15);}
+        .doughnut-inner { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 150px; height: 150px; background: #FFF; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 32px; color: var(--text-main); font-family: 'Lato';}
+
+        /* Custom Footer */
+        .global-footer { display: flex; justify-content: space-between; align-items: center; width: 100%; padding: 1.2vh 0; background-color: #FFFFFF; border-top: 1px solid #E2E8F0; margin-top: auto;}
+        .footer-left { display: flex; align-items: center; gap: 1vw; }
+        .footer-left img { border-radius: 50%; width: 2.5vw; height: 2.5vw; object-fit: cover; border: 2px solid var(--accent-blue);}
+        .footer-left span { font-size: 1.1vw; font-weight: bold; color: var(--text-muted); font-family: 'Suwannaphum'; }
+        .slide-counter { font-size: 1.1vw; color: var(--accent-blue); font-family: 'Suwannaphum'; font-weight: 900; background: #F0F9FF; padding: 0.5vh 1.5vw; border-radius: 5vw; border: 1px solid #BAE6FD;}
+
+        .print-only-footer { display: none; }
+
+        /* PRINT STYLES */
+        @media print {
+            @page { 
+                size: 297mm 209mm; /* Exact A4 Landscape */
+                margin: 0 !important; 
+            }
+            html, body { 
+                background: white !important; 
+                width: 297mm !important; 
+                height: auto !important; 
+                margin: 0 !important; 
+                padding: 0 !important; 
+                overflow: visible !important; 
+                -webkit-print-color-adjust: exact !important; 
+                print-color-adjust: exact !important; 
+                display: block !important;
+            }
+            .slide-deck { 
+                display: block !important; 
+                width: 297mm !important; 
+                height: auto !important; 
+                box-shadow: none !important; 
+                border: none !important; 
+                border-radius: 0 !important; 
+                background: white !important; 
+                position: static !important; 
+            }
+            .slide-wrapper { 
+                display: block !important; 
+                position: static !important; 
+                overflow: visible !important; 
+                height: auto !important; 
+            }
+            /* 1 Slide = 1 PDF Page Exactly */
+            .slide { 
+                display: flex !important; 
+                flex-direction: column !important;
+                position: relative !important; 
+                width: 297mm !important; 
+                height: 209mm !important; 
+                page-break-after: always !important; 
+                page-break-inside: avoid !important; 
+                opacity: 1 !important; 
+                transform: none !important; 
+                animation: none !important; 
+                padding: 8mm 12mm !important; 
+                box-sizing: border-box !important; 
+                background: white !important;
+            }
+            
+            .slide:last-of-type { page-break-after: auto !important; }
+            .nav-btn, #mainFooter { display: none !important; }
+            
+            .global-header { margin: 0 0 5mm 0 !important; padding: 0 0 3mm 0 !important; border-bottom: 2px solid #E0F2FE !important; }
+            
+            .print-only-footer { 
+                display: flex !important; 
+                position: absolute !important; 
+                bottom: 8mm !important; 
+                left: 12mm !important; 
+                right: 12mm !important; 
+                width: calc(100% - 24mm) !important; 
+                padding: 3mm 0 0 0 !important; 
+                border-top: 1px solid #E2E8F0 !important; 
+                background: transparent !important; 
+                margin: 0 !important;
+                box-sizing: border-box !important;
+            }
+            
+            table { box-shadow: none !important; border: 1px solid #CBD5E1 !important; }
+            td.week-cell { background: #0284C7 !important; color: white !important; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="slide-deck" id="deck">
+
+    <!-- Navigation Buttons -->
+    <div class="nav-btn nav-left" onclick="navigate('prev')" title="ថយក្រោយ (Previous)">
+        <i class="fa-solid fa-chevron-left"></i>
+    </div>
+    <div class="nav-btn nav-right" onclick="navigate('next')" title="ទៅមុខ (Next)">
+        <i class="fa-solid fa-chevron-right"></i>
+    </div>
+
+    <template id="headerTemplate">
+        <div class="global-header">
+            <div class="header-item">
+                <img src="Logo.png" onerror="this.src='https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png'">
+                <span>ANGKOR UNIVERSITY</span>
+            </div>
+            <div class="header-center">
+                <h1>ADVANCED DATA STRUCTURES AND ALGORITHMS</h1>
+                <p>Master of Data Science and Artificial Intelligence</p>
+            </div>
+            <div class="header-item">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg">
+                <span>M.Sc. DSA</span>
+            </div>
+        </div>
+    </template>
+
+    <div class="slide-wrapper" id="slideWrapper">
+        
+        <!-- Cover Slide -->
+        <div class="slide active">
+            <div style="text-align: center; margin: auto; width: 100%;">
+                <div style="display: flex; align-items: center; justify-content: center; gap: 3vw; margin-bottom: 2vh;">
+                    <img src="Logo.png" style="height: 10vw; filter: drop-shadow(0 10px 15px rgba(0,0,0,0.1));" alt="AU Logo" onerror="this.src='https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png'">
+                    <div style="text-align: left;">
+                        <h2 style="font-family: 'Suwannaphum'; color: var(--text-main); font-size: 3.5vw; margin: 0; font-weight: 900;">សាកលវិទ្យាល័យអង្គរ</h2>
+                        <p style="font-family: 'Lato'; color: var(--accent-blue); font-size: 1.5vw; margin: 0; font-weight: bold; letter-spacing: 2px;">ANGKOR UNIVERSITY</p>
+                    </div>
+                </div>
+                
+                <div style="margin-bottom: 3vh;">
+                    <h3 style="font-family: 'Suwannaphum'; font-size: 1.6vw; color: var(--text-muted);"><i class="fa-solid fa-user-graduate text-blue"></i> កម្មវិធីអនុបណ្ឌិតវិទ្យាសាស្ត្រទិន្នន័យ និងបញ្ញាសិប្បនិម្មិត (AI - Artificial Intelligence)</h3>
+                </div>
+
+                <div style="background: linear-gradient(135deg, var(--accent-blue), #0369A1); color: white; padding: 1vh 4vw; border-radius: 5vw; display: inline-block; font-size: 1.8vw; font-weight: bold; margin-bottom: 3vh; box-shadow: 0 10px 20px rgba(2, 132, 199, 0.3);">
+                    <i class="fa-solid fa-book-open-reader"></i> គម្រោងមុខវិជ្ជា (Course Syllabus) | ២០២៥-២០២៦
+                </div>
+                
+                <h1 class="main-title">រចនាសម្ព័ន្ធទិន្នន័យកម្រិតខ្ពស់ និងក្បួនដោះស្រាយ<br>
+                <span style="color:var(--text-muted); font-size: 2vw; font-family:'Lato', sans-serif; font-weight: 700; background: none; -webkit-text-fill-color: var(--text-muted);">(Advanced Data Structures and Algorithms - DSA)</span></h1>
+                
+                <div style="margin-top: 4vh; display: flex; gap: 4vw; justify-content: center; align-items: center;">
+                    <span class="tech-badge"><i class="fa-brands fa-python"></i> Python 3.12+</span>
+                    <span class="tech-badge green"><i class="fa-solid fa-brain"></i> AI (Artificial Intelligence)</span>
+                    <span class="tech-badge purple"><i class="fa-solid fa-database"></i> Big Data Optimization</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Instructor Slide -->
+        <div class="slide">
+            <div id="h-placeholder-1"></div>
+            <h2 class="slide-title"><i class="fa-solid fa-chalkboard-user"></i> ព័ត៌មានសាស្ត្រាចារ្យ និងមុខវិជ្ជា</h2>
+            <div class="content-body two-column">
+                <div style="position: relative; width: 22vw; height: 28vw; margin: auto;">
+                    <div style="position: absolute; top: 1.5vw; left: -1.5vw; width: 100%; height: 100%; background: linear-gradient(135deg, var(--accent-blue), var(--accent-green)); border-radius: 2vw; opacity: 0.2; z-index: 0;"></div>
+                    <img src="Lim.jpg" style="position: relative; width: 100%; height: 100%; border-radius: 2vw; object-fit: cover; box-shadow: 0 20px 40px rgba(0,0,0,0.2); z-index: 1; border: 5px solid white;" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'">
+                </div>
+                <div style="padding-left: 1vw;">
+                    <h3 style="font-size: 3vw; color: var(--text-main); font-family: 'Suwannaphum'; margin-bottom: 2vh;">សាស្ត្រាចារ្យ៖ សឿង លីម <br><span style="font-size: 2vw; color: var(--accent-blue); font-family: 'Lato';">(Soeurng LIM)</span></h3>
+                    <div class="card" style="border-left-width: 0.8vw; padding: 4vh 3vw;">
+                        <p><b><i class="fa-solid fa-graduation-cap text-blue keyword-icon"></i> គុណវុឌ្ឍិ៖</b> បរិញ្ញាបត្រជាន់ខ្ពស់ (Master's Degree) - Information Technology (IT)</p>
+                        <p><b><i class="fa-solid fa-phone text-blue keyword-icon"></i> ទូរស័ព្ទ៖</b> ០៦១ ២២៧ ៩៣៣</p>
+                        <p><b><i class="fa-solid fa-envelope text-blue keyword-icon"></i> អ៊ីម៉ែល៖</b> soeurnglim@gmail.com</p>
+                        <hr style="margin: 2vh 0; border: 1px dashed #CBD5E1;">
+                        <p><b><i class="fa-solid fa-star text-yellow keyword-icon"></i> ក្រេឌីត៖</b> ៣ ក្រេឌីត (3 Credits)</p>
+                        <p><b><i class="fa-solid fa-clock text-purple keyword-icon"></i> ម៉ោងសិក្សា៖</b> សរុប ៤៥ ម៉ោង (រយៈពេល ៦ សប្តាហ៍)</p>
+                        <p style="font-size: 1.1vw; color: var(--text-muted); margin-left: 2.2vw;">(សៅរ៍: ៣ ម៉ោង និង អាទិត្យ: ៤.៥ ម៉ោង ក្នុងមួយសប្តាហ៍)</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Main Footer for Screen View -->
+    <div class="global-footer" id="mainFooter">
+        <div class="footer-left">
+            <img src="Lim.jpg" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'" alt="Professor">
+            <span>សាស្ត្រាចារ្យ៖ សឿង លីម | Soeurng LIM</span>
+        </div>
+        <div class="slide-counter" id="slideCounter">កំពុងរៀបចំ...</div>
+    </div>
+
+</div>
+
+<script>
+    const headerHTML = document.getElementById('headerTemplate').innerHTML;
+    const khNums = ["០", "១", "២", "៣", "៤", "៥", "៦", "៧", "៨", "៩"];
+    function toKh(n) { return n.toString().split('').map(d => khNums[parseInt(d)]).join(''); }
+
+    const syllabusData = [
+        { t: "១. ទិដ្ឋភាពទូទៅនៃកម្មវិធីសិក្សា (Course Roadmap)", type: "grid", c: [
+            { h: "<i class='fa-solid fa-layer-group keyword-icon'></i> ផ្នែកទី ១៖ មូលដ្ឋានគ្រឹះ (សប្តាហ៍ ១-២)", p: "<ul><li>ជំពូក១: ការវិភាគល្បឿនកូដ (<i class='fa-solid fa-chart-line text-blue'></i> Big-O Notation)</li><li>ជំពូក២: <i class='fa-solid fa-cubes text-blue'></i> OOP (Object-Oriented Programming)</li><li>ជំពូក៣: <i class='fa-solid fa-table-columns text-blue'></i> Arrays & <i class='fa-solid fa-link text-blue'></i> Linked Lists</li><li>ជំពូក៤: <i class='fa-solid fa-layer-group text-blue'></i> Stacks & <i class='fa-solid fa-list text-blue'></i> Queues</li></ul>", style: "border-left-color: var(--text-muted);" },
+            { h: "<i class='fa-solid fa-sitemap keyword-icon'></i> ផ្នែកទី ២៖ បណ្តាញទិន្នន័យ (សប្តាហ៍ ៣-៤)", p: "<ul><li>ជំពូក៥: <i class='fa-solid fa-folder-tree text-blue'></i> Trees & BST (Binary Search Tree)</li><li><span style='color:var(--accent-yellow); font-weight:bold;'><i class='fa-solid fa-file-pen'></i> ប្រឡង Midterm (សប្តាហ៍ទី ៣)</span></li><li>ជំពូក៦: <i class='fa-solid fa-circle-nodes text-blue'></i> Graphs & <i class='fa-solid fa-table text-blue'></i> Hash Tables</li><li>ជំពូក៧: Advanced <i class='fa-solid fa-arrow-down-a-z text-blue'></i> Sorting & <i class='fa-solid fa-magnifying-glass text-blue'></i> Searching</li></ul>", style: "border-left-color: var(--accent-blue);" },
+            { h: "<i class='fa-solid fa-brain keyword-icon'></i> ផ្នែកទី ៣៖ AI & Optimization (សប្តាហ៍ ៥-៦)", p: "<ul><li>ជំពូក៨: <i class='fa-solid fa-memory text-blue'></i> DP (Dynamic Programming) & <i class='fa-solid fa-robot text-blue'></i> AI (Artificial Intelligence)</li><li>ការណែនាំគម្រោង និងការកែលម្អកូដ (Mentoring)</li><li><span style='color:var(--accent-green); font-weight:bold;'><i class='fa-solid fa-graduation-cap'></i> ការការពារគម្រោង និងប្រឡង Final</span></li></ul>", style: "border-left-color: var(--accent-green); grid-column: 1 / -1;" }
+        ]},
+
+        { t: "១.២ ការពិពណ៌នាមុខវិជ្ជា (Course Description)", type: "split", c: "មុខវិជ្ជានេះត្រូវបានរចនាឡើងយ៉ាងពិសេសសម្រាប់និស្សិតថ្នាក់អនុបណ្ឌិត ដើម្បីផ្តល់ចំណេះដឹងស៊ីជម្រៅលើការរចនា និងវិភាគក្បួនដោះស្រាយ <b style='color:var(--accent-blue);'>(Algorithm Design)</b> សម្រាប់ប្រើប្រាស់ក្នុងវិស័យ <b style='color:var(--accent-purple);'>AI (Artificial Intelligence)</b> និង Data Science។<br><br><b>ចំណុចផ្តោតសំខាន់៖</b> ការបង្កើនប្រសិទ្ធភាពកូដ (Optimization), ការគ្រប់គ្រង Memory ក្នុង Python, និងការរៀបចំទិន្នន័យធំៗ (Big Data)។", img: "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&w=800&q=80" },
+        
+        { t: "សទ្ទានុក្រម និងពាក្យគន្លឹះ (Key Terms) - ផ្នែកទី ១", type: "grid", c: [
+            { h: "<i class='fa-solid fa-database keyword-icon'></i> Data Structures and Algorithms (DSA)", p: "<b>(រចនាសម្ព័ន្ធទិន្នន័យ)</b> វិធីសាស្ត្រក្នុងការរៀបចំ ផ្ទុក និងគ្រប់គ្រងទិន្នន័យនៅក្នុងកុំព្យូទ័រ ដើម្បីអាចទាញយកមកប្រើប្រាស់បានប្រកបដោយប្រសិទ្ធភាពបំផុត។" },
+            { h: "<i class='fa-solid fa-gears keyword-icon'></i> Algorithms", p: "<b>(ក្បួនដោះស្រាយ)</b> សំណុំនៃជំហាន ឬរូបមន្តតក្កវិជ្ជាច្បាស់លាស់ សម្រាប់ដោះស្រាយបញ្ហាណាមួយពីចំណុចចាប់ផ្តើមដល់ចំណុចបញ្ចប់។" },
+            { h: "<i class='fa-solid fa-chart-line keyword-icon'></i> Big-O Notation", p: "ភាសាគណិតវិទ្យាប្រើសម្រាប់វាស់វែងល្បឿនដំណើរការ (Time) និងទំហំ Memory (Space) របស់កូដ ក្នុងករណីអាក្រក់បំផុត (Worst-case)។" },
+            { h: "<i class='fa-solid fa-cubes keyword-icon'></i> Object-Oriented Programming (OOP)", p: "<b>(ការសរសេរកម្មវិធីតម្រង់ទិសវត្ថុ)</b> ដោយបែងចែកទិន្នន័យជា Class និង Object ងាយស្រួលគ្រប់គ្រងកូដធំៗនៅក្នុង Python។" }
+        ]},
+
+        { t: "សទ្ទានុក្រម និងពាក្យគន្លឹះ (Key Terms) - ផ្នែកទី ២", type: "grid", c: [
+            { h: "<i class='fa-solid fa-layer-group keyword-icon'></i> LIFO (Last-In-First-Out) vs FIFO (First-In-First-Out)", p: "<b>LIFO (Last-In-First-Out):</b> ចូលក្រោយ ចេញមុន (<i class='fa-solid fa-layer-group text-blue'></i> Stacks)។<br><b>FIFO (First-In-First-Out):</b> ចូលមុន ចេញមុន (<i class='fa-solid fa-list text-blue'></i> Queues)។" },
+            { h: "<i class='fa-solid fa-project-diagram keyword-icon'></i> BFS (Breadth-First Search) vs DFS (Depth-First Search)", p: "<b>BFS (Breadth-First Search):</b> ក្បួនរុករកបណ្តាញតាមទទឹង។<br><b>DFS (Depth-First Search):</b> ក្បួនរុករកបណ្តាញតាមជម្រៅ។" },
+            { h: "<i class='fa-solid fa-brain keyword-icon'></i> AI / ML / NLP", p: "<b>AI (Artificial Intelligence):</b> បញ្ញាសិប្បនិម្មិត។<br><b>ML (Machine Learning):</b> ការរៀនដោយម៉ាស៊ីន។<br><b>NLP (Natural Language Processing):</b> ដំណើរការភាសាធម្មជាតិ។" },
+            { h: "<i class='fa-solid fa-memory keyword-icon'></i> KNN (K-Nearest Neighbors) & DP (Dynamic Programming)", p: "<b>KNN (K-Nearest Neighbors):</b> ក្បួន AI ចំណាត់ថ្នាក់ក្រុម។<br><b>DP (Dynamic Programming):</b> ក្បួនចងចាំចម្លើយចាស់។" }
+        ]},
+
+        { t: "២. លទ្ធផលសិក្សារំពឹងទុក (CLO - Course Learning Outcomes) - ផ្នែកទី ១", type: "grid", c: [
+            { h: "CLO 1 <span style='font-size: 1.1vw; color: var(--text-muted); font-weight: normal;'>(ការវិភាគកូដ)</span>", p: "វិភាគ និងវាយតម្លៃភាពស្មុគស្មាញនៃកូដ (Time and Space Complexity, <i class='fa-solid fa-chart-line text-blue'></i> Big-O) ឱ្យស្របតាមស្តង់ដារ <b><i class='fa-solid fa-cubes text-blue'></i> OOP (Object-Oriented Programming)</b> ក្នុង Python។" },
+            { h: "CLO 2 <span style='font-size: 1.1vw; color: var(--text-muted); font-weight: normal;'>(រចនាសម្ព័ន្ធលីនេអ៊ែរ)</span>", p: "អនុវត្តការរៀបចំទិន្នន័យដោយប្រើប្រាស់ Linear Data Structures ដូចជា <i class='fa-solid fa-table-columns text-blue'></i> Arrays, <i class='fa-solid fa-link text-blue'></i> Linked Lists, <i class='fa-solid fa-layer-group text-blue'></i> Stacks (LIFO - Last-In-First-Out), និង <i class='fa-solid fa-list text-blue'></i> Queues (FIFO - First-In-First-Out)។" },
+            { h: "CLO 3 <span style='font-size: 1.1vw; color: var(--text-muted); font-weight: normal;'>(Non-Linear)</span>", p: "ដោះស្រាយបញ្ហាបណ្តាញទិន្នន័យដែលមានភាពស្មុគស្មាញដោយប្រើប្រាស់ <i class='fa-solid fa-folder-tree text-blue'></i> Trees (BST - Binary Search Tree), <i class='fa-solid fa-table text-blue'></i> Hash Tables កម្រិតខ្ពស់, និង <i class='fa-solid fa-circle-nodes text-blue'></i> Graphs (BFS - Breadth-First Search, DFS - Depth-First Search)។", style: "grid-column: 1 / -1;" }
+        ]},
+        
+        { t: "២. លទ្ធផលសិក្សារំពឹងទុក (CLO - Course Learning Outcomes) - ផ្នែកទី ២", type: "grid", c: [
+            { h: "CLO 4 <span style='font-size: 1.1vw; color: var(--text-muted); font-weight: normal;'>(Optimization & Sorting)</span>", p: "អភិវឌ្ឍប្រព័ន្ធ <b><i class='fa-solid fa-robot text-blue'></i> AI (Artificial Intelligence)</b> និងការតម្រៀប (<i class='fa-solid fa-arrow-down-a-z text-blue'></i> Sorting & <i class='fa-solid fa-magnifying-glass text-blue'></i> Searching) ប្រកបដោយប្រសិទ្ធភាពល្បឿនខ្ពស់។" },
+            { h: "CLO 5 <span style='font-size: 1.1vw; color: var(--text-muted); font-weight: normal;'>(Dynamic Programming)</span>", p: "ប្រើប្រាស់បច្ចេកទេស <i class='fa-solid fa-memory text-blue'></i> DP (Dynamic Programming) ដើម្បីស្វែងរកផ្លូវខ្លីបំផុត ដោះស្រាយបញ្ហាអាជីវកម្ម និងស្រាវជ្រាវ <b><i class='fa-solid fa-brain text-blue'></i> ML (Machine Learning) / NLP (Natural Language Processing)</b>។" }
+        ]},
+        
+        { t: "៣. ប្លង់មេរៀន (សប្តាហ៍ទី ១)", type: "table-week", week: { 
+            w: "១", 
+            d1: {day: "<i class='fa-regular fa-calendar-days text-blue'></i> សៅរ៍<br><span style='font-size:0.9vw;color:#64748B;font-weight:normal;'>៣ ម៉ោង</span>", title: "<span class='topic-title blue'>ជំពូក១: ទិដ្ឋភាពទូទៅ DSA <br><span style='font-size:0.75em; font-weight:normal; color:#64748B;'>(Data Structures and Algorithms)</span> & <i class='fa-solid fa-chart-line'></i> Big-O</span><ul class='sub-topics'><li>១.១ អ្វីទៅជា Data Structures & Algorithms</li><li>១.២ ការវិភាគ Time & Space Complexity</li><li>១.៣ ការគណនា Big-O Notation</li></ul>", desc: "ស្វែងយល់ពីមូលដ្ឋានគ្រឹះនៃ Data Structures និង Algorithms រួមទាំងការវាស់ស្ទង់ល្បឿន និងទំហំអង្គចងចាំដោយប្រើប្រាស់ Big-O Notation។", exe: "<ul class='exe-list'><li><i class='fa-solid fa-code'></i> វាស់ល្បឿន O(1), O(n), O(n²)</li></ul>", clo: "1"}, 
+            d2: {day: "<i class='fa-regular fa-calendar-check text-green'></i> អាទិត្យ<br><span style='font-size:0.9vw;color:#64748B;font-weight:normal;'>៤.៥ ម៉ោង</span>", title: "<span class='topic-title green'>ជំពូក២: <i class='fa-solid fa-cubes'></i> OOP <br><span style='font-size:0.75em; font-weight:normal; color:#64748B;'>(Object-Oriented Programming)</span></span><ul class='sub-topics'><li>២.១ គោលការណ៍ OOP ទាំង ៤ (Pillars)</li><li>២.២ ការបង្កើត Class និង Object (Node)</li><li>២.៣ គ្រប់គ្រង Memory (Stack vs Heap)</li></ul>", desc: "រំលឹកពីគោលការណ៍គ្រឹះរបស់ OOP ក្នុង Python និងយន្តការនៃការចាត់ចែងអង្គចងចាំ (Memory Management)។", exe: "<ul class='exe-list'><li><i class='fa-solid fa-code'></i> បង្កើត Class Node</li><li><i class='fa-solid fa-code'></i> Deep vs Shallow Copy</li></ul>", clo: "1"} 
+        }},
+        
+        { t: "៣. ប្លង់មេរៀន (សប្តាហ៍ទី ២)", type: "table-week", week: { 
+            w: "២", 
+            d1: {day: "<i class='fa-regular fa-calendar-days text-blue'></i> សៅរ៍<br><span style='font-size:0.9vw;color:#64748B;font-weight:normal;'>៣ ម៉ោង</span>", title: "<span class='topic-title blue'>ជំពូក៣: <i class='fa-solid fa-table-columns'></i> Arrays & <i class='fa-solid fa-link'></i> Linked Lists</span><ul class='sub-topics'><li>៣.១ Static vs Dynamic Arrays</li><li>៣.២ Singly Linked List និងការសាងសង់ Node</li><li>៣.៣ Doubly Linked List (Prev/Next)</li></ul>", desc: "សិក្សាពីភាពខុសគ្នារវាង Arrays និងការរក្សាទុកទិន្នន័យបែបរាយប៉ាយ (Scattered Memory) តាមរយៈ Linked List។", exe: "<ul class='exe-list'><li><i class='fa-solid fa-code'></i> ល្បឿន pop(0) ធៀបនឹង pop()</li><li><i class='fa-solid fa-code'></i> បង្កើត Web Browser History</li></ul>", clo: "2"}, 
+            d2: {day: "<i class='fa-regular fa-calendar-check text-green'></i> អាទិត្យ<br><span style='font-size:0.9vw;color:#64748B;font-weight:normal;'>៤.៥ ម៉ោង</span>", title: "<span class='topic-title green'>ជំពូក៤: <i class='fa-solid fa-layer-group'></i> Stacks & <i class='fa-solid fa-list'></i> Queues</span><ul class='sub-topics'><li>៤.១ ទ្រឹស្តី Stack (Last-In-First-Out)</li><li>៤.២ ទ្រឹស្តី Queue (First-In-First-Out)</li><li>៤.៣ ការប្រើប្រាស់ collections.deque</li></ul>", desc: "សិក្សាពីការរៀបចំទិន្នន័យលីនេអ៊ែរ LIFO (Last-In-First-Out) / FIFO (First-In-First-Out) និងការដោះស្រាយបញ្ហាជួររង់ចាំ។", exe: "<ul class='exe-list'><li><i class='fa-solid fa-code'></i> បញ្ច្រាសពាក្យ (String Reversal)</li><li><i class='fa-solid fa-code'></i> ប្រព័ន្ធជួររង់ចាំធនាគារ (Bank Queue)</li></ul>", clo: "2"} 
+        }},
+
+        { t: "៣. ប្លង់មេរៀន (សប្តាហ៍ទី ៣)", type: "table-week", week: { 
+            w: "៣", 
+            d1: {day: "<i class='fa-regular fa-calendar-days text-blue'></i> សៅរ៍<br><span style='font-size:0.9vw;color:#64748B;font-weight:normal;'>៣ ម៉ោង</span>", title: "<span class='topic-title blue'>ជំពូក៥: <i class='fa-solid fa-folder-tree'></i> Trees & BST <br><span style='font-size:0.75em; font-weight:normal; color:#64748B;'>(Binary Search Tree)</span></span><ul class='sub-topics'><li>៥.១ រចនាសម្ព័ន្ធឋានានុក្រម និង Traversals (BFS / DFS)</li><li>៥.២ ច្បាប់រៀបចំកូនឆ្វេង និងកូនស្តាំ របស់ BST</li><li>៥.៣ ការស្វែងរក O(log n) ក្នុង BST</li></ul>", desc: "ប្តូរពីទម្រង់លីនេអ៊ែរ ទៅជារចនាសម្ព័ន្ធបែបឋានានុក្រម និងអនុវត្ត BST (Binary Search Tree) ដើម្បីស្វែងរកទិន្នន័យលឿន។", exe: "<ul class='exe-list'><li><i class='fa-solid fa-code'></i> In-order, Pre-order</li><li><i class='fa-solid fa-code'></i> Insert & Search ក្នុង BST</li></ul>", clo: "3"}, 
+            d2: {day: "<i class='fa-solid fa-file-pen text-red'></i> អាទិត្យ<br><span style='font-size:0.9vw;color:#64748B;font-weight:normal;'>៤.៥ ម៉ោង</span>", title: "<span class='topic-title red'>រំលឹកមេរៀន & ប្រឡងពាក់កណ្តាលឆមាស</span><ul class='sub-topics'><li>រំលឹកមេរៀនពីជំពូកទី ១ ដល់ ៥ (១.៥ ម៉ោង)</li><li>ប្រឡង Midterm Exam (៣ ម៉ោង)</li></ul>", desc: "ធ្វើការរំលឹកមេរៀនសង្ខេប និងវាយតម្លៃសមត្ថភាពនិស្សិតពាក់កណ្តាលឆមាស ដោយការប្រឡងទ្រឹស្តី និងកូដ Python ផ្ទាល់។", exe: "<span style='color:var(--text-muted);'>- មិនមាន -</span>", clo: "1-3", isExam: true} 
+        }},
+
+        { t: "៣. ប្លង់មេរៀន (សប្តាហ៍ទី ៤)", type: "table-week", week: { 
+            w: "៤", 
+            d1: {day: "<i class='fa-regular fa-calendar-days text-blue'></i> សៅរ៍<br><span style='font-size:0.9vw;color:#64748B;font-weight:normal;'>៣ ម៉ោង</span>", title: "<span class='topic-title blue'>ជំពូក៦: <i class='fa-solid fa-circle-nodes'></i> Graphs & <i class='fa-solid fa-table'></i> Hash Tables</span><ul class='sub-topics'><li>៦.១ ការតំណាង Adjacency List សម្រាប់ Graphs</li><li>៦.២ Hash Function និង Dictionaries</li><li>៦.៣ ការដោះស្រាយ Hash Collisions</li></ul>", desc: "សិក្សាពីការតំណាងបណ្តាញទំនាក់ទំនងស្មុគស្មាញ (Graphs) និងយន្តការរបស់ Hash Table ក្នុងការទាញទិន្នន័យល្បឿន O(1)។", exe: "<ul class='exe-list'><li><i class='fa-solid fa-code'></i> BFS/DFS (Breadth/Depth-First Search)</li><li><i class='fa-solid fa-code'></i> Two Sum O(n)</li></ul>", clo: "3"}, 
+            d2: {day: "<i class='fa-regular fa-calendar-check text-green'></i> អាទិត្យ<br><span style='font-size:0.9vw;color:#64748B;font-weight:normal;'>៤.៥ ម៉ោង</span>", title: "<span class='topic-title green'>ជំពូក៧: <i class='fa-solid fa-magnifying-glass'></i> Searching & <i class='fa-solid fa-arrow-down-a-z'></i> Sorting</span><ul class='sub-topics'><li>៧.១ Binary Search O(log n)</li><li>៧.២ Basic Sort (Bubble & Insertion Sort)</li><li>៧.៣ Advanced Sort (Merge Sort & Quick Sort)</li></ul>", desc: "សិក្សាពីក្បួនស្វែងរកនិងតម្រៀបទិន្នន័យ ដោយបន្តពីកម្រិតមូលដ្ឋាន O(n²) ឈានទៅក្បួនកម្រិតខ្ពស់ O(n log n)។", exe: "<ul class='exe-list'><li><i class='fa-solid fa-code'></i> Binary Search (Recursive)</li><li><i class='fa-solid fa-code'></i> Quick Sort (In-place Swap)</li></ul>", clo: "4"} 
+        }},
+
+        { t: "៣. ប្លង់មេរៀន (សប្តាហ៍ទី ៥)", type: "table-week", week: { 
+            w: "៥", 
+            d1: {day: "<i class='fa-regular fa-calendar-days text-blue'></i> សៅរ៍<br><span style='font-size:0.9vw;color:#64748B;font-weight:normal;'>៣ ម៉ោង</span>", title: "<span class='topic-title blue'>ជំពូក៨: <i class='fa-solid fa-memory'></i> DP <br><span style='font-size:0.75em; font-weight:normal; color:#64748B;'>(Dynamic Programming)</span></span><ul class='sub-topics'><li>៨.១ ក្បួនចងចាំចម្លើយចាស់ (Memoization)</li><li>៨.២ ការប្រើប្រាស់ Tabulation</li><li>៨.៣ បញ្ហាបែងចែកធនធាន (Knapsack)</li></ul>", desc: "សិក្សាពីបច្ចេកទេស DP (Dynamic Programming) ដើម្បីបង្កើនល្បឿនកូដពី O(2ⁿ) មក O(n) និងប្រៀបធៀបជាមួយវិធីសាស្ត្រ Greedy។", exe: "<ul class='exe-list'><li><i class='fa-solid fa-code'></i> Fibonacci (Memoization)</li><li><i class='fa-solid fa-code'></i> 0/1 Knapsack Problem</li></ul>", clo: "5"}, 
+            d2: {day: "<i class='fa-regular fa-calendar-check text-green'></i> អាទិត្យ<br><span style='font-size:0.9vw;color:#64748B;font-weight:normal;'>៤.៥ ម៉ោង</span>", title: "<span class='topic-title green'>ជំពូក៨ (បន្ត): <i class='fa-solid fa-route'></i> Graph Path & <i class='fa-solid fa-robot'></i> AI</span><ul class='sub-topics'><li>៨.៤ ស្វែងរកផ្លូវខ្លីបំផុត (Dijkstra)</li><li>៨.៥ Machine Learning (KNN - K-Nearest Neighbors)</li><li>៨.៦ Game AI: Minimax Algorithm</li></ul>", desc: "ស្វែងរកផ្លូវដែលចំណាយតិចបំផុត (Shortest Path) ព្រមទាំងផ្សារភ្ជាប់ DSA ទៅកាន់ក្បួន AI (Artificial Intelligence)។", exe: "<ul class='exe-list'><li><i class='fa-solid fa-code'></i> រកផ្លូវខ្លីបំផុត (Dijkstra)</li><li><i class='fa-solid fa-code'></i> អនុវត្តក្បួន KNN</li></ul>", clo: "5"} 
+        }},
+
+        { t: "៣. ប្លង់មេរៀន (សប្តាហ៍ទី ៦)", type: "table-week", week: { 
+            w: "៦", 
+            d1: {day: "<i class='fa-regular fa-calendar-days text-blue'></i> សៅរ៍<br><span style='font-size:0.9vw;color:#64748B;font-weight:normal;'>៣ ម៉ោង</span>", title: "<span class='topic-title dark'>ការណែនាំគម្រោង (Project Mentoring)</span><ul class='sub-topics'><li>ការត្រួតពិនិត្យ និងកែលម្អកូដ (Optimization)</li><li>ដោះស្រាយបញ្ហាគាំង (Debugging)</li><li>ត្រៀមខ្លួនសម្រាប់បទបង្ហាញ</li></ul>", desc: "សាស្ត្រាចារ្យធ្វើការណែនាំ (Mentoring) ពិនិត្យមើលកំហុសកូដ និងជួយកែលម្អរចនាសម្ព័ន្ធគម្រោងស្រាវជ្រាវរបស់និស្សិត។", exe: "<ul class='exe-list'><li><i class='fa-solid fa-code'></i> បញ្ចប់កូដគម្រោងជាស្ថាពរ</li></ul>", clo: "1-5"}, 
+            d2: {day: "<i class='fa-solid fa-graduation-cap text-red'></i> អាទិត្យ<br><span style='font-size:0.9vw;color:#64748B;font-weight:normal;'>៤.៥ ម៉ោង</span>", title: "<span class='topic-title red'>បទបង្ហាញគម្រោង & ប្រឡងបញ្ចប់</span><ul class='sub-topics'><li>បទបង្ហាញគម្រោង (Final Project Defense)</li><li>ប្រឡងបញ្ចប់ឆមាស (Final Exam)</li></ul>", desc: "និស្សិតធ្វើបទបង្ហាញពីគម្រោងស្រាវជ្រាវរបស់ខ្លួន និងធ្វើការប្រឡងបញ្ចប់ឆមាស (Final Exam) ដើម្បីវាយតម្លៃលទ្ធផលសិក្សាសរុប។", exe: "<span style='color:var(--text-muted);'>- មិនមាន -</span>", clo: "1-5", isExam: true} 
+        }},
+        
+        { t: "៤. វិធីសាស្រ្តបង្រៀន & វិន័យ", type: "grid", c: [
+            { h: "<i class='fa-solid fa-chalkboard-user keyword-icon'></i> វិធីសាស្ត្របង្រៀន (PBL - Project-Based Learning)", p: "ការសិក្សាមានរយៈពេល <b>៦ សប្តាហ៍ សរុប ៤៥ ម៉ោង</b> ដោយបែងចែកជា៖<br>• <b>ទ្រឹស្តី (Theory):</b> ផ្តោតលើការយល់ដឹង និង Concept នៃក្បួនដោះស្រាយនីមួយៗ។<br>• <b>ការអនុវត្ត (Practice):</b> ផ្តោតលើការសរសេរកូដជាក់ស្តែង និងដោះស្រាយបញ្ហាតាមរយៈ Workbook ក្នុងថ្នាក់។" },
+            { h: "<i class='fa-solid fa-clock-rotate-left keyword-icon'></i> ៥.១ វិន័យវត្តមាន (Attendance)", p: "<ul><li>យឺត ១០-២០ នាទី ស្មើនឹងចំណាំ (AL - Attendance Late)។</li><li>យឺត ៣ ដង ស្មើអវត្តមាន ១ ដង។</li><li>អវត្តមានលើសពី ៣០% នៃម៉ោងសរុប មិនអនុញ្ញាតឱ្យប្រឡងបញ្ចប់។</li></ul>" }
+        ]},
+        
+        { t: "៥. ការវាយតម្លៃ (Assessment Breakdown)", type: "chart", c: [
+            { h: "ប្រឡងបញ្ចប់ឆមាស (Final Exam)", p: "៤០% (វាយតម្លៃជារួមពីជំពូកទី ១ ដល់ ៨)", color: "var(--accent-green)" },
+            { h: "គម្រោងស្រាវជ្រាវ (Final Project)", p: "៣០% (សរសេរកូដ និងធ្វើបទបង្ហាញ)", color: "var(--accent-blue)" },
+            { h: "ប្រឡងពាក់កណ្តាល (Midterm Exam)", p: "២០% (វាយតម្លៃជំពូកទី ១ ដល់ ៥)", color: "var(--accent-yellow)" },
+            { h: "វត្តមាន និងការចូលរួម (Attendance)", p: "១០% (ភាពសកម្មក្នុងការអនុវត្តកូដក្នុងថ្នាក់)", color: "var(--text-muted)" }
+        ]},
+        
+        { t: "៥.២ គម្រោងទី ១ ៖ Logistics Optimization", type: "split", img: "https://images.unsplash.com/photo-1580674285054-bed31e145f59?auto=format&fit=crop&w=800&q=80", c: "<span class='tech-badge purple'><i class='fa-solid fa-circle-nodes'></i> Graphs</span> <span class='tech-badge blue'><i class='fa-solid fa-route'></i> Dijkstra</span><br><br><b>បរិបទអាជីវកម្ម៖</b><br>សាងសង់ប្រព័ន្ធស្វែងរកផ្លូវដឹកជញ្ជូនដែលខ្លី និងចំណាយពេលតិចបំផុតសម្រាប់ក្រុមហ៊ុនដឹកជញ្ជូនក្នុងក្រុងសៀមរាប។" },
+        
+        { t: "៥.២ គម្រោងទី ២ ៖ Banking Data Retrieval", type: "split", img: "https://images.unsplash.com/photo-1563013544-824ae1b704d3?auto=format&fit=crop&w=800&q=80", c: "<span class='tech-badge green'><i class='fa-solid fa-table'></i> Hash Tables</span> <span class='tech-badge blue'><i class='fa-solid fa-bolt'></i> O(1) Time</span><br><br><b>បរិបទអាជីវកម្ម៖</b><br>រចនាប្រព័ន្ធផ្ទុកទិន្នន័យអតិថិជនរាប់សែននាក់ ដោយប្រើ Hash Table កម្រិតខ្ពស់ ដើម្បីទាញយកទិន្នន័យបានល្បឿន O(1)។" },
+        
+        { t: "៥.២ គម្រោងទី ៣ ៖ Khmer NLP / Auto-complete", type: "split", img: "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=800&q=80", c: "<span class='tech-badge purple'><i class='fa-solid fa-folder-tree'></i> Tries Tree</span> <span class='tech-badge green'><i class='fa-solid fa-language'></i> NLP (Natural Language Processing)</span><br><br><b>បរិបទអាជីវកម្ម៖</b><br>ប្រើប្រាស់ Tries Data Structure ដើម្បីកសាងប្រព័ន្ធកាត់ពាក្យភាសាខ្មែរ (Tokenizer) ឬបង្កើតប្រព័ន្ធទស្សន៍ទាយពាក្យពេលវាយអត្ថបទ។" }, 
+        
+        { t: "៥.២ គម្រោងទី ៤ ៖ Resource Allocation", type: "split", img: "https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=800&q=80", c: "<span class='tech-badge blue'><i class='fa-solid fa-memory'></i> Dynamic Programming (DP)</span> <span class='tech-badge yellow'><i class='fa-solid fa-chart-pie'></i> Optimization</span><br><br><b>បរិបទអាជីវកម្ម៖</b><br>ដោះស្រាយបញ្ហា Knapsack Problem ដើម្បីជួយដល់វិស័យកសិកម្ម ក្នុងការរៀបចំផែនការដាំដុះឱ្យទទួលបានប្រាក់ចំណេញអតិបរមា។" },
+        
+        { t: "៦. សៀវភៅសិក្សាគោល (Course Books)", type: "list", c: [
+            "<b><i class='fa-solid fa-book text-blue' style='margin-right:0.5vw;'></i> Data Structures and Algorithms (DSA) in Python</b><br><span style='font-size:1.3vw; color:var(--text-muted);'>- Michael T. Goodrich</span>",
+            "<b><i class='fa-solid fa-book text-blue' style='margin-right:0.5vw;'></i> Introduction to Algorithms (CLRS 4th Edition)</b><br><span style='font-size:1.3vw; color:var(--text-muted);'>- Thomas H. Cormen</span>",
+            "<b><i class='fa-solid fa-book text-blue' style='margin-right:0.5vw;'></i> Grokking Algorithms: An Illustrated Guide</b><br><span style='font-size:1.3vw; color:var(--text-muted);'>- Aditya Bhargava</span>"
+        ]},
+        
+        { t: "៧. ធនធានអនឡាញ (Online Resources)", type: "list", c: [
+            "<b><i class='fa-solid fa-laptop-code text-blue' style='margin-right:0.5vw;'></i> LeetCode & HackerRank:</b> <br><span style='font-size:1.3vw; color:var(--text-muted);'>វេទិកាសម្រាប់ការអនុវត្តកូដជាក់ស្តែង និងត្រៀមសម្ភាសន៍ការងារ។</span>",
+            "<b><i class='fa-solid fa-project-diagram text-blue' style='margin-right:0.5vw;'></i> Visualgo.net:</b> <br><span style='font-size:1.3vw; color:var(--text-muted);'>គេហទំព័រសម្រាប់មើលចលនា (Animations) នៃក្បួនដោះស្រាយផ្សេងៗ។</span>",
+            "<b><i class='fa-brands fa-python text-blue' style='margin-right:0.5vw;'></i> Python Docs:</b> <br><span style='font-size:1.3vw; color:var(--accent-blue);'>https://docs.python.org/3/</span>"
+        ]}
+    ];
+
+    const slideWrapper = document.getElementById('slideWrapper');
+
+    // Generate Slides dynamically
+    syllabusData.forEach((item, index) => {
+        const slide = document.createElement('div');
+        slide.className = 'slide';
+        
+        let bodyContent = '';
+        if(item.type === "split") {
+            bodyContent = `<div class="two-column"><div class="card" style="height:100%; border:none; padding:1vh 0; background:transparent; box-shadow:none;"><p style="font-size:1.5vw;">${item.c}</p></div><div class="visual-frame"><img src="${item.img}"></div></div>`;
+        } else if(item.type === "table-week") {
+            let th = `<tr>
+                <th style="width: 5%;">សប្តាហ៍</th>
+                <th style="width: 10%;">ផ្នែកសិក្សា</th>
+                <th style="width: 30%;">ជំពូក និងខ្លឹមសារមេរៀន</th>
+                <th style="width: 25%;">ការពន្យល់លម្អិត</th>
+                <th style="width: 24%;">លំហាត់អនុវត្តន៍ (Workbook)</th>
+                <th style="width: 6%; text-align:center;">CLO</th>
+            </tr>`;
+            let w = item.week;
+            let rowClass1 = w.d1.isExam ? "exam-row" : "";
+            let rowClass2 = w.d2.isExam ? "exam-row" : "";
+            
+            let trs = `<tr class="${rowClass1}">
+                <td rowspan="2" class="week-cell">${w.w}</td>
+                <td class="day-cell">${w.d1.day}</td>
+                <td>${w.d1.title}</td>
+                <td class="desc-cell">${w.d1.desc}</td>
+                <td>${w.d1.exe}</td>
+                <td class="clo-cell">${w.d1.clo}</td>
+            </tr>`;
+            trs += `<tr class="${rowClass2}">
+                <td class="day-cell">${w.d2.day}</td>
+                <td>${w.d2.title}</td>
+                <td class="desc-cell">${w.d2.desc}</td>
+                <td>${w.d2.exe}</td>
+                <td class="clo-cell">${w.d2.clo}</td>
+            </tr>`;
+            bodyContent = `<table><thead>${th}</thead><tbody>${trs}</tbody></table>`;
+        } else if(item.type === "chart") {
+            bodyContent = `<div class="two-column" style="align-items:center;"><div class="doughnut-chart"><div class="doughnut-inner">១០០%</div></div><div style="display:flex;flex-direction:column;gap:2vh;">${item.c.map(c => `<div class="card" style="border-left-color:${c.color}; padding:2.5vh 2vw;"><h4>${c.h}</h4><p style="margin:0;">${c.p}</p></div>`).join('')}</div></div>`;
+        } else if(item.type === "grid") {
+            bodyContent = `<div class="card-grid">${item.c.map(c => `<div class="card" style="${c.style || ''}"><h4>${c.h}</h4><div style="margin:0; font-size:1.35vw; line-height:1.8;">${c.p}</div></div>`).join('')}</div>`;
+        } else if(item.type === "list") {
+            bodyContent = `<div class="card" style="padding: 4vh 4vw;"><ul style="list-style:none; padding-left:1vw;">${item.c.map(l => `<li style="margin-bottom:3vh;">${l}</li>`).join('')}</ul></div>`;
+        }
+
+        slide.innerHTML = `<div id="h-placeholder-${index+2}"></div> <h2 class="slide-title">${item.t}</h2> <div class="content-body">${bodyContent}</div>`;
+        slideWrapper.appendChild(slide);
+    });
+
+    // Add Final Q&A Slide
+    const finalSlide = document.createElement('div');
+    finalSlide.className = 'slide';
+    finalSlide.innerHTML = `
+        <div id="h-placeholder-last"></div>
+        <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; text-align: center;">
+            <h1 style="font-size: 5vw; color: var(--accent-blue); margin-bottom: 2vh; font-family: 'Suwannaphum';"><i class="fa-solid fa-comments"></i> សំណួរ និងចម្លើយ ?</h1>
+            <p style="font-size: 2vw; color: var(--text-muted); margin-bottom: 5vh; font-family: 'Suwannaphum';">សូមអរគុណនិស្សិតថ្នាក់អនុបណ្ឌិតសម្រាប់ការយកចិត្តទុកដាក់!</p>
+            <div style="display: flex; gap: 2vw; justify-content: center;">
+                <div class="card" style="border-left: none; border-bottom: 4px solid var(--accent-blue); padding: 2vh 3vw; align-items: center;">
+                    <p style="margin: 0; font-weight: bold; font-size: 1.5vw; color: var(--accent-blue);"><i class="fa-solid fa-envelope"></i> soeurnglim@gmail.com</p>
+                </div>
+                <div class="card" style="border-left: none; border-bottom: 4px solid #0088cc; padding: 2vh 3vw; align-items: center;">
+                    <p style="margin: 0; font-weight: bold; font-size: 1.5vw; color: #0088cc;"><i class="fa-brands fa-telegram"></i> Telegram: ០៦១ ២២៧ ៩៣៣</p>
+                </div>
+            </div>
+        </div>
+    `;
+    slideWrapper.appendChild(finalSlide);
+
+    // Apply Global Headers
+    document.querySelectorAll('[id^="h-placeholder"]').forEach(p => p.outerHTML = headerHTML);
+
+    const slides = document.querySelectorAll('.slide');
+    const totalSlides = slides.length; 
+    
+    // បង្កើត Footer សម្រាប់ Print
+    slides.forEach((slide, index) => {
+        let printFooter = document.createElement('div');
+        printFooter.className = 'global-footer print-only-footer';
+        printFooter.innerHTML = `
+            <div class="footer-left">
+                <img src="Lim.jpg" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'">
+                <span>សាស្ត្រាចារ្យ៖ សឿង លីម | Soeurng LIM</span>
+            </div>
+            <div class="slide-counter">ស្លាយទី ${toKh(index + 1)} នៃ ${toKh(totalSlides)}</div>
+        `;
+        slide.appendChild(printFooter);
+    });
+
+    const counter = document.getElementById('slideCounter');
+    const btnPrev = document.querySelector('.nav-left');
+    const btnNext = document.querySelector('.nav-right');
+    let currentIdx = 0;
+
+    function update(idx) { 
+        slides.forEach(s => s.classList.remove('active')); 
+        slides[idx].classList.add('active'); 
+        currentIdx = idx; 
+        
+        // Update Live Numbering for screen
+        if (counter) {
+            counter.innerHTML = `ស្លាយទី ${toKh(idx + 1)} នៃ ${toKh(totalSlides)}`;
+        }
+
+        // Hide Navigation if at extremes
+        if (btnPrev) btnPrev.style.display = (idx === 0) ? 'none' : 'flex';
+        if (btnNext) btnNext.style.display = (idx === totalSlides - 1) ? 'none' : 'flex';
+    }
+
+    function navigate(dir) {
+        if (dir === 'next' && currentIdx < totalSlides - 1) update(currentIdx + 1);
+        else if (dir === 'prev' && currentIdx > 0) update(currentIdx - 1);
+    }
+
+    document.addEventListener('keydown', (e) => {
+        if (e.key === "ArrowRight" || e.key === " " || e.key === "PageDown") navigate('next'); 
+        else if (e.key === "ArrowLeft" || e.key === "PageUp") navigate('prev');
+    });
+
+    // Start App
+    update(0); 
+</script>
+</body>
+</html>

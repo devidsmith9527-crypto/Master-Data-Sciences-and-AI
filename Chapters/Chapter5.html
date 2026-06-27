@@ -1,0 +1,1235 @@
+<!DOCTYPE html>
+<html lang="km">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chapter 5 - Trees and BST</title>
+    <link href="https://fonts.googleapis.com/css2?family=Battambang:wght@400;700&family=Suwannaphum:wght@400;700;900&family=Lato:wght@400;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        :root {
+            --bg-dark: #0F172A; --bg-card: #F8FAFC; --text-main: #0F172A; --text-muted: #475569;
+            --accent-blue: #0284C7; --accent-green: #059669; --accent-yellow: #D97706; --accent-red: #DC2626;
+            --header-footer-bg: #F0F9FF; --code-bg: #111827;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        body { background-color: var(--bg-dark); font-family: 'Battambang', sans-serif; overflow: hidden; height: 100vh; width: 100vw; display: flex; align-items: center; justify-content: center; -webkit-user-select: auto; user-select: auto; }
+        
+        .slide-deck { width: 98vw; height: 95vh; position: relative; background: #FFFFFF; border-radius: 1.5vw; overflow: hidden; box-shadow: 0 40px 100px rgba(0,0,0,0.5); display: flex; flex-direction: column; }
+        .slide-wrapper { flex-grow: 1; position: relative; overflow: hidden; }
+        .slide { display: none; width: 100%; height: 100%; padding: 2.5vh 4.5vw; flex-direction: column; justify-content: flex-start; animation: slideIn 0.4s ease-out; position: absolute; top: 0; left: 0; }
+        .slide.active { display: flex; }
+        @keyframes slideIn { from { opacity: 0; transform: translateX(50px); } to { opacity: 1; transform: translateX(0); } }
+
+        /* Navigation Zones */
+        .nav-zone { position: absolute; top: 0; bottom: 0; width: 8%; z-index: 50; cursor: pointer; display: flex; align-items: center; opacity: 0.12; transition: all 0.3s ease; }
+        .nav-zone:hover { opacity: 1; background: rgba(0,0,0,0.03); }
+        .nav-left { left: 0; justify-content: flex-start; padding-left: 1.5vw; background: linear-gradient(to right, rgba(0,0,0,0.04), transparent); }
+        .nav-right { right: 0; justify-content: flex-end; padding-right: 1.5vw; background: linear-gradient(to left, rgba(0,0,0,0.04), transparent); }
+        .nav-zone i { font-size: 2.5vw; color: var(--accent-blue); filter: drop-shadow(0 2px 4px rgba(0,0,0,0.15)); background: white; border-radius: 50%; padding: 0.7vw; box-shadow: 0 4px 10px rgba(0,0,0,0.08); }
+
+        /* Header Branding */
+        .global-header { display: flex; justify-content: space-between; align-items: center; margin: -2.5vh -4.5vw 1.2vh -4.5vw; padding: 1vh 4.5vw; border-bottom: 3px solid var(--accent-blue); background-color: var(--header-footer-bg); }
+        .header-item { display: flex; flex-direction: column; align-items: center; gap: 3px; width: 15vw; }
+        .header-item img { height: 3.2vw; object-fit: contain; }
+        .header-item span { font-size: 0.75vw; font-weight: bold; color: var(--accent-blue); text-align: center; }
+        .header-center h1 { font-family: 'Suwannaphum'; font-size: 1.5vw; color: var(--accent-blue); margin: 0; }
+        .header-center p { font-family: 'Lato'; font-size: 0.85vw; color: #64748B; margin: 0; font-weight: bold; text-align: center; }
+
+        /* Typography */
+        h1 { font-family: 'Suwannaphum'; font-size: 3vw; text-align: center; color: var(--text-main); font-weight: 900; line-height: 1.4; }
+        h2.slide-title { font-family: 'Suwannaphum'; font-size: 2.1vw; font-weight: 900; border-bottom: 0.3vw solid var(--accent-blue); padding-bottom: 0.3vh; margin-bottom: 1.2vh; color: var(--text-main); display: inline-flex; align-items: center; }
+        .content-body { flex-grow: 1; display: flex; flex-direction: column; justify-content: flex-start; gap: 1vh; width: 100%; overflow-y: auto; padding-bottom: 1vh; }
+        p, li, td { font-size: 1.4vw; line-height: 1.65; color: var(--text-main); }
+        
+        .keyword-icon { color: var(--accent-blue); margin-right: 0.5vw; width: 1.5vw; text-align: center; display: inline-block; }
+        .tech-icon { color: var(--accent-blue); margin-right: 6px; font-size: 1.1em; vertical-align: baseline; }
+        b .tech-icon, strong .tech-icon, .card h4 .tech-icon, h2 .tech-icon { color: inherit; } 
+
+        /* Python Code Indicator Badge */
+        .badge-python {
+            background-color: #0F172A;
+            color: #38BDF8;
+            padding: 0.4vh 1.2vw;
+            border-radius: 5vw;
+            font-size: 1vw;
+            font-weight: bold;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            margin-left: 1.5vw;
+            vertical-align: middle;
+            border: 1px solid #38BDF8;
+            font-family: 'Lato', sans-serif;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        /* Layouts & Cards */
+        .two-column { display: grid; grid-template-columns: 1.15fr 0.85fr; gap: 2vw; height: 100%; align-items: center; }
+        .two-column-equal { display: grid; grid-template-columns: 1fr 1fr; gap: 1.8vw; height: 100%; align-items: start; }
+        .card-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.2vw; }
+        .card { background: var(--bg-card); padding: 1.8vh 2.2vw; border-radius: 0.8vw; border-left: 0.8vw solid var(--accent-blue); box-shadow: 0 4px 10px rgba(0,0,0,0.04); display: flex; flex-direction: column; justify-content: center; }
+        .card h4 { font-size: 1.6vw; color: var(--accent-blue); margin-bottom: 0.8vh; font-family: 'Suwannaphum'; display: flex; align-items: center; gap: 8px;}
+
+        /* Tables */
+        table { width: 100%; border-collapse: collapse; background: white; border-radius: 1vw; overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.04); }
+        th, td { border: 1px solid #E2E8F0; padding: 1vh 1.2vw; text-align: left; }
+        th { background: var(--accent-blue); color: white; font-family: 'Suwannaphum'; font-size: 1.3vw; }
+
+        /* Visual Frame for Technical Diagrams */
+        .visual-frame { background: #FFFFFF; border-radius: 0.8vw; border: 1px solid #CBD5E1; padding: 1vw; display: flex; align-items: center; justify-content: center; height: 100%; min-height: 260px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.04); }
+        .visual-frame svg { width: 100%; height: auto; max-height: 38vh; }
+
+        /* Case Study Narrative Box */
+        .narrative-box { background: #F8FAFC; border-radius: 0.5vw; border: 1px solid #CBD5E1; padding: 1vh 1.3vw; margin-bottom: 0.8vh; box-shadow: 0 2px 6px rgba(0,0,0,0.04); }
+        .narrative-header { font-weight: bold; color: var(--accent-blue); font-size: 1.25vw; border-bottom: 1px solid #E2E8F0; padding-bottom: 0.4vh; margin-bottom: 0.6vh; font-family: 'Suwannaphum'; display: flex; align-items: center; gap: 6px;}
+        .narrative-text { font-size: 1.3vw; color: var(--text-main); line-height: 1.6; margin: 0; }
+        
+        /* Analogy Box */
+        .analogy-box { background: #FFFBEB; border-left: 0.5vw solid var(--accent-yellow); border-radius: 0.5vw; padding: 1vh 1.3vw; margin-bottom: 0.8vh; box-shadow: 0 2px 6px rgba(0,0,0,0.04); }
+        .analogy-header { font-weight: bold; color: var(--accent-yellow); font-size: 1.35vw; margin-bottom: 0.4vh; font-family: 'Suwannaphum'; display: flex; align-items: center; gap: 6px;}
+        .analogy-text { font-size: 1.3vw; color: var(--text-main); line-height: 1.6; margin: 0; }
+
+        /* Code Block Wrapper */
+        .code-wrapper { background: var(--code-bg); border-radius: 0.5vw; border: 1px solid #374151; overflow: hidden; width: 100%; box-shadow: 0 5px 12px rgba(0,0,0,0.08); margin-top: 0.4vh;}
+        .code-header { background: #1F2937; padding: 0.5vh 1vw; font-size: 0.85vw; font-family: 'Battambang', sans-serif; color: #9CA3AF; border-bottom: 1px solid #374151; display: flex; justify-content: space-between; }
+        .code-header span { font-weight: bold; color: #38BDF8; font-size: 1.05vw; }
+        .code-content { padding: 1.2vh 1.5vw; overflow-x: auto; }
+        .code-content pre { font-family: 'Fira Code', monospace; font-size: 1vw; line-height: 1.45; color: #f8f8f2; margin: 0; }
+        .kw { color: #ff79c6; font-weight: bold; } .fn { color: #50fa7b; } .str { color: #f1fa8c; } .com { color: #6272a4; font-style: italic; } .num { color: #bd93f9; }
+
+        /* Highlight Note */
+        .highlight-note { background-color: #FEF9C3; border-left: 4px solid var(--accent-yellow); padding: 1vh 1.3vw; border-radius: 0.4vw; margin-top: 0.8vh; font-weight: bold; color: #854D0E; font-size: 1.25vw; display: flex; align-items: center; gap: 8px; border: 1px dashed var(--accent-yellow);}
+        .highlight-note.green { background-color: #F0FDF4; border-color: var(--accent-green); color: var(--accent-green); }
+
+        /* Main Footer */
+        .global-footer { display: flex; justify-content: space-between; align-items: center; width: 100%; padding: 1vh 4.5vw; border-top: 3px solid var(--accent-blue); background-color: var(--header-footer-bg); z-index: 10; }
+        .footer-left { display: flex; align-items: center; gap: 1.2vw; }
+        .footer-left img { border-radius: 50%; border: 2px solid var(--accent-blue); width: 3.2vw; height: 3.2vw; object-fit: cover; }
+        .footer-left span { font-size: 1.35vw; font-weight: bold; color: var(--text-main); font-family: 'Suwannaphum'; }
+        .slide-counter { font-size: 1.1vw; color: var(--accent-blue); font-family: 'Suwannaphum'; font-weight: 900; background: #FFFFFF; padding: 0.4vh 1.3vw; border-radius: 5vw; box-shadow: 0 2px 4px rgba(0,0,0,0.08); }
+        
+        .print-only-footer { display: none; }
+
+        /* PRINT STYLES */
+        @media print {
+            @page { size: A4 landscape; margin: 0; }
+            html, body { display: block !important; width: 100% !important; height: auto !important; background: white !important; overflow: visible !important; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; margin: 0 !important; padding: 0 !important; }
+            .slide-deck { display: block !important; width: 100% !important; height: auto !important; box-shadow: none !important; border: none !important; border-radius: 0 !important; }
+            .slide-wrapper { display: block !important; overflow: visible !important; }
+            .slide { display: flex !important; flex-direction: column !important; width: 297mm !important; height: 209mm !important; page-break-after: always !important; page-break-inside: avoid !important; position: relative !important; opacity: 1 !important; transform: none !important; animation: none !important; padding: 10mm 15mm !important; box-sizing: border-box !important; }
+            .nav-zone { display: none !important; }
+            .global-header { margin: -10mm -15mm 5mm -15mm !important; padding: 5mm 15mm !important; border-bottom: 2px solid var(--accent-blue) !important;}
+            .global-footer#mainFooter { display: none !important; }
+            .print-only-footer { display: flex !important; margin: auto -15mm -10mm -15mm !important; padding: 5mm 15mm !important; border-top: 2px solid var(--accent-blue) !important; background: var(--header-footer-bg) !important; width: 297mm !important; box-sizing: border-box !important; }
+            .card { box-shadow: 0 2px 5px rgba(0,0,0,0.04) !important; border: 1px solid #E2E8F0 !important; border-left-width: 0.8vw !important; page-break-inside: avoid !important;}
+            .visual-frame svg { object-fit: contain !important; background: #fff !important; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="slide-deck" id="deck">
+
+    <!-- Navigation Overlays -->
+    <div class="nav-zone nav-left" title="ថយក្រោយ (Previous)">
+        <i class="fa-solid fa-chevron-left"></i>
+    </div>
+    <div class="nav-zone nav-right" title="ទៅមុខ (Next)">
+        <i class="fa-solid fa-chevron-right"></i>
+    </div>
+
+    <!-- Header Template -->
+    <template id="headerTemplate">
+        <div class="global-header">
+            <div class="header-item">
+                <img src="Logo.png" onerror="this.src='https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png'">
+                <span>សាកលវិទ្យាល័យអង្គរ</span>
+            </div>
+            <div class="header-center" style="text-align: center;">
+                <h1 style="font-size: 1.5vw;">រចនាសម្ព័ន្ធទិន្នន័យកម្រិតខ្ពស់ និងក្បួនដោះស្រាយ (<i class='fa-solid fa-server tech-icon'></i>DSA)</h1>
+                <p>អនុបណ្ឌិតវិទ្យាសាស្ត្រទិន្នន័យ និងបញ្ញាសិប្បនិម្មិត (Master of Data Science & AI)</p>
+            </div>
+            <div class="header-item">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg">
+                <span>Python Pro</span>
+            </div>
+        </div>
+    </template>
+
+    <div class="slide-wrapper" id="slideWrapper">
+        
+        <!-- Cover Slide -->
+        <div class="slide active">
+            <div style="text-align: center; margin: auto; width: 100%;">
+                <div style="display: flex; align-items: center; justify-content: center; gap: 3vw; margin-bottom: 2vh;">
+                    <img src="Logo.png" style="height: 11vw;" alt="AU Logo" onerror="this.src='https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png'">
+                    <div style="text-align: center;">
+                        <h2 style="font-family: 'Suwannaphum'; color: var(--accent-blue); font-size: 3.5vw; margin: 0;">សាកលវិទ្យាល័យអង្គរ</h2>
+                        <p style="font-family: 'Lato'; color: var(--text-muted); font-size: 1.8vw; margin: 0;">ANGKOR UNIVERSITY</p>
+                    </div>
+                </div>
+                
+                <div style="margin-bottom: 2vh;">
+                    <h3 style="font-family: 'Suwannaphum'; font-size: 1.7vw; color: var(--accent-green);"><i class="fa-solid fa-graduation-cap"></i> អនុបណ្ឌិតវិទ្យាសាស្ត្រទិន្នន័យ និងបញ្ញាសិប្បនិម្មិត (Master of Data Science and AI)</h3>
+                </div>
+
+                <div style="background: var(--accent-blue); color: white; padding: 0.8vh 4.5vw; border-radius: 5vw; display: inline-block; font-size: 2vw; font-weight: bold; margin-bottom: 3vh;">ជំពូកទី៥ | Chapter 5</div>
+                
+                <h1 style="line-height: 1.5;">រចនាសម្ព័ន្ធទិន្នន័យ Trees និង BST<br>
+                <span style="color:var(--accent-blue); font-size: 2.3vw; font-family:'Lato'">(<i class='fa-solid fa-folder-tree tech-icon'></i>Trees and <i class='fa-solid fa-sitemap tech-icon'></i>Binary Search Trees)</span></h1>
+                
+                <div style="margin-top: 3vh; display: flex; gap: 5vw; justify-content: center; align-items: center;">
+                    <div style="text-align: center;">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg" style="height: 5.5vw;">
+                        <p style="font-size: 1.1vw; font-weight: bold; color: var(--accent-blue);">Pythons</p>
+                    </div>
+                    <div style="text-align: center;">
+                        <img src="https://cdn-icons-png.flaticon.com/512/2103/2103633.png" style="height: 5.5vw;">
+                        <p style="font-size: 1.1vw; font-weight: bold; color: var(--accent-blue);">DSA in Pythons</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Instructor Slide -->
+        <div class="slide">
+            <div id="h-placeholder-1"></div>
+            <h2 class="slide-title"><i class="fa-solid fa-user-tie"></i> ព័ត៌មានសាស្ត្រាចារ្យ និងមុខវិជ្ជា</h2>
+            <div class="content-body two-column">
+                <div style="position: relative; width: 20vw; height: 28vw; margin: auto;">
+                    <div style="position: absolute; top: 1.5vw; left: -1.5vw; width: 100%; height: 100%; background: rgba(2, 132, 199, 0.1); border-radius: 2vw; z-index: 0;"></div>
+                    <img src="Lim.jpg" style="position: relative; width: 100%; height: 100%; border-radius: 2vw; object-fit: cover; box-shadow: 0 15px 35px rgba(0,0,0,0.15); z-index: 1; border: 4px solid white;" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'">
+                </div>
+                <div style="padding-left: 2vw;">
+                    <h3 style="font-size: 2.8vw; color: var(--accent-blue); font-family: 'Suwannaphum'; margin-bottom: 2vh;">សាស្ត្រាចារ្យ៖ សឿង លីម <span style="font-size: 1.8vw; color: var(--text-muted);">(Soeurng LIM)</span></h3>
+                    <div class="card" style="border-left: none; border-top: 4px solid var(--accent-blue); padding: 3vh; background: #FFFFFF;">
+                        <p><b><i class="fa-solid fa-graduation-cap text-blue"></i> គុណវុឌ្ឍិ៖</b> បរិញ្ញាបត្រជាន់ខ្ពស់ (Master's Degree) - ព័ត៌មានវិទ្យា</p>
+                        <p><b><i class="fa-solid fa-phone text-blue"></i> ទូរស័ព្ទ៖</b> ០៦១ ២២៧ ៩៣៣</p>
+                        <p><b><i class="fa-solid fa-envelope text-blue"></i> អ៊ីម៉ែល៖</b> soeurnglim@gmail.com</p>
+                        <hr style="margin: 2vh 0; border: 1px solid #E2E8F0;">
+                        <p><b><i class="fa-solid fa-star text-blue"></i> ក្រេឌីត៖</b> ៣ ក្រេឌីត (3 Credits)</p>
+                        <p><b><i class="fa-solid fa-clipboard-check text-blue"></i> មុខវិជ្ជាមុន (Prerequisite)៖</b> ការសរសេរកម្មវិធី Python មូលដ្ឋាន</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Main Footer for Screen View -->
+    <div class="global-footer" id="mainFooter">
+        <div class="footer-left">
+            <img src="Lim.jpg" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'" alt="Professor">
+            <span>សាស្ត្រាចារ្យ៖ សឿង លីម (Soeurng LIM)</span>
+        </div>
+        <div class="slide-counter" id="screenSlideCounter">កំពុងរៀបចំ...</div>
+    </div>
+
+</div>
+
+<script>
+    const slideWrapper = document.getElementById('slideWrapper');
+    const headerHTML = document.getElementById('headerTemplate').innerHTML;
+    const khNums = ["០", "១", "២", "៣", "៤", "៥", "៦", "៧", "៨", "៩"];
+    function toKh(n) { return n.toString().split('').map(d => khNums[parseInt(d)]).join(''); }
+
+    // 1. SVG: General Tree Hierarchy
+    const generalTreeSVG = `
+        <svg viewBox="0 0 600 300" xmlns="http://www.w3.org/2000/svg" style="width:100%; height:100%;">
+            <defs>
+                <linearGradient id="rootGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" stop-color="#DC2626" /><stop offset="100%" stop-color="#991B1B" />
+                </linearGradient>
+                <linearGradient id="nodeGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" stop-color="#0284C7" /><stop offset="100%" stop-color="#0369A1" />
+                </linearGradient>
+                <linearGradient id="leafGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" stop-color="#059669" /><stop offset="100%" stop-color="#047857" />
+                </linearGradient>
+            </defs>
+            <text x="300" y="30" font-family="'Suwannaphum', sans-serif" font-size="20" font-weight="bold" fill="#0F172A" text-anchor="middle">ឋានានុក្រមទូទៅ (General Tree) - បណ្តាញ Wing</text>
+            <line x1="300" y1="80" x2="160" y2="150" stroke="#64748B" stroke-width="3"/>
+            <line x1="300" y1="80" x2="440" y2="150" stroke="#64748B" stroke-width="3"/>
+            <line x1="160" y1="150" x2="80" y2="230" stroke="#64748B" stroke-width="3"/>
+            <line x1="160" y1="150" x2="240" y2="230" stroke="#64748B" stroke-width="3"/>
+            <line x1="440" y1="150" x2="440" y2="230" stroke="#64748B" stroke-width="3"/>
+            
+            <rect x="210" y="55" width="180" height="42" rx="10" fill="url(#rootGrad)"/>
+            <text x="300" y="81" font-family="'Battambang', sans-serif" font-size="15" font-weight="bold" fill="#FFF" text-anchor="middle">ទីស្នាក់ការកណ្តាល (Root)</text>
+            
+            <rect x="80" y="130" width="160" height="42" rx="10" fill="url(#nodeGrad)"/>
+            <text x="160" y="156" font-family="'Battambang', sans-serif" font-size="14" font-weight="bold" fill="#FFF" text-anchor="middle">ភ្នាក់ងារមេ (ភ្នំពេញ)</text>
+            
+            <rect x="360" y="130" width="160" height="42" rx="10" fill="url(#nodeGrad)"/>
+            <text x="440" y="156" font-family="'Battambang', sans-serif" font-size="14" font-weight="bold" fill="#FFF" text-anchor="middle">ភ្នាក់ងារមេ (សៀមរាប)</text>
+            
+            <rect x="30" y="215" width="105" height="38" rx="8" fill="url(#leafGrad)"/>
+            <text x="82" y="239" font-family="'Battambang', sans-serif" font-size="12" font-weight="bold" fill="#FFF" text-anchor="middle">តូបវីង (ទួលគោក)</text>
+            
+            <rect x="190" y="215" width="105" height="38" rx="8" fill="url(#leafGrad)"/>
+            <text x="242" y="239" font-family="'Battambang', sans-serif" font-size="12" font-weight="bold" fill="#FFF" text-anchor="middle">តូបវីង (បឹងកេងកង)</text>
+            
+            <rect x="390" y="215" width="105" height="38" rx="8" fill="url(#leafGrad)"/>
+            <text x="442" y="239" font-family="'Battambang', sans-serif" font-size="12" font-weight="bold" fill="#FFF" text-anchor="middle">តូបវីង (ពួក)</text>
+            
+            <text x="330" y="239" font-family="'Battambang', sans-serif" font-size="13" font-weight="bold" fill="#059669"><- Leaves (ស្លឹក)</text>
+        </svg>
+    `;
+
+    // 2. SVG: Binary vs General Tree Comparison
+    const binVsGenSVG = `
+        <svg viewBox="0 0 600 300" xmlns="http://www.w3.org/2000/svg" style="width:100%; height:100%;">
+            <text x="150" y="30" font-family="'Suwannaphum'" font-size="16" font-weight="bold" fill="#475569" text-anchor="middle">General Tree (មែកមិនកំណត់)</text>
+            <text x="450" y="30" font-family="'Suwannaphum'" font-size="16" font-weight="bold" fill="#0284C7" text-anchor="middle">Binary Tree (មែកអតិបរមា ២)</text>
+            
+            <!-- General Tree Diagram -->
+            <line x1="150" y1="80" x2="90" y2="150" stroke="#94A3B8" stroke-width="2"/>
+            <line x1="150" y1="80" x2="150" y2="150" stroke="#94A3B8" stroke-width="2"/>
+            <line x1="150" y1="80" x2="210" y2="150" stroke="#94A3B8" stroke-width="2"/>
+            <circle cx="150" cy="80" r="20" fill="#475569"/>
+            <text x="150" y="85" fill="white" font-weight="bold" text-anchor="middle">A</text>
+            <circle cx="90" cy="150" r="18" fill="#64748B"/><text x="90" y="154" fill="white" text-anchor="middle" font-size="12">B</text>
+            <circle cx="150" cy="150" r="18" fill="#64748B"/><text x="150" y="154" fill="white" text-anchor="middle" font-size="12">C</text>
+            <circle cx="210" cy="150" r="18" fill="#64748B"/><text x="210" y="154" fill="white" text-anchor="middle" font-size="12">D</text>
+
+            <!-- Binary Tree Diagram -->
+            <line x1="450" y1="80" x2="400" y2="150" stroke="#0284C7" stroke-width="2.5"/>
+            <line x1="450" y1="80" x2="500" y2="150" stroke="#0284C7" stroke-width="2.5"/>
+            <line x1="400" y1="150" x2="370" y2="220" stroke="#0284C7" stroke-width="2.5"/>
+            <line x1="400" y1="150" x2="430" y2="220" stroke="#0284C7" stroke-width="2.5"/>
+            
+            <circle cx="450" cy="80" r="20" fill="#0369A1"/>
+            <text x="450" y="85" fill="white" font-weight="bold" text-anchor="middle">50</text>
+            
+            <circle cx="400" cy="150" r="18" fill="#0284C7"/><text x="400" y="154" fill="white" text-anchor="middle" font-size="12">30</text>
+            <circle cx="500" cy="150" r="18" fill="#0284C7"/><text x="500" y="154" fill="white" text-anchor="middle" font-size="12">70</text>
+            <circle cx="370" cy="220" r="18" fill="#059669"/><text x="370" y="224" fill="white" text-anchor="middle" font-size="12">20</text>
+            <circle cx="430" cy="220" r="18" fill="#059669"/><text x="430" y="224" fill="white" text-anchor="middle" font-size="12">40</text>
+        </svg>
+    `;
+
+    // 3. SVG: BST Rule Search Illustration
+    const bstSVG = `
+        <svg viewBox="0 0 600 300" xmlns="http://www.w3.org/2000/svg" style="width:100%; height:100%;">
+            <defs>
+                <linearGradient id="gradBST" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" stop-color="#0284C7" /><stop offset="100%" stop-color="#0369A1" />
+                </linearGradient>
+                <linearGradient id="gradTarget" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" stop-color="#D97706" /><stop offset="100%" stop-color="#B45309" />
+                </linearGradient>
+            </defs>
+            <text x="300" y="30" font-family="'Suwannaphum', sans-serif" font-size="20" font-weight="bold" fill="#0284C7" text-anchor="middle">Binary Search Tree (ច្បាប់៖ ឆ្វេង < មេ < ស្តាំ)</text>
+            
+            <line x1="300" y1="90" x2="200" y2="170" stroke="#059669" stroke-width="4" stroke-dasharray="5,5"/>
+            <line x1="300" y1="90" x2="400" y2="170" stroke="#64748B" stroke-width="3"/>
+            <line x1="200" y1="170" x2="130" y2="250" stroke="#64748B" stroke-width="3"/>
+            <line x1="200" y1="170" x2="270" y2="250" stroke="#059669" stroke-width="4" stroke-dasharray="5,5"/>
+            <line x1="400" y1="170" x2="470" y2="250" stroke="#64748B" stroke-width="3"/>
+            
+            <circle cx="300" cy="90" r="28" fill="url(#gradBST)"/>
+            <text x="300" y="98" font-family="sans-serif" font-size="20" font-weight="bold" fill="#FFF" text-anchor="middle">50</text>
+            
+            <circle cx="200" cy="170" r="28" fill="url(#gradBST)"/>
+            <text x="200" y="178" font-family="sans-serif" font-size="20" font-weight="bold" fill="#FFF" text-anchor="middle">30</text>
+            
+            <circle cx="400" cy="170" r="28" fill="url(#gradBST)"/>
+            <text x="400" y="178" font-family="sans-serif" font-size="20" font-weight="bold" fill="#FFF" text-anchor="middle">70</text>
+            
+            <circle cx="130" cy="250" r="28" fill="url(#gradBST)"/>
+            <text x="130" y="258" font-family="sans-serif" font-size="20" font-weight="bold" fill="#FFF" text-anchor="middle">20</text>
+            
+            <circle cx="270" cy="250" r="28" fill="url(#gradTarget)"/>
+            <text x="270" y="258" font-family="sans-serif" font-size="20" font-weight="bold" fill="#FFF" text-anchor="middle">40</text>
+            
+            <circle cx="470" cy="250" r="28" fill="url(#gradBST)"/>
+            <text x="470" y="258" font-family="sans-serif" font-size="20" font-weight="bold" fill="#FFF" text-anchor="middle">80</text>
+            
+            <text x="190" y="120" font-family="'Battambang', sans-serif" font-size="13" font-weight="bold" fill="#059669">តូចជាង ៥០ (ឆ្វេង)</text>
+            <text x="410" y="120" font-family="'Battambang', sans-serif" font-size="13" font-weight="bold" fill="#64748B">ធំជាង ៥០ (ស្តាំ)</text>
+        </svg>
+    `;
+
+    // 4. SVG: BST Insertion Steps
+    const bstInsertSVG = `
+        <svg viewBox="0 0 600 300" xmlns="http://www.w3.org/2000/svg" style="width:100%; height:100%;">
+            <text x="300" y="30" font-family="'Suwannaphum', sans-serif" font-size="18" font-weight="bold" fill="#D97706" text-anchor="middle">ដំណើរការបញ្ចូលលេខ ៤០ ទៅក្នុង BST (Insertion Path)</text>
+            
+            <line x1="300" y1="85" x2="200" y2="165" stroke="#D97706" stroke-width="4"/>
+            <line x1="300" y1="85" x2="400" y2="165" stroke="#E2E8F0" stroke-width="2"/>
+            <line x1="200" y1="165" x2="270" y2="245" stroke="#D97706" stroke-width="4" stroke-dasharray="4,4"/>
+            <line x1="200" y1="165" x2="130" y2="245" stroke="#E2E8F0" stroke-width="2"/>
+
+            <!-- Steps Description -->
+            <rect x="385" y="70" width="205" height="70" rx="8" fill="#FEF3C7" stroke="#D97706" stroke-width="1.5"/>
+            <text x="395" y="95" font-family="'Battambang'" font-size="11" font-weight="bold" fill="#B45309">ជំហានទី១៖ ប្រៀបធៀប ៤០ < ៥០</text>
+            <text x="395" y="115" font-family="'Battambang'" font-size="11" fill="#B45309">-> បត់ឆ្វេងទៅកាន់លេខ ៣០</text>
+            
+            <rect x="385" y="175" width="205" height="70" rx="8" fill="#ECFDF5" stroke="#059669" stroke-width="1.5"/>
+            <text x="395" y="200" font-family="'Battambang'" font-size="11" font-weight="bold" fill="#047857">ជំហានទី២៖ ប្រៀបធៀប ៤០ > ៣០</text>
+            <text x="395" y="220" font-family="'Battambang'" font-size="11" fill="#047857">-> បត់ស្តាំដើម្បីបង្កើត Node ថ្មី</text>
+
+            <circle cx="300" cy="85" r="25" fill="#0284C7"/><text x="300" y="92" fill="white" font-weight="bold">50</text>
+            <circle cx="200" cy="165" r="25" fill="#0284C7"/><text x="200" y="172" fill="white" font-weight="bold">30</text>
+            <circle cx="400" cy="165" r="25" fill="#94A3B8"/><text x="400" y="172" fill="white" font-weight="bold">70</text>
+            
+            <circle cx="130" cy="245" r="25" fill="#94A3B8"/><text x="130" y="252" fill="white" font-weight="bold">20</text>
+            <circle cx="270" cy="245" r="25" fill="#D97706"/><text x="270" y="252" fill="white" font-weight="bold" font-size="14">40</text>
+        </svg>
+    `;
+
+    // 5. SVG: BST Deletion Successor (Case 3)
+    const deletionSuccessorSVG = `
+        <svg viewBox="0 0 600 300" xmlns="http://www.w3.org/2000/svg" style="width:100%; height:100%;">
+            <text x="300" y="30" font-family="'Suwannaphum', sans-serif" font-size="18" font-weight="bold" fill="#DC2626" text-anchor="middle">ការលុប Node ដែលមានកូន ២ (លុបលេខ ៥០)</text>
+            <text x="300" y="55" font-family="'Battambang'" font-size="13" fill="#64748B" text-anchor="middle">យុទ្ធសាស្ត្រ៖ ជំនួសដោយតម្លៃតូចបំផុតនៃមែកស្តាំ (In-order Successor = 60)</text>
+            
+            <!-- Paths -->
+            <line x1="300" y1="100" x2="200" y2="180" stroke="#94A3B8" stroke-width="2"/>
+            <line x1="300" y1="100" x2="400" y2="180" stroke="#94A3B8" stroke-width="2"/>
+            <line x1="400" y1="180" x2="350" y2="250" stroke="#059669" stroke-width="3" stroke-dasharray="5,3"/>
+            <line x1="400" y1="180" x2="450" y2="250" stroke="#94A3B8" stroke-width="2"/>
+
+            <!-- Successor Swap Line -->
+            <path d="M 350 250 C 320 220, 290 140, 300 100" fill="none" stroke="#D97706" stroke-width="3" stroke-dasharray="5,5"/>
+
+            <circle cx="300" cy="100" r="25" fill="#DC2626"/><text x="300" y="107" fill="white" font-weight="bold">50</text>
+            <circle cx="200" cy="180" r="25" fill="#94A3B8"/><text x="200" y="187" fill="white" font-weight="bold">30</text>
+            <circle cx="400" cy="180" r="25" fill="#0284C7"/><text x="400" y="187" fill="white" font-weight="bold">70</text>
+            
+            <!-- In-order Successor (min in right subtree) -->
+            <circle cx="350" cy="250" r="25" fill="#059669"/><text x="350" y="257" fill="white" font-weight="bold">60</text>
+            <circle cx="450" cy="250" r="25" fill="#94A3B8"/><text x="450" y="257" fill="white" font-weight="bold">80</text>
+
+            <rect x="20" y="120" width="130" height="90" rx="8" fill="#FEE2E2" stroke="#DC2626"/>
+            <text x="85" y="145" font-family="'Battambang'" font-size="11" font-weight="bold" fill="#991B1B" text-anchor="middle">លុប ៥០</text>
+            <text x="85" y="170" font-family="'Battambang'" font-size="10" fill="#991B1B" text-anchor="middle">យក ៦០ (តូចបំផុត</text>
+            <text x="85" y="190" font-family="'Battambang'" font-size="10" fill="#991B1B" text-anchor="middle">នៃមែកស្តាំ) មកជំនួស</text>
+        </svg>
+    `;
+
+    // 6. SVG: Pre-order Traversal Path
+    const preOrderSVG = `
+        <svg viewBox="0 0 600 300" xmlns="http://www.w3.org/2000/svg" style="width:100%; height:100%;">
+            <text x="300" y="30" font-family="'Suwannaphum'" font-size="18" font-weight="bold" fill="#DC2626" text-anchor="middle">Pre-order Traversal (ឫស ➔ ឆ្វេង ➔ ស្តាំ)</text>
+            
+            <!-- Path lines -->
+            <path d="M 300 80 Q 230 110 200 150 T 270 230" fill="none" stroke="#DC2626" stroke-width="3" stroke-dasharray="5,3"/>
+            <line x1="300" y1="80" x2="200" y2="150" stroke="#94A3B8" stroke-width="2"/>
+            <line x1="300" y1="80" x2="400" y2="150" stroke="#94A3B8" stroke-width="2"/>
+            <line x1="200" y1="150" x2="270" y2="230" stroke="#94A3B8" stroke-width="2"/>
+
+            <circle cx="300" cy="80" r="25" fill="#DC2626"/><text x="300" y="87" fill="white" font-weight="bold">50</text>
+            <circle cx="200" cy="150" r="25" fill="#E2E8F0"/><text x="200" y="157" fill="#0F172A" font-weight="bold">30</text>
+            <circle cx="400" cy="150" r="25" fill="#E2E8F0"/><text x="400" y="157" fill="#0F172A" font-weight="bold">70</text>
+            <circle cx="270" cy="230" r="25" fill="#E2E8F0"/><text x="270" y="237" fill="#0F172A" font-weight="bold">40</text>
+
+            <text x="300" y="45" fill="#DC2626" font-family="sans-serif" font-weight="bold" font-size="20">① 50 ➔ ② 30 ➔ ③ 40 ➔ ④ 70</text>
+        </svg>
+    `;
+
+    // 7. SVG: In-order Traversal Path
+    const inOrderSVG = `
+        <svg viewBox="0 0 600 300" xmlns="http://www.w3.org/2000/svg" style="width:100%; height:100%;">
+            <text x="300" y="30" font-family="'Suwannaphum'" font-size="18" font-weight="bold" fill="#059669" text-anchor="middle">In-order Traversal (ឆ្វេង ➔ ឫស ➔ ស្តាំ)</text>
+            
+            <path d="M 200 150 L 270 230 L 300 80 L 400 150" fill="none" stroke="#059669" stroke-width="3" stroke-dasharray="5,3"/>
+            <line x1="300" y1="80" x2="200" y2="150" stroke="#94A3B8" stroke-width="2"/>
+            <line x1="300" y1="80" x2="400" y2="150" stroke="#94A3B8" stroke-width="2"/>
+            <line x1="200" y1="150" x2="270" y2="230" stroke="#94A3B8" stroke-width="2"/>
+
+            <circle cx="300" cy="80" r="25" fill="#E2E8F0"/><text x="300" y="87" fill="#0F172A" font-weight="bold">50</text>
+            <circle cx="200" cy="150" r="25" fill="#059669"/><text x="200" y="157" fill="white" font-weight="bold">30</text>
+            <circle cx="400" cy="150" r="25" fill="#E2E8F0"/><text x="400" y="157" fill="#0F172A" font-weight="bold">70</text>
+            <circle cx="270" cy="230" r="25" fill="#E2E8F0"/><text x="270" y="237" fill="#0F172A" font-weight="bold">40</text>
+
+            <text x="300" y="45" fill="#059669" font-family="sans-serif" font-weight="bold" font-size="20">① 30 ➔ ② 40 ➔ ③ 50 ➔ ④ 70</text>
+        </svg>
+    `;
+
+    // 8. SVG: Post-order Traversal Path
+    const postOrderSVG = `
+        <svg viewBox="0 0 600 300" xmlns="http://www.w3.org/2000/svg" style="width:100%; height:100%;">
+            <text x="300" y="30" font-family="'Suwannaphum'" font-size="18" font-weight="bold" fill="#0284C7" text-anchor="middle">Post-order Traversal (ឆ្វេង ➔ ស្តាំ ➔ ឫស)</text>
+            
+            <path d="M 270 230 L 200 150 L 400 150 L 300 80" fill="none" stroke="#0284C7" stroke-width="3" stroke-dasharray="5,3"/>
+            <line x1="300" y1="80" x2="200" y2="150" stroke="#94A3B8" stroke-width="2"/>
+            <line x1="300" y1="80" x2="400" y2="150" stroke="#94A3B8" stroke-width="2"/>
+            <line x1="200" y1="150" x2="270" y2="230" stroke="#94A3B8" stroke-width="2"/>
+
+            <circle cx="300" cy="80" r="25" fill="#E2E8F0"/><text x="300" y="87" fill="#0F172A" font-weight="bold">50</text>
+            <circle cx="200" cy="150" r="25" fill="#E2E8F0"/><text x="200" y="157" fill="#0F172A" font-weight="bold">30</text>
+            <circle cx="400" cy="150" r="25" fill="#E2E8F0"/><text x="400" y="157" fill="#0F172A" font-weight="bold">70</text>
+            <circle cx="270" cy="230" r="25" fill="#0284C7"/><text x="270" y="237" fill="white" font-weight="bold">40</text>
+
+            <text x="300" y="45" fill="#0284C7" font-family="sans-serif" font-weight="bold" font-size="20">① 40 ➔ ② 30 ➔ ③ 70 ➔ ④ 50</text>
+        </svg>
+    `;
+
+    // 9. SVG: Unbalanced vs Balanced Tree
+    const balanceVsSkewedSVG = `
+        <svg viewBox="0 0 600 300" xmlns="http://www.w3.org/2000/svg" style="width:100%; height:100%;">
+            <text x="150" y="30" font-family="'Suwannaphum'" font-size="16" font-weight="bold" fill="#059669" text-anchor="middle">Balanced Tree O(log n)</text>
+            <text x="450" y="30" font-family="'Suwannaphum'" font-size="16" font-weight="bold" fill="#DC2626" text-anchor="middle">Skewed (Worst Case) O(n)</text>
+            
+            <!-- Balanced BST -->
+            <line x1="150" y1="80" x2="100" y2="150" stroke="#059669" stroke-width="2.5"/>
+            <line x1="150" y1="80" x2="200" y2="150" stroke="#059669" stroke-width="2.5"/>
+            <circle cx="150" cy="80" r="18" fill="#059669"/><text x="150" y="85" fill="white" font-weight="bold" font-size="12">30</text>
+            <circle cx="100" cy="150" r="18" fill="#059669"/><text x="100" y="155" fill="white" font-weight="bold" font-size="12">20</text>
+            <circle cx="200" cy="150" r="18" fill="#059669"/><text x="200" y="155" fill="white" font-weight="bold" font-size="12">40</text>
+
+            <!-- Skewed Tree -->
+            <line x1="420" y1="80" x2="450" y2="140" stroke="#DC2626" stroke-width="2.5"/>
+            <line x1="450" y1="140" x2="480" y2="200" stroke="#DC2626" stroke-width="2.5"/>
+            <line x1="480" y1="200" x2="510" y2="260" stroke="#DC2626" stroke-width="2.5"/>
+            
+            <circle cx="420" cy="80" r="18" fill="#DC2626"/><text x="420" y="85" fill="white" font-weight="bold" font-size="12">10</text>
+            <circle cx="450" cy="140" r="18" fill="#DC2626"/><text x="450" y="145" fill="white" font-weight="bold" font-size="12">20</text>
+            <circle cx="480" cy="200" r="18" fill="#DC2626"/><text x="480" y="205" fill="white" font-weight="bold" font-size="12">30</text>
+            <circle cx="510" cy="260" r="18" fill="#DC2626"/><text x="510" y="265" fill="white" font-weight="bold" font-size="12">40</text>
+        </svg>
+    `;
+
+    // 10. SVG: Self-Balancing Tree AVL Left Rotation
+    const avlRotationSVG = `
+        <svg viewBox="0 0 600 300" xmlns="http://www.w3.org/2000/svg" style="width:100%; height:100%;">
+            <text x="300" y="25" font-family="'Suwannaphum', sans-serif" font-size="18" font-weight="bold" fill="#0284C7" text-anchor="middle">យន្តការបង្វិលស្វ័យតុល្យភាពរបស់ AVL (AVL Right Rotation)</text>
+            
+            <!-- Before Rotation (Unbalanced Left-Heavy) -->
+            <text x="140" y="65" font-family="'Battambang'" font-size="13" font-weight="bold" fill="#475569" text-anchor="middle">Unbalanced (Left-Heavy)</text>
+            <line x1="140" y1="100" x2="90" y2="160" stroke="#DC2626" stroke-width="2.5"/>
+            <line x1="90" y1="160" x2="40" y2="220" stroke="#DC2626" stroke-width="2.5"/>
+            <circle cx="140" cy="100" r="18" fill="#94A3B8"/><text x="140" y="104" fill="white" font-weight="bold" font-size="11">30</text>
+            <circle cx="90" cy="160" r="18" fill="#94A3B8"/><text x="90" y="164" fill="white" font-weight="bold" font-size="11">20</text>
+            <circle cx="40" cy="220" r="18" fill="#94A3B8"/><text x="40" y="224" fill="white" font-weight="bold" font-size="11">10</text>
+
+            <!-- Rotation Arrow -->
+            <path d="M 230 150 Q 300 110, 340 150" fill="none" stroke="#D97706" stroke-width="4" marker-end="url(#arrow)"/>
+            <text x="285" y="115" font-family="'Battambang'" font-size="12" font-weight="bold" fill="#D97706" text-anchor="middle">បង្វិលស្តាំ (Right Rotate)</text>
+
+            <!-- After Rotation (Balanced) -->
+            <text x="460" y="65" font-family="'Battambang'" font-size="13" font-weight="bold" fill="#059669" text-anchor="middle">Balanced (AVL Auto-fixed)</text>
+            <line x1="460" y1="110" x2="410" y2="170" stroke="#059669" stroke-width="2.5"/>
+            <line x1="460" y1="110" x2="510" y2="170" stroke="#059669" stroke-width="2.5"/>
+            <circle cx="460" cy="110" r="20" fill="#059669"/><text x="460" y="115" fill="white" font-weight="bold" font-size="12">20</text>
+            <circle cx="410" cy="170" r="18" fill="#0284C7"/><text x="410" y="174" fill="white" font-weight="bold" font-size="11">10</text>
+            <circle cx="510" cy="170" r="18" fill="#0284C7"/><text x="510" y="174" fill="white" font-weight="bold" font-size="11">30</text>
+
+            <defs>
+                <marker id="arrow" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                    <path d="M 0 0 L 10 5 L 0 10 z" fill="#D97706"/>
+                </marker>
+            </defs>
+        </svg>
+    `;
+
+    // 11. SVG: Trie Prefix Tree for Autocomplete
+    const trieSVG = `
+        <svg viewBox="0 0 600 300" xmlns="http://www.w3.org/2000/svg" style="width:100%; height:100%;">
+            <text x="300" y="25" font-family="'Suwannaphum', sans-serif" font-size="18" font-weight="bold" fill="#0284C7" text-anchor="middle">រចនាសម្ព័ន្ធ Trie Tree សម្រាប់បង្កើតប្រព័ន្ធ Autocomplete</text>
+            <text x="300" y="45" font-family="'Battambang'" font-size="12" fill="#64748B" text-anchor="middle">រក្សាទុកពាក្យ៖ "CAT", "CAR" និង "CAB"</text>
+            
+            <!-- Tree connections -->
+            <line x1="300" y1="80" x2="300" y2="130" stroke="#0284C7" stroke-width="2.5"/>
+            <line x1="300" y1="130" x2="300" y2="190" stroke="#0284C7" stroke-width="2.5"/>
+            <line x1="300" y1="190" x2="220" y2="250" stroke="#059669" stroke-width="2.5"/>
+            <line x1="300" y1="190" x2="300" y2="250" stroke="#059669" stroke-width="2.5"/>
+            <line x1="300" y1="190" x2="380" y2="250" stroke="#059669" stroke-width="2.5"/>
+
+            <!-- Trie Nodes -->
+            <circle cx="300" cy="80" r="18" fill="#475569"/><text x="300" y="84" fill="white" font-weight="bold" font-size="11">Root</text>
+            
+            <circle cx="300" cy="130" r="18" fill="#0284C7"/><text x="300" y="134" fill="white" font-weight="bold">C</text>
+            <circle cx="300" cy="190" r="18" fill="#0284C7"/><text x="300" y="194" fill="white" font-weight="bold">A</text>
+            
+            <!-- Children (Leaves with mark of word ends) -->
+            <circle cx="220" cy="250" r="18" fill="#059669"/><text x="220" y="254" fill="white" font-weight="bold">T</text>
+            <circle cx="300" cy="250" r="18" fill="#059669"/><text x="300" y="254" fill="white" font-weight="bold">R</text>
+            <circle cx="380" cy="250" r="18" fill="#059669"/><text x="380" y="254" fill="white" font-weight="bold">B</text>
+
+            <rect x="420" y="100" width="160" height="90" rx="8" fill="#ECFDF5" stroke="#059669"/>
+            <text x="500" y="125" font-family="'Battambang'" font-size="11" font-weight="bold" fill="#047857" text-anchor="middle">លក្ខណៈពិសេស</text>
+            <text x="500" y="148" font-family="'Battambang'" font-size="11" fill="#047857" text-anchor="middle">ចែករំលែកបុព្វបទ "CA"</text>
+            <text x="500" y="168" font-family="'Battambang'" font-size="11" fill="#047857" text-anchor="middle">រួមគ្នា មិនខាតមេម៉ូរី</text>
+        </svg>
+    `;
+
+    // 12. SVG: Machine Learning Decision Tree
+    const decisionTreeSVG = `
+        <svg viewBox="0 0 600 300" xmlns="http://www.w3.org/2000/svg" style="width:100%; height:100%;">
+            <text x="300" y="25" font-family="'Suwannaphum', sans-serif" font-size="18" font-weight="bold" fill="#0284C7" text-anchor="middle">ដើមឈើសម្រេចចិត្តក្នុង AI (Decision Tree in AI/ML)</text>
+            <text x="300" y="45" font-family="'Battambang'" font-size="12" fill="#64748B" text-anchor="middle">ករណីសិក្សា៖ ការវិភាគឯកភាពឥណទាន (Loan Approval Model)</text>
+            
+            <line x1="300" y1="90" x2="180" y2="160" stroke="#94A3B8" stroke-width="2.5"/>
+            <line x1="300" y1="90" x2="420" y2="160" stroke="#94A3B8" stroke-width="2.5"/>
+            <line x1="420" y1="160" x2="350" y2="230" stroke="#94A3B8" stroke-width="2.5"/>
+            <line x1="420" y1="160" x2="490" y2="230" stroke="#94A3B8" stroke-width="2.5"/>
+
+            <!-- Branch Texts -->
+            <text x="210" y="115" font-family="'Battambang'" font-size="11" fill="#DC2626" font-weight="bold">< ៦០ ពិន្ទុ</text>
+            <text x="390" y="115" font-family="'Battambang'" font-size="11" fill="#059669" font-weight="bold">>= ៦០ ពិន្ទុ</text>
+            <text x="365" y="195" font-family="'Battambang'" font-size="10" fill="#DC2626" font-weight="bold">គ្មានទ្រព្យ</text>
+            <text x="475" y="195" font-family="'Battambang'" font-size="10" fill="#059669" font-weight="bold">មានទ្រព្យ</text>
+
+            <!-- Nodes -->
+            <rect x="210" y="65" width="180" height="35" rx="8" fill="#0284C7" stroke="#0369A1"/>
+            <text x="300" y="87" font-family="'Battambang'" font-size="12" fill="white" font-weight="bold" text-anchor="middle">ពិន្ទុ Credit Score?</text>
+            
+            <!-- Left Leaf (Reject) -->
+            <rect x="110" y="145" width="140" height="35" rx="8" fill="#FEE2E2" stroke="#DC2626"/>
+            <text x="180" y="167" font-family="'Battambang'" font-size="12" fill="#991B1B" font-weight="bold" text-anchor="middle">បដិសេធ (Reject)</text>
+            
+            <!-- Right Node -->
+            <rect x="340" y="145" width="160" height="35" rx="8" fill="#F59E0B" stroke="#D97706"/>
+            <text x="420" y="167" font-family="'Battambang'" font-size="11" fill="white" font-weight="bold" text-anchor="middle">ទ្រព្យបញ្ចាំ (Collateral)?</text>
+            
+            <!-- Right leaves -->
+            <rect x="290" y="215" width="120" height="35" rx="8" fill="#FEE2E2" stroke="#DC2626"/>
+            <text x="350" y="237" font-family="'Battambang'" font-size="11" fill="#991B1B" font-weight="bold" text-anchor="middle">បដិសេធ (Reject)</text>
+            
+            <rect x="440" y="215" width="120" height="35" rx="8" fill="#D1FAE5" stroke="#059669"/>
+            <text x="500" y="237" font-family="'Battambang'" font-size="11" fill="#065F46" font-weight="bold" text-anchor="middle">អនុម័ត (Approve)</text>
+        </svg>
+    `;
+
+    const chapter5Data = [
+        // 1. Syllabus
+        { t: "១. គម្រោងបង្រៀនប្រចាំឆមាស (Course Syllabus)", hasCode: false, type: "grid", c: [
+            { h: "<i class='fa-solid fa-list-ol keyword-icon'></i> ពាក់កណ្តាលឆមាសទី ១", p: `
+                <ul style='list-style:none; line-height: 2.2; padding-left: 0;'>
+                    <li style='font-size: 1.4vw;'><i class='fa-solid fa-check text-main' style='margin-right: 8px;'></i> ជំពូក១-២: រំលឹកពី <b><i class='fa-solid fa-server tech-icon'></i>DSA</b> & <b><i class='fa-solid fa-boxes-stacked tech-icon'></i>OOP</b></li>
+                    <li style='font-size: 1.4vw;'><i class='fa-solid fa-check text-main' style='margin-right: 8px;'></i> ជំពូក៣: Linear Data Structures (Stacks, Queues)</li>
+                    <li style='font-size: 1.4vw;'><i class='fa-solid fa-check text-main' style='margin-right: 8px;'></i> ជំពូក៤: <b><i class='fa-solid fa-link tech-icon'></i>Linked Lists</b> (Singly, Doubly)</li>
+                </ul>` 
+            },
+            { h: "<i class='fa-solid fa-network-wired keyword-icon'></i> ពាក់កណ្តាលឆមាសទី ២", p: `
+                <ul style='list-style:none; line-height: 2.2; padding-left: 0;'>
+                    <li style='color: var(--accent-red); font-size: 1.4vw; font-weight: bold;'><i class='fa-solid fa-arrow-right text-red' style='margin-right: 8px;'></i> ជំពូក៥: <b><i class='fa-solid fa-folder-tree tech-icon'></i>Trees</b> & BST (ថ្ងៃនេះ)</li>
+                    <li style='font-size: 1.4vw;'><i class='fa-regular fa-circle text-main' style='margin-right: 8px;'></i> ជំពូក៦: <b><i class='fa-solid fa-network-wired tech-icon'></i>Graphs</b> & Hashing Tables</li>
+                    <li style='font-size: 1.4vw;'><i class='fa-regular fa-circle text-main' style='margin-right: 8px;'></i> ជំពូក៧-៨: <b><i class='fa-solid fa-bolt tech-icon'></i>DP</b>, Sorting & <b><i class='fa-solid fa-brain tech-icon'></i>AI</b></li>
+                </ul>` 
+            }
+        ]},
+
+        // 2. Objectives
+        { t: "២. វត្ថុបំណងនៃជំពូកទី ៥ (Chapter Objectives)", hasCode: false, type: "grid", c: [
+            { h: "<i class='fa-solid fa-folder-tree keyword-icon'></i> ស្គាល់រចនាសម្ព័ន្ធ Tree", p: "យល់ពីការរៀបចំទិន្នន័យបែបឋានានុក្រម (Hierarchical) ដែលមិនមែនជាបន្ទាត់ត្រង់ (Non-linear)។" },
+            { h: "<i class='fa-solid fa-sitemap keyword-icon'></i> ស្វែងយល់ពី BST", p: "បែងចែកលក្ខណៈពិសេសរបស់ <b><i class='fa-solid fa-sitemap tech-icon'></i>Binary Search Tree (BST)</b> និងច្បាប់ (Left < Root < Right) របស់វា។" },
+            { h: "<i class='fa-brands fa-python keyword-icon'></i> ការអនុវត្តកូដ និងរុករក", p: "សរសេរកូដ Python បញ្ចូល ស្វែងរក លុបទិន្នន័យ និងរុករក (In-order, Pre-order, Post-order Traversal)។" },
+            { h: "<i class='fa-solid fa-chart-line keyword-icon'></i> វិភាគប្រសិទ្ធភាព", p: "វិភាគ <b><i class='fa-solid fa-chart-line tech-icon'></i>Time Complexity O(log n)</b> សម្រាប់ការស្វែងរកក្នុង BST បើធៀបនឹង Array ឬ Linked List។" }
+        ]},
+
+        // 3. ToC
+        { t: "៣. មាតិកានៃជំពូក (Table of Contents)", hasCode: false, type: "card", c: `
+            <ul style="list-style: none; padding-left: 2vw; line-height: 1.9; font-size: 1.5vw;">
+                <li><i class="fa-solid fa-folder-tree text-blue" style="width:2.5vw;"></i> ៤ ដល់ ៦. សេចក្តីផ្តើម ប្រៀបធៀប និងសទ្ទានុក្រមនៃ <b><i class='fa-solid fa-folder-tree tech-icon'></i>Tree</b></li>
+                <li><i class="fa-solid fa-sitemap text-blue" style="width:2.5vw;"></i> ៧ ដល់ ៩. រចនាសម្ព័ន្ធ <b><i class='fa-solid fa-sitemap tech-icon'></i>Binary Search Tree (BST)</b> និងកូដបញ្ចូលទិន្នន័យ</li>
+                <li><i class="fa-solid fa-magnifying-glass text-blue" style="width:2.5vw;"></i> ១០ ដល់ ១១. ការស្វែងរកទិន្នន័យក្នុង BST (Search Operation & Code)</li>
+                <li><i class="fa-solid fa-trash text-blue" style="width:2.5vw;"></i> ១២ ដល់ ១៤. ការលុប Node ចេញពី BST (Deletion Case 1, 2, 3 & Code)</li>
+                <li><i class="fa-solid fa-route text-blue" style="width:2.5vw;"></i> ១៥ ដល់ ១៩. ការរុករកបង្ហាញទិន្នន័យតាមលំដាប់លំដោយ (Pre, In, Post-order Traversal)</li>
+                <li><i class="fa-solid fa-scale-balanced text-blue" style="width:2.5vw;"></i> ២០ ដល់ ២២. តុល្យភាពនៃ Tree, Balanced vs Skewed BST និង AVL Tree</li>
+                <li><i class="fa-solid fa-brain text-blue" style="width:2.5vw;"></i> ២៣ ដល់ ២៦. ការអនុវត្តក្នុង AI, Trie Tree សម្រាប់ Autocomplete, Decision Trees</li>
+                <li><i class="fa-solid fa-book-bookmark text-blue" style="width:2.5vw;"></i> ២៧ ដល់ ២៩. លំហាត់អនុវត្តន៍ សង្ខេបមេរៀន និងឯកសារយោង</li>
+            </ul>
+        `},
+        
+        // 4. Intro to Trees with Analogies
+        { t: "៤. សេចក្តីផ្តើមពី <b><i class='fa-solid fa-folder-tree tech-icon'></i>Trees</b>", hasCode: false, type: "split", svg: generalTreeSVG, c: `
+            <div style="display:flex; flex-direction:column; height:100%; justify-content:center;">
+                <p style="margin-bottom: 1.2vh;"><b><i class='fa-solid fa-folder-tree keyword-icon'></i> Tree:</b> ជារចនាសម្ព័ន្ធទិន្នន័យបែបឋានានុក្រម (Hierarchical) ដែលផ្ទុកចំណុច (Nodes) តភ្ជាប់គ្នាដោយខ្សែ ស្រដៀងនឹងមែកឈើបញ្ច្រាស។</p>
+                <div class="analogy-box">
+                    <div class="analogy-header"><i class="fa-solid fa-building-columns"></i> ករណីទី១៖ រចនាសម្ព័ន្ធរដ្ឋបាលកម្ពុជា</div>
+                    <p class="analogy-text"><b>រាជរដ្ឋាភិបាល (Root)</b> បំបែកជា ក្រសួងនានា (Internal Nodes) រួចបន្តទៅ មន្ទីរខេត្ត និង ការិយាល័យស្រុក ដែលនៅចុងក្រោយគេបង្អស់គឺ <b>(Leaves)</b>។</p>
+                </div>
+                <div class="analogy-box">
+                    <div class="analogy-header"><i class="fa-solid fa-money-bill-transfer"></i> ករណីទី២៖ បណ្តាញភ្នាក់ងារ Wing</div>
+                    <p class="analogy-text">ទីស្នាក់ការកណ្តាលគ្រប់គ្រងភ្នាក់ងារមេប្រចាំខេត្ត ហើយភ្នាក់ងារខេត្តគ្រប់គ្រងតូបវីងតូចៗតាមភូមិឃុំ។ រចនាសម្ព័ន្ធនេះជួយឲ្យវីងងាយស្រួលគ្រប់គ្រងលំហូរសាច់ប្រាក់។</p>
+                </div>
+            </div>
+        `},
+
+        // 5. Tree Types: General vs Binary
+        { t: "៥. ប្រភេទនៃ Tree: General Tree vs Binary Tree", hasCode: false, type: "split", svg: binVsGenSVG, c: `
+            <div style="display:flex; flex-direction:column; height:100%; justify-content:center; gap: 1.2vh;">
+                <div class="card" style="border-left-color: var(--text-muted); background: white;">
+                    <h4 style="color: var(--text-muted);"><i class="fa-solid fa-folder-tree"></i> General Tree</h4>
+                    <p style="font-size: 1.4vw;">Node នីមួយៗអាចមានកូន (Children) ចំនួនប៉ុន្មានក៏បាន មិនមានកំណត់ព្រំដែនឡើយ។ (ឧ. រចនាសម្ព័ន្ធ File Directory ក្នុងកុំព្យូទ័រ)។</p>
+                </div>
+                <div class="card" style="border-left-color: var(--accent-blue); background: white;">
+                    <h4><i class="fa-solid fa-sitemap"></i> Binary Tree (ទ្វេភាគ)</h4>
+                    <p style="font-size: 1.4vw;">Node នីមួយៗត្រូវបានកំណត់យ៉ាងតឹងរ៉ឹងថា <b>អាចមានកូនអតិបរមាតែ ២ នាក់ប៉ុណ្ណោះ</b> (កូនឆ្វេង និងកូនស្តាំ)។ នេះជារចនាសម្ព័ន្ធគ្រឹះសម្រាប់ស្វែងរកល្បឿនលឿន។</p>
+                </div>
+            </div>
+        `},
+
+        // 6. Tree Terminology
+        { t: "៦. សទ្ទានុក្រមសំខាន់ៗនៃ <b><i class='fa-solid fa-folder-tree tech-icon'></i>Tree</b>", hasCode: false, type: "grid", c: [
+            { h: "<i class='fa-solid fa-crown keyword-icon'></i> Root (ឫស/មេកញ្រ្ចោង)", p: "ជា Node កំពូលគេបង្អស់នៃ Tree (ឧ. នាយកសាលា)។ រាល់ Tree នីមួយៗមាន Root តែមួយគត់។" },
+            { h: "<i class='fa-solid fa-leaf keyword-icon'></i> Leaf (ស្លឹក/ចុងបញ្ចប់)", p: "ជា Node នៅចុងខាងក្រោមគេបង្អស់ ដែលមិនមានកូន (Children) បន្តទៀតទេ (ឧ. សិស្សានុសិស្ស)។" },
+            { h: "<i class='fa-solid fa-diagram-project keyword-icon'></i> Edge & Path", p: "<b>Edge:</b> ខ្សែតភ្ជាប់រវាង Node ពីរ។<br><b>Path:</b> បណ្តុំនៃខ្សែដែលត្រូវដើរឆ្លងកាត់ពីចំណុចមួយ ទៅចំណុចមួយទៀត។" },
+            { h: "<i class='fa-solid fa-layer-group keyword-icon'></i> Height & Depth", p: "<b>Depth:</b> ចម្ងាយរាប់ពីកំពូល (Root) ចុះមកក្រោម。 <br><b>Height:</b> ចម្ងាយរាប់ពីចំណុចនោះ ទៅកាន់ស្លឹក (Leaf) ដែលនៅឆ្ងាយបំផុត។" }
+        ]},
+
+        // 7. BST Intro with Analogies
+        { t: "៧. រចនាសម្ព័ន្ធ <b><i class='fa-solid fa-sitemap tech-icon'></i>Binary Search Tree (BST)</b>", hasCode: false, type: "split", svg: bstSVG, c: `
+            <div style="display:flex; flex-direction:column; height:100%; justify-content:center;">
+                <p style="margin-bottom: 1.2vh;"><b><i class='fa-solid fa-code-branch keyword-icon'></i> ច្បាប់មាសរបស់ BST:</b> កូនខាងឆ្វេងត្រូវតែ <b style="color:var(--accent-red);">តូចជាង</b> មេ (Root) ឯកូនខាងស្តាំត្រូវតែ <b style="color:var(--accent-green);">ធំជាង</b> មេ ជានិច្ច។</p>
+                <div class="analogy-box">
+                    <div class="analogy-header"><i class="fa-solid fa-id-card"></i> ករណីទី១៖ ការស្វែងរកឈ្មោះបោះឆ្នោត</div>
+                    <p class="analogy-text">បើរកឈ្មោះផ្តើមដោយអក្សរ "ម" យើងបើកសៀវភៅចំកណ្តាល (ឧ.អក្សរ ប)។ យើងដឹងភ្លាមថា "ម" នៅខាងឆ្វេង ដូច្នេះយើងបោះបង់ទំព័រខាងស្តាំចោលទាំងស្រុង។</p>
+                </div>
+                <div class="analogy-box">
+                    <div class="analogy-header"><i class="fa-solid fa-shirt"></i> ករណីទី២៖ រោងចក្រកាត់ដេរ (Garment Factory)</div>
+                    <p class="analogy-text">ការបែងចែកអាវ៖ បើអាវទំហំតូចជាង M (Size S) បោះទៅកន្ត្រកខាងឆ្វេង បើធំជាង (Size L, XL) បោះទៅកន្ត្រកស្តាំ ដើម្បីងាយស្រួលរក។</p>
+                </div>
+            </div>
+        `},
+
+        // 8. BST Insertion Concept
+        { t: "៨. គោលការណ៍បញ្ចូលទិន្នន័យក្នុង BST (Insertion Process)", hasCode: false, type: "split", svg: bstInsertSVG, c: `
+            <div style="display:flex; flex-direction:column; height:100%; justify-content:center;">
+                <p style="margin-bottom: 1.2vh;">ដើម្បីបញ្ចូល Node ថ្មី យើងត្រូវចាប់ផ្តើមប្រៀបធៀបពី Root ទៅតាមលំដាប់លំដោយ៖</p>
+                <ul style="padding-left: 1.5vw; line-height: 1.8; font-size: 1.35vw;">
+                    <li>បើតម្លៃថ្មី <b>តូចជាង</b> Node បច្ចុប្បន្ន ➔ បោះជំហានទៅ <b>ឆ្វេង</b>។</li>
+                    <li>បើតម្លៃថ្មី <b>ធំជាង</b> Node បច្ចុប្បន្ន ➔ បោះជំហានទៅ <b>ស្តាំ</b>。</li>
+                    <li>ដំណើរការនេះធ្វើឡើងជាលក្ខណៈរមិលឡើងវិញ (Recursion) រហូតរកឃើញកន្លែងទំនេរ (None) ទើបបញ្ចូល។</li>
+                </ul>
+                <div class="analogy-box" style="margin-top: 1.2vh;">
+                    <div class="analogy-header"><i class="fa-solid fa-car"></i> ករណីសិក្សា៖ ចតឡាននៅ AEON</div>
+                    <p class="analogy-text">ឡានតូច (Compact) តម្រង់ទៅចំណតតូចៗ (ឆ្វេង), ឡានធំ (SUV) តម្រង់ទៅចំណតធំៗ (ស្តាំ) រហូតដល់រកឃើញកន្លែងទំនេរទើបចតចូល។</p>
+                </div>
+            </div>
+        `},
+
+        // 9. BST Insert Code
+        { t: "៩. កូដ Python សម្រាប់បញ្ចូលទិន្នន័យ (Insertion Code)", hasCode: true, type: "card", c: `
+            <div class="two-column-equal">
+                <div style="display: flex; flex-direction: column; gap: 1.2vh;">
+                    <div class="analogy-box">
+                        <div class="analogy-header"><i class="fa-solid fa-code"></i> ពន្យល់យន្តការកូដ</div>
+                        <p class="analogy-text">ថ្នាក់ <b>TreeNode</b> ផ្ទុកតម្លៃ <code>val</code> និងបណ្តាញភ្ជាប់ពីរគឺ <code>left</code> និង <code>right</code> ដែលដំបូងមានតម្លៃស្មើ <code>None</code>។</p>
+                    </div>
+                    <div class="analogy-box">
+                        <div class="analogy-header"><i class="fa-solid fa-rotate-left"></i> ការប្រើប្រាស់ Recursion</div>
+                        <p class="analogy-text">អនុគមន៍ <code>insert</code> ហៅខ្លួនឯងរហូតដល់លក្ខខណ្ឌ <code>root is None</code> ក្លាយជាពិត ទើបបង្កើត Node ថ្មីនៅទីនោះ។</p>
+                    </div>
+                </div>
+                <div>
+                    <div class="code-wrapper">
+                        <div class="code-header"><span><i class="fa-brands fa-python"></i> កូដអនុវត្តទី ១៖ បញ្ចូល Node ក្នុង BST</span></div>
+                        <div class="code-content"><pre>
+<span class="kw">class</span> <span class="fn">TreeNode</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="kw">self</span>, key):
+        <span class="kw">self</span>.left = <span class="kw">None</span>
+        <span class="kw">self</span>.right = <span class="kw">None</span>
+        <span class="kw">self</span>.val = key
+
+<span class="kw">def</span> <span class="fn">insert</span>(root, key):
+    <span class="kw">if</span> root <span class="kw">is None</span>:
+        <span class="kw">return</span> TreeNode(key)
+    <span class="kw">if</span> root.val < key: 
+        root.right = insert(root.right, key)
+    <span class="kw">elif</span> root.val > key: 
+        root.left = insert(root.left, key)
+    <span class="kw">return</span> root</pre></div>
+                    </div>
+                </div>
+            </div>
+        `},
+
+        // 10. BST Search Intro
+        { t: "១០. <b><i class='fa-solid fa-sitemap tech-icon'></i>BST</b>: ការស្វែងរកទិន្នន័យ (Search Operation)", hasCode: false, type: "split", svg: bstSVG, c: `
+            <div style="display:flex; flex-direction:column; height:100%; justify-content:center;">
+                <p style="margin-bottom: 1.2vh;"><b><i class='fa-solid fa-magnifying-glass keyword-icon'></i> Search:</b> គឺជាចំណុចខ្លាំងបំផុតរបស់ BST។ យើងមិនចាំបាច់ដើររកគ្រប់ប្រអប់ដូចកាលរៀន Linked List ឡើយ។ រាល់ពេលរកម្តង យើងកាត់ចោលទិន្នន័យពាក់កណ្តាល។</p>
+                <div class="analogy-box">
+                    <div class="analogy-header"><i class="fa-solid fa-file-medical"></i> ករណីទី១៖ រកប្រវត្តិអ្នកជំងឺ (មន្ទីរពេទ្យកាល់ម៉ែត)</div>
+                    <p class="analogy-text">មន្ទីរពេទ្យរៀបឯកសារតាមឆ្នាំ។ បើឯកសារឆ្នាំ ២០២០ ហើយអ្នកកំពុងបើកទូឆ្នាំ ២០១៥ អ្នកដឹងភ្លាមថាត្រូវដើរទៅទូខាងស្តាំ មិនបាច់រុករកទូខាងឆ្វេងទេ។</p>
+                </div>
+                <div class="analogy-box">
+                    <div class="analogy-header"><i class="fa-solid fa-map-location-dot"></i> ករណីទី២៖ រកប្លង់ដី (ក្រសួងសុរិយោដី)</div>
+                    <p class="analogy-text">ស្វែងរកក្បាលដីលេខ ៤០ ក្នុងចំណោមក្បាលដី ១០០។ យើងឆែកលេខ ៥០ ឃើញថាធំជាង ដូច្នេះយើងទៅរកក្នុងប្លុកលេខ ១-៤៩ វិញ (ចំណេញពេលមិនបាច់រាវរកក្បាលដី ៥១-១០០)។</p>
+                </div>
+            </div>
+        `},
+
+        // 11. BST Search Code
+        { t: "១១. កូដ Python សម្រាប់ការស្វែងរក (Search Code)", hasCode: true, type: "card", c: `
+            <div class="two-column-equal">
+                <div style="display: flex; flex-direction: column; gap: 1.2vh;">
+                    <div class="analogy-box">
+                        <div class="analogy-header"><i class="fa-solid fa-bolt"></i> ប្រសិទ្ធភាពល្បឿន O(log n)</div>
+                        <p class="analogy-text">ទោះបីជាមានទិន្នន័យដល់ទៅ ១ លាននាក់ក្នុងប្រព័ន្ធ ក៏យើងធ្វើការស្វែងរក និងប្រៀបធៀបត្រឹមតែអតិបរមា ២០ ដងប៉ុណ្ណោះ គឺនឹងរកឃើញ (2^20 ≈ 1,000,000)។</p>
+                    </div>
+                    <div class="analogy-box">
+                        <div class="analogy-header"><i class="fa-solid fa-arrow-pointer"></i> របៀបស្វែងរកក្នុងកូដ</div>
+                        <p class="analogy-text">បើរកឃើញតម្លៃដែលត្រូវគ្នា វានឹងប្រគល់ Node នោះភ្លាម។ បើអស់មែកស្វែងរក (None) មានន័យថាមិនមានទិន្នន័យនោះឡើយ។</p>
+                    </div>
+                </div>
+                <div>
+                    <div class="code-wrapper">
+                        <div class="code-header"><span><i class="fa-brands fa-python"></i> កូដអនុវត្តទី ២៖ ការស្វែងរកក្នុង BST</span></div>
+                        <div class="code-content"><pre>
+<span class="kw">def</span> <span class="fn">search</span>(root, key):
+    <span class="com"># Base cases: root ទទេ ឬ រកឃើញ key</span>
+    <span class="kw">if</span> root <span class="kw">is None or</span> root.val == key:
+        <span class="kw">return</span> root
+
+    <span class="com"># បើ key ធំជាង តម្រង់ទៅមែកស្តាំ</span>
+    <span class="kw">if</span> root.val < key:
+        <span class="kw">return</span> search(root.right, key)
+
+    <span class="com"># បើ key តូចជាង តម្រង់ទៅមែកឆ្វេង</span>
+    <span class="kw">return</span> search(root.left, key)</pre></div>
+                    </div>
+                </div>
+            </div>
+        `},
+
+        // 12. BST Deletion: Intro & Cases 1 & 2
+        { t: "១២. ការលុប Node ក្នុង BST (Cases 1 & 2)", hasCode: false, type: "grid", c: [
+            { h: "<i class='fa-solid fa-trash-can keyword-icon'></i> គោលការណ៍លុប (Deletion)", p: "ការលុប Node ក្នុង BST មានភាពស្មុគស្មាញជាងការបញ្ចូល ព្រោះយើងត្រូវថែរក្សាច្បាប់មាសរបស់ BST ឲ្យនៅដដែលក្រោយពេលលុប។" },
+            { h: "<i class='fa-solid fa-leaf keyword-icon'></i> ករណីទី១៖ Node គ្មានកូន (Leaf Node)", p: "ងាយស្រួលបំផុត! គ្រាន់តែលុប Node នោះចោលភ្លាមៗ ដោយប្តូរវាទៅជា <code>None</code>។ <br><b>ឧទាហរណ៍៖</b> លុបលេខ ២០ ក្នុងរូប BST មុន។" },
+            { h: "<i class='fa-solid fa-code-branch keyword-icon'></i> ករណីទី២៖ Node មានកូន ១ (Single Child)", p: "យើងលុប Node នោះចោល រួចយកកូនរបស់វា (ឆ្វេង ឬស្តាំ) មកភ្ជាប់ជំនួសទីតាំងរបស់វាផ្ទាល់។" },
+            { h: "<i class='fa-solid fa-user-group keyword-icon'></i> ករណីសិក្សា៖ ផ្ទេរតំណែងរដ្ឋបាល", p: "<b>ករណីទី២</b> ប្រៀបដូចជាប្រធានការិយាល័យម្នាក់លាឈប់ រួចផ្ទេរការងារ និងសិទ្ធិទាំងអស់ទៅឲ្យកូនចៅជំនួយការតែម្នាក់គត់របស់គាត់ឡើងជំនួសភ្លាមៗ។" }
+        ]},
+
+        // 13. BST Deletion: Case 3 (Two Children)
+        { t: "១៣. ការលុប Node ក្នុង BST: ករណីទី៣ (Two Children)", hasCode: false, type: "split", svg: deletionSuccessorSVG, c: `
+            <div style="display:flex; flex-direction:column; height:100%; justify-content:center;">
+                <p style="margin-bottom: 1vh;"><b><i class='fa-solid fa-circle-nodes keyword-icon'></i> ករណីទី៣៖ Node មានកូនទាំង ២ (ឆ្វេងផង ស្តាំផង):</b></p>
+                <div class="analogy-box">
+                    <div class="analogy-header"><i class="fa-solid fa-medal"></i> យុទ្ធសាស្ត្រស្វែងរកអ្នកបន្តវេន (In-order Successor)</div>
+                    <p class="analogy-text">យើងមិនអាចលុបវាចោលភ្លាមៗទេ ព្រោះនាំឲ្យដាច់មែកឈើ។ យើងត្រូវស្វែងរក <b>តម្លៃតូចបំផុតនៅក្នុងមែកខាងស្តាំ (In-order Successor)</b> យកមកជំនួស រួចទើបលុប Node បន្តវេននោះចោល។</p>
+                </div>
+                <div class="analogy-box">
+                    <div class="analogy-header"><i class="fa-solid fa-crown"></i> ករណីសិក្សា៖ ការតែងតាំងស្តេចគ្រងរាជ្យ</div>
+                    <p class="analogy-text">នៅពេលព្រះមហាក្សត្រ (Root) ចូលទិវង្គត នាយករដ្ឋមន្ត្រីត្រូវជ្រើសរើសបុត្រាច្បង ឬអ្នកមានសិទ្ធិស្របច្បាប់តូចបំផុតពីខ្សែរាជវង្សស្តាំមកឡើងគ្រងរាជ្យជំនួសភ្លាម ដើម្បីរក្សាស្ថិរភាពនយោបាយជាតិ។</p>
+                </div>
+            </div>
+        `},
+
+        // 14. BST Deletion Python Code
+        { t: "១៤. កូដ Python សម្រាប់ការលុប Node (Deletion Code)", hasCode: true, type: "card", c: `
+            <div class="two-column-equal">
+                <div style="display: flex; flex-direction: column; gap: 1.2vh;">
+                    <div class="analogy-box" style="border-left-color: var(--accent-red); background: #FFF5F5;">
+                        <div class="analogy-header" style="color: var(--accent-red);"><i class="fa-solid fa-code"></i> ស្វែងយល់ពីកូដលុប</div>
+                        <p class="analogy-text">អនុគមន៍ <code>minValueNode</code> ប្រើសម្រាប់រកតម្លៃតូចបំផុត (ឆ្វេងបង្អស់) នៃមែកស្តាំ ដើម្បីធ្វើជា In-order Successor សម្រាប់ជំនួស Node ដែលមានកូនពីរ។</p>
+                    </div>
+                </div>
+                <div>
+                    <div class="code-wrapper" style="border-color: var(--accent-red);">
+                        <div class="code-header" style="background: #2D1B1B;"><span style="color: #F87171;"><i class="fa-brands fa-python"></i> កូដ៖ Delete Node ក្នុង BST</span></div>
+                        <div class="code-content"><pre style="font-size: 0.9vw; line-height: 1.35;">
+<span class="kw">def</span> <span class="fn">minValueNode</span>(node):
+    current = node
+    <span class="kw">while</span> current.left <span class="kw style="color:#ff79c6">is not</span> <span class="kw">None</span>:
+        current = current.left
+    <span class="kw">return</span> current
+
+<span class="kw">def</span> <span class="fn">deleteNode</span>(root, key):
+    <span class="kw">if</span> root <span class="kw">is None</span>: <span class="kw">return</span> root
+    <span class="kw">if</span> key < root.val:
+        root.left = deleteNode(root.left, key)
+    <span class="kw">elif</span> key > root.val:
+        root.right = deleteNode(root.right, key)
+    <span class="kw">else</span>:
+        <span class="kw">if</span> root.left <span class="kw">is None</span>: <span class="kw">return</span> root.right
+        <span class="kw">elif</span> root.right <span class="kw">is None</span>: <span class="kw">return</span> root.left
+        temp = minValueNode(root.right)
+        root.val = temp.val
+        root.right = deleteNode(root.right, temp.val)
+    <span class="kw">return</span> root</pre></div>
+                    </div>
+                </div>
+            </div>
+        `},
+
+        // 15. Tree Traversals Overview
+        { t: "១៥. ស្វែងយល់ពីការរុករកបង្ហាញទិន្នន័យ (Tree Traversals)", hasCode: false, type: "grid", c: [
+            { h: "<i class='fa-solid fa-route keyword-icon'></i> ការរុករក (Depth-First Search)", p: "ការរុករកបង្ហាញតម្លៃ Node នីមួយៗក្នុង Tree ត្រូវធ្វើឡើងតាមលំដាប់លំដោយជាក់លាក់ ដោយមិនទុកចោល Node ណាមួយឡើយ។" },
+            { h: "<i class='fa-solid fa-sitemap keyword-icon'></i> វិធីសាស្ត្រចម្បងទាំង ៣", p: "<ul><li><b>Pre-order:</b> ឫស ➔ ឆ្វេង ➔ ស្តាំ</li><li><b>In-order:</b> ឆ្វេង ➔ ឫស ➔ ស្តាំ</li><li><b>Post-order:</b> ឆ្វេង ➔ ស្តាំ ➔ ឫស</li></ul>" },
+            { h: "<i class='fa-solid fa-arrows-spin keyword-icon'></i> ហេតុអ្វីត្រូវរៀន Traversal?", p: "រចនាសម្ព័ន្ធ Tree មិនមែនជាបន្ទាត់ត្រង់ (Non-linear) ដូច Array ឡើយ ដូច្នេះកុំព្យូទ័រត្រូវការច្បាប់ច្បាស់លាស់ដើម្បីអានវាពីចំណុចមួយទៅចំណុចមួយ។" },
+            { h: "<i class='fa-solid fa-cubes keyword-icon'></i> ការប្រើប្រាស់ខុសៗគ្នា", p: "លំដាប់នៃការដើរនីមួយៗត្រូវបានយកទៅប្រើប្រាស់ក្នុងមុខងារខុសៗគ្នា ដូចជា ការចម្លងរចនាសម្ព័ន្ធ Tree, ការលុបឯកសារ, ឬការតម្រៀបទិន្នន័យ។" }
+        ]},
+
+        // 16. Pre-order Traversal
+        { t: "១៦. ការរុករកបែប Pre-order Traversal", hasCode: false, type: "split", svg: preOrderSVG, c: `
+            <div style="display:flex; flex-direction:column; height:100%; justify-content:center;">
+                <p style="margin-bottom: 1.2vh;"><b><i class='fa-solid fa-route keyword-icon'></i> លំដាប់ដំណើរការ៖</b> ឫស (Root) ➔ ឆ្វេង (Left) ➔ ស្តាំ (Right)។</p>
+                <div class="analogy-box">
+                    <div class="analogy-header"><i class="fa-solid fa-school"></i> ករណីទី១៖ ការផ្សព្វផ្សាយព័ត៌មានសាលា</div>
+                    <p class="analogy-text">នាយកសាលា (Root) ហៅប្រជុំប្រាប់ព័ត៌មានទៅគ្រូបន្ទុកថ្នាក់ (Left) រួចគ្រូយកព័ត៌មានទៅប្រកាសប្រាប់សិស្សក្នុងថ្នាក់ (Right) ជាបន្តបន្ទាប់។</p>
+                </div>
+                <div class="analogy-box">
+                    <div class="analogy-header"><i class="fa-solid fa-clone"></i> ករណីទី២៖ ការចម្លង (Copy) រចនាសម្ព័ន្ធ Tree</div>
+                    <p class="analogy-text">Pre-order Traversal ត្រូវបានប្រើប្រាស់ដើម្បីចម្លង (Duplicate) ឬផ្ទេររចនាសម្ព័ន្ធ Tree ទាំងមូលទុក ព្រោះវាបង្កើត Root មុនគេបង្អស់។</p>
+                </div>
+            </div>
+        `},
+
+        // 17. Pre-order Code
+        { t: "១៧. កូដ Python សម្រាប់ Pre-order Traversal", hasCode: true, type: "card", c: `
+            <div class="two-column-equal">
+                <div style="display: flex; flex-direction: column; gap: 1.2vh;">
+                    <div class="analogy-box" style="border-left-color: var(--accent-red); background: #FFF5F5;">
+                        <div class="analogy-header" style="color: var(--accent-red);"><i class="fa-solid fa-heart"></i> ចំណុចគន្លឹះនៃ Pre-order</div>
+                        <p class="analogy-text">អនុគមន៍ <code>print</code> ត្រូវបានហៅមុនគេបង្អស់ (Root) បន្ទាប់មកទើប Recursion ហៅទៅកាន់ <code>left</code> និង <code>right</code> តាមក្រោយ។</p>
+                    </div>
+                </div>
+                <div>
+                    <div class="code-wrapper" style="border-color: var(--accent-red);">
+                        <div class="code-header" style="background: #2D1B1B;"><span style="color: #F87171;"><i class="fa-brands fa-python"></i> កូដ៖ Pre-order Traversal</span></div>
+                        <div class="code-content"><pre>
+<span class="kw">def</span> <span class="fn">preorder</span>(root):
+    <span class="kw">if</span> root:
+        <span class="com"># 1. បង្ហាញតម្លៃ Root កណ្តាលមុនគេ</span>
+        <span class="fn">print</span>(root.val, end=<span class="str">" "</span>)
+        
+        <span class="com"># 2. បន្តទៅឆ្វេង</span>
+        preorder(root.left)
+        
+        <span class="com"># 3. បន្តទៅស្តាំ</span>
+        preorder(root.right)</pre></div>
+                    </div>
+                </div>
+            </div>
+        `},
+
+        // 18. In-order Traversal
+        { t: "១៨. ការរុករកបែប In-order Traversal", hasCode: false, type: "split", svg: inOrderSVG, c: `
+            <div style="display:flex; flex-direction:column; height:100%; justify-content:center;">
+                <p style="margin-bottom: 1.2vh;"><b><i class='fa-solid fa-route keyword-icon'></i> លំដាប់ដំណើរការ៖</b> ឆ្វេង (Left) ➔ ឫស (Root) ➔ ស្តាំ (Right)។</p>
+                <div class="analogy-box">
+                    <div class="analogy-header"><i class="fa-solid fa-sort-numeric-down"></i> ករណីទី១៖ ការតម្រៀបពិន្ទុពីទាបទៅខ្ពស់</div>
+                    <p class="analogy-text">ការហៅឈ្មោះសិស្សប្រលងចេញពីអ្នកពិន្ទុទាបបំផុត ទៅខ្ពស់បំផុត។ សម្រាប់ BST, ការដើររុករកបែប In-order នឹងទាញលេខចេញមកតម្រៀបគ្នាពីតូចទៅធំជានិច្ច។</p>
+                </div>
+                <div class="analogy-box">
+                    <div class="analogy-header"><i class="fa-solid fa-boxes-stacked"></i> ករណីទី២៖ ការរៀបចំទំហំផលិតផល</div>
+                    <p class="analogy-text">ការរៀបចំបង្ហាញទំហំសម្លៀកបំពាក់ពីតូចទៅធំ គឺពី Size S ➔ M ➔ L ➔ XL នៅក្នុងកម្មវិធីលក់ទំនិញ (E-Commerce)។</p>
+                </div>
+            </div>
+        `},
+
+        // 19. In-order Code
+        { t: "១៩. កូដ Python សម្រាប់ In-order Traversal", hasCode: true, type: "card", c: `
+            <div class="two-column-equal">
+                <div style="display: flex; flex-direction: column; gap: 1.2vh;">
+                    <div class="analogy-box" style="border-left-color: var(--accent-green); background: #F0FDF4;">
+                        <div class="analogy-header" style="color: var(--accent-green);"><i class="fa-solid fa-star"></i> ចំណុចគន្លឹះនៃ In-order</div>
+                        <p class="analogy-text">ប្រព័ន្ធនឹងទៅរកតម្លៃតូចបំផុតនៅផ្នែកខាងឆ្វេងបង្អស់ឱ្យអស់សិន ទើបបង្ហាញតម្លៃ Root កណ្តាល រួចបន្តទៅបង្ហាញតម្លៃធំជាងនៅខាងស្តាំ។</p>
+                    </div>
+                </div>
+                <div>
+                    <div class="code-wrapper" style="border-color: var(--accent-green);">
+                        <div class="code-header" style="background: #1B2D21;"><span style="color: #34D399;"><i class="fa-brands fa-python"></i> កូដ៖ In-order Traversal</span></div>
+                        <div class="code-content"><pre>
+<span class="kw">def</span> <span class="fn">inorder</span>(root):
+    <span class="kw">if</span> root:
+        <span class="com"># 1. ទៅឆ្វេងឱ្យអស់សិន (រកតូចបំផុត)</span>
+        inorder(root.left)
+        
+        <span class="com"># 2. បង្ហាញតម្លៃ Root កណ្តាល</span>
+        <span class="fn">print</span>(root.val, end=<span class="str">" "</span>)
+        
+        <span class="com"># 3. ទៅស្តាំបន្ត</span>
+        inorder(root.right)</pre></div>
+                    </div>
+                </div>
+            </div>
+        `},
+
+        // 20. Post-order Traversal
+        { t: "២០. ការរុករកបែប Post-order Traversal", hasCode: false, type: "split", svg: postOrderSVG, c: `
+            <div style="display:flex; flex-direction:column; height:100%; justify-content:center;">
+                <p style="margin-bottom: 1.2vh;"><b><i class='fa-solid fa-route keyword-icon'></i> លំដាប់ដំណើរការ៖</b> ឆ្វេង (Left) ➔ ស្តាំ (Right) ➔ ឫស (Root)។</p>
+                <div class="analogy-box">
+                    <div class="analogy-header"><i class="fa-solid fa-trash-can"></i> ករណីទី១៖ ការលុប Folder កុំព្យូទ័រ</div>
+                    <p class="analogy-text">ដើម្បីលុប Folder ធំមួយចោល យើងត្រូវលុបឯកសារ និង Folder កូនៗខាងក្នុងឲ្យអស់ជាមុនសិន (Left & Right) ទើបយើងអាចលុប Folder មេ (Root) បានដោយជោគជ័យ។</p>
+                </div>
+                <div class="analogy-box">
+                    <div class="analogy-header"><i class="fa-solid fa-gavel"></i> ករណីទី២៖ ការរំលាយគម្រោង ឬរចនាសម្ព័ន្ធ</div>
+                    <p class="analogy-text">ការរំលាយឆាកតន្ត្រី៖ គេត្រូវដោះគ្រឿងតុបតែង មែកធាងតូចៗ និងអំពូលភ្លើងសិន ទើបគេរំលាយគ្រោងដែកមេធំនៅក្រោយគេបង្អស់។</p>
+                </div>
+            </div>
+        `},
+
+        // 21. Post-order Code
+        { t: "២១. កូដ Python សម្រាប់ Post-order Traversal", hasCode: true, type: "card", c: `
+            <div class="two-column-equal">
+                <div style="display: flex; flex-direction: column; gap: 1.2vh;">
+                    <div class="analogy-box" style="border-left-color: var(--accent-blue); background: #F0F9FF;">
+                        <div class="analogy-header" style="color: var(--accent-blue);"><i class="fa-solid fa-lightbulb"></i> ចំណុចគន្លឹះនៃ Post-order</div>
+                        <p class="analogy-text">កូដនេះនឹងដំណើរការស្វែងរកទៅមែកខាងក្រោមទាំងសងខាងឱ្យរួចរាល់សិន ទើបបង្ហាញតម្លៃ Root នៅចុងក្រោយគេបង្អស់។</p>
+                    </div>
+                </div>
+                <div>
+                    <div class="code-wrapper" style="border-color: var(--accent-blue);">
+                        <div class="code-header" style="background: #1B2838;"><span style="color: #60A5FA;"><i class="fa-brands fa-python"></i> កូដ៖ Post-order Traversal</span></div>
+                        <div class="code-content"><pre>
+<span class="kw">def</span> <span class="fn">postorder</span>(root):
+    <span class="kw">if</span> root:
+        <span class="com"># 1. ទៅឆ្វេងឱ្យអស់</span>
+        postorder(root.left)
+        
+        <span class="com"># 2. ទៅស្តាំឱ្យអស់</span>
+        postorder(root.right)
+        
+        <span class="com"># 3. បង្ហាញតម្លៃ Root នៅក្រោយគេ</span>
+        <span class="fn">print</span>(root.val, end=<span class="str">" "</span>)</pre></div>
+                    </div>
+                </div>
+            </div>
+        `},
+
+        // 22. Balanced vs Skewed BST
+        { t: "២២. ករណីពិសេស៖ Balanced BST vs Skewed BST", hasCode: false, type: "split", svg: balanceVsSkewedSVG, c: `
+            <div style="display:flex; flex-direction:column; height:100%; justify-content:center;">
+                <p style="margin-bottom: 1.2vh;"><b><i class="fa-solid fa-scale-balanced keyword-icon"></i> តុល្យភាពនៃ Tree (Balance)</b> មានឥទ្ធិពលខ្លាំងលើល្បឿនស្វែងរកទិន្នន័យ៖</p>
+                <div class="analogy-box" style="border-left-color: var(--accent-green); background: #F0FDF4;">
+                    <div class="analogy-header" style="color: var(--accent-green);"><i class="fa-solid fa-circle-check"></i> Balanced BST (ល្អបំផុត)</div>
+                    <p class="analogy-text">មែកឆ្វេង និងស្តាំមានលំនឹងល្អ។ ល្បឿនស្វែងរកលឿនបំផុតគឺ <b>O(log n)</b>។</p>
+                </div>
+                <div class="analogy-box" style="border-left-color: var(--accent-red); background: #FFF5F5;">
+                    <div class="analogy-header" style="color: var(--accent-red);"><i class="fa-solid fa-triangle-exclamation"></i> Skewed BST (អាក្រក់បំផុត)</div>
+                    <p class="analogy-text">កើតឡើងនៅពេលបញ្ចូលទិន្នន័យដែលមានលំដាប់ស្រាប់ (ឧ. ១០, ២០, ៣០...)。 វានឹងដុះមែកតែម្ខាងមើលទៅដូច Linked List។ ល្បឿនស្វែងរកយឺតគឺ <b>O(n)</b>។</p>
+                </div>
+            </div>
+        `},
+
+        // 23. Self-Balancing Trees: AVL Trees
+        { t: "២៣. ដំណោះស្រាយបញ្ហា Skewed: ដើមឈើ AVL (AVL Tree)", hasCode: false, type: "split", svg: avlRotationSVG, c: `
+            <div style="display:flex; flex-direction:column; height:100%; justify-content:center;">
+                <p style="margin-bottom: 1vh;"><b><i class='fa-solid fa-arrows-spin keyword-icon'></i> AVL Tree (Adelson-Velsky & Landis):</b></p>
+                <div class="analogy-box">
+                    <div class="analogy-header"><i class="fa-solid fa-shield-halved"></i> ស្វ័យតុល្យភាព (Self-Balancing Binary Tree)</div>
+                    <p class="analogy-text">ជាប្រភេទ BST ពិសេសដែលលៃលកតុល្យភាពដោយស្វ័យប្រវត្តិ។ រាល់ពេលបញ្ចូល ឬលុប Node, AVL នឹងពិនិត្យមើលកម្ពស់មែកឆ្វេង និងស្តាំ។ បើខុសគ្នាលើសពី ១ កម្រិត វានឹងធ្វើការ <b>បង្វិល (Rotation)</b> ដើម្បីរក្សាតុល្យភាពឡើងវិញ។</p>
+                </div>
+                <div class="analogy-box">
+                    <div class="analogy-header"><i class="fa-solid fa-scale-balanced"></i> ករណីសិក្សា៖ ជញ្ជីងថ្លឹងបុរាណ</div>
+                    <p class="analogy-text">ប្រៀបដូចជាជញ្ជីងថ្លឹងថ្នាំបុរាណ។ កាលណាដាក់ថ្នាំធ្ងន់ខាងឆ្វេងខ្លាំង គ្រូពេទ្យត្រូវរំកិលកូនជញ្ជីង ឬប្តូរទីតាំងថ្នាំទៅស្តាំវិញភ្លាម ដើម្បីឲ្យជញ្ជីងមានលំនឹងស្មើគ្នាជានិច្ច។</p>
+                </div>
+            </div>
+        `},
+
+        // 24. Time Complexity Table
+        { t: "២៤. ការវិភាគប្រសិទ្ធភាពពេលវេលា (Time Complexity Comparison)", hasCode: false, type: "table", rows: [
+            ["រចនាសម្ព័ន្ធ (DS)", "ស្វែងរក (Search)", "បញ្ចូល (Insert)", "លុប (Delete)", "ការវិភាគរួម"],
+            ["<b><i class='fa-solid fa-list-ol tech-icon'></i> Array (Sorted)</b>", "<b style='color:var(--accent-green)'>O(log n)</b>", "<b style='color:var(--accent-red)'>O(n) យឺត</b>", "<b style='color:var(--accent-red)'>O(n) យឺត</b>", "ស្វែងរកលឿន តែបញ្ចូលយឺត"],
+            ["<b><i class='fa-solid fa-link tech-icon'></i> Linked List</b>", "<b style='color:var(--accent-red)'>O(n) យឺត</b>", "<b style='color:var(--accent-green)'>O(1) លឿន</b>", "<b style='color:var(--accent-green)'>O(1) លឿន</b>", "បញ្ចូលលឿន តែស្វែងរកយឺត"],
+            ["<b><i class='fa-solid fa-sitemap tech-icon'></i> BST (Average)</b>", "<b style='color:var(--accent-green)'>O(log n) លឿន</b>", "<b style='color:var(--accent-green)'>O(log n) លឿន</b>", "<b style='color:var(--accent-green)'>O(log n) លឿន</b>", "មានលំនឹងល្អទាំងស្វែងរក និងបញ្ចូល"],
+            ["<b><i class='fa-solid fa-sitemap tech-icon'></i> BST (Worst)</b>", "<b style='color:var(--accent-red)'>O(n) យឺត</b>", "<b style='color:var(--accent-red)'>O(n) យឺត</b>", "<b style='color:var(--accent-red)'>O(n) យឺត</b>", "កើតឡើងនៅពេល Tree ដុះមែកតែម្ខាង (Skewed)"]
+        ]},
+
+        // 25. Real-world Application: Trie (Prefix Tree)
+        { t: "២៥. ការអនុវត្តជាក់ស្តែង៖ Trie Tree សម្រាប់ Autocomplete", hasCode: false, type: "split", svg: trieSVG, c: `
+            <div style="display:flex; flex-direction:column; height:100%; justify-content:center;">
+                <p style="margin-bottom: 1vh;"><b><i class='fa-solid fa-font keyword-icon'></i> Trie (Prefix Tree):</b> ជារចនាសម្ព័ន្ធ Tree ពិសេសប្រើសម្រាប់រក្សាទុកអក្សរ ឬពាក្យ។</p>
+                <div class="analogy-box">
+                    <div class="analogy-header"><i class="fa-solid fa-magnifying-glass"></i> ប្រព័ន្ធទាយពាក្យស្វែងរក (Google Autocomplete)</div>
+                    <p class="analogy-text">នៅពេលអ្នកវាយអក្សរ "CA" ក្នុង Google Search ឬ ABA App, ប្រព័ន្ធនឹងដើរតាមមែកធាង Trie ទៅកាន់អក្សរ "CA" រួចបង្ហាញពាក្យបន្តដូចជា "CAT", "CAR", "CAB" ភ្លាមៗ ក្នុងល្បឿនលឿនបំផុត។</p>
+                </div>
+                <div class="analogy-box">
+                    <div class="analogy-header"><i class="fa-solid fa-memory"></i> សន្សំសំចៃមេម៉ូរីកម្រិតខ្ពស់</div>
+                    <p class="analogy-text">ដោយសារពាក្យដែលមានបុព្វបទដូចគ្នា (ដូចជា "CA") ត្រូវបានរក្សាទុករួមគ្នានៅក្នុង Node មេតែមួយ វាមិនបង្កើតអក្សរដដែលៗ ដែលនាំឲ្យចំណេញមេម៉ូរីធំធេង។</p>
+                </div>
+            </div>
+        `},
+
+        // 26. Real-world Application: Decision Trees
+        { t: "២៦. ការអនុវត្តក្នុង AI: Decision Tree (ដើមឈើសម្រេចចិត្ត)", hasCode: false, type: "split", svg: decisionTreeSVG, c: `
+            <div style="display:flex; flex-direction:column; height:100%; justify-content:center;">
+                <p style="margin-bottom: 1vh;"><b><i class='fa-solid fa-brain keyword-icon'></i> Decision Trees ក្នុង Machine Learning (ML):</b></p>
+                <div class="analogy-box">
+                    <div class="analogy-header"><i class="fa-solid fa-wand-magic-sparkles"></i> យន្តការវាយតម្លៃ និងទស្សន៍ទាយរបស់ AI</div>
+                    <p class="analogy-text">Decision Tree គឺជាក្បួនដោះស្រាយដ៏ពេញនិយមបំផុតមួយក្នុងវិស័យវិទ្យាសាស្ត្រទិន្នន័យ (Data Science)។ AI ប្រើប្រាស់វាដើម្បីបំបែកលក្ខខណ្ឌទិន្នន័យជាមែកធាងសម្រេចចិត្ត ដូចជាការកំណត់ថាគួរអនុម័តប្រាក់កម្ចី ឬអត់។</p>
+                </div>
+                <div class="analogy-box">
+                    <div class="analogy-header"><i class="fa-solid fa-network-wired"></i> ការពង្រីកទៅជា Random Forest</div>
+                    <p class="analogy-text">នៅក្នុងប្រព័ន្ធ AI កម្រិតខ្ពស់ គេរួមបញ្ចូលគ្នានូវ Decision Tree រាប់រយបញ្ចូលគ្នា បង្កើតបានជា <b>Random Forest</b> ដើម្បីបង្កើនភាពត្រឹមត្រូវនៃការទស្សន៍ទាយឲ្យកាន់តែប្រសើរ។</p>
+                </div>
+            </div>
+        `},
+
+        // 27. Real-world Applications: Databases
+        { t: "២៧. ការប្រើប្រាស់ក្នុងប្រព័ន្ធ Database & ឯកសារកុំព្យូទ័រ", hasCode: false, type: "grid", c: [
+            { h: "<i class='fa-solid fa-database keyword-icon'></i> Database Indexing (B-Tree)", p: "ប្រព័ន្ធគ្រប់គ្រងទិន្នន័យខ្នាតយក្ស (MySQL, PostgreSQL) ប្រើប្រាស់ B-Tree (ប្រភេទមែកធាងកម្រិតខ្ពស់) ដើម្បីស្វែងរកប្រតិបត្តិការផ្ទេរប្រាក់រាប់លាន ក្នុងល្បឿនពន្លឺ O(log n)។" },
+            { h: "<i class='fa-solid fa-folder-open keyword-icon'></i> File Directory (រចនាសម្ព័ន្ធឯកសារ)", p: "ថតឯកសារក្នុងកុំព្យូទ័រ (Drive C: ➔ Users ➔ Documents) ត្រូវបានរៀបចំឡើងជាទម្រង់ Tree ទាំងស្រុង។ រាល់ការបើក Folder កូន គឺជាការដើរចុះក្រោមតាម Edge របស់ Tree។" },
+            { h: "<i class='fa-solid fa-network-wired keyword-icon'></i> Domain Name System (DNS)", p: "ប្រព័ន្ធអ៊ីនធឺណិតប្រើប្រាស់ DNS Tree ដើម្បីបកប្រែឈ្មោះវេបសាយ (au.edu.kh) ទៅជាលេខ IP Address។ Root DNS គ្រប់គ្រង (.kh), បន្ទាប់មកគ្រប់គ្រង (.edu) និង (.au)។" },
+            { h: "<i class='fa-solid fa-code keyword-icon'></i> HTML Document Object Model (DOM)", p: "រាល់ទំព័រវេបសាយដែលអ្នកកំពុងមើលនេះ ត្រូវបានកម្មវិធីរុករក (Web Browser) បម្លែងទៅជា DOM Tree (Body ➔ Div ➔ P) មុននឹងបង្ហាញរូបរាងមកលើអេក្រង់។" }
+        ]},
+
+        // 28. Practice Note
+        { t: "២៨. លំហាត់អនុវត្តន៍កូដ (Practice Exercises)", hasCode: false, type: "card", c: `
+            <div style="text-align:center; padding: 2vh 2vw;">
+                <i class="fa-solid fa-laptop-code" style="font-size: 5vw; color: var(--accent-blue); margin-bottom: 2vh;"></i>
+                <h3 style="font-size: 2.3vw; color: var(--accent-blue); font-family: 'Suwannaphum'; margin-bottom: 1.5vh;">ដល់ពេលអនុវត្តន៍ជាក់ស្តែងហើយ!</h3>
+                <p style="font-size: 1.6vw; color: var(--text-main); margin-bottom: 3vh;">បន្ទាប់ពីយល់ទ្រឹស្តី និងករណីសិក្សាប្រៀបធៀបរួច និស្សិតត្រូវអនុវត្តការសរសេរកូដដោយខ្លួនឯង។</p>
+                
+                <div class="highlight-note green" style="display:inline-block; text-align: left; padding: 2vh 3vw; border-width: 2px;">
+                    <p style="margin: 0; font-size: 1.6vw;">
+                        <i class="fa-solid fa-bell"></i> <b>បញ្ជាក់៖</b> មានលំហាត់កូដ Python ពេញលេញចំនួន <b>២០ លំហាត់</b> ត្រូវបានរៀបចំយ៉ាងលម្អិតនៅក្នុង <br><b>"សៀវភៅលំហាត់អនុវត្តន៍ (Workbook) - ជំពូកទី ៥"</b> រង់ចាំនិស្សិតយកទៅ Run ផ្ទាល់!
+                    </p>
+                </div>
+            </div>
+        `},
+
+        // 29. Summary
+        { t: "២៩. សទ្ទានុក្រម និងសង្ខេបជំពូកទី ៥ (Summary)", hasCode: false, type: "grid", c: [
+            { h: "<i class='fa-solid fa-spell-check keyword-icon'></i> ពាក្យគន្លឹះ (Key Terms)", p: "<ul><li><b><i class='fa-solid fa-folder-tree tech-icon'></i>Tree:</b> រចនាសម្ព័ន្ធ Hierarchical មាន Root ឯកា និងកូនៗខាងក្រោម (Leaves)។</li><li><b><i class='fa-solid fa-sitemap tech-icon'></i>BST:</b> Tree ដែលមែកឆ្វេងតូចជាង Root ចំណែកមែកស្តាំធំជាង Root។</li><li><b><i class='fa-solid fa-route tech-icon'></i>Traversal:</b> វិធីដើររុករកតាមលំដាប់ (Pre-order, In-order, Post-order)។</li></ul>" },
+            { h: "<i class='fa-solid fa-clipboard-list keyword-icon'></i> សង្ខេបជំពូក (Summary)", p: "<b><i class='fa-solid fa-sitemap tech-icon'></i>BST</b> គឺជាការរួមបញ្ចូលគ្នានូវចំណុចល្អរបស់ Array និង Linked List។ វាមានល្បឿនលឿន O(log n) ទាំងក្នុងការស្វែងរក និងការបញ្ចូលទិន្នន័យ ដែលធ្វើឱ្យវាជា Data Structure ដ៏សំខាន់បំផុតមួយក្នុងការអភិវឌ្ឍប្រព័ន្ធ Database ធំៗ និង AI។" }
+        ]},
+
+        // 30. References
+        { t: "៣០. ឯកសារយោង និងគន្ថនិទ្ទេស (References)", hasCode: false, type: "list", c: [
+            "<b><i class='fa-solid fa-book text-blue' style='margin-right:0.5vw;'></i> Goodrich, M. T. (2013).</b> <i>Data Structures and Algorithms in Python</i>. Wiley. (ជំពូកទី ៨: Trees, ជំពូកទី ១១: Search Trees).",
+            "<b><i class='fa-solid fa-book text-blue' style='margin-right:0.5vw;'></i> Cormen, T. H. (2022).</b> <i>Introduction to Algorithms</i> (4th ed.). MIT Press.",
+            "<b><i class='fa-solid fa-link text-blue' style='margin-right:0.5vw;'></i> GeeksforGeeks:</b> Binary Search Tree: <a href='#' style='color:var(--accent-blue); text-decoration:none;'>geeksforgeeks.org/binary-search-tree-data-structure/</a>",
+            "<b><i class='fa-brands fa-youtube text-blue' style='margin-right:0.5vw;'></i> CS Dojo:</b> Trees and Binary Search Trees (YouTube)."
+        ]}
+    ];
+
+    const container = document.getElementById('slideWrapper');
+
+    chapter5Data.forEach((item, index) => {
+        const slide = document.createElement('div');
+        slide.className = 'slide';
+        
+        let bodyContent = '';
+        if(item.type === "split") {
+            let visual = item.img ? `<img src="${item.img}">` : (item.svg ? item.svg : '');
+            bodyContent = `<div class="two-column"><div class="card" style="height:100%; border:none; padding:0; background:transparent; justify-content:start;">${item.c}</div><div class="visual-frame">${visual}</div></div>`;
+        } else if(item.type === "two-equal") {
+            bodyContent = `<div class="two-column-equal">${item.c}</div>`;
+        } else if(item.type === "grid") {
+            bodyContent = `<div class="card-grid">${item.c.map(c => `<div class="card"><h4>${c.h}</h4><div style="margin:0; font-size: 1.3vw;">${c.p}</div></div>`).join('')}</div>`;
+        } else if(item.type === "card") {
+            bodyContent = `<div class="card" style="height: 100%; justify-content: center; background:#FFFFFF;">${item.c}</div>`;
+        } else if(item.type === "table") {
+            let th = `<tr>${item.rows[0].map(h => `<th style="text-align:center;">${h}</th>`).join('')}</tr>`;
+            let trs = item.rows.slice(1).map(r => `<tr>${r.map((td, i) => `<td ${i>0 ? 'align="center"' : ''}>${td}</td>`).join('')}</tr>`).join('');
+            bodyContent = `<table><thead>${th}</thead><tbody>${trs}</tbody></table>`;
+        } else if(item.type === "list") {
+            bodyContent = `<div class="card" style="padding: 3vh 4vw; background:#FFFFFF;"><ul style="list-style:none; padding-left:1vw; line-height:2.2;">${item.c.map(l => `<li>${l}</li>`).join('')}</ul></div>`;
+        }
+
+        const badge = item.hasCode ? ` <span class="badge-python"><i class="fa-brands fa-python"></i> Python Code</span>` : '';
+        slide.innerHTML = `<div id="h-placeholder-${index}"></div> <h2 class="slide-title">${item.t}${badge}</h2> <div class="content-body">${bodyContent}</div>`;
+        container.appendChild(slide);
+    });
+
+    // Q&A Slide
+    const qaSlide = document.createElement('div');
+    qaSlide.className = 'slide';
+    qaSlide.innerHTML = `
+        <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; text-align: center;">
+            <h1 style="font-size: 5vw; color: var(--accent-blue); margin-bottom: 2vh;"><i class="fa-solid fa-comments"></i> សំណួរ និងការពិភាក្សា</h1>
+            <p style="font-size: 2vw; color: var(--text-muted); margin-bottom: 5vh;">សូមអរគុណនិស្សិតទាំងអស់សម្រាប់ការយកចិត្តទុកដាក់!</p>
+            <div style="display: flex; gap: 2vw; justify-content: center;">
+                <div style="background: #FFFFFF; padding: 2vh 3vw; border-radius: 5vw; border: 2px solid var(--accent-blue); box-shadow: 0 10px 20px rgba(0,0,0,0.05);">
+                    <p style="margin: 0; font-weight: bold; font-size: 1.6vw; color: var(--accent-blue);"><i class="fa-solid fa-envelope"></i> soeurnglim@gmail.com</p>
+                </div>
+                <div style="background: #FFFFFF; padding: 2vh 3vw; border-radius: 5vw; border: 2px solid #0088cc; box-shadow: 0 10px 20px rgba(0,0,0,0.05);">
+                    <p style="margin: 0; font-weight: bold; font-size: 1.6vw; color: #0088cc;"><i class="fa-brands fa-telegram"></i> ០៦១ ២២៧ ៩៣៣</p>
+                </div>
+            </div>
+        </div>
+    `;
+    container.appendChild(qaSlide);
+
+    // End of Chapter
+    const endSlide = document.createElement('div');
+    endSlide.className = 'slide';
+    endSlide.innerHTML = `
+        <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; text-align: center;">
+            <i class="fa-solid fa-flag-checkered" style="font-size: 5vw; color: var(--accent-green); margin-bottom: 2vh;"></i>
+            <h1 style="font-size: 4.2vw; color: var(--accent-blue); margin-bottom: 1vh;">បញ្ចប់ជំពូកទី ៥</h1>
+            <p style="font-size: 1.8vw; color: var(--text-muted); margin-bottom: 5vh;">ត្រៀមខ្លួនអនុវត្តកូដក្នុងសៀវភៅ Workbook!</p>
+        </div>
+    `;
+    container.appendChild(endSlide);
+
+    // Next Chapter Prep
+    const nextChapSlide = document.createElement('div');
+    nextChapSlide.className = 'slide';
+    nextChapSlide.innerHTML = `
+        <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; text-align: center;">
+            <h2 style="font-size: 2.3vw; color: var(--text-muted); margin-bottom: 2vh;"><i class="fa-solid fa-forward-step"></i> ត្រៀមសម្រាប់សប្តាហ៍បន្ទាប់</h2>
+            <div class="card" style="background: #FFFFFF; border-left: 1vw solid var(--accent-yellow); padding: 4vh 6vw; box-shadow: 0 15px 30px rgba(0,0,0,0.1); border-radius: 1.5vw; margin-top: 2vh;">
+                <h1 style="font-size: 3.2vw; color: var(--accent-blue); margin-bottom: 1.5vh; font-family: 'Suwannaphum';">ជំពូកទី ៦</h1>
+                <h2 style="font-size: 2.3vw; color: var(--text-main); margin: 0; font-family: 'Suwannaphum';">រចនាសម្ព័ន្ធទិន្នន័យ Graphs និង Hash Tables<br><span style="font-size: 1.6vw; color: var(--text-muted); font-family: 'Lato';">(Graphs, Networks & Hashing)</span></h2>
+            </div>
+            <p style="font-size: 1.5vw; color: var(--text-muted); margin-top: 4vh;"><i class="fa-solid fa-book-open"></i> សូមអានសៀវភៅគោលជំពូកទី៦ ជាមុន ដើម្បីងាយស្រួលក្នុងការអនុវត្តកូដ!</p>
+        </div>
+    `;
+    container.appendChild(nextChapSlide);
+
+    // -----------------------------------------------------
+    // Initialize Navigation and Print Layouts
+    // -----------------------------------------------------
+
+    // 1. Apply Global Header to all slides
+    document.querySelectorAll('[id^="h-placeholder"]').forEach(p => p.outerHTML = headerHTML);
+
+    // 2. Count Total Slides
+    const slides = document.querySelectorAll('.slide');
+    const totalSlides = slides.length;
+    
+    // 3. Setup Print Footers
+    const mainFooter = document.getElementById('mainFooter');
+    const screenCounter = document.getElementById('screenSlideCounter'); 
+
+    slides.forEach((slide, index) => {
+        let printFooter = mainFooter.cloneNode(true);
+        printFooter.id = ''; 
+        
+        let printCounter = printFooter.querySelector('.slide-counter');
+        if (printCounter) {
+            printCounter.id = ''; 
+            printCounter.innerHTML = `ស្លាយទី ${toKh(index + 1)} នៃ ${toKh(totalSlides)}`; 
+        }
+        
+        printFooter.className = 'global-footer print-only-footer';
+        slide.appendChild(printFooter);
+    });
+
+    // 4. Update function for Screen display
+    let currentIdx = 0;
+    function update(idx) { 
+        slides.forEach(s => s.classList.remove('active')); 
+        slides[idx].classList.add('active'); 
+        currentIdx = idx; 
+        
+        if (screenCounter) {
+            screenCounter.innerHTML = `ស្លាយទី ${toKh(idx + 1)} នៃ ${toKh(totalSlides)}`;
+        }
+    }
+
+    // 5. Allow Navigation by Clicking ONLY the arrows (So users can copy text)
+    document.querySelector('.nav-right').addEventListener('click', (e) => { 
+        e.stopPropagation(); 
+        if (currentIdx < totalSlides - 1) update(currentIdx + 1); 
+    });
+    
+    document.querySelector('.nav-left').addEventListener('click', (e) => { 
+        e.stopPropagation(); 
+        if (currentIdx > 0) update(currentIdx - 1); 
+    });
+
+    // 6. Keyboard Navigation Support
+    document.addEventListener('keydown', (e) => {
+        if (e.key === "ArrowRight" || e.key === " " || e.key === "PageDown") { 
+            if (currentIdx < totalSlides - 1) update(currentIdx + 1); 
+        } else if (e.key === "ArrowLeft" || e.key === "PageUp") { 
+            if (currentIdx > 0) update(currentIdx - 1); 
+        }
+    });
+
+    // Start presentation
+    update(0); 
+</script>
+</body>
+</html>

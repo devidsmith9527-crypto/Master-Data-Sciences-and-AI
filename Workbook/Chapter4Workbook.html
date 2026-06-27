@@ -1,0 +1,1081 @@
+<!DOCTYPE html>
+<html lang="km">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Workbook Chapter 4 - Linked Lists</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Battambang:wght@400;700&family=Suwannaphum:wght@400;700;900&family=Lato:wght@400;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <style>
+        :root {
+            --bg-color: #E2E8F0;
+            --paper-white: #FFFFFF;
+            --text-main: #0F172A;
+            --text-muted: #475569;
+            --accent-blue: #0284C7; 
+            --accent-green: #059669;
+            --answer-color: #0369A1; 
+            --header-footer-bg: #F0F9FF;
+            --code-bg: #111827; 
+            --low: #059669; --mid: #D97706; --high: #DC2626;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            background-color: var(--bg-color);
+            font-family: 'Battambang', sans-serif;
+            color: var(--text-main);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 40px 20px;
+        }
+
+        /* A4 Page Layout - STRICT FIXED HEIGHT */
+        .a4-page {
+            width: 210mm; 
+            height: 297mm; 
+            background: var(--paper-white);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1); 
+            margin-bottom: 30px;
+            display: block; 
+            position: relative; 
+            border-radius: 8px;
+            page-break-after: always;
+            overflow: hidden; 
+        }
+
+        /* COVER PAGE STYLES */
+        .cover-page {
+            display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; 
+            padding: 30mm 20mm;
+            background-image: linear-gradient(to bottom, #F0F9FF, #FFFFFF);
+        }
+        .cover-logo { width: 140px; margin-bottom: 15px; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1)); }
+        .cover-uni-kh { font-family: 'Suwannaphum'; color: var(--accent-blue); font-size: 38px; margin: 0 0 5px 0; font-weight: 900; }
+        .cover-uni-en { font-family: 'Lato'; color: #475569; font-size: 18px; margin: 0 0 40px 0; letter-spacing: 1px; font-weight: bold; }
+        .cover-program { font-family: 'Suwannaphum'; font-size: 20px; color: var(--accent-green); margin-bottom: 25px; font-weight: bold; }
+        .cover-chapter-badge { background: var(--accent-blue); color: white; padding: 10px 40px; border-radius: 50px; font-size: 22px; font-weight: bold; margin-bottom: 40px; font-family: 'Suwannaphum'; box-shadow: 0 5px 15px rgba(2,132,199,0.3); display: inline-block;}
+        .cover-main-title { font-family: 'Suwannaphum'; font-size: 34px; color: var(--text-main); line-height: 1.4; margin-bottom: 10px; font-weight: 900; }
+        .cover-sub-title { font-family: 'Lato'; font-size: 22px; color: var(--accent-blue); margin-bottom: 50px; font-weight: bold; }
+        
+        .cover-author-wrapper { display: flex; flex-direction: column; align-items: center; gap: 15px; margin-bottom: 40px; }
+        .cover-author-img { width: 100px; height: 100px; border-radius: 50%; border: 4px solid var(--accent-blue); object-fit: cover; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        .cover-author-text { font-size: 20px; color: var(--text-muted); font-family: 'Suwannaphum'; }
+        .cover-author-text strong { color: var(--accent-blue); font-size: 24px; }
+
+        .cover-icons-wrapper { display: flex; gap: 60px; justify-content: center; margin-top: auto; border-top: 1px solid #E2E8F0; padding-top: 20px; width: 100%; }
+        .cover-icon-item img { height: 70px; margin-bottom: 10px; object-fit: contain; }
+        .cover-icon-item p { font-size: 16px; font-weight: bold; color: var(--accent-blue); font-family: 'Lato'; }
+
+        /* HEADER */
+        .global-header {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 12px 25px; border-bottom: 3px solid var(--accent-blue); background-color: var(--header-footer-bg);
+            height: 75px; box-sizing: border-box;
+        }
+        .header-item { display: flex; flex-direction: column; align-items: center; gap: 3px; width: 120px; }
+        .header-item img { height: 40px; object-fit: contain; }
+        .header-item span { font-size: 10px; font-weight: bold; color: var(--accent-blue); text-align: center; font-family: 'Suwannaphum'; }
+        .header-center { text-align: center; }
+        .header-center h1 { font-family: 'Suwannaphum'; font-size: 16px; color: var(--accent-blue); margin: 0; }
+        .header-center p { font-family: 'Battambang'; font-size: 11px; color: #64748B; margin: 0; font-weight: bold; text-transform: uppercase;}
+
+        /* CONTENT */
+        .page-content { padding: 8mm 15mm; height: calc(297mm - 75px - 55px); overflow: hidden; box-sizing: border-box; display: flex; flex-direction: column;}
+        
+        .student-info {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 12px;
+            border: 1px solid #CBD5E1; padding: 10px 15px; border-radius: 8px; background: #F8FAFC; flex-shrink: 0;
+        }
+        .info-line { font-size: 14px; display: flex; align-items: flex-end; font-weight: bold;}
+        .info-line span { flex-grow: 1; border-bottom: 1px dotted #94A3B8; margin-left: 10px; height: 18px; color: var(--answer-color); font-weight: normal; padding-left: 10px;}
+
+        .case-title {
+            background: var(--header-footer-bg); border-left: 5px solid var(--accent-blue);
+            padding: 8px 15px; margin: 12px 0 10px 0; font-family: 'Suwannaphum';
+            font-size: 16px; display: flex; align-items: center; gap: 10px; font-weight: bold;
+            border-radius: 0 6px 6px 0; color: var(--accent-blue); page-break-after: avoid; flex-shrink: 0;
+        }
+        
+        .exercise-block { margin-bottom: 10px; border: 1px solid #E2E8F0; padding: 10px 12px; border-radius: 6px; background: white; page-break-inside: avoid; flex-shrink: 0;}
+        .exercise-block p { margin-bottom: 6px; font-size: 13.5px; font-weight: bold; color: #1E293B; display: flex; align-items: center; gap: 8px;}
+        
+        .level-badge { font-size: 11px; color: white; padding: 3px 8px; border-radius: 4px; font-weight: bold; display: inline-block; margin-right: 8px; font-family: 'Battambang';}
+        .bg-low { background-color: var(--low); }
+        .bg-mid { background-color: var(--mid); }
+        .bg-high { background-color: var(--high); }
+
+        /* CODE DISPLAY */
+        .code-container {
+            background: var(--code-bg); border-radius: 6px; padding: 10px 12px; margin: 6px 0;
+            overflow-x: auto; border: 1px solid #374151; position: relative;
+        }
+        .code-header { background: #1F2937; padding: 4px 8px; font-size: 11px; font-family: 'Battambang'; color: #38BDF8; border-bottom: 1px solid #374151; margin: -10px -12px 8px -12px; border-radius: 6px 6px 0 0; display: flex; align-items: center; gap: 8px;}
+        pre { font-family: 'Fira Code', monospace; font-size: 11.5px; line-height: 1.45; color: #f8f8f2; margin: 0; }
+        .kw { color: #ff79c6; font-weight: bold; } 
+        .fn { color: #50fa7b; } 
+        .str { color: #f1fa8c; } 
+        .com { color: #6272a4; font-style: italic; } 
+        .num { color: #bd93f9; } 
+
+        .answer-box { margin-top: 8px; font-size: 13.5px; display: flex; align-items: flex-start; }
+        .answer-box label { font-family: 'Battambang', sans-serif; font-weight: bold; margin-right: 10px; color: #475569; white-space: nowrap;}
+        .filled-answer { 
+            flex-grow: 1; border-bottom: 1px dotted #94A3B8; color: var(--answer-color); 
+            font-family: 'Battambang', sans-serif; line-height: 1.5; padding-bottom: 2px;
+        }
+
+        /* Note Area */
+        .note-area {
+            flex-grow: 1; border: 1px dashed #CBD5E1; background: #F8FAFC; border-radius: 8px;
+            padding: 15px; margin-top: 5px; color: #94A3B8; font-size: 13.5px; display: flex; flex-direction: column;
+        }
+
+        /* FOOTER - FIXED TO ABSOLUTE BOTTOM */
+        .global-footer {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 10px 25px; border-top: 3px solid var(--accent-blue);
+            background-color: var(--header-footer-bg); 
+            position: absolute; bottom: 0; left: 0; width: 100%; height: 55px; box-sizing: border-box;
+        }
+        .footer-left { display: flex; align-items: center; gap: 10px; }
+        .footer-left img { border-radius: 50%; border: 2px solid var(--accent-blue); width: 30px; height: 30px; object-fit: cover; background-color: #fff; }
+        .footer-left span { font-size: 11px; font-weight: bold; color: var(--text-main); font-family: 'Suwannaphum'; }
+        .footer-right { font-size: 11px; color: var(--accent-blue); font-weight: bold; font-family: 'Battambang'; }
+
+        /* PRINT MEDIA QUERY */
+        @page { size: A4; margin: 0; }
+        @media print {
+            body { background: white; padding: 0; margin: 0; }
+            .a4-page { box-shadow: none; margin: 0; width: 210mm; height: 297mm; border: none; border-radius: 0; page-break-after: always; }
+            .a4-page:last-child { page-break-after: auto; }
+            .no-print { display: none !important; }
+            * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+        }
+    </style>
+</head>
+<body>
+
+<button class="no-print" onclick="window.print()" style="margin-bottom: 20px; padding: 12px 25px; cursor: pointer; background: var(--accent-blue); color: white; border: none; border-radius: 8px; font-family: 'Battambang'; font-weight: bold; font-size: 16px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); transition: all 0.3s;">
+    <i class="fa-solid fa-print"></i> បោះពុម្ពសៀវភៅលំហាត់ (Print as PDF)
+</button>
+
+<!-- COVER PAGE -->
+<div class="a4-page cover-page">
+    <img src="Logo.png" class="cover-logo" onerror="this.src='https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png'">
+    <h1 class="cover-uni-kh">សាកលវិទ្យាល័យអង្គរ</h1>
+    <p class="cover-uni-en">ANGKOR UNIVERSITY</p>
+
+    <div class="cover-program">
+        <i class="fa-solid fa-graduation-cap"></i> អនុបណ្ឌិតវិទ្យាសាស្ត្រទិន្នន័យ និងបញ្ញាសិប្បនិម្មិត (Master of Data Science and AI)
+    </div>
+
+    <div class="cover-chapter-badge">សៀវភៅលំហាត់អនុវត្តន៍ (Workbook) | ២០២៥-២០២៦</div>
+
+    <h1 class="cover-main-title">ជំពូកទី ៤៖ រចនាសម្ព័ន្ធទិន្នន័យបណ្តាញតភ្ជាប់</h1>
+    <h2 class="cover-sub-title">(Linked Lists - Singly & Doubly)</h2>
+
+    <div class="cover-author-wrapper">
+        <img src="Lim.jpg" class="cover-author-img" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'">
+        <div class="cover-author-text">
+            សាស្ត្រាចារ្យ៖
+        </div>
+        <div class="cover-author-text">
+            <strong>សឿង លីម (Soeurng LIM)</strong>
+        </div>
+    </div>
+
+    <div class="cover-icons-wrapper">
+        <div class="cover-icon-item">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg">
+            <p>Pythons</p>
+        </div>
+        <div class="cover-icon-item">
+            <img src="https://cdn-icons-png.flaticon.com/512/2103/2103633.png">
+            <p>DSA in Pythons</p>
+        </div>
+    </div>
+</div>
+
+<!-- PAGE 1 : Node Basics -->
+<div class="a4-page">
+    <div class="global-header">
+        <div class="header-item"><img src="Logo.png" onerror="this.src='https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png'"><span>សាកលវិទ្យាល័យអង្គរ</span></div>
+        <div class="header-center">
+            <h1>សៀវភៅលំហាត់អនុវត្តន៍ - ជំពូកទី ៤</h1>
+            <p>ADVANCED DATA STRUCTURES AND ALGORITHMS</p>
+        </div>
+        <div class="header-item"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg"><span>Python Pro</span></div>
+    </div>
+
+    <div class="page-content">
+        <div class="student-info">
+            <div class="info-line">អត្តលេខ (ID): <span>អត្រាកំណែផ្លូវការ</span></div>
+            <div class="info-line">ឈ្មោះ (Name): <span>សន្លឹកចម្លើយ</span></div>
+        </div>
+
+        <div class="case-title"><i class="fa-solid fa-cube"></i> ១. ករណីសិក្សា៖ មូលដ្ឋានគ្រឹះនៃ Node (ចំណុចថ្នាំង)</div>
+        
+        <div class="exercise-block">
+            <p><span class="level-badge bg-low">ស្រាល ១</span> ការបង្កើតប្រអប់ទិន្នន័យ (Node Class)</p>
+            <div class="code-container">
+                <div class="code-header"><i class="fa-brands fa-python"></i> Copy & Run Code</div>
+<pre><span class="kw">class</span> <span class="fn">Node</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="kw">self</span>, data):
+        <span class="kw">self</span>.data = data
+        <span class="kw">self</span>.next = <span class="kw">None</span>
+
+<span class="com"># បង្កើតប្រអប់ (Object) ថ្មីមួយ</span>
+node1 = Node(<span class="str">"ផ្លែប៉ោម"</span>)
+<span class="fn">print</span>(<span class="str">"ទិន្នន័យក្នុងប្រអប់គឺ:"</span>, node1.data)
+<span class="fn">print</span>(<span class="str">"ខ្សែចង្អុលទៅ:"</span>, node1.next)</pre>
+            </div>
+            <div class="answer-box">
+                <label>ការពន្យល់កូដ ៖</label> 
+                <div class="filled-answer">យើងបង្កើត Class <code>Node</code> ជាពុម្ព។ ពេលបង្កើត <code>node1</code> វាផ្ទុកទិន្នន័យ "ផ្លែប៉ោម" ហើយខ្សែ <code>next</code> របស់វាគឺ <code>None</code> ព្រោះវាអត់ទាន់មានអ្នកតភ្ជាប់ទៅប្រអប់បន្ទាប់។</div>
+            </div>
+        </div>
+
+        <div class="exercise-block">
+            <p><span class="level-badge bg-low">ស្រាល ២</span> ការតភ្ជាប់ប្រអប់ Nodes ពីរចូលគ្នា (Link)</p>
+            <div class="code-container">
+                <div class="code-header"><i class="fa-brands fa-python"></i> Copy & Run Code</div>
+<pre><span class="kw">class</span> <span class="fn">Node</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="kw">self</span>, data):
+        <span class="kw">self</span>.data = data
+        <span class="kw">self</span>.next = <span class="kw">None</span>
+
+node_a = Node(<span class="str">"ទូរថភ្លើងទី ១"</span>)
+node_b = Node(<span class="str">"ទូរថភ្លើងទី ២"</span>)
+
+<span class="com"># ចងខ្សែពីប្រអប់ A ទៅប្រអប់ B</span>
+node_a.next = node_b
+
+<span class="fn">print</span>(<span class="str">"ប្រអប់បន្ទាប់ពី A គឺ:"</span>, node_a.next.data)</pre>
+            </div>
+            <div class="answer-box">
+                <label>គោលការណ៍តភ្ជាប់ ៖</label> 
+                <div class="filled-answer">យើងប្រើប្រាស់ Pointer <code>next</code> របស់ប្រអប់មុន ដើម្បីចង្អុល (រក្សាអាសយដ្ឋាន Memory) ទៅកាន់ប្រអប់បន្ទាប់ បង្កើតបានជាខ្សែសង្វាក់ទិន្នន័យ។</div>
+            </div>
+        </div>
+
+        <div class="note-area">
+            <i class="fa-solid fa-pen"></i> កន្លែងសម្រាប់កត់ត្រាបន្ថែម (Notes / Scratchpad)...
+        </div>
+    </div>
+
+    <div class="global-footer">
+        <div class="footer-left"><img src="Lim.jpg" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'"><span>សាស្ត្រាចារ្យ៖ សឿង លីម (Soeurng LIM)</span></div>
+        <div class="footer-right">ទំព័រទី ១ នៃ ១២</div>
+    </div>
+</div>
+
+<!-- PAGE 2 : SLL Basics -->
+<div class="a4-page">
+    <div class="global-header">
+        <div class="header-item"><img src="Logo.png" onerror="this.src='https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png'"><span>សាកលវិទ្យាល័យអង្គរ</span></div>
+        <div class="header-center">
+            <h1>សៀវភៅលំហាត់អនុវត្តន៍ - ជំពូកទី ៤</h1>
+            <p>ADVANCED DATA STRUCTURES AND ALGORITHMS</p>
+        </div>
+        <div class="header-item"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg"><span>Python Pro</span></div>
+    </div>
+
+    <div class="page-content">
+        <div class="case-title"><i class="fa-solid fa-arrow-right-long"></i> ២. ករណីសិក្សា៖ Singly Linked List (SLL)</div>
+        
+        <div class="exercise-block">
+            <p><span class="level-badge bg-low">ស្រាល ៣</span> ការតភ្ជាប់ Nodes ៣ និងតួនាទីរបស់ Head</p>
+            <div class="code-container">
+                <div class="code-header"><i class="fa-brands fa-python"></i> Copy & Run Code</div>
+<pre><span class="kw">class</span> <span class="fn">Node</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="kw">self</span>, d): <span class="kw">self</span>.data = d; <span class="kw">self</span>.next = <span class="kw">None</span>
+
+<span class="com"># បង្កើត Nodes ៣ ដាច់ពីគ្នា</span>
+head = Node(<span class="str">"A"</span>)
+nodeB = Node(<span class="str">"B"</span>)
+nodeC = Node(<span class="str">"C"</span>)
+
+<span class="com"># តភ្ជាប់ខ្សែបញ្ជូលគ្នា</span>
+head.next = nodeB
+nodeB.next = nodeC
+
+<span class="fn">print</span>(<span class="str">"លោតពីក្បាលទៅប្រអប់ទី ៣:"</span>, head.next.next.data)</pre>
+            </div>
+            <div class="answer-box">
+                <label>លទ្ធផល និង Head ៖</label> 
+                <div class="filled-answer">ចេញលទ្ធផល "C"។ <code>head</code> គឺសំខាន់បំផុត ព្រោះបើបាត់បង់ Head យើងនឹងបាត់បង់ការចង្អុលទៅកាន់ Node បន្តបន្ទាប់ទាំងអស់នៅក្នុងបណ្តាញ។</div>
+            </div>
+        </div>
+
+        <div class="exercise-block">
+            <p><span class="level-badge bg-mid">មធ្យម ១</span> ការរុករកបង្ហាញទិន្នន័យទាំងអស់ (Traversal)</p>
+            <div class="code-container">
+                <div class="code-header"><i class="fa-brands fa-python"></i> Copy & Run Code</div>
+<pre><span class="kw">class</span> <span class="fn">Node</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="kw">self</span>, d): <span class="kw">self</span>.data = d; <span class="kw">self</span>.next = <span class="kw">None</span>
+
+<span class="kw">def</span> <span class="fn">print_sll</span>(head):
+    curr = head
+    <span class="kw">while</span> curr <span class="kw">is not None</span>:
+        <span class="fn">print</span>(curr.data, end=<span class="str">" -> "</span>)
+        curr = curr.next <span class="com"># រំកិលទៅមុខតាមខ្សែបន្ទាប់</span>
+    <span class="fn">print</span>(<span class="str">"None"</span>)
+
+h = Node(<span class="num">1</span>); h.next = Node(<span class="num">2</span>); h.next.next = Node(<span class="num">3</span>)
+print_sll(h)</pre>
+            </div>
+            <div class="answer-box">
+                <label>ដំណើរការ While Loop (O(n)) ៖</label> 
+                <div class="filled-answer">អថេរ <code>curr</code> ដើរតួជាអ្នកដើរតាមខ្សែពីក្បាលរហូតដល់ប្រអប់ចុងក្រោយ (None) រួចផ្តិតយកទិន្នន័យបង្ហាញ។ បើមាន N ប្រអប់ វារត់ N ដង (O(n))។</div>
+            </div>
+        </div>
+
+        <div class="note-area">
+            <i class="fa-solid fa-pen"></i> កន្លែងសម្រាប់កត់ត្រាបន្ថែម (Notes / Scratchpad)...
+        </div>
+    </div>
+
+    <div class="global-footer">
+        <div class="footer-left"><img src="Lim.jpg" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'"><span>សាស្ត្រាចារ្យ៖ សឿង លីម (Soeurng LIM)</span></div>
+        <div class="footer-right">ទំព័រទី ២ នៃ ១២</div>
+    </div>
+</div>
+
+<!-- PAGE 3 : SLL Insertion & Count -->
+<div class="a4-page">
+    <div class="global-header">
+        <div class="header-item"><img src="Logo.png" onerror="this.src='https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png'"><span>សាកលវិទ្យាល័យអង្គរ</span></div>
+        <div class="header-center">
+            <h1>សៀវភៅលំហាត់អនុវត្តន៍ - ជំពូកទី ៤</h1>
+            <p>ADVANCED DATA STRUCTURES AND ALGORITHMS</p>
+        </div>
+        <div class="header-item"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg"><span>Python Pro</span></div>
+    </div>
+
+    <div class="page-content">
+        <div class="case-title"><i class="fa-solid fa-plus"></i> ៣. ករណីសិក្សា៖ ការបន្ថែម និងការរាប់ក្នុង SLL</div>
+        
+        <div class="exercise-block">
+            <p><span class="level-badge bg-mid">មធ្យម ២</span> ការរាប់ចំនួន Nodes សរុប (Length of SLL)</p>
+            <div class="code-container">
+                <div class="code-header"><i class="fa-brands fa-python"></i> Copy & Run Code</div>
+<pre><span class="kw">class</span> <span class="fn">Node</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="kw">self</span>, d): <span class="kw">self</span>.data = d; <span class="kw">self</span>.next = <span class="kw">None</span>
+
+<span class="kw">def</span> <span class="fn">count_nodes</span>(head):
+    count = <span class="num">0</span>
+    curr = head
+    <span class="kw">while</span> curr:
+        count += <span class="num">1</span>
+        curr = curr.next
+    <span class="kw">return</span> count
+
+head = Node(<span class="num">10</span>); head.next = Node(<span class="num">20</span>)
+<span class="fn">print</span>(<span class="str">"ចំនួន Nodes សរុប:"</span>, count_nodes(head))</pre>
+            </div>
+            <div class="answer-box">
+                <label>តើខុសពី <code>len()</code> ធម្មតាម៉េចខ្លះ?</label> 
+                <div class="filled-answer">សម្រាប់ List (Array) ធម្មតា <code>len()</code> ដើរក្នុងល្បឿន O(1) តែសម្រាប់ Linked List យើងត្រូវដើររាប់ម្តងមួយប្រអប់ ទើបវាប្រើពេលរហូតដល់ O(n)។</div>
+            </div>
+        </div>
+
+        <div class="exercise-block">
+            <p><span class="level-badge bg-low">ស្រាល ៤</span> បញ្ចូល Node ថ្មីនៅខាងមុខគេ (Insert at Head)</p>
+            <div class="code-container">
+                <div class="code-header"><i class="fa-brands fa-python"></i> Copy & Run Code</div>
+<pre><span class="kw">class</span> <span class="fn">Node</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="kw">self</span>, d): <span class="kw">self</span>.data = d; <span class="kw">self</span>.next = <span class="kw">None</span>
+
+<span class="kw">def</span> <span class="fn">insert_head</span>(head, data):
+    new_node = Node(data)
+    new_node.next = head <span class="com"># តភ្ជាប់ទៅ Head ចាស់</span>
+    <span class="kw">return</span> new_node      <span class="com"># ក្លាយជា Head ថ្មី</span>
+
+h = Node(<span class="num">2</span>)
+h = insert_head(h, <span class="num">1</span>) <span class="com"># ដាក់លេខ 1 ពីមុខលេខ 2</span>
+<span class="fn">print</span>(h.data, <span class="str">"->"</span>, h.next.data)</pre>
+            </div>
+            <div class="answer-box">
+                <label>ល្បឿននៃកូដ (O(1)) ៖</label> 
+                <div class="filled-answer">នេះជាចំណុចខ្លាំងរបស់ Linked List។ យើងគ្រាន់តែចងខ្សែ Node ថ្មីទៅ Head ចាស់ រួចប្តូរឈ្មោះ Head មកប្រអប់ថ្មីវិញជាការស្រេច លឿនបំផុតមិនចាំបាច់រុញទិន្នន័យ។</div>
+            </div>
+        </div>
+
+        <div class="note-area">
+            <i class="fa-solid fa-pen"></i> កន្លែងសម្រាប់កត់ត្រាបន្ថែម (Notes / Scratchpad)...
+        </div>
+    </div>
+
+    <div class="global-footer">
+        <div class="footer-left"><img src="Lim.jpg" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'"><span>សាស្ត្រាចារ្យ៖ សឿង លីម (Soeurng LIM)</span></div>
+        <div class="footer-right">ទំព័រទី ៣ នៃ ១២</div>
+    </div>
+</div>
+
+<!-- PAGE 4 : SLL Insert Tail & Delete Head -->
+<div class="a4-page">
+    <div class="global-header">
+        <div class="header-item"><img src="Logo.png" onerror="this.src='https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png'"><span>សាកលវិទ្យាល័យអង្គរ</span></div>
+        <div class="header-center">
+            <h1>សៀវភៅលំហាត់អនុវត្តន៍ - ជំពូកទី ៤</h1>
+            <p>ADVANCED DATA STRUCTURES AND ALGORITHMS</p>
+        </div>
+        <div class="header-item"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg"><span>Python Pro</span></div>
+    </div>
+
+    <div class="page-content">
+        <div class="case-title"><i class="fa-solid fa-minus"></i> ៤. ករណីសិក្សា៖ ប្រតិបត្តិការចុងបញ្ជី និងការលុប</div>
+        
+        <div class="exercise-block">
+            <p><span class="level-badge bg-mid">មធ្យម ៣</span> បញ្ចូល Node ថ្មីនៅខាងចុង (Insert at Tail)</p>
+            <div class="code-container">
+                <div class="code-header"><i class="fa-brands fa-python"></i> Copy & Run Code</div>
+<pre><span class="kw">class</span> <span class="fn">Node</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="kw">self</span>, d): <span class="kw">self</span>.data = d; <span class="kw">self</span>.next = <span class="kw">None</span>
+
+<span class="kw">def</span> <span class="fn">insert_tail</span>(head, data):
+    new_node = Node(data)
+    <span class="kw">if not</span> head: <span class="kw">return</span> new_node
+    curr = head
+    <span class="kw">while</span> curr.next:  <span class="com"># ដើររហូតដល់កន្ទុយចុងក្រោយគេ</span>
+        curr = curr.next
+    curr.next = new_node
+    <span class="kw">return</span> head
+
+h = insert_tail(<span class="kw">None</span>, <span class="num">10</span>); insert_tail(h, <span class="num">20</span>)
+<span class="fn">print</span>(h.data, <span class="str">"->"</span>, h.next.data)</pre>
+            </div>
+            <div class="answer-box">
+                <label>ហេតុអ្វីកូដនេះប្រើពេល O(n)? ៖</label> 
+                <div class="filled-answer">ដោយសារយើងអត់មានខ្សែចង្អុលទៅកន្ទុយ (Tail Pointer) ផ្ទាល់ យើងត្រូវប្រើ While Loop ដើម្បីដើរពីក្បាលរហូតដល់ប្រអប់ចុងក្រោយ ទើបអាចចងខ្សែបញ្ជូលវាបាន។</div>
+            </div>
+        </div>
+
+        <div class="exercise-block">
+            <p><span class="level-badge bg-low">ស្រាល ៥</span> ការលុប Node ខាងមុខគេ (Delete from Head)</p>
+            <div class="code-container">
+                <div class="code-header"><i class="fa-brands fa-python"></i> Copy & Run Code</div>
+<pre><span class="kw">class</span> <span class="fn">Node</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="kw">self</span>, d): <span class="kw">self</span>.data = d; <span class="kw">self</span>.next = <span class="kw">None</span>
+
+<span class="kw">def</span> <span class="fn">delete_head</span>(head):
+    <span class="kw">if not</span> head: <span class="kw">return None</span>
+    <span class="kw">return</span> head.next <span class="com"># រំកិល Head ទៅប្រអប់បន្ទាប់</span>
+
+h = Node(<span class="str">"A"</span>); h.next = Node(<span class="str">"B"</span>)
+h = delete_head(h) <span class="com"># លុប A ចោល</span>
+<span class="fn">print</span>(<span class="str">"Head ថ្មីគឺ:"</span>, h.data)</pre>
+            </div>
+            <div class="answer-box">
+                <label>តើប្រអប់ចាស់ (A) ទៅណា? ៖</label> 
+                <div class="filled-answer">នៅពេល Head រំកិលទៅបន្ទាប់ ប្រអប់ "A" លែងមានអ្នកចង្អុលទៅវា។ ពេលនោះប្រព័ន្ធ Garbage Collection របស់ Python នឹងលុបវាចេញពី Memory ដោយស្វ័យប្រវត្តិ។</div>
+            </div>
+        </div>
+
+        <div class="note-area">
+            <i class="fa-solid fa-pen"></i> កន្លែងសម្រាប់កត់ត្រាបន្ថែម (Notes / Scratchpad)...
+        </div>
+    </div>
+
+    <div class="global-footer">
+        <div class="footer-left"><img src="Lim.jpg" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'"><span>សាស្ត្រាចារ្យ៖ សឿង លីម (Soeurng LIM)</span></div>
+        <div class="footer-right">ទំព័រទី ៤ នៃ ១២</div>
+    </div>
+</div>
+
+<!-- PAGE 5 : SLL Search & Delete Value -->
+<div class="a4-page">
+    <div class="global-header">
+        <div class="header-item"><img src="Logo.png" onerror="this.src='https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png'"><span>សាកលវិទ្យាល័យអង្គរ</span></div>
+        <div class="header-center">
+            <h1>សៀវភៅលំហាត់អនុវត្តន៍ - ជំពូកទី ៤</h1>
+            <p>ADVANCED DATA STRUCTURES AND ALGORITHMS</p>
+        </div>
+        <div class="header-item"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg"><span>Python Pro</span></div>
+    </div>
+
+    <div class="page-content">
+        <div class="case-title"><i class="fa-solid fa-magnifying-glass"></i> ៥. ករណីសិក្សា៖ ការស្វែងរក និងលុបតាមតម្លៃក្នុង SLL</div>
+        
+        <div class="exercise-block">
+            <p><span class="level-badge bg-high">ធ្ងន់ ១</span> ការស្វែងរកទិន្នន័យក្នុងបញ្ជី (Search Value)</p>
+            <div class="code-container">
+                <div class="code-header"><i class="fa-brands fa-python"></i> Copy & Run Code</div>
+<pre><span class="kw">class</span> <span class="fn">Node</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="kw">self</span>, d): <span class="kw">self</span>.data = d; <span class="kw">self</span>.next = <span class="kw">None</span>
+
+<span class="kw">def</span> <span class="fn">search_node</span>(head, target):
+    curr = head
+    <span class="kw">while</span> curr:
+        <span class="kw">if</span> curr.data == target:
+            <span class="kw">return True</span>
+        curr = curr.next
+    <span class="kw">return False</span>
+
+h = Node(<span class="str">"X"</span>); h.next = Node(<span class="str">"Y"</span>)
+<span class="fn">print</span>(<span class="str">"តើមាន Y ទេ?"</span>, search_node(h, <span class="str">"Y"</span>))
+<span class="fn">print</span>(<span class="str">"តើមាន Z ទេ?"</span>, search_node(h, <span class="str">"Z"</span>))</pre>
+            </div>
+            <div class="answer-box">
+                <label>ការវិភាគល្បឿន ៖</label> 
+                <div class="filled-answer">វាដំណើរការដូច Linear Search ក្នុង Array ដែរ (O(n)) ដោយត្រូវធៀបទិន្នន័យម្តងមួយៗពីក្បាលរហូតដល់ចុងបញ្ជី។</div>
+            </div>
+        </div>
+
+        <div class="exercise-block">
+            <p><span class="level-badge bg-high">ធ្ងន់ ២</span> ការលុប Node កណ្តាល ដោយស្វែងរកតម្លៃ (Delete Value)</p>
+            <div class="code-container">
+                <div class="code-header"><i class="fa-brands fa-python"></i> Copy & Run Code</div>
+<pre><span class="kw">class</span> <span class="fn">Node</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="kw">self</span>, d): <span class="kw">self</span>.data = d; <span class="kw">self</span>.next = <span class="kw">None</span>
+
+<span class="kw">def</span> <span class="fn">delete_value</span>(head, target):
+    <span class="kw">if not</span> head: <span class="kw">return None</span>
+    <span class="kw">if</span> head.data == target: <span class="kw">return</span> head.next <span class="com"># លុបចំ Head</span>
+    
+    curr = head
+    <span class="kw">while</span> curr.next <span class="kw">and</span> curr.next.data != target:
+        curr = curr.next <span class="com"># ដើររកមើលប្រអប់បន្ទាប់</span>
+        
+    <span class="kw">if</span> curr.next: 
+        curr.next = curr.next.next <span class="com"># កាត់ខ្សែរំលងប្រអប់គោលដៅ</span>
+    <span class="kw">return</span> head
+
+h = Node(<span class="num">1</span>); h.next = Node(<span class="num">2</span>); h.next.next = Node(<span class="num">3</span>)
+h = delete_value(h, <span class="num">2</span>)
+<span class="fn">print</span>(<span class="str">"លុបលេខ២ចេញ:"</span>, h.data, <span class="str">"->"</span>, h.next.data)</pre>
+            </div>
+            <div class="answer-box">
+                <label>បច្ចេកទេសកាត់ខ្សែ ៖</label> 
+                <div class="filled-answer">យើងត្រូវឈប់នៅប្រអប់ពីមុខគោលដៅ (curr) រួចភ្ជាប់ខ្សែ <code>next</code> របស់វា រំលងទៅប្រអប់បន្ទាប់មួយទៀត នោះប្រអប់កណ្តាលនឹងត្រូវកាត់ផ្តាច់។</div>
+            </div>
+        </div>
+
+        <div class="note-area">
+            <i class="fa-solid fa-pen"></i> កន្លែងសម្រាប់កត់ត្រាបន្ថែម (Notes / Scratchpad)...
+        </div>
+    </div>
+
+    <div class="global-footer">
+        <div class="footer-left"><img src="Lim.jpg" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'"><span>សាស្ត្រាចារ្យ៖ សឿង លីម (Soeurng LIM)</span></div>
+        <div class="footer-right">ទំព័រទី ៥ នៃ ១២</div>
+    </div>
+</div>
+
+<!-- PAGE 6 : DLL Basics -->
+<div class="a4-page">
+    <div class="global-header">
+        <div class="header-item"><img src="Logo.png" onerror="this.src='https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png'"><span>សាកលវិទ្យាល័យអង្គរ</span></div>
+        <div class="header-center">
+            <h1>សៀវភៅលំហាត់អនុវត្តន៍ - ជំពូកទី ៤</h1>
+            <p>ADVANCED DATA STRUCTURES AND ALGORITHMS</p>
+        </div>
+        <div class="header-item"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg"><span>Python Pro</span></div>
+    </div>
+
+    <div class="page-content">
+        <div class="case-title"><i class="fa-solid fa-arrows-left-right"></i> ៦. ករណីសិក្សា៖ Doubly Linked List (DLL)</div>
+        
+        <div class="exercise-block">
+            <p><span class="level-badge bg-low">ស្រាល ៦</span> បង្កើត Node សម្រាប់ DLL (មានខ្សែពីរសងខាង)</p>
+            <div class="code-container">
+                <div class="code-header"><i class="fa-brands fa-python"></i> Copy & Run Code</div>
+<pre><span class="kw">class</span> <span class="fn">DNode</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="kw">self</span>, data):
+        <span class="kw">self</span>.prev = <span class="kw">None</span> <span class="com"># ខ្សែត្រឡប់ក្រោយ</span>
+        <span class="kw">self</span>.data = data
+        <span class="kw">self</span>.next = <span class="kw">None</span> <span class="com"># ខ្សែទៅមុខ</span>
+
+n1 = DNode(<span class="num">100</span>)
+<span class="fn">print</span>(<span class="str">"ប្រអប់ DLL:"</span>, n1.data)</pre>
+            </div>
+            <div class="answer-box">
+                <label>ភាពខុសគ្នាពី SLL ៖</label> 
+                <div class="filled-answer"><code>DNode</code> មានខ្សែបន្ថែមមួយទៀតគឺ <code>prev</code> សម្រាប់ចង្អុលទៅកាន់ប្រអប់ដែលនៅពីមុខវា ដែលជួយឱ្យវាអាចធ្វើដំណើរថយក្រោយបាន តែវាក៏ស៊ី Memory ជាងមុនដែរ។</div>
+            </div>
+        </div>
+
+        <div class="exercise-block">
+            <p><span class="level-badge bg-low">ស្រាល ៧</span> ការតភ្ជាប់ DNodes ចូលគ្នា (Link Forward/Backward)</p>
+            <div class="code-container">
+                <div class="code-header"><i class="fa-brands fa-python"></i> Copy & Run Code</div>
+<pre><span class="kw">class</span> <span class="fn">DNode</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="kw">self</span>, d): <span class="kw">self</span>.prev=<span class="kw">None</span>; <span class="kw">self</span>.data=d; <span class="kw">self</span>.next=<span class="kw">None</span>
+
+n1 = DNode(<span class="str">"Page 1"</span>)
+n2 = DNode(<span class="str">"Page 2"</span>)
+
+<span class="com"># ចងខ្សែទាំងសងខាង</span>
+n1.next = n2   <span class="com"># n1 ទៅមុខជួប n2</span>
+n2.prev = n1   <span class="com"># n2 ថយក្រោយជួប n1</span>
+
+<span class="fn">print</span>(<span class="str">"ពី Page 2 ថយក្រោយមក:"</span>, n2.prev.data)</pre>
+            </div>
+            <div class="answer-box">
+                <label>ការពន្យល់កូដ ៖</label> 
+                <div class="filled-answer">រាល់ពេលតភ្ជាប់ DNode យើងត្រូវប្រាកដថាបានតភ្ជាប់ខ្សែទាំងសងខាង។ <code>n1.next</code> ចង្អុលទៅ <code>n2</code> ហើយ <code>n2.prev</code> ត្រូវចង្អុលត្រឡប់មក <code>n1</code> វិញ។</div>
+            </div>
+        </div>
+
+        <div class="note-area">
+            <i class="fa-solid fa-pen"></i> កន្លែងសម្រាប់កត់ត្រាបន្ថែម (Notes / Scratchpad)...
+        </div>
+    </div>
+
+    <div class="global-footer">
+        <div class="footer-left"><img src="Lim.jpg" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'"><span>សាស្ត្រាចារ្យ៖ សឿង លីម (Soeurng LIM)</span></div>
+        <div class="footer-right">ទំព័រទី ៦ នៃ ១២</div>
+    </div>
+</div>
+
+<!-- PAGE 7 : DLL Traversal -->
+<div class="a4-page">
+    <div class="global-header">
+        <div class="header-item"><img src="Logo.png" onerror="this.src='https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png'"><span>សាកលវិទ្យាល័យអង្គរ</span></div>
+        <div class="header-center">
+            <h1>សៀវភៅលំហាត់អនុវត្តន៍ - ជំពូកទី ៤</h1>
+            <p>ADVANCED DATA STRUCTURES AND ALGORITHMS</p>
+        </div>
+        <div class="header-item"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg"><span>Python Pro</span></div>
+    </div>
+
+    <div class="page-content">
+        <div class="case-title"><i class="fa-solid fa-route"></i> ៧. ករណីសិក្សា៖ ការរុករកក្នុង Doubly Linked List</div>
+        
+        <div class="exercise-block">
+            <p><span class="level-badge bg-mid">មធ្យម ៤</span> រុករកទៅមុខធម្មតា (Forward Traversal)</p>
+            <div class="code-container">
+                <div class="code-header"><i class="fa-brands fa-python"></i> Copy & Run Code</div>
+<pre><span class="kw">class</span> <span class="fn">DNode</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="kw">self</span>, d): <span class="kw">self</span>.prev=<span class="kw">None</span>; <span class="kw">self</span>.data=d; <span class="kw">self</span>.next=<span class="kw">None</span>
+
+<span class="kw">def</span> <span class="fn">print_forward</span>(head):
+    curr = head
+    <span class="kw">while</span> curr:
+        <span class="fn">print</span>(curr.data, end=<span class="str">" -> "</span>)
+        curr = curr.next
+    <span class="fn">print</span>(<span class="str">"None"</span>)
+
+h = DNode(<span class="str">"A"</span>); m = DNode(<span class="str">"B"</span>); h.next = m; m.prev = h
+print_forward(h)</pre>
+            </div>
+            <div class="answer-box">
+                <label>ដំណើរការ ៖</label> 
+                <div class="filled-answer">វាដំណើរការដូចគ្នាបេះបិទទៅនឹង Singly Linked List ដែរ ដោយចាប់ផ្តើមពី Head រួចដើរតាមខ្សែ <code>next</code> រហូតដល់ចុងបញ្ចប់។</div>
+            </div>
+        </div>
+
+        <div class="exercise-block">
+            <p><span class="level-badge bg-mid">មធ្យម ៥</span> រុករកថយក្រោយ (Backward Traversal)</p>
+            <div class="code-container">
+                <div class="code-header"><i class="fa-brands fa-python"></i> Copy & Run Code</div>
+<pre><span class="kw">class</span> <span class="fn">DNode</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="kw">self</span>, d): <span class="kw">self</span>.prev=<span class="kw">None</span>; <span class="kw">self</span>.data=d; <span class="kw">self</span>.next=<span class="kw">None</span>
+
+<span class="kw">def</span> <span class="fn">print_backward</span>(tail):
+    curr = tail
+    <span class="kw">while</span> curr:
+        <span class="fn">print</span>(curr.data, end=<span class="str">" <- "</span>)
+        curr = curr.prev <span class="com"># ដើរថយក្រោយតាមខ្សែ prev</span>
+    <span class="fn">print</span>(<span class="str">"None"</span>)
+
+t = DNode(<span class="str">"C"</span>); m = DNode(<span class="str">"B"</span>); t.prev = m; m.next = t
+print_backward(t)</pre>
+            </div>
+            <div class="answer-box">
+                <label>អត្ថប្រយោជន៍នៃប៊ូតុង Back ៖</label> 
+                <div class="filled-answer">នេះគឺជាដំណើរការរបស់ប៊ូតុង "Back" នៅក្នុង Web Browser។ ដោយសារយើងមានខ្សែ <code>prev</code> យើងអាចដើរពីកន្ទុយត្រឡប់មកក្បាលវិញបានយ៉ាងរលូន (O(n))។</div>
+            </div>
+        </div>
+
+        <div class="note-area">
+            <i class="fa-solid fa-pen"></i> កន្លែងសម្រាប់កត់ត្រាបន្ថែម (Notes / Scratchpad)...
+        </div>
+    </div>
+
+    <div class="global-footer">
+        <div class="footer-left"><img src="Lim.jpg" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'"><span>សាស្ត្រាចារ្យ៖ សឿង លីម (Soeurng LIM)</span></div>
+        <div class="footer-right">ទំព័រទី ៧ នៃ ១២</div>
+    </div>
+</div>
+
+<!-- PAGE 8 : DLL Insertion -->
+<div class="a4-page">
+    <div class="global-header">
+        <div class="header-item"><img src="Logo.png" onerror="this.src='https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png'"><span>សាកលវិទ្យាល័យអង្គរ</span></div>
+        <div class="header-center">
+            <h1>សៀវភៅលំហាត់អនុវត្តន៍ - ជំពូកទី ៤</h1>
+            <p>ADVANCED DATA STRUCTURES AND ALGORITHMS</p>
+        </div>
+        <div class="header-item"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg"><span>Python Pro</span></div>
+    </div>
+
+    <div class="page-content">
+        <div class="case-title"><i class="fa-solid fa-plus-minus"></i> ៨. ករណីសិក្សា៖ ការបញ្ចូលទិន្នន័យក្នុង DLL</div>
+        
+        <div class="exercise-block">
+            <p><span class="level-badge bg-high">ធ្ងន់ ៣</span> បញ្ចូល Node ថ្មីនៅមុខក្បាល DLL (Insert Head)</p>
+            <div class="code-container">
+                <div class="code-header"><i class="fa-brands fa-python"></i> Copy & Run Code</div>
+<pre><span class="kw">class</span> <span class="fn">DNode</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="kw">self</span>, d): <span class="kw">self</span>.prev=<span class="kw">None</span>; <span class="kw">self</span>.data=d; <span class="kw">self</span>.next=<span class="kw">None</span>
+
+<span class="kw">def</span> <span class="fn">insert_dll_head</span>(head, data):
+    new_node = DNode(data)
+    new_node.next = head
+    <span class="kw">if</span> head:
+        head.prev = new_node <span class="com"># ខ្សែត្រឡប់របស់ Head ចាស់</span>
+    <span class="kw">return</span> new_node <span class="com"># ក្លាយជា Head ថ្មី</span>
+
+h = DNode(<span class="str">"1"</span>)
+h = insert_dll_head(h, <span class="str">"0"</span>)
+<span class="fn">print</span>(<span class="str">f"{h.data} <-> {h.next.data}"</span>)</pre>
+            </div>
+            <div class="answer-box">
+                <label>របៀបដំណើរការ (O(1)) ៖</label> 
+                <div class="filled-answer">ត្រូវចងខ្សែ <code>next</code> របស់ Node ថ្មីទៅកាន់ Head ចាស់ រួចយកខ្សែ <code>prev</code> របស់ Head ចាស់មកភ្ជាប់ជាមួយ Node ថ្មីវិញ ទើបបញ្ជូន Node ថ្មីនោះជា Head ទីមួយ។</div>
+            </div>
+        </div>
+
+        <div class="exercise-block">
+            <p><span class="level-badge bg-high">ធ្ងន់ ៤</span> បញ្ចូល Node ថ្មីនៅខាងចុង DLL (Insert Tail)</p>
+            <div class="code-container">
+                <div class="code-header"><i class="fa-brands fa-python"></i> Copy & Run Code</div>
+<pre><span class="kw">class</span> <span class="fn">DNode</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="kw">self</span>, d): <span class="kw">self</span>.prev=<span class="kw">None</span>; <span class="kw">self</span>.data=d; <span class="kw">self</span>.next=<span class="kw">None</span>
+
+<span class="kw">def</span> <span class="fn">insert_dll_tail</span>(head, data):
+    new_node = DNode(data)
+    <span class="kw">if not</span> head: <span class="kw">return</span> new_node
+    curr = head
+    <span class="kw">while</span> curr.next: curr = curr.next <span class="com"># ដើររកកន្ទុយ</span>
+    
+    curr.next = new_node
+    new_node.prev = curr <span class="com"># ភ្ជាប់ត្រឡប់មកវិញ</span>
+    <span class="kw">return</span> head
+
+h = DNode(<span class="num">10</span>); h = insert_dll_tail(h, <span class="num">20</span>)
+<span class="fn">print</span>(<span class="str">f"{h.data} <-> {h.next.data}"</span>)</pre>
+            </div>
+            <div class="answer-box">
+                <label>ភាពខុសគ្នាពី SLL ៖</label> 
+                <div class="filled-answer">ពេលរាវរកដល់កន្ទុយហើយ ក្រៅពីភ្ជាប់ខ្សែ <code>next</code> ទៅ Node ថ្មី យើងក៏ត្រូវយកខ្សែ <code>prev</code> របស់ Node ថ្មី ចង្អុលត្រឡប់មកកន្ទុយចាស់វិញដែរ។</div>
+            </div>
+        </div>
+
+        <div class="note-area">
+            <i class="fa-solid fa-pen"></i> កន្លែងសម្រាប់កត់ត្រាបន្ថែម (Notes / Scratchpad)...
+        </div>
+    </div>
+
+    <div class="global-footer">
+        <div class="footer-left"><img src="Lim.jpg" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'"><span>សាស្ត្រាចារ្យ៖ សឿង លីម (Soeurng LIM)</span></div>
+        <div class="footer-right">ទំព័រទី ៨ នៃ ១២</div>
+    </div>
+</div>
+
+<!-- PAGE 9 : Advanced Conversions -->
+<div class="a4-page">
+    <div class="global-header">
+        <div class="header-item"><img src="Logo.png" onerror="this.src='https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png'"><span>សាកលវិទ្យាល័យអង្គរ</span></div>
+        <div class="header-center">
+            <h1>សៀវភៅលំហាត់អនុវត្តន៍ - ជំពូកទី ៤</h1>
+            <p>ADVANCED DATA STRUCTURES AND ALGORITHMS</p>
+        </div>
+        <div class="header-item"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg"><span>Python Pro</span></div>
+    </div>
+
+    <div class="page-content">
+        <div class="case-title"><i class="fa-solid fa-wand-magic-sparkles"></i> ៩. ករណីសិក្សា៖ បច្ចេកទេសបំប្លែង និង Pointer កម្រិតខ្ពស់</div>
+        
+        <div class="exercise-block">
+            <p><span class="level-badge bg-mid">មធ្យម ៦</span> បំប្លែង Array ទៅជា Linked List (Array to SLL)</p>
+            <div class="code-container">
+                <div class="code-header"><i class="fa-brands fa-python"></i> Copy & Run Code</div>
+<pre><span class="kw">class</span> <span class="fn">Node</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="kw">self</span>, d): <span class="kw">self</span>.data=d; <span class="kw">self</span>.next=<span class="kw">None</span>
+
+<span class="kw">def</span> <span class="fn">array_to_sll</span>(arr):
+    <span class="kw">if not</span> arr: <span class="kw">return None</span>
+    head = Node(arr[<span class="num">0</span>])
+    curr = head
+    <span class="kw">for</span> val <span class="kw">in</span> arr[<span class="num">1</span>:]:
+        curr.next = Node(val)
+        curr = curr.next
+    <span class="kw">return</span> head
+
+h = array_to_sll([<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>])
+<span class="fn">print</span>(h.data, <span class="str">"->"</span>, h.next.data, <span class="str">"->"</span>, h.next.next.data)</pre>
+            </div>
+            <div class="answer-box">
+                <label>ការពន្យល់កូដ ៖</label> 
+                <div class="filled-answer">យើងយកធាតុដំបូងរបស់ Array មកធ្វើជា Head រួច Loop យកធាតុបន្ទាប់ៗមកបង្កើតជា Node ថ្មី ហើយតភ្ជាប់ខ្សែ <code>next</code> ជាបន្តបន្ទាប់រហូតដល់ចប់បញ្ជី Array។</div>
+            </div>
+        </div>
+
+        <div class="exercise-block">
+            <p><span class="level-badge bg-high">ធ្ងន់ ៥</span> រកប្រអប់កណ្តាលដោយ Pointers ២ (Slow/Fast)</p>
+            <div class="code-container">
+                <div class="code-header"><i class="fa-brands fa-python"></i> Copy & Run Code</div>
+<pre><span class="kw">class</span> <span class="fn">Node</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="kw">self</span>, d): <span class="kw">self</span>.data=d; <span class="kw">self</span>.next=<span class="kw">None</span>
+
+<span class="kw">def</span> <span class="fn">find_middle</span>(head):
+    slow = fast = head
+    <span class="kw">while</span> fast <span class="kw">and</span> fast.next:
+        slow = slow.next       <span class="com"># ដើរម្តង ១ ជំហាន</span>
+        fast = fast.next.next  <span class="com"># ដើរម្តង ២ ជំហាន</span>
+    <span class="kw">return</span> slow.data
+
+h = Node(<span class="num">1</span>); h.next=Node(<span class="num">2</span>); h.next.next=Node(<span class="num">3</span>)
+<span class="fn">print</span>(<span class="str">"កណ្តាលគឺ:"</span>, find_middle(h))</pre>
+            </div>
+            <div class="answer-box">
+                <label>ហេតុអ្វីប្រើ Slow/Fast? ៖</label> 
+                <div class="filled-answer">នេះជាល្បិចកម្រិតខ្ពស់។ ដោយសារ Fast ដើរលឿនជាង Slow ពីរដង ដូច្នេះនៅពេល Fast ដើរទៅដល់ចុងបញ្ជី នោះ Slow ប្រាកដជាដើរមកដល់ចំណុចកណ្តាលនៃបញ្ជីល្មម (ចំណេញពេលរាប់)។</div>
+            </div>
+        </div>
+
+        <div class="note-area">
+            <i class="fa-solid fa-pen"></i> កន្លែងសម្រាប់កត់ត្រាបន្ថែម (Notes / Scratchpad)...
+        </div>
+    </div>
+
+    <div class="global-footer">
+        <div class="footer-left"><img src="Lim.jpg" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'"><span>សាស្ត្រាចារ្យ៖ សឿង លីម (Soeurng LIM)</span></div>
+        <div class="footer-right">ទំព័រទី ៩ នៃ ១២</div>
+    </div>
+</div>
+
+<!-- PAGE 10 : Advanced Transformations -->
+<div class="a4-page">
+    <div class="global-header">
+        <div class="header-item"><img src="Logo.png" onerror="this.src='https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png'"><span>សាកលវិទ្យាល័យអង្គរ</span></div>
+        <div class="header-center">
+            <h1>សៀវភៅលំហាត់អនុវត្តន៍ - ជំពូកទី ៤</h1>
+            <p>ADVANCED DATA STRUCTURES AND ALGORITHMS</p>
+        </div>
+        <div class="header-item"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg"><span>Python Pro</span></div>
+    </div>
+
+    <div class="page-content">
+        <div class="case-title"><i class="fa-solid fa-code-compare"></i> ១០. ករណីសិក្សា៖ ការបំប្លែងទម្រង់ Linked Lists</div>
+        
+        <div class="exercise-block">
+            <p><span class="level-badge bg-high">ធ្ងន់ ៦</span> ត្រឡប់ខ្សែ Singly Linked List បញ្ច្រាស (Reverse SLL)</p>
+            <div class="code-container">
+                <div class="code-header"><i class="fa-brands fa-python"></i> Copy & Run Code</div>
+<pre><span class="kw">class</span> <span class="fn">Node</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="kw">self</span>, d): <span class="kw">self</span>.data=d; <span class="kw">self</span>.next=<span class="kw">None</span>
+
+<span class="kw">def</span> <span class="fn">reverse_list</span>(head):
+    prev = <span class="kw">None</span>; curr = head
+    <span class="kw">while</span> curr:
+        nxt = curr.next  <span class="com"># រក្សាទុកខ្សែទៅមុខសិន</span>
+        curr.next = prev <span class="com"># កាត់ខ្សែបង្វិលមកក្រោយវិញ</span>
+        prev = curr; curr = nxt <span class="com"># រំកិលទៅមុខបន្ត</span>
+    <span class="kw">return</span> prev <span class="com"># prev ក្លាយជា Head ថ្មីនៅខាងចុង</span>
+
+h = Node(<span class="num">1</span>); h.next=Node(<span class="num">2</span>)
+rev = reverse_list(h)
+<span class="fn">print</span>(<span class="str">"បង្វិលខ្សែ:"</span>, rev.data, <span class="str">"->"</span>, rev.next.data)</pre>
+            </div>
+            <div class="answer-box">
+                <label>របៀបបង្វិលខ្សែ (In-Place) ៖</label> 
+                <div class="filled-answer">យើងត្រូវការអថេរ ៣ ដើម្បីចងចាំខ្សែអនាគតសិន (nxt) មុននឹងកាត់ខ្សែបច្ចុប្បន្នចង្អុលមកអតីតកាលវិញ (prev)។ វាដំណើរការក្នុងល្បឿន O(n) និងចំណេញ Memory។</div>
+            </div>
+        </div>
+
+        <div class="exercise-block">
+            <p><span class="level-badge bg-mid">មធ្យម ៧</span> លុបលេខស្ទួនពីបញ្ជី SLL ដែលតម្រៀបរួច</p>
+            <div class="code-container">
+                <div class="code-header"><i class="fa-brands fa-python"></i> Copy & Run Code</div>
+<pre><span class="kw">class</span> <span class="fn">Node</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="kw">self</span>, d): <span class="kw">self</span>.data=d; <span class="kw">self</span>.next=<span class="kw">None</span>
+
+<span class="kw">def</span> <span class="fn">remove_dups</span>(head):
+    curr = head
+    <span class="kw">while</span> curr <span class="kw">and</span> curr.next:
+        <span class="kw">if</span> curr.data == curr.next.data:
+            curr.next = curr.next.next <span class="com"># កាត់ខ្សែរំលងអាស្ទួនចោល</span>
+        <span class="kw">else</span>: curr = curr.next
+    <span class="kw">return</span> head
+
+h = Node(<span class="num">1</span>); h.next=Node(<span class="num">1</span>); h.next.next=Node(<span class="num">2</span>)
+clean = remove_dups(h)
+<span class="fn">print</span>(<span class="str">"លុបស្ទួន:"</span>, clean.data, <span class="str">"->"</span>, clean.next.data)</pre>
+            </div>
+            <div class="answer-box">
+                <label>ដំណើរការកាត់ខ្សែ ៖</label> 
+                <div class="filled-answer">ដោយសារបញ្ជីតម្រៀបលេខរួចរាល់ លេខស្ទួនប្រាកដជានៅជាប់គ្នា។ បើយើងឃើញប្រអប់បន្ទាប់មានលេខដូចគ្នា យើងគ្រាន់តែភ្ជាប់ខ្សែទៅប្រអប់បន្ទាប់មួយទៀតរំលងវាចោល។</div>
+            </div>
+        </div>
+
+        <div class="note-area">
+            <i class="fa-solid fa-pen"></i> កន្លែងសម្រាប់កត់ត្រាបន្ថែម (Notes / Scratchpad)...
+        </div>
+    </div>
+
+    <div class="global-footer">
+        <div class="footer-left"><img src="Lim.jpg" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'"><span>សាស្ត្រាចារ្យ៖ សឿង លីម (Soeurng LIM)</span></div>
+        <div class="footer-right">ទំព័រទី ១០ នៃ ១២</div>
+    </div>
+</div>
+
+<!-- PAGE 11 : Advanced Algorithms -->
+<div class="a4-page">
+    <div class="global-header">
+        <div class="header-item"><img src="Logo.png" onerror="this.src='https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png'"><span>សាកលវិទ្យាល័យអង្គរ</span></div>
+        <div class="header-center">
+            <h1>សៀវភៅលំហាត់អនុវត្តន៍ - ជំពូកទី ៤</h1>
+            <p>ADVANCED DATA STRUCTURES AND ALGORITHMS</p>
+        </div>
+        <div class="header-item"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg"><span>Python Pro</span></div>
+    </div>
+
+    <div class="page-content">
+        <div class="case-title"><i class="fa-solid fa-brain"></i> ១១. ករណីសិក្សា៖ ក្បួនដោះស្រាយ (Algorithms) លើ SLL</div>
+        
+        <div class="exercise-block">
+            <p><span class="level-badge bg-high">ធ្ងន់ ៧</span> រាវរកផ្លូវទាល់ ឬរង្វិលជុំ (Detect Cycle)</p>
+            <div class="code-container">
+                <div class="code-header"><i class="fa-brands fa-python"></i> Copy & Run Code</div>
+<pre><span class="kw">class</span> <span class="fn">Node</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="kw">self</span>, d): <span class="kw">self</span>.data=d; <span class="kw">self</span>.next=<span class="kw">None</span>
+
+<span class="kw">def</span> <span class="fn">has_cycle</span>(head):
+    slow = fast = head
+    <span class="kw">while</span> fast <span class="kw">and</span> fast.next:
+        slow = slow.next; fast = fast.next.next
+        <span class="kw">if</span> slow == fast: <span class="kw">return True</span>
+    <span class="kw">return False</span>
+
+n1=Node(<span class="num">1</span>); n2=Node(<span class="num">2</span>); n3=Node(<span class="num">3</span>)
+n1.next=n2; n2.next=n3; n3.next=n1 <span class="com"># ចងខ្សែវល់គ្នា (Cycle)</span>
+<span class="fn">print</span>(<span class="str">"មាន Cycle ទេ?"</span>, has_cycle(n1))</pre>
+            </div>
+            <div class="answer-box">
+                <label>ក្បួនដោះស្រាយ Floyd ៖</label> 
+                <div class="filled-answer">បើខ្សែ Linked List នោះវិលវល់ជារង្វង់ នោះ Pointer ដើរលឿន (Fast) គង់តែនឹងរត់មកជាន់ Pointer ដើរយឺត (Slow) ជាមិនខាន។ បើជាន់គ្នា គឺមានរង្វិលជុំពិតមែន។</div>
+            </div>
+        </div>
+
+        <div class="exercise-block">
+            <p><span class="level-badge bg-high">ធ្ងន់ ៨</span> ផ្តុំបញ្ជីតម្រៀបរួចពីរចូលគ្នា (Merge 2 Sorted SLLs)</p>
+            <div class="code-container">
+                <div class="code-header"><i class="fa-brands fa-python"></i> Copy & Run Code</div>
+<pre><span class="kw">class</span> <span class="fn">Node</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="kw">self</span>, d): <span class="kw">self</span>.data=d; <span class="kw">self</span>.next=<span class="kw">None</span>
+
+<span class="kw">def</span> <span class="fn">merge</span>(l1, l2):
+    dummy = curr = Node(<span class="num">0</span>)
+    <span class="kw">while</span> l1 <span class="kw">and</span> l2:
+        <span class="kw">if</span> l1.data < l2.data: curr.next = l1; l1 = l1.next
+        <span class="kw">else</span>: curr.next = l2; l2 = l2.next
+        curr = curr.next
+    curr.next = l1 <span class="kw">or</span> l2 
+    <span class="kw">return</span> dummy.next
+
+list1 = Node(<span class="num">1</span>); list1.next = Node(<span class="num">3</span>)
+list2 = Node(<span class="num">2</span>); list2.next = Node(<span class="num">4</span>)
+m = merge(list1, list2)
+<span class="fn">print</span>(<span class="str">"បញ្ចួលគ្នា:"</span>, m.data, m.next.data, m.next.next.data)</pre>
+            </div>
+            <div class="answer-box">
+                <label>ហេតុអ្វីត្រូវប្រើ Dummy Node? ៖</label> 
+                <div class="filled-answer">Dummy Node ជួយឱ្យយើងមិនចាំបាច់សរសេរលក្ខខណ្ឌ If-Else ស្មុគស្មាញដើម្បីឆែករកមើលថាអ្នកណាជា Head ពិតប្រាកដ។ ចុងក្រោយយើងគ្រាន់តែយក <code>dummy.next</code> ជាការស្រេច។</div>
+            </div>
+        </div>
+
+        <div class="note-area">
+            <i class="fa-solid fa-pen"></i> កន្លែងសម្រាប់កត់ត្រាបន្ថែម (Notes / Scratchpad)...
+        </div>
+    </div>
+
+    <div class="global-footer">
+        <div class="footer-left"><img src="Lim.jpg" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'"><span>សាស្ត្រាចារ្យ៖ សឿង លីម (Soeurng LIM)</span></div>
+        <div class="footer-right">ទំព័រទី ១១ នៃ ១២</div>
+    </div>
+</div>
+
+<!-- PAGE 12 : Applications (Stack & Queue) -->
+<div class="a4-page">
+    <div class="global-header">
+        <div class="header-item"><img src="Logo.png" onerror="this.src='https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png'"><span>សាកលវិទ្យាល័យអង្គរ</span></div>
+        <div class="header-center">
+            <h1>សៀវភៅលំហាត់អនុវត្តន៍ - ជំពូកទី ៤</h1>
+            <p>ADVANCED DATA STRUCTURES AND ALGORITHMS</p>
+        </div>
+        <div class="header-item"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg"><span>Python Pro</span></div>
+    </div>
+
+    <div class="page-content">
+        <div class="case-title"><i class="fa-solid fa-briefcase"></i> ១២. ករណីសិក្សា៖ ការយក Linked List ទៅបង្កើត Data Structure ផ្សេង</div>
+        
+        <div class="exercise-block">
+            <p><span class="level-badge bg-mid">មធ្យម ៨</span> ការយក SLL មកបង្កើតជា Stack (LIFO)</p>
+            <div class="code-container">
+                <div class="code-header"><i class="fa-brands fa-python"></i> Copy & Run Code</div>
+<pre><span class="kw">class</span> <span class="fn">Node</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="kw">self</span>, d): <span class="kw">self</span>.data=d; <span class="kw">self</span>.next=<span class="kw">None</span>
+<span class="kw">class</span> <span class="fn">StackLL</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="kw">self</span>): <span class="kw">self</span>.top = <span class="kw">None</span>
+    <span class="kw">def</span> <span class="fn">push</span>(<span class="kw">self</span>, data):
+        n = Node(data)
+        n.next = <span class="kw">self</span>.top; <span class="kw">self</span>.top = n
+    <span class="kw">def</span> <span class="fn">pop</span>(<span class="kw">self</span>):
+        <span class="kw">if not self</span>.top: <span class="kw">return None</span>
+        val = <span class="kw">self</span>.top.data; <span class="kw">self</span>.top = <span class="kw">self</span>.top.next
+        <span class="kw">return</span> val
+
+s = StackLL(); s.push(<span class="num">10</span>); s.push(<span class="num">20</span>)
+<span class="fn">print</span>(<span class="str">"យកចេញ (Pop):"</span>, s.pop()) <span class="com"># លទ្ធផល: 20</span></pre>
+            </div>
+            <div class="answer-box">
+                <label>ការពន្យល់អត្ថប្រយោជន៍ ៖</label> 
+                <div class="filled-answer">ការប្រើប្រាស់ Linked List បង្កើត Stack មានចំណុចល្អជាង Array ត្រង់ថា វាអាចផ្ទុកទិន្នន័យបានច្រើនតាមតែ Memory អាចទទួលយកបាន (Dynamic Allocation) ដោយល្បឿន O(1) ជានិច្ច។</div>
+            </div>
+        </div>
+
+        <div class="exercise-block">
+            <p><span class="level-badge bg-high">ធ្ងន់ ៩</span> ការយក SLL មកបង្កើតជា Queue (FIFO)</p>
+            <div class="code-container">
+                <div class="code-header"><i class="fa-brands fa-python"></i> Copy & Run Code</div>
+<pre><span class="kw">class</span> <span class="fn">Node</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="kw">self</span>, d): <span class="kw">self</span>.data=d; <span class="kw">self</span>.next=<span class="kw">None</span>
+<span class="kw">class</span> <span class="fn">QueueLL</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="kw">self</span>): <span class="kw">self</span>.head = <span class="kw">self</span>.tail = <span class="kw">None</span>
+    <span class="kw">def</span> <span class="fn">enqueue</span>(<span class="kw">self</span>, d):
+        n = Node(d)
+        <span class="kw">if not self</span>.tail: <span class="kw">self</span>.head = <span class="kw">self</span>.tail = n; <span class="kw">return</span>
+        <span class="kw">self</span>.tail.next = n; <span class="kw">self</span>.tail = n
+
+q = QueueLL(); q.enqueue(<span class="str">"A"</span>); q.enqueue(<span class="str">"B"</span>)
+<span class="fn">print</span>(<span class="str">"អ្នកមកមុនគេគឺ (Head):"</span>, q.head.data) <span class="com"># លទ្ធផល: A</span></pre>
+            </div>
+            <div class="answer-box">
+                <label>អត្ថប្រយោជន៍នៃ Tail Pointer ៖</label> 
+                <div class="filled-answer">នៅពេលយើងរក្សាទុក Tail Pointer យើងអាចបន្ថែមទិន្នន័យ (Enqueue) នៅខាងចុងជួរបានយ៉ាងលឿនក្នុងល្បឿន O(1) ដោយមិនបាច់ដើរ Loop រកកន្ទុយឡើយ។</div>
+            </div>
+        </div>
+
+        <div class="note-area">
+            <i class="fa-solid fa-pen"></i> កន្លែងសម្រាប់កត់ត្រាបន្ថែម (Notes / Scratchpad)...
+        </div>
+    </div>
+
+    <div class="global-footer">
+        <div class="footer-left"><img src="Lim.jpg" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'"><span>សាស្ត្រាចារ្យ៖ សឿង លីម (Soeurng LIM)</span></div>
+        <div class="footer-right">ទំព័រទី ១២ នៃ ១២</div>
+    </div>
+</div>
+
+</body>
+</html>

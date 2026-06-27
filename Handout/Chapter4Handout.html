@@ -1,0 +1,970 @@
+<!DOCTYPE html>
+<html lang="km">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guidebook Chapter 4 - Linked Lists</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Battambang:wght@400;700&family=Suwannaphum:wght@400;700;900&family=Lato:wght@400;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <style>
+        :root {
+            --bg-color: #E2E8F0;
+            --paper-white: #FFFFFF;
+            --text-main: #0F172A;
+            --text-muted: #475569;
+            --accent-blue: #0284C7; 
+            --accent-green: #059669;
+            --accent-yellow: #D97706; 
+            --accent-red: #DC2626;
+            --header-footer-bg: #F0F9FF;
+            --code-bg: #111827;
+            --term-bg: #000000;
+            --term-text: #4ade80;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            background-color: var(--bg-color);
+            font-family: 'Battambang', sans-serif;
+            color: var(--text-main);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 40px 20px;
+        }
+
+        /* Utility Classes */
+        .text-blue { color: var(--accent-blue) !important; }
+        .text-green { color: var(--accent-green) !important; }
+        .text-red { color: var(--accent-red) !important; }
+        .text-yellow { color: var(--accent-yellow) !important; }
+
+        /* A4 Page Layout */
+        .a4-page {
+            width: 210mm; 
+            height: 297mm; 
+            background: var(--paper-white);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1); 
+            margin-bottom: 30mm;
+            display: flex; 
+            flex-direction: column; 
+            position: relative; 
+            border-radius: 8px;
+            overflow: hidden; 
+            page-break-after: always;
+        }
+
+        /* COVER PAGE STYLES */
+        .cover-page {
+            justify-content: center; 
+            align-items: center; 
+            text-align: center; 
+            padding: 30mm 20mm;
+            background-image: linear-gradient(to bottom, #F0F9FF, #FFFFFF);
+        }
+        .cover-logo { width: 140px; margin-bottom: 15px; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1)); }
+        .cover-uni-kh { font-family: 'Suwannaphum'; color: var(--accent-blue); font-size: 34px; margin: 0 0 5px 0; font-weight: 900; }
+        .cover-uni-en { font-family: 'Lato'; color: #475569; font-size: 18px; margin: 0 0 40px 0; letter-spacing: 1px; font-weight: bold; }
+        .cover-program { font-family: 'Suwannaphum'; font-size: 18px; color: var(--accent-green); margin-bottom: 25px; font-weight: bold; }
+        .cover-chapter-badge { background: var(--accent-blue); color: white; padding: 10px 30px; border-radius: 50px; font-size: 20px; font-weight: bold; margin-bottom: 40px; font-family: 'Suwannaphum'; box-shadow: 0 5px 15px rgba(2,132,199,0.3); display: inline-block;}
+        .cover-main-title { font-family: 'Suwannaphum'; font-size: 30px; color: var(--text-main); line-height: 1.5; margin-bottom: 10px; font-weight: 900; }
+        .cover-sub-title { font-family: 'Lato'; font-size: 18px; color: var(--accent-blue); margin-bottom: 50px; font-weight: bold; line-height: 1.5;}
+        
+        .cover-author-wrapper { display: flex; flex-direction: column; align-items: center; gap: 15px; margin-bottom: 40px; }
+        .cover-author-img { width: 110px; height: 110px; border-radius: 50%; border: 4px solid var(--accent-blue); object-fit: cover; box-shadow: 0 6px 15px rgba(0,0,0,0.15); background-color: #fff;}
+        .cover-author-text { font-size: 18px; color: #64748B; font-family: 'Suwannaphum'; }
+        .cover-author-text strong { color: var(--text-main); font-size: 22px; }
+
+        .cover-icons-wrapper { display: flex; gap: 50px; justify-content: center; margin-top: auto; border-top: 1px solid #E2E8F0; padding-top: 20px; width: 100%; }
+        .cover-icon-item img { height: 60px; margin-bottom: 8px; object-fit: contain; }
+        .cover-icon-item p { font-size: 14px; font-weight: bold; color: var(--accent-blue); font-family: 'Lato'; }
+
+        /* HEADER & FOOTER */
+        .global-header {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 12px 25px; border-bottom: 3px solid var(--accent-blue); background-color: var(--header-footer-bg);
+            height: 25mm;
+        }
+        .header-item { display: flex; flex-direction: column; align-items: center; gap: 5px; width: 120px; }
+        .header-item img { height: 40px; object-fit: contain; }
+        .header-item span { font-size: 10px; font-weight: bold; color: var(--accent-blue); text-align: center; font-family: 'Suwannaphum'; }
+        .header-center { text-align: center; flex-grow: 1; padding: 0 10px;}
+        .header-center h1 { font-family: 'Suwannaphum'; font-size: 15px; color: var(--accent-blue); margin: 0; }
+        .header-center p { font-family: 'Battambang'; font-size: 10px; color: #64748B; margin: 0; font-weight: bold; text-transform: uppercase;}
+
+        .global-footer {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 10px 25px; border-top: 3px solid var(--accent-blue);
+            background-color: var(--header-footer-bg);
+            position: absolute; bottom: 0; left: 0; width: 100%; height: 15mm;
+        }
+        .footer-left { display: flex; align-items: center; gap: 12px; }
+        .footer-left img { border-radius: 50%; border: 2px solid var(--accent-blue); width: 30px; height: 30px; object-fit: cover; background-color: #fff; }
+        .footer-left span { font-size: 11px; font-weight: bold; color: var(--text-main); font-family: 'Suwannaphum'; }
+        .footer-right { font-size: 11px; color: var(--accent-blue); font-weight: bold; font-family: 'Battambang'; }
+
+        /* CONTENT */
+        .page-content { flex-grow: 1; padding: 8mm 15mm; height: 257mm; overflow: hidden; } 
+        
+        .section-title {
+            background: var(--header-footer-bg); border-left: 5px solid var(--accent-blue);
+            padding: 8px 15px; margin: 10px 0; font-family: 'Suwannaphum';
+            font-size: 16px; display: flex; align-items: center; gap: 10px; font-weight: bold;
+            border-radius: 0 6px 6px 0; color: var(--accent-blue); page-break-after: avoid;
+        }
+
+        .text-block { font-size: 13px; line-height: 1.8; margin-bottom: 12px; color: var(--text-main); text-align: justify; }
+        
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
+        
+        .card { background: #F8FAFC; border: 1px solid #CBD5E1; border-top: 3px solid var(--accent-blue); padding: 12px; border-radius: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); page-break-inside: avoid; }
+        .card h4 { font-family: 'Suwannaphum'; font-size: 14px; color: var(--accent-blue); margin-bottom: 6px; display: flex; align-items: center; gap: 8px;}
+        .card.red-card { border-top-color: var(--accent-red); }
+        .card.red-card h4 { color: var(--accent-red); }
+        .card.green-card { border-top-color: var(--accent-green); }
+        .card.green-card h4 { color: var(--accent-green); }
+        .card.yellow-card { border-top-color: var(--accent-yellow); }
+        .card.yellow-card h4 { color: var(--accent-yellow); }
+        .card ul { padding-left: 20px; margin-top: 5px; font-size: 12px; line-height: 1.8;}
+
+        /* Narrative Boxes */
+        .narrative-box { background: #FFFFFF; border-radius: 6px; border: 1px solid #CBD5E1; border-left: 4px solid var(--accent-blue); padding: 10px 12px; margin-bottom: 12px; box-shadow: 0 2px 5px rgba(0,0,0,0.02); page-break-inside: avoid;}
+        .narrative-header { font-weight: bold; color: var(--accent-blue); font-size: 13.5px; border-bottom: 1px solid #E2E8F0; padding-bottom: 5px; margin-bottom: 6px; font-family: 'Suwannaphum'; display: flex; align-items: center; gap: 8px;}
+        .narrative-text { font-size: 12px; color: var(--text-main); line-height: 1.8; margin: 0; text-align: justify;}
+        
+        .narrative-box.danger { background: #FEF2F2; border-left-color: var(--accent-red); border-color: #FECACA;}
+        .narrative-box.danger .narrative-header { color: var(--accent-red); border-bottom-color: #FCA5A5; }
+        
+        .narrative-box.warning { background: #FFFBEB; border-left-color: var(--accent-yellow); border-color: #FDE68A;}
+        .narrative-box.warning .narrative-header { color: var(--accent-yellow); border-bottom-color: #FCD34D; }
+
+        /* Compare Blocks */
+        .compare-block { border: 1px solid #CBD5E1; border-radius: 8px; overflow: hidden; margin-bottom: 15px; background: #fff; box-shadow: 0 3px 8px rgba(0,0,0,0.05); page-break-inside: avoid;}
+        .compare-img { width: 100%; height: 110px; object-fit: cover; border-bottom: 2px solid var(--accent-blue); }
+        .compare-title { font-family: 'Suwannaphum'; font-size: 14.5px; color: var(--text-main); padding: 6px 12px; background: #F8FAFC; border-bottom: 1px solid #CBD5E1; font-weight: bold; text-align: center;}
+        .compare-grid { display: grid; grid-template-columns: 1fr 1fr; }
+        .compare-col { padding: 10px 12px; font-size: 12px; line-height: 1.8; text-align: justify; }
+        .compare-col:first-child { border-right: 1px dashed #CBD5E1; background: #F8FAFC; }
+        .compare-col h5 { font-family: 'Suwannaphum'; font-size: 13px; margin-bottom: 6px; display: flex; align-items: center; gap: 6px;}
+
+        /* Table Styles */
+        table { width: 100%; border-collapse: collapse; margin-bottom: 15px; font-size: 12px; background: #fff; box-shadow: 0 2px 5px rgba(0,0,0,0.05); border-radius: 6px; overflow: hidden; page-break-inside: avoid;}
+        th { background: var(--header-footer-bg); color: var(--accent-blue); font-family: 'Suwannaphum'; font-size: 13px; text-align: left; padding: 10px 12px; border-bottom: 2px solid var(--accent-blue); }
+        td { padding: 10px 12px; border-bottom: 1px solid #E2E8F0; color: var(--text-main); }
+        tr:last-child td { border-bottom: none; }
+        tr:nth-child(even) { background-color: #F8FAFC; }
+
+        /* Q&A Boxes */
+        .qa-box { border: 1px solid #CBD5E1; border-radius: 8px; margin-bottom: 12px; background: #fff; overflow: hidden; page-break-inside: avoid; box-shadow: 0 3px 6px rgba(0,0,0,0.02);}
+        .qa-question { background: #F0F9FF; padding: 10px 15px; border-bottom: 1px dashed #CBD5E1; font-weight: bold; color: var(--accent-blue); font-family: 'Suwannaphum'; font-size: 13.5px; display: flex; gap: 10px; align-items: flex-start; line-height: 1.6;}
+        .qa-answer { padding: 10px 15px; font-size: 12.5px; line-height: 1.8; color: var(--text-main); display: flex; gap: 10px; text-align: justify;}
+        .qa-icon-q { color: var(--accent-red); font-size: 16px; margin-top: 2px;}
+        .qa-icon-a { color: var(--accent-green); font-size: 16px; margin-top: 2px;}
+
+        .highlight-note { background-color: #FEF9C3; border: 1px dashed var(--accent-yellow); padding: 10px 15px; border-radius: 6px; margin-bottom: 12px; font-weight: bold; color: #854D0E; font-size: 12.5px; display: flex; align-items: center; gap: 10px; page-break-inside: avoid; line-height: 1.6;}
+
+        /* Fully Runnable Python Code Block Design */
+        .visual-img { width: 100%; height: 140px; object-fit: cover; border-radius: 4px; margin-bottom: 10px; border: 1px solid #E2E8F0; }
+        
+        .code-wrapper { background: var(--code-bg); border-radius: 8px; border: 1px solid #374151; overflow: hidden; width: 100%; box-shadow: 0 4px 10px rgba(0,0,0,0.15); margin-top: 10px; margin-bottom: 15px; page-break-inside: avoid;}
+        .code-header { background: #1F2937; padding: 6px 12px; font-size: 11.5px; font-family: 'Battambang', sans-serif; color: #9CA3AF; border-bottom: 1px solid #374151; display: flex; justify-content: space-between; align-items: center;}
+        .code-header span { font-weight: bold; color: #38BDF8; display: flex; align-items: center; gap: 5px; }
+        .code-content { padding: 10px 12px; }
+        
+        .code-content pre { font-family: 'Fira Code', monospace; font-size: 11.5px; line-height: 1.8; color: #f8f8f2; margin: 0; white-space: pre-wrap; word-break: break-word;}
+        .com { color: #6272a4; font-style: italic; font-family: 'Battambang', sans-serif !important; } 
+        .str { color: #f1fa8c; font-family: 'Battambang', sans-serif !important; }
+        
+        /* Terminal Output Design */
+        .code-output { background: var(--term-bg); padding: 10px 12px; border-top: 1px dashed #4B5563; }
+        .code-output pre { font-family: 'Battambang', sans-serif !important; font-size: 11.5px; color: var(--term-text); margin: 0; white-space: pre-wrap; line-height: 1.8; word-break: break-word;}
+        .code-output-title { font-size: 10px; color: #9CA3AF; margin-bottom: 5px; font-family: 'Battambang'; text-transform: uppercase;}
+
+        .kw { color: #ff79c6; font-weight: bold; } .fn { color: #50fa7b; } .num { color: #bd93f9; } .bult { color: #8be9fd; } .cls { color: #8be9fd; font-style: italic; }
+
+        /* PRINT Media Query */
+        @page { size: A4; margin: 0; }
+        @media print {
+            body { background: white; padding: 0; margin: 0; }
+            .a4-page { box-shadow: none; margin: 0; width: 210mm; height: 297mm; border: none; border-radius: 0; page-break-after: always; }
+            .no-print { display: none !important; }
+            * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+        }
+    </style>
+</head>
+<body>
+
+<button class="no-print" onclick="window.print()" style="margin-bottom: 20px; padding: 12px 25px; cursor: pointer; background: var(--accent-blue); color: white; border: none; border-radius: 8px; font-family: 'Battambang'; font-weight: bold; font-size: 16px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); transition: all 0.3s;">
+    <i class="fa-solid fa-print"></i> បោះពុម្ពសៀវភៅមគ្គទ្ទេសក៍ (Print Guidebook)
+</button>
+
+<!-- ================= PAGE 1: COVER ================= -->
+<div class="a4-page cover-page">
+    <img src="https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png" alt="Angkor University Logo" class="cover-logo" onerror="this.src='Logo.png'">
+    <h1 class="cover-uni-kh">សាកលវិទ្យាល័យអង្គរ</h1>
+    <p class="cover-uni-en">ANGKOR UNIVERSITY</p>
+
+    <div class="cover-program">
+        <i class="fa-solid fa-graduation-cap"></i> អនុបណ្ឌិតវិទ្យាសាស្ត្រទិន្នន័យ និងបញ្ញាសិប្បនិម្មិត
+    </div>
+
+    <div class="cover-chapter-badge">សៀវភៅមគ្គទ្ទេសក៍ (Guidebook) | ជំពូកទី ៤</div>
+
+    <h1 class="cover-main-title">រចនាសម្ព័ន្ធទិន្នន័យបណ្តាញតភ្ជាប់<br>Singly និង Doubly Linked Lists</h1>
+    <h2 class="cover-sub-title">(Linked List Data Structures in Python)</h2>
+
+    <div class="cover-author-wrapper">
+        <img src="Lim.jpg" alt="Professor" class="cover-author-img" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'">
+        <div class="cover-author-text">
+            រៀបចំដោយសាស្ត្រាចារ្យ៖ <strong>សឿង លីម (Soeurng LIM)</strong>
+        </div>
+    </div>
+
+    <div class="cover-icons-wrapper">
+        <div class="cover-icon-item">
+            <i class="fa-solid fa-arrow-right-long" style="font-size: 60px; color: var(--accent-blue); margin-bottom: 8px;"></i>
+            <p>Singly Linked</p>
+        </div>
+        <div class="cover-icon-item">
+            <i class="fa-solid fa-arrows-left-right" style="font-size: 60px; color: var(--accent-green); margin-bottom: 8px;"></i>
+            <p>Doubly Linked</p>
+        </div>
+    </div>
+</div>
+
+<!-- ================= PAGE 2: Objectives & TOC ================= -->
+<div class="a4-page">
+    <div class="global-header">
+        <div class="header-item"><img src="https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png" onerror="this.src='Logo.png'"><span>សាកលវិទ្យាល័យអង្គរ</span></div>
+        <div class="header-center">
+            <h1>សៀវភៅមគ្គទ្ទេសក៍ (Guidebook) - ជំពូកទី ៤</h1>
+            <p>ADVANCED DATA STRUCTURES AND ALGORITHMS FOR AI</p>
+        </div>
+        <div class="header-item"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg"><span>Python Pro</span></div>
+    </div>
+
+    <div class="page-content">
+        <!-- Banner Image for Chapter 4 -->
+        <img src="https://images.unsplash.com/photo-1544383835-bda2bc66a55d?auto=format&fit=crop&w=1200&q=80" class="visual-img" alt="Network Nodes Banner" style="height: 120px; object-fit: cover; margin-bottom: 15px; border-bottom: 3px solid var(--accent-blue);">
+
+        <!-- Learning Objectives -->
+        <div class="section-title" style="margin-top: 0;"><i class="fa-solid fa-bullseye"></i> វត្ថុបំណងនៃមេរៀន (Learning Objectives)</div>
+        <div class="card green-card" style="margin-bottom: 20px;">
+            <p class="text-block" style="margin-bottom: 12px; font-weight: bold;">បន្ទាប់ពីបញ្ចប់ការសិក្សានៅក្នុងជំពូកទី ៤ នេះ និស្សិតនឹងមានសមត្ថភាព៖</p>
+            <ul style="line-height: 1.8; color: var(--text-main); font-size: 13px; padding-left: 25px;">
+                <li><b class="text-blue">យល់ច្បាស់ពី Linked List៖</b> យល់ដឹងពីការរក្សាទុកទិន្នន័យបែបរាយប៉ាយ (Scattered Memory) ធៀបនឹងការប្រើប្រាស់ Arrays (Contiguous)។</li>
+                <li><b class="text-blue">គ្រប់គ្រង Singly Linked List៖</b> ស្គាល់រចនាសម្ព័ន្ធ Singly Linked List, ការចង្អុលទៅមុខតែម្ខាង និងយល់ពីករណីសិក្សាជាក់ស្តែង។</li>
+                <li><b class="text-blue">គ្រប់គ្រង Doubly Linked List៖</b> យល់ពីការចង្អុលទៅមកសងខាង (Prev & Next Pointers) និងការប្តូររវាងគុណសម្បត្តិ និងគុណវិបត្តិនៃការប្រើ RAM។</li>
+                <li><b class="text-blue">ចេះសរសេរកូដ OOP Node៖</b> អនុវត្តការសរសេរ <code class="text-red">class Node</code> ក្នុង Python ដើម្បីបង្កើត និងចងភ្ជាប់បណ្តាញទិន្នន័យដោយខ្លួនឯង។</li>
+                <li><b class="text-blue">វិភាគ Time Complexity៖</b> អាចប្រៀបធៀបប្រសិទ្ធភាព Big-O រវាង Arrays ធៀបនឹង Linked Lists ក្នុងគ្រប់ករណីប្រតិបត្តិការ។</li>
+                <li><b class="text-blue">ការអនុវត្តក្នុង AI៖</b> ស្វែងយល់ពីរបៀបដែល Linked List ត្រូវបានប្រើប្រាស់ក្នុង NLP, Graph Processing, Neural Network Layers និង Backtracking Search។</li>
+            </ul>
+        </div>
+
+        <!-- Table of Contents -->
+        <div class="section-title"><i class="fa-solid fa-list"></i> មាតិកា (Table of Contents)</div>
+        <div class="narrative-box" style="padding: 12px 20px; border-left-color: var(--accent-green);">
+            <div class="grid-2" style="margin-bottom: 0;">
+                <div style="font-size: 13px; line-height: 2.1; color: var(--text-main);">
+                    <div style="border-bottom: 1px dashed #E2E8F0;"><b class="text-blue">១.</b> គំនិតទូទៅនៃ Linked Lists (Scattered Memory)</div>
+                    <div style="border-bottom: 1px dashed #E2E8F0;"><b class="text-blue">២.</b> រចនាសម្ព័ន្ធ Singly Linked List (ផ្លូវមួយទិស)</div>
+                    <div style="border-bottom: 1px dashed #E2E8F0;"><b class="text-blue">៣.</b> ករណីសិក្សា Singly Linked List ក្នុងជីវភាពរស់នៅ</div>
+                    <div style="border-bottom: 1px dashed #E2E8F0;"><b class="text-blue">៤.</b> ការអនុវត្តកូដ Singly Linked List ក្នុង Python</div>
+                    <div style="border-bottom: 1px dashed #E2E8F0;"><b class="text-blue">៥.</b> រចនាសម្ព័ន្ធ Doubly Linked List (ផ្លូវពីរទិស)</div>
+                    <div style="border-bottom: 1px dashed #E2E8F0;"><b class="text-blue">៦.</b> ករណីសិក្សា Doubly Linked List ជាក់ស្តែង</div>
+                </div>
+                <div style="font-size: 13px; line-height: 2.1; color: var(--text-main);">
+                    <div style="border-bottom: 1px dashed #E2E8F0;"><b class="text-blue">៧.</b> ការអនុវត្តកូដ Doubly Linked List ក្នុង Python</div>
+                    <div style="border-bottom: 1px dashed #E2E8F0;"><b class="text-blue">៨.</b> ការប្រើប្រាស់ Linked Lists ក្នុងវិស័យ AI</div>
+                    <div style="border-bottom: 1px dashed #E2E8F0;"><b class="text-blue">៩.</b> តារាងប្រៀបធៀបល្បឿន Big-O (Array vs Linked List)</div>
+                    <div style="border-bottom: 1px dashed #E2E8F0;"><b class="text-blue">១០.</b> សំណួររំលឹកមេរៀន និងការបកស្រាយលម្អិត (Q&A)</div>
+                    <div style="border-bottom: 1px dashed #E2E8F0;"><b class="text-blue">១១.</b> សទ្ទានុក្រម និងពាក្យគន្លឹះប្រចាំជំពូកទី ៤ (Glossary)</div>
+                    <div style="border-bottom: 1px dashed #E2E8F0;"><b class="text-blue">១២.</b> សេចក្តីសន្និដ្ឋាន និងឯកសារយោង (References)</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="global-footer">
+        <div class="footer-left"><img src="Lim.jpg" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'"><span>សាស្ត្រាចារ្យ៖ សឿង លីម (Soeurng LIM)</span></div>
+        <div class="footer-right">ទំព័រទី ២ នៃ ១៤</div>
+    </div>
+</div>
+
+<!-- ================= PAGE 3: Intro to Linked Lists ================= -->
+<div class="a4-page">
+    <div class="global-header">
+        <div class="header-item"><img src="https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png" onerror="this.src='Logo.png'"><span>សាកលវិទ្យាល័យអង្គរ</span></div>
+        <div class="header-center">
+            <h1>សៀវភៅមគ្គទ្ទេសក៍ (Guidebook) - ជំពូកទី ៤</h1>
+            <p>ADVANCED DATA STRUCTURES AND ALGORITHMS FOR AI</p>
+        </div>
+        <div class="header-item"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg"><span>Python Pro</span></div>
+    </div>
+
+    <div class="page-content">
+        <div class="section-title" style="margin-top: 0;"><i class="fa-solid fa-link"></i> ១. សេចក្តីផ្តើមអំពី Linked Lists (Scattered Memory)</div>
+        <div class="text-block">
+            <b>Linked List</b> គឺជាប្រភេទរចនាសម្ព័ន្ធទិន្នន័យជាជួរ (Linear Data Structure) ដ៏មានឥទ្ធិពល ដែលធាតុនីមួយៗ (ហៅថា <b>Node</b>) មិនតម្រូវឲ្យរក្សាទុកនៅទីតាំងអង្គចងចាំជាប់ៗគ្នា (Contiguous Memory) ដូចជា Array នោះឡើយ។ Nodes អាចស្ថិតនៅទីកន្លែងរាយប៉ាយគ្រប់ទិសទីនៅក្នុង Memory (RAM) ដោយពួកវាប្រើប្រាស់ <b>Pointer / Reference (ខ្សែចង្អុលអាសយដ្ឋាន)</b> ដើម្បីចងភ្ជាប់គ្នាពីមួយទៅមួយជារលកបន្តបន្ទាប់។
+        </div>
+
+        <div class="compare-block">
+            <div class="compare-title" style="text-align: left;"><i class="fa-solid fa-microchip text-blue"></i> ការដោះស្រាយបញ្ហា Memory Allocation និង Fragmentation</div>
+            <div class="compare-grid">
+                <div class="compare-col">
+                    <h5><i class="fa-solid fa-table-cells text-red"></i> ដែនកំណត់របស់ Arrays</h5>
+                    Array ត្រូវការប្លុក Memory ទំហំធំ និងជាប់គ្នាជានិច្ច។ ប្រសិនបើ RAM របស់កុំព្យូទ័រមានចន្លោះទំនេរតូចៗនៅរាយប៉ាយ (Memory Fragmentation) សរុបទៅមានទំហំធំល្មម ប៉ុន្តែគ្មានប្លុកណាមួយជាប់គ្នាធំល្មមសម្រាប់ Array នោះទេ កុំព្យូទ័រនឹងបរាជ័យក្នុងការបង្កើត Array (Out of Memory Error)។
+                </div>
+                <div class="compare-col">
+                    <h5><i class="fa-solid fa-circle-nodes text-green"></i> ដំណោះស្រាយរបស់ Linked Lists</h5>
+                    Linked List មិនខ្វល់ខ្វាយពីការ Fragment នៃ Memory ឡើយ។ ឲ្យតែមានចន្លោះទំនេរតូចមួយនៅក្នុង RAM វានឹងបង្កើត Node ថ្មីនៅទីនោះ ហើយចង Pointer ពី Node មុនមកកាន់ទីតាំងថ្មីនេះ។ នេះជាយន្តការបែងចែក Memory បត់បែន (Dynamic Memory Allocation) ដ៏ប្រសើរ។
+                </div>
+            </div>
+        </div>
+
+        <div class="narrative-box danger">
+            <div class="narrative-header"><i class="fa-solid fa-triangle-exclamation"></i> ដែនកំណត់ធំរបស់ Linked Lists៖ គ្មាន Random Access ឡើយ</div>
+            <p class="narrative-text">ដោយសារតែទិន្នន័យមិនស្ថិតនៅលើទីតាំងជាប់គ្នា យើងមិនអាចប្រើរូបមន្តគណិតវិទ្យាដើម្បីលោតទៅយកទិន្នន័យតាមរយៈ Index ដូចជា <code>arr[5]</code> បានលឿនកម្រិត O(1) នោះទេ។ ប្រសិនបើចង់បានទិន្នន័យទី ៥ ក្នុង Linked List យើងគ្មានជម្រើសអ្វីក្រៅពីចាប់ផ្តើមដើរពី Node ដំបូងគេ (Head) ហើយចម្លងតាម Pointer ម្តងមួយជំហានៗរហូតដល់ទី ៥ ឡើយ ដែលប្រើពេលយឺតកម្រិត <b>O(n)</b>។</p>
+        </div>
+    </div>
+
+    <div class="global-footer">
+        <div class="footer-left"><img src="Lim.jpg" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'"><span>សាស្ត្រាចារ្យ៖ សឿង លីម (Soeurng LIM)</span></div>
+        <div class="footer-right">ទំព័រទី ៣ នៃ ១៤</div>
+    </div>
+</div>
+
+<!-- ================= PAGE 4: Singly Linked List Intro ================= -->
+<div class="a4-page">
+    <div class="global-header">
+        <div class="header-item"><img src="https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png" onerror="this.src='Logo.png'"><span>សាកលវិទ្យាល័យអង្គរ</span></div>
+        <div class="header-center">
+            <h1>សៀវភៅមគ្គទ្ទេសក៍ (Guidebook) - ជំពូកទី ៤</h1>
+            <p>ADVANCED DATA STRUCTURES AND ALGORITHMS FOR AI</p>
+        </div>
+        <div class="header-item"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg"><span>Python Pro</span></div>
+    </div>
+
+    <div class="page-content">
+        <div class="section-title" style="margin-top: 0;"><i class="fa-solid fa-arrow-right-long"></i> ២. រចនាសម្ព័ន្ធ Singly Linked List (ផ្លូវមួយទិស)</div>
+        <div class="text-block">
+            <b>Singly Linked List</b> គឺជាទម្រង់មូលដ្ឋានបំផុតនៃ Linked List ដែលការតភ្ជាប់ដំណើរការតែមួយទិសដៅប៉ុណ្ណោះ (ពីឆ្វេងទៅស្តាំ ឬពីដើមទៅចុង)។ នៅក្នុង Node នីមួយៗផ្ទុកនូវសមាសភាគពីរធំៗគឺ៖
+            <br>១. <b>Data:</b> តម្លៃទិន្នន័យពិតប្រាកដដែលយើងចង់រក្សាទុក (ឧ. លេខ ឬអក្សរ)។
+            <br>២. <b>Next:</b> ខ្សែចងភ្ជាប់ (Reference/Pointer) ដែលផ្ទុកអាសយដ្ឋានរបស់ Node បន្ទាប់។ Node ចុងក្រោយគេបង្អស់ (Tail Node) នឹងចង្អុលទៅរក <b>Null / None</b> ដើម្បីប្រាប់ថាមកដល់ទីបញ្ចប់នៃខ្សែភ្ជាប់ហើយ។
+        </div>
+
+        <div class="section-title"><i class="fa-solid fa-map-location-dot"></i> ៣. ករណីសិក្សា Singly Linked List ក្នុងជីវភាពជាក់ស្តែង</div>
+        <div class="grid-2">
+            <div class="narrative-box">
+                <div class="narrative-header"><i class="fa-solid fa-train"></i> ករណីសិក្សាទី១៖ ខ្សែរថភ្លើង (Train Analogy)</div>
+                <p class="narrative-text">ទូរថភ្លើងនីមួយៗតំណាងឲ្យ Node ដែលមានផ្ទុកអ្នកដំណើរ (Data) និងទំពក់ដែកនៅចុងទូដើម្បីចងភ្ជាប់ទៅនឹងទូបន្ទាប់ (Next Pointer)។ ក្បាលរថភ្លើងទាំងមូលគឺតំណាងឲ្យ <b>Head Pointer</b>។ ប្រសិនបើទំពក់នៅកណ្តាលរថភ្លើងត្រូវបានផ្តាច់ចេញ ទូទាំងអស់នៅខាងក្រោយនឹងត្រូវដាច់បាត់បង់ចេញពីក្បាលរថភ្លើងភ្លាមៗ។</p>
+            </div>
+            <div class="narrative-box">
+                <div class="narrative-header"><i class="fa-solid fa-magnifying-glass"></i> ករណីសិក្សាទី២៖ ល្បែងដេញតាមតម្រុយ (Treasure Hunt)</div>
+                <p class="narrative-text">អ្នកលេងហ្គេមទទួលបានតែក្រដាសតម្រុយទី១ (Head)។ ក្រដាសនោះប្រាប់ពីទីតាំងកំណប់ទី១ និងមានការណែនាំ (Next) ឲ្យដើរទៅរកក្រដាសតម្រុយទី២។ អ្នកលេងមិនអាចលោតផ្លោះទៅរកកំណប់ចុងក្រោយបានឡើយ គឺត្រូវតែដើរតាមលំដាប់លំដោយរហូតដល់ជួបក្រដាសចុងក្រោយដែលគ្មានការណែនាំបន្តទៀត (None)។</p>
+            </div>
+        </div>
+
+        <div class="narrative-box warning" style="margin-bottom: 0;">
+            <div class="narrative-header"><i class="fa-solid fa-images"></i> ករណីសិក្សាទី៣៖ កម្មវិធីបញ្ចាំងស្លាយរូបភាពមួយទិស (One-way Slideshow)</div>
+            <p class="narrative-text">នៅក្នុងកម្មវិធីចាក់រូបភាពចាស់ៗ រូបនីមួយៗផ្ទុកតែកូដបង្កប់ចង្អុលទៅយករូបបន្ទាប់។ នៅពេលអ្នកចុច "បន្ទាប់ (Next)" វានឹងរុញទៅមុខជានិច្ច។ ប៉ុន្តែអ្នកមិនអាចចុចប៊ូតុង "ត្រឡប់ក្រោយ (Previous)" បានទេ លុះត្រាតែកម្មវិធីដើរវិលជុំមកដល់រូបភាពទី១ សារជាថ្មី ឬប្រើប្រាស់រចនាសម្ព័ន្ធពីរទិស (Doubly Linked List)។</p>
+        </div>
+    </div>
+
+    <div class="global-footer">
+        <div class="footer-left"><img src="Lim.jpg" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'"><span>សាស្ត្រាចារ្យ៖ សឿង លីម (Soeurng LIM)</span></div>
+        <div class="footer-right">ទំព័រទី ៤ នៃ ១៤</div>
+    </div>
+</div>
+
+<!-- ================= PAGE 5: Singly Linked List Code ================= -->
+<div class="a4-page">
+    <div class="global-header">
+        <div class="header-item"><img src="https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png" onerror="this.src='Logo.png'"><span>សាកលវិទ្យាល័យអង្គរ</span></div>
+        <div class="header-center">
+            <h1>សៀវភៅមគ្គទ្ទេសក៍ (Guidebook) - ជំពូកទី ៤</h1>
+            <p>ADVANCED DATA STRUCTURES AND ALGORITHMS FOR AI</p>
+        </div>
+        <div class="header-item"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg"><span>Python Pro</span></div>
+    </div>
+
+    <div class="page-content">
+        <div class="section-title" style="margin-top: 0;"><i class="fa-solid fa-code"></i> ៤. ការអនុវត្តកូដ Singly Linked List ក្នុង Python</div>
+        <div class="text-block" style="margin-bottom: 5px;">
+            នៅក្នុងភាសា Python យើងប្រើប្រាស់ការសរសេរកម្មវិធីតម្រង់ទិសវត្ថុ (OOP) ដើម្បីបង្កើតរចនាសម្ព័ន្ធ Linked List ដោយខ្លួនឯង។ យើងត្រូវបង្កើត Class ចំនួនពីរគឺ <code class="text-blue">class Node</code> សម្រាប់ធ្វើជាប្រអប់ផ្ទុកទិន្នន័យ និង <code class="text-blue">class SinglyLinkedList</code> សម្រាប់គ្រប់គ្រងក្បាល (Head) និងប្រតិបត្តិការផ្សេងៗ។
+        </div>
+
+        <!-- Runnable Code -->
+        <div class="code-wrapper" style="margin-top: 10px; margin-bottom: 10px;">
+            <div class="code-header"><span><i class="fa-brands fa-python"></i> 1_singly_linked_list.py</span><span>Singly Linked List Implementation</span></div>
+            <div class="code-content"><pre>
+<span class="kw">class</span> <span class="cls">Node</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="kw">self</span>, data):
+        <span class="kw">self</span>.data = data
+        <span class="kw">self</span>.next = <span class="kw">None</span> <span class="com"># ដើមឡើយមិនទាន់មានការចង្អុលទៅណាឡើយ</span>
+
+<span class="kw">class</span> <span class="cls">SinglyLinkedList</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="kw">self</span>):
+        <span class="kw">self</span>.head = <span class="kw">None</span> <span class="com"># បង្កើតបញ្ជីទទេមួយដែលមានក្បាលស្មើ None</span>
+
+    <span class="com"># បន្ថែម Node ថ្មីទៅខាងចុងបញ្ជី O(n)</span>
+    <span class="kw">def</span> <span class="fn">insert_at_end</span>(<span class="kw">self</span>, data):
+        new_node = Node(data)
+        <span class="kw">if</span> <span class="kw">self</span>.head <span class="kw">is</span> <span class="kw">None</span>:
+            <span class="kw">self</span>.head = new_node
+            <span class="kw">return</span>
+        <span class="com"># បើមាន Node រួចហើយ ត្រូវដើរទៅរក Tail (Node ចុងក្រោយបង្អស់)</span>
+        current = <span class="kw">self</span>.head
+        <span class="kw">while</span> current.next:
+            current = current.next
+        current.next = new_node
+
+    <span class="com"># បោះពុម្ពទិន្នន័យទាំងអស់ក្នុងបណ្តាញតភ្ជាប់ O(n)</span>
+    <span class="kw">def</span> <span class="fn">print_list</span>(<span class="kw">self</span>):
+        current = <span class="kw">self</span>.head
+        elements = []
+        <span class="kw">while</span> current:
+            elements.append(<span class="bult">str</span>(current.data))
+            current = current.next
+        <span class="fn">print</span>(<span class="str">" -> "</span>.join(elements) + <span class="str">" -> None"</span>)
+
+<span class="com"># ដំណើរការសាកល្បង</span>
+llist = SinglyLinkedList()
+llist.insert_at_end(<span class="num">10</span>)
+llist.insert_at_end(<span class="num">20</span>)
+llist.insert_at_end(<span class="num">30</span>)
+
+<span class="fn">print</span>(<span class="str">"លទ្ធផលការតភ្ជាប់ Singly Linked List:"</span>)
+llist.print_list()
+</pre></div>
+            <div class="code-output">
+                <div class="code-output-title">>_ Terminal Output</div>
+                <pre>លទ្ធផលការតភ្ជាប់ Singly Linked List:
+10 -> 20 -> 30 -> None</pre>
+            </div>
+        </div>
+        
+        <div class="highlight-note" style="margin-top: 5px; margin-bottom: 0;">
+            <i class="fa-solid fa-lightbulb"></i> <b>វិភាគកូដ៖</b> នៅពេលបន្ថែមធាតុទៅចុងបញ្ជី យើងត្រូវប្រើ <code>while loop</code> ដើម្បីស្វែងរក Tail ធ្វើឱ្យល្បឿនមានកម្រិត O(n)។ ប្រសិនបើចង់បានកម្រិត O(1) យើងត្រូវថែរក្សា Pointer មួយទៀតឈ្មោះថា <b>Tail Pointer</b> សម្រាប់ចង្អុលទៅចុងបញ្ជីជានិច្ច។
+        </div>
+    </div>
+
+    <div class="global-footer">
+        <div class="footer-left"><img src="Lim.jpg" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'"><span>សាស្ត្រាចារ្យ៖ សឿង លីម (Soeurng LIM)</span></div>
+        <div class="footer-right">ទំព័រទី ៥ នៃ ១៤</div>
+    </div>
+</div>
+
+<!-- ================= PAGE 6: Doubly Linked List Intro ================= -->
+<div class="a4-page">
+    <div class="global-header">
+        <div class="header-item"><img src="https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png" onerror="this.src='Logo.png'"><span>សាកលវិទ្យាល័យអង្គរ</span></div>
+        <div class="header-center">
+            <h1>សៀវភៅមគ្គទ្ទេសក៍ (Guidebook) - ជំពូកទី ៤</h1>
+            <p>ADVANCED DATA STRUCTURES AND ALGORITHMS FOR AI</p>
+        </div>
+        <div class="header-item"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg"><span>Python Pro</span></div>
+    </div>
+
+    <div class="page-content">
+        <div class="section-title" style="margin-top: 0;"><i class="fa-solid fa-arrows-left-right"></i> ៥. រចនាសម្ព័ន្ធ Doubly Linked List (ផ្លូវពីរទិស)</div>
+        <div class="text-block">
+            <b>Doubly Linked List</b> ត្រូវបានបង្កើតឡើងដើម្បីលុបបំបាត់ដែនកំណត់នៃការធ្វើដំណើរតែម្ខាងរបស់ Singly Linked List។ នៅក្នុងរចនាសម្ព័ន្ធប្រភេទនេះ Node នីមួយៗផ្ទុកនូវ Pointer រហូតដល់ទៅពីរ ដែលអនុញ្ញាតឲ្យយើងរំកិលខ្លួនទៅមុខ ឬថយក្រោយបានយ៉ាងមានប្រសិទ្ធភាពខ្ពស់។
+            <br>សមាសភាគចម្បងទាំង ៣ របស់ Doubly Node រួមមាន៖
+            <br>១. <b>Prev:</b> ខ្សែចង្អុលត្រឡប់ក្រោយ ដែលផ្ទុកអាសយដ្ឋានរបស់ Node នៅពីមុខវា (Node ទី១ មាន Prev ស្មើ None)។
+            <br>២. <b>Data:</b> តម្លៃពិតប្រាកដរបស់ទិន្នន័យ។
+            <br>៣. <b>Next:</b> ខ្សែចង្អុលទៅមុខ ដែលផ្ទុកអាសយដ្ឋានរបស់ Node បន្ទាប់ (Node ចុងក្រោយមាន Next ស្មើ None)។
+        </div>
+
+        <div class="compare-block">
+            <div class="compare-title" style="text-align: left;"><i class="fa-solid fa-scale-balanced text-blue"></i> ការថ្លឹងថ្លែង (Trade-off Analysis)៖ ប្រសិទ្ធភាពធៀបនឹងទំហំ Memory</div>
+            <div class="compare-grid">
+                <div class="compare-col">
+                    <h5><i class="fa-solid fa-circle-check text-green"></i> គុណសម្បត្តិលេចធ្លោ</h5>
+                    - អាចធ្វើការរុករកទិន្នន័យ និងដើរចុះឡើងបានទាំងពីរទិស (Bidirectional Traversal)។
+                    <br>- ប្រតិបត្តិការលុបទិន្នន័យ (Deletion) គឺលឿនជាងមុនខ្លាំង ព្រោះយើងមិនបាច់ដើររក Node ពីមុខឡើយ ដោយសារ Node បច្ចុប្បន្នស្គាល់ <code>prev</code> ស្រាប់ហើយ។
+                </div>
+                <div class="compare-col">
+                    <h5><i class="fa-solid fa-circle-xmark text-red"></i> គុណវិបត្តិ និងផលប៉ះពាល់</h5>
+                    - ស៊ីទំហំ Memory របស់ RAM ច្រើនជាងមុន ព្រោះគ្រប់ Node ទាំងអស់ត្រូវបន្ថែមទំហំសម្រាប់ផ្ទុក Pointer ទីពីរ (Prev)។
+                    <br>- ការសរសេរកូដមានភាពស្មុគស្មាញជាងមុន ព្រោះរាល់ពេលបន្ថែម ឬលុប Node យើងត្រូវចងខ្សែភ្ជាប់ឡើងវិញរហូតដល់ទៅ ៤ ខ្សែចង្អុល។
+                </div>
+            </div>
+        </div>
+
+        <div class="section-title"><i class="fa-solid fa-circle-info"></i> ៦. ករណីសិក្សា Doubly Linked List ជាក់ស្តែង</div>
+        <div class="grid-2">
+            <div class="narrative-box">
+                <div class="narrative-header"><i class="fa-brands fa-chrome"></i> ករណីទី១៖ ប្រវត្តិនៃការចូលមើល Web Browser History</div>
+                <p class="narrative-text">រាល់ពេលដែលអ្នកចុចមើលទំព័រវេបសាយថ្មីៗ កម្មវិធីរុករក (Chrome, Safari) នឹងបង្កើត Node រៀបជាខ្សែបណ្តាញ។ តាមរយៈ Doubly Linked List នេះហើយ ទើបអនុញ្ញាតឲ្យអ្នកអាចចុចប៊ូតុង <b>"Back" (ថយក្រោយ <code>prev</code>)</b> ឬប៊ូតុង <b>"Forward" (ទៅមុខ <code>next</code>)</b> បានភ្លាមៗដោយរលូនជានិច្ច។</p>
+            </div>
+            <div class="narrative-box">
+                <div class="narrative-header"><i class="fa-brands fa-spotify"></i> ករណីទី២៖ បញ្ជីចាក់បទចម្រៀង (Spotify Playlist)</div>
+                <p class="narrative-text">ក្នុងកម្មវិធីស្តាប់តន្ត្រីទំនើប បទចម្រៀងនីមួយៗតំណាងឲ្យ Node មួយ។ ពេលកំពុងស្តាប់បទចម្រៀងបច្ចុប្បន្ន ប្រព័ន្ធនឹងដឹងថាបទបន្ទាប់ជាបទអ្វី (Next) ព្រមទាំងបទណាដែលទើបតែចាក់រួចមុននេះបន្តិច (Prev) ធ្វើឲ្យអ្នកប្រើប្រាស់អាចចុចប្តូរបទចម្រៀងទៅមកសងខាងបានយ៉ាងងាយស្រួលបំផុត។</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="global-footer">
+        <div class="footer-left"><img src="Lim.jpg" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'"><span>សាស្ត្រាចារ្យ៖ សឿង លីម (Soeurng LIM)</span></div>
+        <div class="footer-right">ទំព័រទី ៦ នៃ ១៤</div>
+    </div>
+</div>
+
+<!-- ================= PAGE 7: Doubly Linked List Code ================= -->
+<div class="a4-page">
+    <div class="global-header">
+        <div class="header-item"><img src="https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png" onerror="this.src='Logo.png'"><span>សាកលវិទ្យាល័យអង្គរ</span></div>
+        <div class="header-center">
+            <h1>សៀវភៅមគ្គទ្ទេសក៍ (Guidebook) - ជំពូកទី ៤</h1>
+            <p>ADVANCED DATA STRUCTURES AND ALGORITHMS FOR AI</p>
+        </div>
+        <div class="header-item"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg"><span>Python Pro</span></div>
+    </div>
+
+    <div class="page-content">
+        <div class="section-title" style="margin-top: 0;"><i class="fa-solid fa-code"></i> ៧. ការអនុវត្តកូដ Doubly Linked List ក្នុង Python</div>
+        <div class="text-block" style="margin-bottom: 5px;">
+            ខាងក្រោមនេះជាកូដ Python ជាក់ស្តែងនៃការបង្កើត <code class="text-blue">class DNode</code> (Doubly Node) និងការចងភ្ជាប់ទំនាក់ទំនងរវាង Node ចំនួនបីទៅមកសងខាង ព្រមទាំងការសរសេរកូដដើរថយក្រោយ (Reverse Traversal) ពីចុងមកដើមបញ្ជីវិញ។
+        </div>
+
+        <!-- Runnable Code -->
+        <div class="code-wrapper" style="margin-top: 10px; margin-bottom: 10px;">
+            <div class="code-header"><span><i class="fa-brands fa-python"></i> 2_doubly_linked_list.py</span><span>Doubly Node & Reverse Traversal</span></div>
+            <div class="code-content"><pre>
+<span class="kw">class</span> <span class="cls">DNode</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="kw">self</span>, data):
+        <span class="kw">self</span>.data = data
+        <span class="kw">self</span>.prev = <span class="kw">None</span> <span class="com"># ខ្សែចង្អុលថយក្រោយ</span>
+        <span class="kw">self</span>.next = <span class="kw">None</span> <span class="com"># ខ្សែចង្អុលទៅមុខ</span>
+
+<span class="com"># បង្កើត Node ចំនួន ៣ ដាច់ដោយឡែកពីគ្នា</span>
+nodeA = DNode(<span class="str">"ទំព័រទី១ (Home)"</span>)
+nodeB = DNode(<span class="str">"ទំព័រទី២ (Products)"</span>)
+nodeC = DNode(<span class="str">"ទំព័រទី៣ (Checkout)"</span>)
+
+<span class="com"># ភ្ជាប់ទំនាក់ទំនងពីរទិសដៅ (A <-> B <-> C)</span>
+nodeA.next = nodeB
+nodeB.prev = nodeA
+
+nodeB.next = nodeC
+nodeC.prev = nodeB
+
+<span class="com"># ដើរទៅមុខពី A រហូតដល់ C O(n)</span>
+<span class="fn">print</span>(<span class="str">"១. ដំណើរការដើរទៅមុខ (Forward Traversal):"</span>)
+current = nodeA
+<span class="kw">while</span> current:
+    <span class="fn">print</span>(<span class="str">f"[ {current.data} ]"</span>, end=<span class="str">" -> "</span>)
+    current = current.next
+<span class="fn">print</span>(<span class="str">"None"</span>)
+
+<span class="com"># ដើរថយក្រោយពី C ត្រឡប់មក A វិញ O(n)</span>
+<span class="fn">print</span>(<span class="str">"\n២. ដំណើរការដើរថយក្រោយ (Backward Traversal) តាមរយៈ Prev Pointer:"</span>)
+current = nodeC
+<span class="kw">while</span> current:
+    <span class="fn">print</span>(<span class="str">f"[ {current.data} ]"</span>, end=<span class="str">" -> "</span>)
+    current = current.prev
+<span class="fn">print</span>(<span class="str">"None"</span>)
+</pre></div>
+            <div class="code-output">
+                <div class="code-output-title">>_ Terminal Output</div>
+                <pre>១. ដំណើរការដើរទៅមុខ (Forward Traversal):
+[ ទំព័រទី១ (Home) ] -> [ ទំព័រទី២ (Products) ] -> [ ទំព័រទី៣ (Checkout) ] -> None
+
+២. ដំណើរការដើរថយក្រោយ (Backward Traversal) តាមរយៈ Prev Pointer:
+[ ទំព័រទី៣ (Checkout) ] -> [ ទំព័រទី២ (Products) ] -> [ ទំព័រទី១ (Home) ] -> None</pre>
+            </div>
+        </div>
+        
+    </div>
+
+    <div class="global-footer">
+        <div class="footer-left"><img src="Lim.jpg" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'"><span>សាស្ត្រាចារ្យ៖ សឿង លីម (Soeurng LIM)</span></div>
+        <div class="footer-right">ទំព័រទី ៧ នៃ ១៤</div>
+    </div>
+</div>
+
+<!-- ================= PAGE 8: AI Applications ================= -->
+<div class="a4-page">
+    <div class="global-header">
+        <div class="header-item"><img src="https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png" onerror="this.src='Logo.png'"><span>សាកលវិទ្យាល័យអង្គរ</span></div>
+        <div class="header-center">
+            <h1>សៀវភៅមគ្គទ្ទេសក៍ (Guidebook) - ជំពូកទី ៤</h1>
+            <p>ADVANCED DATA STRUCTURES AND ALGORITHMS FOR AI</p>
+        </div>
+        <div class="header-item"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg"><span>Python Pro</span></div>
+    </div>
+
+    <div class="page-content">
+        <div class="section-title" style="margin-top: 0;"><i class="fa-solid fa-brain"></i> ៨. ការអនុវត្ត Linked Lists ក្នុងប្រព័ន្ធ AI & Data Science</div>
+        <div class="text-block">
+            ទោះបីជាភាសា Python ផ្តល់នូវលក្ខណៈងាយស្រួលតាមរយៈ Lists ក៏ដោយ ក៏គំនិតបណ្តាញតភ្ជាប់ (Linked representation) នៅតែជាបេះដូងគ្រឹះនៃស្ថាបត្យកម្មប្រព័ន្ធបញ្ញាសិប្បនិម្មិតកម្រិតខ្ពស់ជាច្រើនដូចខាងក្រោម៖
+        </div>
+        
+        <div class="grid-2">
+            <div class="card">
+                <h4><i class="fa-solid fa-language"></i> 1. NLP Token Sequences</h4>
+                <p class="text-block" style="font-size: 11.5px; margin: 0; text-align: justify;">
+                    នៅក្នុងដំណើរការភាសាធម្មជាតិ (NLP) ពាក្យនីមួយៗក្នុងល្បះត្រូវបានបំប្លែងទៅជា Token Nodes។ ម៉ូដែល AI ស្មុគស្មាញត្រូវការការវិភាគបរិបទសងខាង (Symmetric Context) ដោយប្រើប្រាស់គោលការណ៍ Doubly Linked List ដើម្បីឆែកពាក្យនៅខាងមុខ (Next) និងពាក្យពីក្រោយ (Prev) ដើម្បីស្វែងយល់អត្ថន័យ និងវេយ្យាករណ៍បានត្រឹមត្រូវ។
+                </p>
+            </div>
+            <div class="card">
+                <h4><i class="fa-solid fa-network-wired"></i> 2. Neural Network Layers</h4>
+                <p class="text-block" style="font-size: 11.5px; margin: 0; text-align: justify;">
+                    រចនាសម្ព័ន្ធបណ្តាញណឺរ៉ូនសិប្បនិម្មិត (ANN) មានស្រទាប់ (Layers) ច្រើនតភ្ជាប់គ្នា។ ការបញ្ជូនទិន្នន័យទៅមុខ (Forward Propagation) និងការគណនាកំហុសថយក្រោយដើម្បីបង្រៀន AI (Backpropagation) ប្រើប្រាស់គោលការណ៍ចង្អុលអាសយដ្ឋានទៅមកដូចជា Doubly Linked List ដើម្បីផ្ទេរទិន្នន័យរវាងស្រទាប់នីមួយៗ។
+                </p>
+            </div>
+        </div>
+
+        <div class="grid-2" style="margin-top: 10px;">
+            <div class="card yellow-card">
+                <h4><i class="fa-solid fa-project-diagram"></i> 3. Graph Adjacency Lists</h4>
+                <p class="text-block" style="font-size: 11.5px; margin: 0; text-align: justify;">
+                    ក្នុងការតំណាងទិន្នន័យក្រាហ្វដែលមាន Nodes រាប់លាន (ដូចជា បណ្តាញទំនាក់ទំនងសង្គម Facebook) គេជៀសវាងការប្រើ Adjacency Matrix (តារាងពីរវិមាត្រ) ព្រោះវាខ្ជះខ្ជាយ Memory O(V²) ខ្លាំង។ ផ្ទុយទៅវិញ គេប្រើ <b>Adjacency List</b> ដែលនៅពីក្រោយខ្នងគឺជាការតម្រៀបនៃ Singly Linked Lists ជួយសន្សំសំចៃ Memory យ៉ាងច្រើន។
+                </p>
+            </div>
+            <div class="card red-card">
+                <h4><i class="fa-solid fa-clock-rotate-left"></i> 4. State Management (Backtracking)</h4>
+                <p class="text-block" style="font-size: 11.5px; margin: 0; text-align: justify;">
+                    នៅក្នុងការស្វែងរកផ្លូវ និងការដោះស្រាយល្បែងផ្គុំរូបរបស់ AI (ដូចជា ក្បួនដោះស្រាយ DFS ស្វែងរកផ្លូវ) ប្រព័ន្ធត្រូវកត់ត្រាប្រវត្តិទីតាំងនីមួយៗដែលវាបានឆ្លងកាត់។ ការប្រើប្រាស់ Linked List ជួយឲ្យប្រព័ន្ធអាចលុបទីតាំង និងដកថយ (Backtrack) ត្រឡប់ក្រោយបានលឿនកម្រិត O(1) ពេលដែលជួបផ្លូវទាល់។
+                </p>
+            </div>
+        </div>
+
+        <img src="https://images.unsplash.com/photo-1501526029524-a8ea952b15be?auto=format&fit=crop&w=1200&q=80" class="visual-img" alt="Artificial Neural Network Abstract" style="height: 100px; margin-top: 10px; border-bottom: 3px solid var(--accent-blue);">
+    </div>
+
+    <div class="global-footer">
+        <div class="footer-left"><img src="Lim.jpg" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'"><span>សាស្ត្រាចារ្យ៖ សឿង លីម (Soeurng LIM)</span></div>
+        <div class="footer-right">ទំព័រទី ៨ នៃ ១៤</div>
+    </div>
+</div>
+
+<!-- ================= PAGE 9: Time Complexity Table ================= -->
+<div class="a4-page">
+    <div class="global-header">
+        <div class="header-item"><img src="https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png" onerror="this.src='Logo.png'"><span>សាកលវិទ្យាល័យអង្គរ</span></div>
+        <div class="header-center">
+            <h1>សៀវភៅមគ្គទ្ទេសក៍ (Guidebook) - ជំពូកទី ៤</h1>
+            <p>ADVANCED DATA STRUCTURES AND ALGORITHMS FOR AI</p>
+        </div>
+        <div class="header-item"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg"><span>Python Pro</span></div>
+    </div>
+
+    <div class="page-content">
+        <div class="section-title" style="margin-top: 0;"><i class="fa-solid fa-scale-balanced"></i> ៩. តារាងប្រៀបធៀបប្រសិទ្ធភាពពេលវេលា (Array vs Linked List)</div>
+        <div class="text-block">
+            ការជ្រើសរើសរចនាសម្ព័ន្ធទិន្នន័យត្រឹមត្រូវ ជះឥទ្ធិពលយ៉ាងខ្លាំងទៅលើល្បឿនដំណើរការប្រព័ន្ធបញ្ញាសិប្បនិម្មិត។ តារាងខាងក្រោមបង្ហាញពីប្រសិទ្ធភាព Big-O ក្នុងករណីអាក្រក់បំផុត (Worst-case)៖
+        </div>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>ប្រតិបត្តិការ (Operation)</th>
+                    <th style="text-align: center;">Array (Dynamic)</th>
+                    <th style="text-align: center;">Singly Linked List</th>
+                    <th style="text-align: center;">Doubly Linked List</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><b>ចូលយកទិន្នន័យ (Access តាម Index)</b></td>
+                    <td align="center"><b class="text-green">O(1)</b> ⚡ លឿនបំផុត</td>
+                    <td align="center"><b class="text-red">O(n)</b> 🐌 ត្រូវដើររាប់ពីក្បាល</td>
+                    <td align="center"><b class="text-red">O(n)</b> 🐌 ត្រូវដើររាប់ពីក្បាល</td>
+                </tr>
+                <tr>
+                    <td><b>ស្វែងរកទិន្នន័យ (Search តាមតម្លៃ)</b></td>
+                    <td align="center"><b class="text-red">O(n)</b></td>
+                    <td align="center"><b class="text-red">O(n)</b></td>
+                    <td align="center"><b class="text-red">O(n)</b></td>
+                </tr>
+                <tr>
+                    <td><b>បញ្ចូល/លុប នៅក្បាលបញ្ជី (Head)</b></td>
+                    <td align="center"><b class="text-red">O(n)</b> 🐌 ត្រូវរុញធាតុចាស់ៗ</td>
+                    <td align="center"><b class="text-green">O(1)</b> ⚡ លឿនបំផុត</td>
+                    <td align="center"><b class="text-green">O(1)</b> ⚡ លឿនបំផុត</td>
+                </tr>
+                <tr>
+                    <td><b>បញ្ចូល/លុប នៅចុងបញ្ជី (Tail)</b></td>
+                    <td align="center"><b class="text-green">O(1)</b> (Amortized)</td>
+                    <td align="center"><b class="text-red">O(n)</b> (បើគ្មាន Tail Pointer)<br><b class="text-green">O(1)</b> (បើមាន Tail Pointer)</td>
+                    <td align="center"><b class="text-red">O(n)</b> (បើគ្មាន Tail Pointer)<br><b class="text-green">O(1)</b> (បើមាន Tail Pointer)</td>
+                </tr>
+                <tr>
+                    <td><b>បញ្ចូល/លុប នៅកណ្តាលបញ្ជី</b><br><span style="font-size:10px; font-weight:normal;">(ករណីស្គាល់ទីតាំង Node នោះរួចរាល់)</span></td>
+                    <td align="center"><b class="text-red">O(n)</b> 🐌 ត្រូវរុញធាតុចាស់ៗ</td>
+                    <td align="center"><b class="text-green">O(1)</b> ⚡ គ្រាន់តែប្តូរខ្សែចង</td>
+                    <td align="center"><b class="text-green">O(1)</b> ⚡ គ្រាន់តែប្តូរខ្សែចង</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="narrative-box warning" style="margin-bottom: 0;">
+            <div class="narrative-header"><i class="fa-solid fa-lightbulb"></i> គន្លឹះយុទ្ធសាស្ត្រក្នុងការវិភាគជ្រើសរើស Data Structure</div>
+            <p class="narrative-text"><b>• ជ្រើសរើស Arrays៖</b> នៅពេលដែលប្រព័ន្ធរបស់អ្នកត្រូវការស្វែងរក និងទាញយកទិន្នន័យតាមរយៈលេខលំដាប់ (Index) ញឹកញាប់បំផុត ហើយទិន្នន័យមិនសូវមានការបញ្ចូល ឬលុបចេញពីខាងមុខ ឬកណ្តាលនោះទេ។
+            <br><b>• ជ្រើសរើស Linked Lists៖</b> នៅពេលដែលប្រព័ន្ធរបស់អ្នកត្រូវការបញ្ចូល និងលុបទិន្នន័យជាប្រចាំនៅខាងមុខ ឬចំពិន្ទុណាមួយក្នុងបញ្ជី ហើយអ្នកមិនដឹងពីចំនួនទិន្នន័យច្បាស់លាស់មុនពេលដំណើរការ (ទាមទារភាពបត់បែនខ្ពស់ក្នុងការប្រើ RAM)។</p>
+        </div>
+    </div>
+
+    <div class="global-footer">
+        <div class="footer-left"><img src="Lim.jpg" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'"><span>សាស្ត្រាចារ្យ៖ សឿង លីម (Soeurng LIM)</span></div>
+        <div class="footer-right">ទំព័រទី ៩ នៃ ១៤</div>
+    </div>
+</div>
+
+<!-- ================= PAGE 10: Q&A 1-4 ================= -->
+<div class="a4-page">
+    <div class="global-header">
+        <div class="header-item"><img src="https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png" onerror="this.src='Logo.png'"><span>សាកលវិទ្យាល័យអង្គរ</span></div>
+        <div class="header-center">
+            <h1>សៀវភៅមគ្គទ្ទេសក៍ (Guidebook) - ជំពូកទី ៤</h1>
+            <p>ADVANCED DATA STRUCTURES AND ALGORITHMS FOR AI</p>
+        </div>
+        <div class="header-item"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg"><span>Python Pro</span></div>
+    </div>
+
+    <div class="page-content">
+        <div class="section-title" style="margin-top: 0;"><i class="fa-solid fa-circle-question"></i> ១០. សំណួររំលឹកមេរៀន និងការបកស្រាយលម្អិត (Review Q&A)</div>
+        <div class="text-block" style="margin-bottom: 8px; font-size:12.5px;">
+            ខាងក្រោមនេះគឺជាការបកស្រាយលម្អិតអំពីសំណួរស្នូល និងចំណុចគន្លឹះសំខាន់ៗដែលតែងតែជួបប្រទះនៅក្នុងការប្រឡង និងការសម្ភាសការងារវិស្វករ AI៖
+        </div>
+
+        <!-- Question 1 -->
+        <div class="qa-box" style="margin-bottom: 8px;">
+            <div class="qa-question" style="padding: 6px 12px;">
+                <i class="fa-solid fa-q qa-icon-q"></i> 
+                <span>១. តើភាពខុសគ្នាជាមូលដ្ឋានរវាង Array និង Linked List នៅក្នុង RAM របស់កុំព្យូទ័រមានអ្វីខ្លះ?</span>
+            </div>
+            <div class="qa-answer" style="padding: 6px 12px; font-size:11.5px;">
+                <i class="fa-solid fa-a qa-icon-a"></i>
+                <span>• <b>Array:</b> ទាមទារទីតាំងផ្ទុកនៅក្នុង Memory ដែលមានប្លុក **ជាប់ៗគ្នាជានិច្ច (Contiguous Memory)**។ វាដឹងពីទំហំជាក់លាក់ ដែលធ្វើឲ្យការទាញយកលឿន O(1) ប៉ុន្តែមិនបត់បែនពេលពង្រីកទំហំឡើយ។
+                <br>• <b>Linked List:</b> ផ្ទុកទិន្នន័យនៅទីតាំង **រាយប៉ាយគ្រប់ទិសទី (Scattered Memory)** នៅក្នុង RAM។ វាប្រើប្រាស់ខ្សែចង្អុល (Pointers) ដើម្បីភ្ជាប់ទំនាក់ទំនងពី Node មួយទៅមួយ ធ្វើឲ្យវាមានភាពបត់បែនខ្ពស់ក្នុងការបន្ថែមទិន្នន័យ ប៉ុន្តែការទាញយកមានភាពយឺត O(n)។</span>
+            </div>
+        </div>
+
+        <!-- Question 2 -->
+        <div class="qa-box" style="margin-bottom: 8px;">
+            <div class="qa-question" style="padding: 6px 12px;">
+                <i class="fa-solid fa-q qa-icon-q"></i> 
+                <span>២. ហេតុអ្វីបានជាការបញ្ចូលទិន្នន័យនៅខាងមុខបញ្ជី (Head) នៃ Linked List មានល្បឿន O(1) ខណៈពេល Array ត្រូវការ O(n)?</span>
+            </div>
+            <div class="qa-answer" style="padding: 6px 12px; font-size:11.5px;">
+                <i class="fa-solid fa-a qa-icon-a"></i>
+                <span><b>ការបកស្រាយ៖</b> នៅក្នុង Array ទីតាំងនៃធាតុនីមួយៗត្រូវបានកំណត់ជាប់គ្នានៅក្នុង Memory។ ដូចនេះបើចង់បញ្ចូលទិន្នន័យនៅក្បាល Array កុំព្យូទ័រត្រូវបង្ខំចិត្តរុញធាតុដែលមានស្រាប់ទាំងអស់ទៅក្រោយមួយលំដាប់សិន (ស៊ីពេល O(n))។ ផ្ទុយទៅវិញ នៅក្នុង Linked List យើងគ្រាន់តែបង្កើត Node ថ្មីមួយ រួចកំណត់ឲ្យ Pointer <code>next</code> របស់វាចង្អុលទៅកាន់ Node ក្បាលចាស់ (Head) ហើយដូរ Head មកកាន់ Node ថ្មីនេះវិញជាការស្រេច ដែលប្រើពេលថេរ O(1) ជានិច្ច។</span>
+            </div>
+        </div>
+
+        <!-- Question 3 -->
+        <div class="qa-box" style="margin-bottom: 8px;">
+            <div class="qa-question" style="padding: 6px 12px;">
+                <i class="fa-solid fa-q qa-icon-q"></i> 
+                <span>៣. តើលក្ខខណ្ឌណាខ្លះដែលធ្វើឲ្យប្រតិបត្តិការស្វែងរក (Search) ក្នុង Linked List ប្រើពេលយឺត O(n)?</span>
+            </div>
+            <div class="qa-answer" style="padding: 6px 12px; font-size:11.5px;">
+                <i class="fa-solid fa-a qa-icon-a"></i>
+                <span><b>ការបកស្រាយ៖</b> ដោយសារតែ Nodes នៅក្នុង Linked List មិនស្ថិតនៅក្នុងទីតាំងជាប់គ្នា យើងមិនអាចគណនាអាសយដ្ឋានរបស់ Node នីមួយៗដោយផ្ទាល់បានឡើយ។ ដូច្នេះដើម្បីស្វែងរកតម្លៃទិន្នន័យណាមួយ យើងគ្មានវិធីអ្វីក្រៅពីដើរត្រួតពិនិត្យម្តងមួយ Node ពីក្បាល (Head) រហូតដល់ចុងបញ្ចប់ (Tail) ឡើយ។ ក្នុងករណីអាក្រក់បំផុត (ទិន្នន័យនៅចុងគេបង្អស់ ឬគ្មានក្នុងបញ្ជី) យើងត្រូវឆែករហូតដល់អស់ $n$ ធាតុ ទើបប្រើពេល O(n)។</span>
+            </div>
+        </div>
+
+        <!-- Question 4 -->
+        <div class="qa-box" style="margin-bottom: 0;">
+            <div class="qa-question" style="padding: 6px 12px;">
+                <i class="fa-solid fa-q qa-icon-q"></i> 
+                <span>៤. តើនឹងមានរឿងអ្វីកើតឡើង ប្រសិនបើយើងធ្វើឲ្យបាត់បង់ Pointer របស់ក្បាលបញ្ជី (Head) នៃ Singly Linked List?</span>
+            </div>
+            <div class="qa-answer" style="padding: 6px 12px; font-size:11.5px;">
+                <i class="fa-solid fa-a qa-icon-a"></i>
+                <span><b>ការបកស្រាយ៖</b> នៅក្នុង Singly Linked List យើងអាចចូលទៅប្រើប្រាស់ Nodes ដទៃទៀតបាន គឺមានតែការចាប់ផ្តើមដើរពី Head តែមួយគត់។ ប្រសិនបើយើងបាត់បង់ការចង្អុលរបស់ Head (ឧ. កំណត់វាទៅជា <code>None</code> ដោយច្រឡំ) នោះយើងនឹងលែងមានលទ្ធភាពដើរទៅកាន់ Nodes បន្ទាប់ទៀតហើយ។ ទិន្នន័យទាំងនោះនឹងត្រូវកប់ជាប់ក្នុង RAM ដោយគ្មានអ្នកប្រើប្រាស់ ដែលបង្កើតជាបញ្ហា <b>Memory Leak</b> រហូតទាល់តែប្រព័ន្ធ Garbage Collector របស់ Python រកឃើញ និងលុបពួកវាចោលពី RAM។</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="global-footer">
+        <div class="footer-left"><img src="Lim.jpg" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'"><span>សាស្ត្រាចារ្យ៖ សឿង លីម (Soeurng LIM)</span></div>
+        <div class="footer-right">ទំព័រទី ១០ នៃ ១៤</div>
+    </div>
+</div>
+
+<!-- ================= PAGE 11: Q&A 5-8 + Practice ================= -->
+<div class="a4-page">
+    <div class="global-header">
+        <div class="header-item"><img src="https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png" onerror="this.src='Logo.png'"><span>សាកលវិទ្យាល័យអង្គរ</span></div>
+        <div class="header-center">
+            <h1>សៀវភៅមគ្គទ្ទេសក៍ (Guidebook) - ជំពូកទី ៤</h1>
+            <p>ADVANCED DATA STRUCTURES AND ALGORITHMS FOR AI</p>
+        </div>
+        <div class="header-item"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg"><span>Python Pro</span></div>
+    </div>
+
+    <div class="page-content">
+        <!-- Question 5 -->
+        <div class="qa-box" style="margin-bottom: 8px; margin-top: 0;">
+            <div class="qa-question" style="padding: 6px 12px;">
+                <i class="fa-solid fa-q qa-icon-q"></i> 
+                <span>៥. ហេតុអ្វីបានជា Doubly Linked List ស៊ីទំហំ Memory ច្រើនជាង Singly Linked List យ៉ាងជាក់លាក់?</span>
+            </div>
+            <div class="qa-answer" style="padding: 6px 12px; font-size:11.5px;">
+                <i class="fa-solid fa-a qa-icon-a"></i>
+                <span><b>ការបកស្រាយ៖</b> នៅក្នុង Singly Node នីមួយៗត្រូវរក្សាទុកតែពីរតម្លៃប៉ុណ្ណោះ គឺតម្លៃទិន្នន័យ (Data) និងអាសយដ្ឋានចង្អុលទៅមុខ (Next Pointer)។ ចំណែកឯនៅក្នុង Doubly Node វិញ យើងត្រូវបន្ថែមសមាសភាគទីបីមួយទៀត គឺអាសយដ្ឋានចង្អុលត្រឡប់ក្រោយ (Prev Pointer)។ ការបន្ថែម Pointer មួយបន្ថែមទៀតនៅក្នុងរាល់គ្រប់ Nodes ទាំងអស់ ធ្វើឲ្យទំហំតម្រូវការប្រើប្រាស់ RAM កើនឡើងជិតទ្វេដង។</span>
+            </div>
+        </div>
+
+        <!-- Question 6 -->
+        <div class="qa-box" style="margin-bottom: 8px;">
+            <div class="qa-question" style="padding: 6px 12px;">
+                <i class="fa-solid fa-q qa-icon-q"></i> 
+                <span>៦. តើ Linked List អាចយកមកបង្កើត ឬអនុវត្តរចនាសម្ព័ន្ធ Stacks និង Queues យ៉ាងដូចម្តេច?</span>
+            </div>
+            <div class="qa-answer" style="padding: 6px 12px; font-size:11.5px;">
+                <i class="fa-solid fa-a qa-icon-a"></i>
+                <span><b>ការបកស្រាយ៖</b> • <b>Stack:</b> យើងអាចយក Linked List មកធ្វើជា Stack បានដោយធ្វើប្រតិបត្តិការ Push និង Pop តែនៅត្រង់ក្បាលបញ្ជី (Head) ព្រោះការបន្ថែម និងដកចេញពី Head គឺមានល្បឿនថេរ O(1) ជានិច្ច។
+                <br>• <b>Queue:</b> យើងត្រូវរក្សាទុកទាំង Head (Front) និង Tail Pointer (Rear)។ ប្រតិបត្តិការ Enqueue គឺធ្វើការបន្ថែមទិន្នន័យថ្មីនៅត្រង់ Tail O(1) ហើយ Dequeue គឺធ្វើការលុបទិន្នន័យចេញពី Head O(1)។</span>
+            </div>
+        </div>
+
+        <!-- Question 7 -->
+        <div class="qa-box" style="margin-bottom: 8px;">
+            <div class="qa-question" style="padding: 6px 12px;">
+                <i class="fa-solid fa-q qa-icon-q"></i> 
+                <span>៧. តើអ្វីទៅជា Circular Linked List? តើវាត្រូវបានគេយកទៅប្រើប្រាស់ក្នុងករណីណាខ្លះ?</span>
+            </div>
+            <div class="qa-answer" style="padding: 6px 12px; font-size:11.5px;">
+                <i class="fa-solid fa-a qa-icon-a"></i>
+                <span><b>ការបកស្រាយ៖</b> Circular Linked List គឺជារចនាសម្ព័ន្ធពិសេសដែល Node ចុងក្រោយគេបង្អស់ (Tail) មិនចង្អុលទៅរក <code>None</code> នោះឡើយ ប៉ុន្តែវាចង្អុលត្រឡប់មកកាន់ Node ទីមួយបង្អស់ (Head) វិញជារង្វង់មូលបិទជិត។ វាត្រូវបានគេប្រើប្រាស់យ៉ាងទូលំទូលាយនៅក្នុងប្រព័ន្ធប្រតិបត្តិការ (OS) សម្រាប់ចាត់ចែងចែកចាយពេលវេលាដំណើរការកម្មវិធីជាច្រើន (Round-Robin CPU Task Scheduling) ឬក្នុងកម្មវិធីហ្គេមដែលត្រូវផ្លាស់ប្តូរវេនគ្នាលេងវិលជុំ។</span>
+            </div>
+        </div>
+
+        <!-- Question 8 -->
+        <div class="qa-box" style="margin-bottom: 12px;">
+            <div class="qa-question" style="padding: 6px 12px;">
+                <i class="fa-solid fa-q qa-icon-q"></i> 
+                <span>៨. តើអ្វីទៅជា Garbage Collection នៅក្នុងភាសា Python ហើយវាពាក់ព័ន្ធនឹង Linked List យ៉ាងដូចម្តេច?</span>
+            </div>
+            <div class="qa-answer" style="padding: 6px 12px; font-size:11.5px;">
+                <i class="fa-solid fa-a qa-icon-a"></i>
+                <span><b>ការបកស្រាយ៖</b> Garbage Collection គឺជាប្រព័ន្ធស្វ័យប្រវត្តិនៃកុំព្យូទ័រក្នុងការសម្អាត និងដកហូតយកទំហំ Memory RAM មកវិញពីវត្ថុ (Objects) ណាដែលលែងមានការប្រើប្រាស់ (Reference Count ស្មើ 0)។ នៅក្នុង Linked List នៅពេលដែលយើងលុប Node មួយចេញដោយផ្តាច់ខ្សែចង Pointer ទាំងអស់ដែលចង្អុលទៅកាន់វា Node នោះនឹងលែងមានអ្នកណាស្គាល់ឡើយ (Reference Count = 0) នោះប្រព័ន្ធ Garbage Collector នឹងស្វែងរក និងបំផ្លាញវាចោលពី RAM ដោយស្វ័យប្រវត្តិ។</span>
+            </div>
+        </div>
+
+        <div class="highlight-note" style="margin-bottom: 0; padding: 8px 12px;">
+            <p style="margin: 0; font-size: 11.5px; line-height: 1.5;">
+                <i class="fa-solid fa-bell text-yellow"></i> <b>ផ្នែកអនុវត្តន៍ជាក់ស្តែងសរុបប្រចាំជំពូកទី ៤៖</b>
+                <br>បន្ទាប់ពីយល់ដឹងពីទ្រឹស្តី និស្សិតត្រូវសរសេរកូដ Python បង្កើតប្រតិបត្តិការលុប Node (Deletion) និងការបញ្ចូល Node ថ្មីនៅចន្លោះកណ្តាលបញ្ជី។ លំហាត់កូដគំរូ និងការណែនាំពីរបៀបបង្កើតប្រព័ន្ធ History របស់ Web Browser ដោយប្រើប្រាស់ Doubly Linked List ត្រូវបានរៀបចំយ៉ាងលម្អិតនៅក្នុង <b>"សៀវភៅលំហាត់អនុវត្តន៍ (Workbook) - ជំពូកទី ៤"</b>។
+            </p>
+        </div>
+    </div>
+
+    <div class="global-footer">
+        <div class="footer-left"><img src="Lim.jpg" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'"><span>សាស្ត្រាចារ្យ៖ សឿង លីម (Soeurng LIM)</span></div>
+        <div class="footer-right">ទំព័រទី ១១ នៃ ១៤</div>
+    </div>
+</div>
+
+<!-- ================= PAGE 12: Glossary ================= -->
+<div class="a4-page">
+    <div class="global-header">
+        <div class="header-item"><img src="https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png" onerror="this.src='Logo.png'"><span>សាកលវិទ្យាល័យអង្គរ</span></div>
+        <div class="header-center">
+            <h1>សៀវភៅមគ្គទ្ទេសក៍ (Guidebook) - ជំពូកទី ៤</h1>
+            <p>ADVANCED DATA STRUCTURES AND ALGORITHMS FOR AI</p>
+        </div>
+        <div class="header-item"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg"><span>Python Pro</span></div>
+    </div>
+
+    <div class="page-content">
+        <div class="section-title" style="margin-top: 0;"><i class="fa-solid fa-spell-check"></i> ១១. សទ្ទានុក្រម និងពាក្យគន្លឹះប្រចាំជំពូកទី ៤ (Key Terms & Glossary)</div>
+        <div class="grid-2">
+            <div class="card">
+                <p><b><i class="fa-solid fa-cube text-blue"></i> Node (ថ្នាំង/ប្រអប់ទិន្នន័យ)៖</b> ជាសមាសភាគវត្ថុ (Object) នីមួយៗនៅក្នុងបណ្តាញ Linked List ដែលផ្ទុកនូវតម្លៃទិន្នន័យ (Data) និងអាសយដ្ឋានចង្អុល (Pointers)។</p>
+                <p><b><i class="fa-solid fa-play text-blue"></i> Head (ក្បាលបញ្ជី)៖</b> ជា Node ដំបូងគេបង្អស់នៃខ្សែភ្ជាប់ ដែលជាចំណុចចាប់ផ្តើមនៃការស្វែងរក និងដំណើរការទិន្នន័យទាំងអស់ក្នុងបណ្តាញ។</p>
+                <p><b><i class="fa-solid fa-stop text-blue"></i> Tail (កន្ទុយបញ្ជី)៖</b> ជា Node ចុងក្រោយគេបង្អស់ដែលលែងមានការចង្អុលទៅមុខទៀតហើយ គឺចង្អុលទៅរកតម្លៃ <code>None</code>។</p>
+            </div>
+            <div class="card">
+                <p><b><i class="fa-solid fa-arrow-pointer text-blue"></i> Pointer / Reference ៖</b> ជាអាសយដ្ឋានចង្អុលនៅក្នុង RAM ដែលប្រាប់ប្រព័ន្ធកុំព្យូទ័រថា តើទីតាំងទិន្នន័យរបស់ Node បន្ទាប់ស្ថិតនៅត្រង់ណាពិតប្រាកដ។</p>
+                <p><b><i class="fa-solid fa-ban text-blue"></i> None / Null ៖</b> ជាតម្លៃពិសេសដែលតំណាងឲ្យការ "គ្មានទិន្នន័យ" ឬបញ្ជាក់ពីទីបញ្ចប់នៃខ្សែតភ្ជាប់បណ្តាញ។</p>
+                <p><b><i class="fa-solid fa-shoe-prints text-blue"></i> Traversing (ការដើររុករក)៖</b> ជាសកម្មភាពនៃការដើរត្រួតពិនិត្យទិន្នន័យម្តងមួយ Node ពីដើមរហូតដល់ចប់បញ្ជី។</p>
+            </div>
+        </div>
+
+        <div class="narrative-box warning" style="margin-top: 15px;">
+            <div class="narrative-header"><i class="fa-solid fa-microchip"></i> ការយល់ដឹងពីការគ្រប់គ្រង Memory កម្រិត Hardware</div>
+            <p class="narrative-text">ក្នុងនាមជាអ្នកវិទ្យាសាស្ត្រទិន្នន័យ និងវិស្វករ AI ការយល់ច្បាស់ពីយន្តការគ្រប់គ្រង Memory របស់ Linked List ជួយឱ្យយើងចេះថ្លឹងថ្លែងច្បាស់លាស់ពីការប្រើប្រាស់ RAM។ នៅពេលដំណើរការទិន្នន័យខ្នាតយក្ស (Big Data) ការជ្រើសរើសរចនាសម្ព័ន្ធត្រឹមត្រូវមិនត្រឹមតែជួយឲ្យកូដរត់លឿននោះទេ ប៉ុន្តែវាជួយការពារបញ្ហាគាំងប្រព័ន្ធ (Memory Leak/RAM Exhaustion) ថែមទៀតផង។</p>
+        </div>
+    </div>
+
+    <div class="global-footer">
+        <div class="footer-left"><img src="Lim.jpg" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'"><span>សាស្ត្រាចារ្យ៖ សឿង លីម (Soeurng LIM)</span></div>
+        <div class="footer-right">ទំព័រទី ១២ នៃ ១៤</div>
+    </div>
+</div>
+
+<!-- ================= PAGE 13: Conclusion & References ================= -->
+<div class="a4-page">
+    <div class="global-header">
+        <div class="header-item"><img src="https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png" onerror="this.src='Logo.png'"><span>សាកលវិទ្យាល័យអង្គរ</span></div>
+        <div class="header-center">
+            <h1>សៀវភៅមគ្គទ្ទេសក៍ (Guidebook) - ជំពូកទី ៤</h1>
+            <p>ADVANCED DATA STRUCTURES AND ALGORITHMS FOR AI</p>
+        </div>
+        <div class="header-item"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg"><span>Python Pro</span></div>
+    </div>
+
+    <div class="page-content">
+        <div class="section-title" style="margin-top: 0;"><i class="fa-solid fa-clipboard-list"></i> ១២. សេចក្តីសន្និដ្ឋាននៃជំពូកទី ៤ (Conclusion)</div>
+        <div class="card" style="border-top-color: var(--accent-green); background: #F0FDF4; margin-bottom: 20px;">
+            <ul style="line-height: 1.8; color: var(--text-main); font-size: 13px;">
+                <li><b><i class="fa-solid fa-hand-pointer text-green"></i> គ្មានយន្តការណាដែលល្អគ្រប់ដប់ឡើយ៖</b> ការជ្រើសរើសរវាង Array និង Linked List គឺជាការដោះដូរ (Trade-off)។ បើចង់បានល្បឿនអានទិន្នន័យលឿន O(1) ត្រូវប្រើ Array។ បើចង់បានភាពបត់បែនក្នុងការបញ្ចូល ឬលុបចេញពីខាងមុខ O(1) ត្រូវប្រើ Linked List។</li>
+                <li><b><i class="fa-solid fa-arrows-left-right text-green"></i> Doubly ខ្លាំងតែស៊ី RAM៖</b> Doubly Linked List ផ្តល់ភាពងាយស្រួលបំផុតក្នុងការរុករកទិន្នន័យទាំងពីរទិសដៅ ប៉ុន្តែត្រូវលះបង់ការចំណាយ Memory បន្ថែមសម្រាប់រក្សាទុក Pointer ទីពីរ។</li>
+                <li><b><i class="fa-solid fa-network-wired text-green"></i> គ្រឹះនៃរចនាសម្ព័ន្ធស្មុគស្មាញ៖</b> ការយល់ច្បាស់ពីរបៀបចងភ្ជាប់ Node របស់ Linked List គឺជាគ្រឹះដ៏សំខាន់បំផុតមុននឹងឈានទៅសិក្សារចនាសម្ព័ន្ធទិន្នន័យមិនលីនេអ៊ែរ (Non-Linear Data Structures) ដ៏ស្មុគស្មាញនៅជំពូកបន្ទាប់ គឺ <b>Trees (ដើមឈើ) និង Graphs (បណ្តាញក្រាហ្វ)</b>។</li>
+            </ul>
+        </div>
+
+        <div class="section-title"><i class="fa-solid fa-book-bookmark"></i> ១៣. ឯកសារយោង និងគន្ថនិទ្ទេស (References & Further Reading)</div>
+        <div class="text-block">
+            <ul style="list-style: none; padding-left: 0; line-height: 1.8; text-align: left !important;">
+                <li style="margin-bottom: 8px;"><b><i class='fa-solid fa-book text-blue'></i> Goodrich, M. T., Tamassia, R. (2013).</b> <i>Data Structures and Algorithms in Python</i>. Wiley. (Chapter 7: Linked Lists).</li>
+                <li style="margin-bottom: 8px;"><b><i class='fa-solid fa-book text-blue'></i> Cormen, T. H. (2022).</b> <i>Introduction to Algorithms</i> (4th ed.). MIT Press. (Chapter 10: Elementary Data Structures).</li>
+                <li style="margin-bottom: 8px;"><b><i class='fa-solid fa-globe text-blue'></i> VisuAlgo.net៖</b> គំនូរជីវចលបង្ហាញពីដំណើរការ Singly & Doubly Linked Lists៖ <a href='https://visualgo.net/en/list' style='color:var(--accent-blue); text-decoration:none;'>visualgo.net/en/list</a></li>
+                <li style="margin-bottom: 8px;"><b><i class='fa-solid fa-laptop-code text-blue'></i> LeetCode Platform៖</b> ស្វែងរកដោះស្រាយលំហាត់ល្បីៗប្រភេទ៖ <i>Linked List Cycle, Reverse Linked List,</i> និង <i>Merge Two Sorted Lists</i>។</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="global-footer">
+        <div class="footer-left"><img src="Lim.jpg" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'"><span>សាស្ត្រាចារ្យ៖ សឿង លីម (Soeurng LIM)</span></div>
+        <div class="footer-right">ទំព័រទី ១៣ នៃ ១៤</div>
+    </div>
+</div>
+
+<!-- ================= PAGE 14: BACK COVER ================= -->
+<div class="a4-page cover-page" style="justify-content: center;">
+    <img src="https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png" alt="Angkor University Logo" class="cover-logo" onerror="this.src='Logo.png'" style="width: 100px;">
+    <h1 class="cover-uni-kh" style="font-size: 24px;">សាកលវិទ្យាល័យអង្គរ</h1>
+    <p class="cover-uni-en" style="font-size: 14px; margin-bottom: 20px;">ANGKOR UNIVERSITY</p>
+
+    <div style="width: 50px; height: 3px; background-color: var(--accent-blue); margin: 20px auto;"></div>
+    
+    <h1 class="cover-main-title" style="font-size: 22px; color: var(--accent-green);"><i class="fa-solid fa-flag-checkered"></i> បញ្ចប់ជំពូកទី ៤</h1>
+    <p class="cover-sub-title" style="font-size: 14px; margin-bottom: 30px; color: var(--text-muted);">(End of Chapter 4 Guidebook)</p>
+    
+    <div style="background: #FFFFFF; padding: 15px 30px; border-radius: 50px; border: 2px solid var(--accent-blue); display: inline-block; box-shadow: 0 4px 10px rgba(0,0,0,0.05);">
+        <p style="margin: 0; font-weight: bold; font-size: 14px; color: var(--accent-blue); font-family: 'Lato';"><i class="fa-solid fa-envelope" style="margin-right: 8px;"></i> soeurnglim@gmail.com</p>
+    </div>
+
+    <div class="global-footer" style="position: absolute; bottom: 0;">
+        <div class="footer-left"><img src="Lim.jpg" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'"><span>សាស្ត្រាចារ្យ៖ សឿង លីម (Soeurng LIM)</span></div>
+        <div class="footer-right">ទំព័រទី ១៤ នៃ ១៤</div>
+    </div>
+</div>
+
+</body>
+</html>

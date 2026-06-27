@@ -1,0 +1,1006 @@
+<!DOCTYPE html>
+<html lang="km">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guidebook Chapter 3 - Linear Data Structures</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Battambang:wght@400;700&family=Suwannaphum:wght@400;700;900&family=Lato:wght@400;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <style>
+        :root {
+            --bg-color: #E2E8F0;
+            --paper-white: #FFFFFF;
+            --text-main: #0F172A;
+            --text-muted: #475569;
+            --accent-blue: #0284C7; 
+            --accent-green: #059669;
+            --accent-yellow: #D97706; 
+            --accent-red: #DC2626;
+            --header-footer-bg: #F0F9FF;
+            --code-bg: #111827;
+            --term-bg: #000000;
+            --term-text: #4ade80;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            background-color: var(--bg-color);
+            font-family: 'Battambang', sans-serif;
+            color: var(--text-main);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 40px 20px;
+        }
+
+        /* Utility Classes */
+        .text-blue { color: var(--accent-blue) !important; }
+        .text-green { color: var(--accent-green) !important; }
+        .text-red { color: var(--accent-red) !important; }
+        .text-yellow { color: var(--accent-yellow) !important; }
+
+        /* A4 Page Layout */
+        .a4-page {
+            width: 210mm; 
+            height: 297mm; 
+            background: var(--paper-white);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1); 
+            margin-bottom: 30mm;
+            display: flex; 
+            flex-direction: column; 
+            position: relative; 
+            border-radius: 8px;
+            overflow: hidden; 
+            page-break-after: always;
+        }
+
+        /* COVER PAGE STYLES */
+        .cover-page {
+            justify-content: center; 
+            align-items: center; 
+            text-align: center; 
+            padding: 30mm 20mm;
+            background-image: linear-gradient(to bottom, #F0F9FF, #FFFFFF);
+        }
+        .cover-logo { width: 140px; margin-bottom: 15px; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1)); }
+        .cover-uni-kh { font-family: 'Suwannaphum'; color: var(--accent-blue); font-size: 34px; margin: 0 0 5px 0; font-weight: 900; }
+        .cover-uni-en { font-family: 'Lato'; color: #475569; font-size: 18px; margin: 0 0 40px 0; letter-spacing: 1px; font-weight: bold; }
+        .cover-program { font-family: 'Suwannaphum'; font-size: 18px; color: var(--accent-green); margin-bottom: 25px; font-weight: bold; }
+        .cover-chapter-badge { background: var(--accent-blue); color: white; padding: 10px 30px; border-radius: 50px; font-size: 20px; font-weight: bold; margin-bottom: 40px; font-family: 'Suwannaphum'; box-shadow: 0 5px 15px rgba(2,132,199,0.3); display: inline-block;}
+        .cover-main-title { font-family: 'Suwannaphum'; font-size: 30px; color: var(--text-main); line-height: 1.5; margin-bottom: 10px; font-weight: 900; }
+        .cover-sub-title { font-family: 'Lato'; font-size: 18px; color: var(--accent-blue); margin-bottom: 50px; font-weight: bold; line-height: 1.5;}
+        
+        .cover-author-wrapper { display: flex; flex-direction: column; align-items: center; gap: 15px; margin-bottom: 40px; }
+        .cover-author-img { width: 110px; height: 110px; border-radius: 50%; border: 4px solid var(--accent-blue); object-fit: cover; box-shadow: 0 6px 15px rgba(0,0,0,0.15); background-color: #fff;}
+        .cover-author-text { font-size: 18px; color: #64748B; font-family: 'Suwannaphum'; }
+        .cover-author-text strong { color: var(--text-main); font-size: 22px; }
+
+        .cover-icons-wrapper { display: flex; gap: 50px; justify-content: center; margin-top: auto; border-top: 1px solid #E2E8F0; padding-top: 20px; width: 100%; }
+        .cover-icon-item img { height: 60px; margin-bottom: 8px; object-fit: contain; }
+        .cover-icon-item p { font-size: 14px; font-weight: bold; color: var(--accent-blue); font-family: 'Lato'; }
+
+        /* HEADER & FOOTER */
+        .global-header {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 12px 25px; border-bottom: 3px solid var(--accent-blue); background-color: var(--header-footer-bg);
+            height: 25mm;
+        }
+        .header-item { display: flex; flex-direction: column; align-items: center; gap: 5px; width: 120px; }
+        .header-item img { height: 40px; object-fit: contain; }
+        .header-item span { font-size: 10px; font-weight: bold; color: var(--accent-blue); text-align: center; font-family: 'Suwannaphum'; }
+        .header-center { text-align: center; flex-grow: 1; padding: 0 10px;}
+        .header-center h1 { font-family: 'Suwannaphum'; font-size: 15px; color: var(--accent-blue); margin: 0; }
+        .header-center p { font-family: 'Battambang'; font-size: 10px; color: #64748B; margin: 0; font-weight: bold; text-transform: uppercase;}
+
+        .global-footer {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 10px 25px; border-top: 3px solid var(--accent-blue);
+            background-color: var(--header-footer-bg);
+            position: absolute; bottom: 0; left: 0; width: 100%; height: 15mm;
+        }
+        .footer-left { display: flex; align-items: center; gap: 12px; }
+        .footer-left img { border-radius: 50%; border: 2px solid var(--accent-blue); width: 30px; height: 30px; object-fit: cover; background-color: #fff; }
+        .footer-left span { font-size: 11px; font-weight: bold; color: var(--text-main); font-family: 'Suwannaphum'; }
+        .footer-right { font-size: 11px; color: var(--accent-blue); font-weight: bold; font-family: 'Battambang'; }
+
+        /* CONTENT */
+        .page-content { flex-grow: 1; padding: 8mm 15mm; height: 257mm; overflow: hidden; } 
+        
+        .section-title {
+            background: var(--header-footer-bg); border-left: 5px solid var(--accent-blue);
+            padding: 8px 15px; margin: 10px 0; font-family: 'Suwannaphum';
+            font-size: 16px; display: flex; align-items: center; gap: 10px; font-weight: bold;
+            border-radius: 0 6px 6px 0; color: var(--accent-blue); page-break-after: avoid;
+        }
+
+        .text-block { font-size: 13px; line-height: 1.8; margin-bottom: 12px; color: var(--text-main); text-align: justify; }
+        
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
+        
+        .card { background: #F8FAFC; border: 1px solid #CBD5E1; border-top: 3px solid var(--accent-blue); padding: 12px; border-radius: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); page-break-inside: avoid; }
+        .card h4 { font-family: 'Suwannaphum'; font-size: 14px; color: var(--accent-blue); margin-bottom: 6px; display: flex; align-items: center; gap: 8px;}
+        .card.red-card { border-top-color: var(--accent-red); }
+        .card.red-card h4 { color: var(--accent-red); }
+        .card.green-card { border-top-color: var(--accent-green); }
+        .card.green-card h4 { color: var(--accent-green); }
+        .card.yellow-card { border-top-color: var(--accent-yellow); }
+        .card.yellow-card h4 { color: var(--accent-yellow); }
+        .card ul { padding-left: 20px; margin-top: 5px; font-size: 12px; line-height: 1.8;}
+
+        /* Narrative Boxes */
+        .narrative-box { background: #FFFFFF; border-radius: 6px; border: 1px solid #CBD5E1; border-left: 4px solid var(--accent-blue); padding: 10px 12px; margin-bottom: 12px; box-shadow: 0 2px 5px rgba(0,0,0,0.02); page-break-inside: avoid;}
+        .narrative-header { font-weight: bold; color: var(--accent-blue); font-size: 13.5px; border-bottom: 1px solid #E2E8F0; padding-bottom: 5px; margin-bottom: 6px; font-family: 'Suwannaphum'; display: flex; align-items: center; gap: 8px;}
+        .narrative-text { font-size: 12px; color: var(--text-main); line-height: 1.8; margin: 0; text-align: justify;}
+        
+        .narrative-box.danger { background: #FEF2F2; border-left-color: var(--accent-red); border-color: #FECACA;}
+        .narrative-box.danger .narrative-header { color: var(--accent-red); border-bottom-color: #FCA5A5; }
+        
+        .narrative-box.warning { background: #FFFBEB; border-left-color: var(--accent-yellow); border-color: #FDE68A;}
+        .narrative-box.warning .narrative-header { color: var(--accent-yellow); border-bottom-color: #FCD34D; }
+
+        /* Compare Blocks */
+        .compare-block { border: 1px solid #CBD5E1; border-radius: 8px; overflow: hidden; margin-bottom: 15px; background: #fff; box-shadow: 0 3px 8px rgba(0,0,0,0.05); page-break-inside: avoid;}
+        .compare-img { width: 100%; height: 110px; object-fit: cover; border-bottom: 2px solid var(--accent-blue); }
+        .compare-title { font-family: 'Suwannaphum'; font-size: 14.5px; color: var(--text-main); padding: 6px 12px; background: #F8FAFC; border-bottom: 1px solid #CBD5E1; font-weight: bold; text-align: center;}
+        .compare-grid { display: grid; grid-template-columns: 1fr 1fr; }
+        .compare-col { padding: 10px 12px; font-size: 12px; line-height: 1.8; text-align: justify; }
+        .compare-col:first-child { border-right: 1px dashed #CBD5E1; background: #F8FAFC; }
+        .compare-col h5 { font-family: 'Suwannaphum'; font-size: 13px; margin-bottom: 6px; display: flex; align-items: center; gap: 6px;}
+
+        /* Table Styles */
+        table { width: 100%; border-collapse: collapse; margin-bottom: 15px; font-size: 12px; background: #fff; box-shadow: 0 2px 5px rgba(0,0,0,0.05); border-radius: 6px; overflow: hidden; page-break-inside: avoid;}
+        th { background: var(--header-footer-bg); color: var(--accent-blue); font-family: 'Suwannaphum'; font-size: 13px; text-align: left; padding: 10px 12px; border-bottom: 2px solid var(--accent-blue); }
+        td { padding: 10px 12px; border-bottom: 1px solid #E2E8F0; color: var(--text-main); }
+        tr:last-child td { border-bottom: none; }
+        tr:nth-child(even) { background-color: #F8FAFC; }
+
+        /* Q&A Boxes */
+        .qa-box { border: 1px solid #CBD5E1; border-radius: 8px; margin-bottom: 12px; background: #fff; overflow: hidden; page-break-inside: avoid; box-shadow: 0 3px 6px rgba(0,0,0,0.02);}
+        .qa-question { background: #F0F9FF; padding: 10px 15px; border-bottom: 1px dashed #CBD5E1; font-weight: bold; color: var(--accent-blue); font-family: 'Suwannaphum'; font-size: 13.5px; display: flex; gap: 10px; align-items: flex-start; line-height: 1.6;}
+        .qa-answer { padding: 10px 15px; font-size: 12.5px; line-height: 1.8; color: var(--text-main); display: flex; gap: 10px; text-align: justify;}
+        .qa-icon-q { color: var(--accent-red); font-size: 16px; margin-top: 2px;}
+        .qa-icon-a { color: var(--accent-green); font-size: 16px; margin-top: 2px;}
+
+        .highlight-note { background-color: #FEF9C3; border: 1px dashed var(--accent-yellow); padding: 10px 15px; border-radius: 6px; margin-bottom: 12px; font-weight: bold; color: #854D0E; font-size: 12.5px; display: flex; align-items: center; gap: 10px; page-break-inside: avoid; line-height: 1.6;}
+
+        /* Fully Runnable Python Code Block Design */
+        .visual-img { width: 100%; height: 140px; object-fit: cover; border-radius: 4px; margin-bottom: 10px; border: 1px solid #E2E8F0; }
+        
+        .code-wrapper { background: var(--code-bg); border-radius: 8px; border: 1px solid #374151; overflow: hidden; width: 100%; box-shadow: 0 4px 10px rgba(0,0,0,0.15); margin-top: 10px; margin-bottom: 15px; page-break-inside: avoid;}
+        .code-header { background: #1F2937; padding: 6px 12px; font-size: 11.5px; font-family: 'Battambang', sans-serif; color: #9CA3AF; border-bottom: 1px solid #374151; display: flex; justify-content: space-between; align-items: center;}
+        .code-header span { font-weight: bold; color: #38BDF8; display: flex; align-items: center; gap: 5px; }
+        .code-content { padding: 10px 12px; }
+        
+        /* FIX: 'Battambang' as fallback and increased line-height to prevent Khmer text breaking in PDF */
+        .code-content pre { font-family: 'Fira Code', monospace; font-size: 11.5px; line-height: 1.8; color: #f8f8f2; margin: 0; white-space: pre-wrap; word-break: break-word;}
+        .com { color: #6272a4; font-style: italic; font-family: 'Battambang', sans-serif !important; } 
+        .str { color: #f1fa8c; font-family: 'Battambang', sans-serif !important; }
+        
+        /* Terminal Output Design */
+        .code-output { background: var(--term-bg); padding: 10px 12px; border-top: 1px dashed #4B5563; }
+        
+        /* FIX: Force 'Battambang' here so Terminal Khmer text doesn't overlap/duplicate */
+        .code-output pre { font-family: 'Battambang', sans-serif !important; font-size: 11.5px; color: var(--term-text); margin: 0; white-space: pre-wrap; line-height: 1.8; word-break: break-word;}
+        .code-output-title { font-size: 10px; color: #9CA3AF; margin-bottom: 5px; font-family: 'Battambang'; text-transform: uppercase;}
+
+        .kw { color: #ff79c6; font-weight: bold; } .fn { color: #50fa7b; } .num { color: #bd93f9; } .bult { color: #8be9fd; } .cls { color: #8be9fd; font-style: italic; }
+
+        /* PRINT MEDIA QUERY */
+        @page { size: A4; margin: 0; }
+        @media print {
+            body { background: white; padding: 0; margin: 0; }
+            .a4-page { box-shadow: none; margin: 0; width: 210mm; height: 297mm; border: none; border-radius: 0; page-break-after: always; }
+            .no-print { display: none !important; }
+            * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+        }
+    </style>
+</head>
+<body>
+
+<button class="no-print" onclick="window.print()" style="margin-bottom: 20px; padding: 12px 25px; cursor: pointer; background: var(--accent-blue); color: white; border: none; border-radius: 8px; font-family: 'Battambang'; font-weight: bold; font-size: 16px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); transition: all 0.3s;">
+    <i class="fa-solid fa-print"></i> បោះពុម្ពសៀវភៅមគ្គទ្ទេសក៍ (Print Guidebook)
+</button>
+
+<!-- ================= PAGE 1: COVER ================= -->
+<div class="a4-page cover-page">
+    <img src="https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png" alt="Angkor University Logo" class="cover-logo" onerror="this.src='Logo.png'">
+    <h1 class="cover-uni-kh">សាកលវិទ្យាល័យអង្គរ</h1>
+    <p class="cover-uni-en">ANGKOR UNIVERSITY</p>
+
+    <div class="cover-program">
+        <i class="fa-solid fa-graduation-cap"></i> អនុបណ្ឌិតវិទ្យាសាស្ត្រទិន្នន័យ និងបញ្ញាសិប្បនិម្មិត
+    </div>
+
+    <div class="cover-chapter-badge">សៀវភៅមគ្គទ្ទេសក៍ (Guidebook) | ជំពូកទី ៣</div>
+
+    <h1 class="cover-main-title">រចនាសម្ព័ន្ធទិន្នន័យជាជួរ<br>Arrays, Stacks និង Queues</h1>
+    <h2 class="cover-sub-title">(Linear Data Structures in Python)</h2>
+
+    <div class="cover-author-wrapper">
+        <img src="Lim.jpg" alt="Professor" class="cover-author-img" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'">
+        <div class="cover-author-text">
+            រៀបចំដោយសាស្ត្រាចារ្យ៖ <strong>សឿង លីម (Soeurng LIM)</strong>
+        </div>
+    </div>
+
+    <div class="cover-icons-wrapper">
+        <div class="cover-icon-item">
+            <i class="fa-solid fa-list-ol" style="font-size: 60px; color: var(--accent-blue); margin-bottom: 8px;"></i>
+            <p>Arrays</p>
+        </div>
+        <div class="cover-icon-item">
+            <i class="fa-solid fa-layer-group" style="font-size: 60px; color: var(--accent-green); margin-bottom: 8px;"></i>
+            <p>Stacks</p>
+        </div>
+        <div class="cover-icon-item">
+            <i class="fa-solid fa-users-line" style="font-size: 60px; color: var(--accent-yellow); margin-bottom: 8px;"></i>
+            <p>Queues</p>
+        </div>
+    </div>
+</div>
+
+<!-- ================= PAGE 2: Objectives & TOC ================= -->
+<div class="a4-page">
+    <div class="global-header">
+        <div class="header-item"><img src="https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png" onerror="this.src='Logo.png'"><span>សាកលវិទ្យាល័យអង្គរ</span></div>
+        <div class="header-center">
+            <h1>សៀវភៅមគ្គទ្ទេសក៍ (Guidebook) - ជំពូកទី ៣</h1>
+            <p>ADVANCED DATA STRUCTURES AND ALGORITHMS FOR AI</p>
+        </div>
+        <div class="header-item"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg"><span>Python Pro</span></div>
+    </div>
+
+    <div class="page-content">
+        
+        <!-- រូបភាព Banner បែប Stack (Server Stacks) -->
+        <img src="https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=1200&q=80" class="visual-img" alt="Sequential Stacks Banner" style="height: 120px; object-fit: cover; margin-bottom: 15px; border-bottom: 3px solid var(--accent-blue);">
+
+        <!-- វត្ថុបំណងនៃមេរៀន -->
+        <div class="section-title" style="margin-top: 0;"><i class="fa-solid fa-bullseye"></i> វត្ថុបំណងនៃមេរៀន (Learning Objectives)</div>
+        <div class="card green-card" style="margin-bottom: 20px;">
+            <p class="text-block" style="margin-bottom: 12px; font-weight: bold;">បន្ទាប់ពីបញ្ចប់ការសិក្សានៅក្នុងជំពូកទី ៣ នេះ និស្សិតនឹងមានសមត្ថភាព៖</p>
+            <ul style="line-height: 1.8; color: var(--text-main); font-size: 13px; padding-left: 25px;">
+                <li><b class="text-blue">យល់ដឹងពីគ្រឹះ៖</b> យល់ច្បាស់ពីនិយមន័យ និងតួនាទីរបស់រចនាសម្ព័ន្ធទិន្នន័យជាជួរ (Linear Data Structures)។</li>
+                <li><b class="text-blue">ស្វែងយល់ពី Arrays៖</b> យល់ពីរបៀបដែលកុំព្យូទ័របែងចែកអង្គចងចាំជាប់ៗគ្នា (Contiguous Memory) សម្រាប់ Array ព្រមទាំងយន្តការ Dynamic Arrays ក្នុង Python។</li>
+                <li><b class="text-blue">ចេះគ្រប់គ្រង Stacks៖</b> យល់ដឹងពីគោលការណ៍ LIFO (Last In, First Out) របស់ Stacks និងវិធីសរសេរកូដអនុវត្តជាក់ស្តែង។</li>
+                <li><b class="text-blue">ចេះគ្រប់គ្រង Queues៖</b> យល់ដឹងពីគោលការណ៍ FIFO (First In, First Out) របស់ Queues និងមូលហេតុដែលត្រូវប្រើ Module <code class="text-red">collections.deque</code> ជំនួសឲ្យ Python List ធម្មតា។</li>
+                <li><b class="text-blue">វិភាគ និងអនុវត្ត៖</b> អាចធ្វើការវិភាគគណិតវិទ្យា Big-O (Time Complexity) នៃរចនាសម្ព័ន្ធនីមួយៗ និងអនុវត្តវាទៅក្នុងប្រព័ន្ធបញ្ញាសិប្បនិម្មិត (AI/Data Science)។</li>
+            </ul>
+        </div>
+
+        <!-- មាតិកា -->
+        <div class="section-title"><i class="fa-solid fa-list"></i> មាតិកា (Table of Contents)</div>
+        <div class="narrative-box" style="padding: 12px 20px; border-left-color: var(--accent-green);">
+            <div class="grid-2" style="margin-bottom: 0;">
+                
+                <!-- ជួរឈរទី ១ -->
+                <div style="font-size: 13px; line-height: 2.1; color: var(--text-main);">
+                    <div style="border-bottom: 1px dashed #E2E8F0;"><b class="text-blue">១.</b> សេចក្តីផ្តើមអំពីរចនាសម្ព័ន្ធទិន្នន័យជាជួរ</div>
+                    <div style="border-bottom: 1px dashed #E2E8F0;"><b class="text-blue">២.</b> រចនាសម្ព័ន្ធ Arrays និងការបែងចែក Memory</div>
+                    <div style="border-bottom: 1px dashed #E2E8F0;"><b class="text-blue">៣.</b> ការអនុវត្តកូដ Dynamic Arrays ក្នុង Python</div>
+                    <div style="border-bottom: 1px dashed #E2E8F0;"><b class="text-blue">៤.</b> រចនាសម្ព័ន្ធ Stacks (LIFO)</div>
+                    <div style="border-bottom: 1px dashed #E2E8F0;"><b class="text-blue">៥.</b> ការអនុវត្តកូដ Stacks ក្នុង Python</div>
+                    <div style="border-bottom: 1px dashed #E2E8F0;"><b class="text-blue">៦.</b> រចនាសម្ព័ន្ធ Queues (FIFO)</div>
+                </div>
+
+                <!-- ជួរឈរទី ២ -->
+                <div style="font-size: 13px; line-height: 2.1; color: var(--text-main);">
+                    <div style="border-bottom: 1px dashed #E2E8F0;"><b class="text-blue">៧.</b> ការអនុវត្តកូដ Queues ជាមួយ deque</div>
+                    <div style="border-bottom: 1px dashed #E2E8F0;"><b class="text-blue">៨.</b> ការអនុវត្ត Stacks & Queues ក្នុង AI</div>
+                    <div style="border-bottom: 1px dashed #E2E8F0;"><b class="text-blue">៩.</b> តារាងប្រៀបធៀបប្រសិទ្ធភាព Big-O</div>
+                    <div style="border-bottom: 1px dashed #E2E8F0;"><b class="text-blue">១០.</b> សំណួររំលឹកមេរៀន និងការបកស្រាយ (Q&A)</div>
+                    <div style="border-bottom: 1px dashed #E2E8F0;"><b class="text-blue">១១.</b> សទ្ទានុក្រម និងពាក្យគន្លឹះ (Glossary)</div>
+                    <div style="border-bottom: 1px dashed #E2E8F0;"><b class="text-blue">១២.</b> សេចក្តីសន្និដ្ឋាននៃជំពូកទី ៣ (Conclusion)</div>
+                    <div style="border-bottom: 1px dashed #E2E8F0;"><b class="text-blue">១៣.</b> ឯកសារយោង និងគន្ថនិទ្ទេស (References)</div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+    <div class="global-footer">
+        <div class="footer-left"><img src="Lim.jpg" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'"><span>សាស្ត្រាចារ្យ៖ សឿង លីម (Soeurng LIM)</span></div>
+        <div class="footer-right">ទំព័រទី ២ នៃ ១៤</div>
+    </div>
+</div>
+
+<!-- ================= PAGE 3: Intro to Linear & Arrays ================= -->
+<div class="a4-page">
+    <div class="global-header">
+        <div class="header-item"><img src="https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png" onerror="this.src='Logo.png'"><span>សាកលវិទ្យាល័យអង្គរ</span></div>
+        <div class="header-center">
+            <h1>សៀវភៅមគ្គទ្ទេសក៍ (Guidebook) - ជំពូកទី ៣</h1>
+            <p>ADVANCED DATA STRUCTURES AND ALGORITHMS FOR AI</p>
+        </div>
+        <div class="header-item"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg"><span>Python Pro</span></div>
+    </div>
+
+    <div class="page-content">
+        <div class="section-title"><i class="fa-solid fa-bullseye"></i> ១. សេចក្តីផ្តើមអំពីរចនាសម្ព័ន្ធទិន្នន័យជាជួរ (Linear Data Structures)</div>
+        <div class="text-block">
+            <b>Linear Data Structures</b> គឺជារចនាសម្ព័ន្ធដែលតម្រៀបទិន្នន័យជាបន្តបន្ទាប់គ្នា (Sequential) ដែលធាតុនីមួយៗត្រូវបានភ្ជាប់ទៅកាន់ធាតុមុន និងធាតុបន្ទាប់របស់វា (លើកលែងតែធាតុដើម និងចុង)។ ទម្រង់នេះមានភាពងាយស្រួលក្នុងការស្វែងរក ពីព្រោះយើងអាចដើរតាមជួរពីដើមដល់ចប់បាន (Traversal)។ នៅក្នុងជំពូកនេះ យើងនឹងសិក្សាអំពីរចនាសម្ព័ន្ធធំៗ ៣ គឺ៖ <b>Arrays, Stacks, និង Queues</b>។
+        </div>
+
+        <div class="section-title"><i class="fa-solid fa-list-ol"></i> ២. រចនាសម្ព័ន្ធ Arrays និងការបែងចែកអង្គចងចាំ</div>
+        <div class="text-block">
+            <b>Array</b> គឺជាទម្រង់ទិន្នន័យចំណាស់ជាងគេ និងប្រើប្រាស់ច្រើនជាងគេ។ លក្ខណៈពិសេសរបស់វាគឺ វាទាមទារកន្លែងទំនេរនៅក្នុង Memory កុំព្យូទ័រ ដែលនៅ<b>ជាប់ៗគ្នា (Contiguous Memory)</b> ដើម្បីផ្ទុកទិន្នន័យ។
+        </div>
+        
+        <div class="grid-2">
+            <div class="narrative-box">
+                <div class="narrative-header"><i class="fa-solid fa-envelope"></i> ករណីសិក្សា៖ ប្រអប់សំបុត្រ (PO Box)</div>
+                <p class="narrative-text">Array ប្រៀបដូចជាប្រអប់សំបុត្រនៅប្រៃសណីយ៍ដែលតម្រៀបជាប់ៗគ្នា។ កាលណាយើងដឹងពីលេខរៀង (Index) នៃប្រអប់ទី១ យើងអាចលោតទៅចាប់យកប្រអប់ទី១០ បានភ្លាមៗដោយប្រើរូបមន្តគណិតវិទ្យា ធ្វើឲ្យល្បឿនក្នុងការ Access ទិន្នន័យគឺលឿនបំផុតកម្រិត <b>O(1)</b>。</p>
+            </div>
+            <div class="narrative-box warning">
+                <div class="narrative-header"><i class="fa-solid fa-chair"></i> ករណីសិក្សា៖ កៅអីរោងកុន (Static Array)</div>
+                <p class="narrative-text">កៅអីរោងកុនត្រូវបានរៀបចំជាជួរថេរ។ បើជួរនោះមានកៅអី ១០ ហើយមានមនុស្ស ១០ នាក់អង្គុយពេញ បើមានមនុស្សទី ១១ មក គាត់មិនអាចជ្រែកអង្គុយបានទេ លុះត្រាតែយើងប្តូរពួកគេទាំងអស់ទៅជួរថ្មីដែលធំជាងមុន។ នេះហៅថាបញ្ហានៃ Static Array。</p>
+            </div>
+        </div>
+
+        <div class="compare-block">
+            <div class="compare-title" style="text-align: left;"><i class="fa-solid fa-person-walking-arrow-right text-blue"></i> បញ្ហានៃការបញ្ចូលទិន្នន័យនៅកណ្តាលជួរ (Insertion Problem)</div>
+            <div class="compare-grid" style="grid-template-columns: 1fr;">
+                <div class="compare-col real">
+                    ការបន្ថែម (Append) ឬលុប (Pop) មនុស្សនៅ<b>ចុងជួរ</b> គឺលឿនណាស់ (<b>O(1)</b>)។ ប៉ុន្តែប្រសិនបើមានអ្នកចង់ជ្រែកចូលនៅ<b>កណ្តាលជួរ (កៅអីទី២)</b> យើងត្រូវបង្ខំចិត្តប្រាប់អ្នកអង្គុយពីកៅអីទី២ ដល់ទី១០ ឲ្យងើបឈរ ហើយរំកិលខ្លួនថយក្រោយមួយកៅអីម្នាក់សិន ដើម្បីទុកចន្លោះឲ្យអ្នកថ្មី។ ដំណើរការរុញចុះឡើងនេះ ស៊ីពេលយឺតខ្លាំង <b>O(n)</b>។
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="global-footer">
+        <div class="footer-left"><img src="Lim.jpg" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'"><span>សាស្ត្រាចារ្យ៖ សឿង លីម (Soeurng LIM)</span></div>
+        <div class="footer-right">ទំព័រទី ៣ នៃ ១៤</div>
+    </div>
+</div>
+
+<!-- ================= PAGE 4: Array Code ================= -->
+<div class="a4-page">
+    <div class="global-header">
+        <div class="header-item"><img src="https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png" onerror="this.src='Logo.png'"><span>សាកលវិទ្យាល័យអង្គរ</span></div>
+        <div class="header-center">
+            <h1>សៀវភៅមគ្គទ្ទេសក៍ (Guidebook) - ជំពូកទី ៣</h1>
+            <p>ADVANCED DATA STRUCTURES AND ALGORITHMS FOR AI</p>
+        </div>
+        <div class="header-item"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg"><span>Python Pro</span></div>
+    </div>
+
+    <div class="page-content">
+        <div class="section-title"><i class="fa-solid fa-code"></i> ៣. ការអនុវត្តកូដ Dynamic Arrays ក្នុង Python</div>
+        <div class="text-block" style="margin-bottom: 5px;">
+            នៅក្នុងភាសា C ឬ Java អ្នកត្រូវប្រាប់កុំព្យូទ័រពីទំហំ Array ជាមុន (ឧ. ផ្ទុកបានតែ ១០ ធាតុ)។ ប៉ុន្តែនៅក្នុងភាសា Python ទិន្នន័យប្រភេទ <code>list</code> គឺជា <b>Dynamic Array</b>។ វាមានប្រព័ន្ធឆ្លាតវៃក្នុងការ "ពង្រីកទំហំខ្លួនឯង (Resize)" ដោយស្វ័យប្រវត្តិនៅពេលដែលវាពេញ ដោយយើងមិនចាំបាច់ខ្វល់ខ្វាយពីការបង្កើត Memory ថ្មីដោយខ្លួនឯងនោះទេ។
+        </div>
+
+        <!-- Runnable Code -->
+        <div class="code-wrapper" style="margin-top: 15px;">
+            <div class="code-header"><span><i class="fa-brands fa-python"></i> 1_dynamic_arrays.py</span><span>Array Operations</span></div>
+            <div class="code-content"><pre>
+<span class="kw">import</span> time
+
+<span class="com"># បង្កើត List (Dynamic Array)</span>
+arr = [<span class="str">"Sok"</span>, <span class="str">"Sao"</span>, <span class="str">"Piseth"</span>]
+<span class="fn">print</span>(<span class="str">f"១. ទិន្នន័យដើម: {arr}"</span>)
+
+<span class="com"># การ Access ទិន្នន័យតាមរយៈ Index គឺលឿនបំផុត O(1)</span>
+<span class="fn">print</span>(<span class="str">f"២. ហៅឈ្មោះអ្នកទី២: {arr[1]}"</span>)
+
+<span class="com"># ការបន្ថែមនៅចុងជួរ (Append) គឺលឿន O(1)</span>
+arr.<span class="fn">append</span>(<span class="str">"Dara"</span>)
+<span class="fn">print</span>(<span class="str">f"៣. ក្រោយបន្ថែមចុង: {arr}"</span>)
+
+<span class="com"># ការបញ្ចូលនៅកណ្តាលជួរ (Insert) គឺយឺត O(n)</span>
+<span class="com"># ព្រោះ Python ត្រូវរុញ Sao, Piseth, Dara ថយក្រោយ១កន្លែងសិន</span>
+arr.<span class="fn">insert</span>(<span class="num">1</span>, <span class="str">"Vuthy"</span>)
+<span class="fn">print</span>(<span class="str">f"៤. ក្រោយជ្រែកចូលទី២: {arr}"</span>)
+
+<span class="com"># ការវាស់ស្ទង់ភាពយឺតនៃការលុប (Pop) ពីខាងមុខ O(n)</span>
+huge_list = <span class="bult">list</span>(<span class="fn">range</span>(<span class="num">1000000</span>)) <span class="com"># List មាន ១លានតួ</span>
+
+start_time = time.<span class="fn">time</span>()
+huge_list.<span class="fn">pop</span>(<span class="num">0</span>) <span class="com"># លុបអ្នកទី១ចេញ (ត្រូវរុញ ៩សែននាក់ផ្សេងទៀតមកមុខ)</span>
+end_time = time.<span class="fn">time</span>()
+
+<span class="fn">print</span>(<span class="str">f"\n៥. លុបធាតុទី១ ចេញពី List ១លានតួ ប្រើពេល: {end_time - start_time:.5f} វិនាទី"</span>)
+</pre></div>
+            <div class="code-output">
+                <div class="code-output-title">>_ Terminal Output</div>
+                <pre>១. ទិន្នន័យដើម: ['Sok', 'Sao', 'Piseth']
+២. ហៅឈ្មោះអ្នកទី២: Sao
+៣. ក្រោយបន្ថែមចុង: ['Sok', 'Sao', 'Piseth', 'Dara']
+៤. ក្រោយជ្រែកចូលទី២: ['Sok', 'Vuthy', 'Sao', 'Piseth', 'Dara']
+
+៥. លុបធាតុទី១ ចេញពី List ១លានតួ ប្រើពេល: 0.00124 វិនាទី</pre>
+            </div>
+        </div>
+        
+        <div class="highlight-note" style="margin-top: 15px;">
+            <i class="fa-solid fa-lightbulb"></i> <b>គន្លឹះ Data Science៖</b> ទោះបីជាពេលវេលា `0.001` វិនាទីមើលទៅលឿន តែប្រសិនបើក្នុង Machine Learning អ្នកត្រូវ Loop លុបទិន្នន័យពីខាងមុខរាប់លានដង នោះវានឹងកើនឡើងដល់រាប់ម៉ោង (បញ្ហា O(n²))។
+        </div>
+    </div>
+
+    <div class="global-footer">
+        <div class="footer-right">ទំព័រទី ៤ នៃ ១៤</div>
+    </div>
+</div>
+
+<!-- ================= PAGE 5: Stacks ================= -->
+<div class="a4-page">
+    <div class="global-header">
+        <div class="header-item"><img src="https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png" onerror="this.src='Logo.png'"><span>សាកលវិទ្យាល័យអង្គរ</span></div>
+        <div class="header-center">
+            <h1>សៀវភៅមគ្គទ្ទេសក៍ (Guidebook) - ជំពូកទី ៣</h1>
+            <p>ADVANCED DATA STRUCTURES AND ALGORITHMS FOR AI</p>
+        </div>
+        <div class="header-item"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg"><span>Python Pro</span></div>
+    </div>
+
+    <div class="page-content">
+        <div class="section-title"><i class="fa-solid fa-layer-group"></i> ៤. រចនាសម្ព័ន្ធ Stacks (LIFO - Last In, First Out)</div>
+        <div class="text-block">
+            <b>Stack</b> ជារចនាសម្ព័ន្ធទិន្នន័យដែលដំណើរការក្រោមច្បាប់ <b>LIFO (អ្នកចូលក្រោយគេ ត្រូវចេញមកមុនគេ)</b>។ ប្រៀបបាននឹងការដាក់របស់ត្រួតលើគ្នា។ យើងអាចបន្ថែម ឬដករបស់ចេញបានតែពី<b>ផ្នែកខាងលើ (Top)</b> តែប៉ុណ្ណោះ។
+        </div>
+        
+        <div class="grid-2">
+            <div class="card green-card">
+                <h4><i class="fa-solid fa-arrow-down"></i> ប្រតិបត្តិការ Push()</h4>
+                <p class="text-block" style="font-size: 12px; margin:0;">
+                    ការដាក់ទិន្នន័យថ្មីចូលទៅផ្នែកខាងលើបង្អស់នៃ Stack។ ល្បឿនគឺលឿនបំផុត <b>O(1)</b> ព្រោះមិនចាំបាច់រុញទិន្នន័យចាស់ៗឡើយ។
+                </p>
+            </div>
+            <div class="card red-card">
+                <h4><i class="fa-solid fa-arrow-up"></i> ប្រតិបត្តិការ Pop()</h4>
+                <p class="text-block" style="font-size: 12px; margin:0;">
+                    ការទាញយកទិន្នន័យដែលនៅខាងលើគេបង្អស់ចេញមកក្រៅ។ ល្បឿនលឿនបំផុត <b>O(1)</b>។
+                </p>
+            </div>
+        </div>
+
+        <div class="grid-2">
+            <div class="narrative-box">
+                <div class="narrative-header"><i class="fa-solid fa-utensils"></i> ករណីសិក្សា៖ ការត្រួតចានបាយ</div>
+                <p class="narrative-text">ពេលយើងលាងចាន យើងយកចានទៅត្រួតពីលើគ្នា (Push)។ នៅពេលញ៉ាំបាយ យើងមិនអាចទាញចានពីបាតក្រោមគេបានទេ (ព្រោះអាចធ្លាក់បែក) យើងត្រូវយកចានដែលនៅខាងលើគេបង្អស់ ដែលយើងទើបតែដាក់ក្រោយគេ (Last In) យកមកប្រើប្រាស់មុនគេ (First Out)។</p>
+            </div>
+            <div class="narrative-box">
+                <div class="narrative-header"><i class="fa-solid fa-rotate-left"></i> ករណីសិក្សា៖ មុខងារ Undo (Ctrl+Z)</div>
+                <p class="narrative-text">ក្នុងកម្មវិធី Word រាល់ពេលអ្នកវាយអក្សរ "A", "B", "C" សកម្មភាពទាំងនេះត្រូវបាន Push ចូលក្នុង Memory Stack របស់កុំព្យូទ័រ។ ពេលអ្នកចុច Undo វានឹង Pop យកសកម្មភាព "C" ដែលទើបនឹងវាយមុននេះបន្តិច មកលុបចោលវិញ។</p>
+            </div>
+        </div>
+
+        <img src="https://images.unsplash.com/photo-1586075010923-2dd4570fb338?auto=format&fit=crop&w=1200&q=80" class="visual-img" alt="Stack of pancakes" style="height: 120px; object-position: center 70%;">
+
+    </div>
+
+    <div class="global-footer">
+        <div class="footer-left"><img src="Lim.jpg" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'"><span>សាស្ត្រាចារ្យ៖ សឿង លីម (Soeurng LIM)</span></div>
+        <div class="footer-right">ទំព័រទី ៥ នៃ ១៤</div>
+    </div>
+</div>
+
+<!-- ================= PAGE 6: Stack Code ================= -->
+<div class="a4-page">
+    <div class="global-header">
+        <div class="header-item"><img src="https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png" onerror="this.src='Logo.png'"><span>សាកលវិទ្យាល័យអង្គរ</span></div>
+        <div class="header-center">
+            <h1>សៀវភៅមគ្គទ្ទេសក៍ (Guidebook) - ជំពូកទី ៣</h1>
+            <p>ADVANCED DATA STRUCTURES AND ALGORITHMS FOR AI</p>
+        </div>
+        <div class="header-item"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg"><span>Python Pro</span></div>
+    </div>
+
+    <div class="page-content">
+        <div class="section-title"><i class="fa-solid fa-code"></i> ៥. ការអនុវត្តកូដ Stacks ក្នុង Python</div>
+        <div class="text-block" style="margin-bottom: 5px;">
+            នៅក្នុងភាសា Python យើងមិនចាំបាច់ដំឡើង Library អ្វីថ្មីដើម្បីប្រើ Stack នោះទេ។ យើងអាចយក <code>list</code> ធម្មតាមកប្រើជា Stack បានយ៉ាងល្អឥតខ្ចោះ។ មូលហេតុគឺដោយសារតែការបញ្ចូល <code>append()</code> និងការដកចេញ <code>pop()</code> នៅខាងចុងបញ្ជីរបស់ Python គឺមានល្បឿនលឿនថេរ <b>O(1)</b> ស្រាប់ទៅហើយ។
+        </div>
+
+        <!-- Runnable Code -->
+        <div class="code-wrapper" style="margin-top: 15px;">
+            <div class="code-header"><span><i class="fa-brands fa-python"></i> 2_stack_lifo.py</span><span>LIFO Operations</span></div>
+            <div class="code-content"><pre>
+<span class="com"># បង្កើត Stack ទទេមួយ</span>
+history_stack = []
+
+<span class="com"># 1. Push - ដាក់ទិន្នន័យបញ្ជាន់ពីលើគ្នា (O(1))</span>
+history_stack.<span class="fn">append</span>(<span class="str">"ចូលទំព័រ Home"</span>)
+history_stack.<span class="fn">append</span>(<span class="str">"ចូលទំព័រ About Us"</span>)
+history_stack.<span class="fn">append</span>(<span class="str">"ចូលទំព័រ Contact"</span>)
+
+<span class="fn">print</span>(<span class="str">f"ស្ថានភាព Stack បច្ចុប្បន្ន: {history_stack}"</span>)
+
+<span class="com"># 2. Peek - មើលទិន្នន័យដែលនៅខាងលើគេបង្អស់ (តែមិនដកវាចេញ) (O(1))</span>
+<span class="com"># ក្នុង Python យើងប្រើ index -1 ដើម្បីយកតួចុងក្រោយ</span>
+top_item = history_stack[-<span class="num">1</span>]
+<span class="fn">print</span>(<span class="str">f"ទំព័រចុងក្រោយដែលបានចូលគឺ: {top_item}"</span>)
+
+<span class="com"># 3. Pop - ចុចប៊ូតុង Back ត្រឡប់ក្រោយ (ដកចេញពីលើគេ) (O(1))</span>
+removed_item = history_stack.<span class="fn">pop</span>()
+<span class="fn">print</span>(<span class="str">f"អ្នកបានចុច Back ចាកចេញពីទំព័រ: {removed_item}"</span>)
+<span class="fn">print</span>(<span class="str">f"ស្ថានភាព Stack ក្រោយពី Pop: {history_stack}"</span>)
+
+<span class="com"># ការការពារកំហុសពេល Stack ទទេ (Empty Stack)</span>
+<span class="kw">if</span> <span class="fn">len</span>(history_stack) > <span class="num">0</span>:
+    history_stack.<span class="fn">pop</span>()
+<span class="kw">else</span>:
+    <span class="fn">print</span>(<span class="str">"មិនអាចត្រឡប់ក្រោយបានទេ!"</span>)</pre></div>
+            <div class="code-output">
+                <div class="code-output-title">>_ Terminal Output</div>
+                <pre>ស្ថានភាព Stack បច្ចុប្បន្ន: ['ចូលទំព័រ Home', 'ចូលទំព័រ About Us', 'ចូលទំព័រ Contact']
+ទំព័រចុងក្រោយដែលបានចូលគឺ: ចូលទំព័រ Contact
+អ្នកបានចុច Back ចាកចេញពីទំព័រ: ចូលទំព័រ Contact
+ស្ថានភាព Stack ក្រោយពី Pop: ['ចូលទំព័រ Home', 'ចូលទំព័រ About Us']</pre>
+            </div>
+        </div>
+        
+    </div>
+
+    <div class="global-footer">
+        <div class="footer-left"><img src="Lim.jpg" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'"><span>សាស្ត្រាចារ្យ៖ សឿង លីម (Soeurng LIM)</span></div>
+        <div class="footer-right">ទំព័រទី ៦ នៃ ១៤</div>
+    </div>
+</div>
+
+<!-- ================= PAGE 7: Queues ================= -->
+<div class="a4-page">
+    <div class="global-header">
+        <div class="header-item"><img src="https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png" onerror="this.src='Logo.png'"><span>សាកលវិទ្យាល័យអង្គរ</span></div>
+        <div class="header-center">
+            <h1>សៀវភៅមគ្គទ្ទេសក៍ (Guidebook) - ជំពូកទី ៣</h1>
+            <p>ADVANCED DATA STRUCTURES AND ALGORITHMS FOR AI</p>
+        </div>
+        <div class="header-item"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg"><span>Python Pro</span></div>
+    </div>
+
+    <div class="page-content">
+        <div class="section-title"><i class="fa-solid fa-users-line"></i> ៦. រចនាសម្ព័ន្ធ Queues (FIFO - First In, First Out)</div>
+        <div class="text-block">
+            <b>Queue</b> ជារចនាសម្ព័ន្ធទិន្នន័យដែលដំណើរការក្រោមច្បាប់ <b>FIFO (អ្នកមកមុន ត្រូវបម្រើមុន)</b>។ វាតំណាងឲ្យការឈរតម្រង់ជួរ។ ទិន្នន័យថ្មីត្រូវចូលតាម "ខាងកន្ទុយជួរ (Rear)" ហើយទិន្នន័យចាស់ត្រូវចេញតាម "ខាងក្បាលជួរ (Front)"។
+        </div>
+        
+        <div class="grid-2">
+            <div class="card green-card">
+                <h4><i class="fa-solid fa-arrow-right-to-bracket"></i> ប្រតិបត្តិការ Enqueue()</h4>
+                <p class="text-block" style="font-size: 12px; margin:0;">
+                    ការដាក់ទិន្នន័យថ្មីចូលទៅខាងកន្ទុយជួរ (Rear)។ ល្បឿនគឺ <b>O(1)</b>។
+                </p>
+            </div>
+            <div class="card red-card">
+                <h4><i class="fa-solid fa-arrow-right-from-bracket"></i> ប្រតិបត្តិការ Dequeue()</h4>
+                <p class="text-block" style="font-size: 12px; margin:0;">
+                    ការទាញយកទិន្នន័យចេញពីខាងក្បាលជួរ (Front)។ ល្បឿនត្រូវតែ <b>O(1)</b> សម្រាប់ប្រព័ន្ធជួរដែលល្អ។
+                </p>
+            </div>
+        </div>
+
+        <div class="grid-2">
+            <div class="narrative-box">
+                <div class="narrative-header"><i class="fa-solid fa-ticket"></i> ករណីសិក្សា៖ ការទិញសំបុត្រកុន</div>
+                <p class="narrative-text">អតិថិជនដែលមកឈរចាំក្នុងជួរមុនគេ នឹងទទួលបានសំបុត្រ ហើយដើរចេញពីជួរមុនគេ (First In, First Out)។ ចំណែកឯអ្នកដែលទើបតែមកដល់ ត្រូវតែទៅឈរតម្រង់នៅខាងកន្ទុយជួរជានិច្ច មិនអាចជ្រែកទៅមុខបានទេ។ នេះជាប្រព័ន្ធដែលមានភាពយុត្តិធម៌។</p>
+            </div>
+            <div class="narrative-box">
+                <div class="narrative-header"><i class="fa-solid fa-print"></i> ករណីសិក្សា៖ ម៉ាស៊ីន Print ឯកសារ</div>
+                <p class="narrative-text">នៅក្នុងការិយាល័យ ពេលបុគ្គលិក ៥ នាក់ចុចបញ្ជា Print ក្នុងពេលតែមួយ ម៉ាស៊ីនមិនអាចព្រីនទាំង ៥ ព្រមគ្នាបានទេ។ វាបង្កើត Memory Queue មួយ។ ឯកសារអ្នកណាបញ្ជូនមកមុន វាព្រីនចេញមុន។ អ្នកក្រោយៗត្រូវរង់ចាំក្នុងជួររហូតដល់វេនខ្លួន។</p>
+            </div>
+        </div>
+
+        <img src="https://images.unsplash.com/photo-1524661135-423995f22d0b?auto=format&fit=crop&w=1200&q=80" class="visual-img" alt="Traffic Queue" style="height: 120px; object-position: center 60%;">
+
+    </div>
+
+    <div class="global-footer">
+        <div class="footer-left"><img src="Lim.jpg" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'"><span>សាស្ត្រាចារ្យ៖ សឿង លីម (Soeurng LIM)</span></div>
+        <div class="footer-right">ទំព័រទី ៧ នៃ ១៤</div>
+    </div>
+</div>
+
+<!-- ================= PAGE 8: Queue Code ================= -->
+<div class="a4-page">
+    <div class="global-header">
+        <div class="header-item"><img src="https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png" onerror="this.src='Logo.png'"><span>សាកលវិទ្យាល័យអង្គរ</span></div>
+        <div class="header-center">
+            <h1>សៀវភៅមគ្គទ្ទេសក៍ (Guidebook) - ជំពូកទី ៣</h1>
+            <p>ADVANCED DATA STRUCTURES AND ALGORITHMS FOR AI</p>
+        </div>
+        <div class="header-item"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg"><span>Python Pro</span></div>
+    </div>
+
+    <div class="page-content">
+        <div class="section-title"><i class="fa-solid fa-code"></i> ៧. ការអនុវត្តកូដ Queues ជាមួយ collections.deque</div>
+        
+        <div class="narrative-box danger" style="margin-bottom: 10px;">
+            <div class="narrative-header"><i class="fa-solid fa-triangle-exclamation"></i> ហេតុអ្វីមិនគួរប្រើ List ធម្មតាធ្វើជា Queue?</div>
+            <p class="narrative-text">ក្នុង Python ការប្រើ <code>list.pop(0)</code> ដើម្បីយកអ្នកខាងមុខចេញ គឺយឺតខ្លាំងកម្រិត <b>O(n)</b> ព្រោះកុំព្យូទ័រត្រូវចំណាយពេលរុញទិន្នន័យដែលនៅសល់ទាំងអស់ទៅមុខម្តងមួយៗ។ បើមានអ្នកតម្រង់ជួរ ១លាននាក់ វានឹងគាំងម៉ាស៊ីន。 ដូច្នេះ វិស្វករតែងតែទាញយក Module ដែលមានល្បឿនលឿនគឺ <b><code style="color:var(--accent-red)">collections.deque</code></b> មកប្រើជំនួសវិញ។</p>
+        </div>
+
+        <!-- Runnable Code -->
+        <div class="code-wrapper" style="margin-top: 10px;">
+            <div class="code-header"><span><i class="fa-brands fa-python"></i> 3_queue_fifo.py</span><span>Double-Ended Queue (O(1))</span></div>
+            <div class="code-content"><pre>
+<span class="kw">from</span> collections <span class="kw">import</span> deque
+
+<span class="com"># បង្កើត Queue ទទេមួយ ដោយប្រើ deque (អានថា "ដែក")</span>
+print_queue = <span class="fn">deque</span>()
+
+<span class="com"># 1. Enqueue - ចូលតម្រង់ជួរខាងកន្ទុយ (O(1))</span>
+print_queue.<span class="fn">append</span>(<span class="str">"ឯកសារ សុខ"</span>)
+print_queue.<span class="fn">append</span>(<span class="str">"ឯកសារ សៅ"</span>)
+print_queue.<span class="fn">append</span>(<span class="str">"ឯកសារ លីម"</span>)
+
+<span class="fn">print</span>(<span class="str">f"មានឯកសារកំពុងរង់ចាំ: {print_queue}"</span>)
+
+<span class="com"># 2. Dequeue - ព្រីនចេញ និងលុបចេញពីក្បាលជួរ (O(1))</span>
+<span class="com"># ការប្រើ popleft() គឺមានប្រសិទ្ធភាព O(1) លឿនជាង pop(0) របស់ list</span>
+finished_job = print_queue.<span class="fn">popleft</span>()
+<span class="fn">print</span>(<span class="str">f"-> កំពុងព្រីន: {finished_job}"</span>)
+<span class="fn">print</span>(<span class="str">f"នៅសល់ក្នុងជួរ: {print_queue}"</span>)
+
+<span class="com"># បម្រើអ្នកបន្ទាប់ទៀត</span>
+<span class="fn">print</span>(<span class="str">f"-> កំពុងព្រីន: {print_queue.popleft()}"</span>)
+<span class="fn">print</span>(<span class="str">f"នៅសល់ក្នុងជួរ: {print_queue}"</span>)</pre></div>
+            <div class="code-output">
+                <div class="code-output-title">>_ Terminal Output</div>
+                <pre>មានឯកសារកំពុងរង់ចាំ: deque(['ឯកសារ សុខ', 'ឯកសារ សៅ', 'ឯកសារ លីម'])
+-> កំពុងព្រីន: ឯកសារ សុខ
+នៅសល់ក្នុងជួរ: deque(['ឯកសារ សៅ', 'ឯកសារ លីម'])
+-> កំពុងព្រីន: ឯកសារ សៅ
+នៅសល់ក្នុងជួរ: deque(['ឯកសារ លីម'])</pre>
+            </div>
+        </div>
+        
+    </div>
+
+    <div class="global-footer">
+        <div class="footer-left"><img src="Lim.jpg" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'"><span>សាស្ត្រាចារ្យ៖ សឿង លីម (Soeurng LIM)</span></div>
+        <div class="footer-right">ទំព័រទី ៨ នៃ ១៤</div>
+    </div>
+</div>
+
+<!-- ================= PAGE 9: AI Apps & Time Complexity Table ================= -->
+<div class="a4-page">
+    <div class="global-header">
+        <div class="header-item"><img src="https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png" onerror="this.src='Logo.png'"><span>សាកលវិទ្យាល័យអង្គរ</span></div>
+        <div class="header-center">
+            <h1>សៀវភៅមគ្គទ្ទេសក៍ (Guidebook) - ជំពូកទី ៣</h1>
+            <p>ADVANCED DATA STRUCTURES AND ALGORITHMS FOR AI</p>
+        </div>
+        <div class="header-item"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg"><span>Python Pro</span></div>
+    </div>
+
+    <div class="page-content">
+        <div class="section-title"><i class="fa-solid fa-brain"></i> ៨. ការអនុវត្ត Stacks & Queues ក្នុងប្រព័ន្ធ AI & Data Science</div>
+        <div class="text-block">
+            រចនាសម្ព័ន្ធទាំងពីរនេះ មិនមែនគ្រាន់តែជាទ្រឹស្តីនោះទេ វាគឺជាបេះដូងនៃក្បួនដោះស្រាយ (Algorithms) ដ៏សំខាន់ៗជាច្រើននៅក្នុងវិស័យបញ្ញាសិប្បនិម្មិត។
+        </div>
+        
+        <div class="grid-2">
+            <div class="card">
+                <h4><i class="fa-solid fa-project-diagram"></i> ការស្វែងរកផ្លូវ (Pathfinding)</h4>
+                <ul>
+                    <li><b><i class='fa-solid fa-layer-group text-blue'></i> Stack ក្នុង DFS:</b> ក្បួន Depth-First Search ប្រើ Stack ដើម្បីចងចាំផ្លូវបំបែក។ វាជួយឲ្យរ៉ូបូតចេះដើររុករកក្នុងវង្កត់ (Maze) ដល់ផ្លូវទាល់ ហើយដកថយ (Backtrack) មករកផ្លូវថ្មីវិញ។</li>
+                    <li><b><i class='fa-solid fa-users-line text-green'></i> Queue ក្នុង BFS:</b> ក្បួន Breadth-First Search ប្រើ Queue ដើម្បីរុករកទីតាំងដែលនៅក្បែរៗជាមុន។ វាត្រូវបានប្រើក្នុង Google Maps ដើម្បីរកផ្លូវដែលខ្លីជាងគេ (Shortest Path)។</li>
+                </ul>
+            </div>
+            <div class="card">
+                <h4><i class="fa-solid fa-language"></i> ដំណើរការភាសា (NLP)</h4>
+                <ul>
+                    <li><b><i class='fa-solid fa-layer-group text-blue'></i> Stack ក្នុង Syntax:</b> ម៉ូដែល AI ប្រើ Stack ដើម្បីពិនិត្យមើលវេយ្យាករណ៍ និងវង់ក្រចកថាតើវាត្រូវបានបិទបើកត្រឹមត្រូវ ឬអត់ (Parsing)។</li>
+                    <li><b><i class='fa-solid fa-users-line text-green'></i> Queue ក្នុង Translation:</b> ម៉ូដែលបកប្រែភាសា ប្រើប្រាស់រចនាសម្ព័ន្ធជួរ ដើម្បីទទួលពាក្យម្តងមួយៗតាមលំដាប់លំដោយ មុននឹងបំប្លែងទៅជាភាសាដទៃទៀត។</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="section-title"><i class="fa-solid fa-scale-balanced"></i> ៩. តារាងប្រៀបធៀបប្រសិទ្ធភាព (Time Complexity Analysis)</div>
+        <div class="text-block">
+            ការជ្រើសរើស Data Structure ត្រូវអាស្រ័យលើថា "តើអ្នកត្រូវការធ្វើប្រតិបត្តិការមួយណាញឹកញាប់ជាងគេ?"។ ខាងក្រោមនេះជាតារាង Big-O សម្រាប់ Worst-case៖
+        </div>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>រចនាសម្ព័ន្ធ (Data Structure)</th>
+                    <th style="text-align: center;">ចូលទៅយក<br>(Access / Peek)</th>
+                    <th style="text-align: center;">ស្វែងរក<br>(Search)</th>
+                    <th style="text-align: center;">បញ្ចូល/លុប (ខាងចុង)<br>(End)</th>
+                    <th style="text-align: center;">បញ្ចូល/លុប (ខាងមុខ)<br>(Front)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><b><i class="fa-solid fa-list-ol text-blue"></i> Array</b> (Python List)</td>
+                    <td align="center"><b class="text-green">O(1)</b></td>
+                    <td align="center"><span class="text-yellow">O(n)</span></td>
+                    <td align="center"><b class="text-green">O(1)</b></td>
+                    <td align="center"><b class="text-red">O(n)</b></td>
+                </tr>
+                <tr>
+                    <td><b><i class="fa-solid fa-layer-group text-blue"></i> Stack</b> (ប្រើ List)</td>
+                    <td align="center"><b class="text-green">O(1)</b> (Top ទេ)</td>
+                    <td align="center"><span class="text-yellow">O(n)</span></td>
+                    <td align="center"><b class="text-green">O(1)</b> (Push/Pop)</td>
+                    <td align="center"><span class="text-muted">N/A</span></td>
+                </tr>
+                <tr>
+                    <td><b><i class="fa-solid fa-users-line text-blue"></i> Queue</b> (ប្រើ <code>deque</code>)</td>
+                    <td align="center"><b class="text-green">O(1)</b> (Front ទេ)</td>
+                    <td align="center"><span class="text-yellow">O(n)</span></td>
+                    <td align="center"><b class="text-green">O(1)</b> (Enqueue)</td>
+                    <td align="center"><b class="text-green">O(1)</b> (Dequeue)</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="highlight-note">
+            <i class="fa-solid fa-lightbulb"></i> <b>សន្និដ្ឋាន៖</b> បើចង់លោតទៅចាប់យកទិន្នន័យ (Index) ញឹកញាប់ ត្រូវប្រើ Array។ បើគ្រាន់តែចង់ដាក់ចូល និងដកចេញតាមលំដាប់លំដោយ ត្រូវប្រើ Stack ឬ Queue ព្រោះវាលឿនកម្រិត O(1) ដាច់ខាត។
+        </div>
+
+    </div>
+
+    <div class="global-footer">
+        <div class="footer-left"><img src="Lim.jpg" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'"><span>សាស្ត្រាចារ្យ៖ សឿង លីម (Soeurng LIM)</span></div>
+        <div class="footer-right">ទំព័រទី ៩ នៃ ១៤</div>
+    </div>
+</div>
+
+<!-- ================= PAGE 10: Q&A 1-4 ================= -->
+<div class="a4-page">
+    <div class="global-header">
+        <div class="header-item"><img src="https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png" onerror="this.src='Logo.png'"><span>សាកលវិទ្យាល័យអង្គរ</span></div>
+        <div class="header-center">
+            <h1>សៀវភៅមគ្គទ្ទេសក៍ (Guidebook) - ជំពូកទី ៣</h1>
+            <p>ADVANCED DATA STRUCTURES AND ALGORITHMS FOR AI</p>
+        </div>
+        <div class="header-item"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg"><span>Python Pro</span></div>
+    </div>
+
+    <div class="page-content">
+        <div class="section-title" style="margin-top:0;"><i class="fa-solid fa-circle-question"></i> ១០. សំណួររំលឹកមេរៀន និងការបកស្រាយ (Review Q&A)</div>
+        <div class="text-block" style="margin-bottom: 8px; font-size:12.5px;">
+            ខាងក្រោមនេះគឺជាសំណួរ និងការបកស្រាយគំរូដ៏សំខាន់ៗដែលត្រូវបានរៀបចំឡើងដើម្បីវាស់ស្ទង់ការយល់ដឹងរបស់និស្សិត៖
+        </div>
+
+        <!-- Question 1 -->
+        <div class="qa-box" style="margin-bottom: 8px;">
+            <div class="qa-question" style="padding: 6px 12px;">
+                <i class="fa-solid fa-q qa-icon-q"></i> 
+                <span>១. តើគោលការណ៍ LIFO និង FIFO មានអត្ថន័យដូចម្តេច? សូមលើកឧទាហរណ៍។</span>
+            </div>
+            <div class="qa-answer" style="padding: 6px 12px; font-size:11.5px;">
+                <i class="fa-solid fa-a qa-icon-a"></i>
+                <span>• <b>LIFO (Last In, First Out):</b> គឺច្បាប់របស់ Stack មានន័យថា "អ្នកចូលក្រោយគេ ត្រូវចេញមកមុនគេ"។ ឧទាហរណ៍៖ ការត្រួតចានបាយ ឬមុខងារ Undo ក្នុងកុំព្យូទ័រ ដែលសកម្មភាពចុងក្រោយបង្អស់ត្រូវបានទាញយកមកមុនគេ។<br>
+                • <b>FIFO (First In, First Out):</b> គឺច្បាប់របស់ Queue មានន័យថា "អ្នកចូលមុនគេ ត្រូវចេញមុនគេ"។ ឧទាហរណ៍៖ ការតម្រង់ជួរទិញសំបុត្រកុន អ្នកណាឈរចាំមុន នឹងទទួលបានសំបុត្រមុន។</span>
+            </div>
+        </div>
+
+        <!-- Question 2 -->
+        <div class="qa-box" style="margin-bottom: 8px;">
+            <div class="qa-question" style="padding: 6px 12px;">
+                <i class="fa-solid fa-q qa-icon-q"></i> 
+                <span>២. ហេតុអ្វីបានជាការបញ្ចូលទិន្នន័យ (Insert) នៅកណ្តាល Array មានល្បឿនយឺតកម្រិត O(n)?</span>
+            </div>
+            <div class="qa-answer" style="padding: 6px 12px; font-size:11.5px;">
+                <i class="fa-solid fa-a qa-icon-a"></i>
+                <span><b>ការបកស្រាយ៖</b> ដោយសារតែ Array រក្សាទុកទិន្នន័យនៅ "ជាប់ៗគ្នា (Contiguous Memory)" ដូច្នេះនៅពេលដែលយើងចង់ជ្រែកបញ្ចូលទិន្នន័យថ្មីមួយនៅកណ្តាលជួរ កុំព្យូទ័រត្រូវបង្ខំចិត្ត "រុញ" ទិន្នន័យផ្សេងទៀតទាំងអស់ដែលនៅពីក្រោយកន្លែងនោះ ឲ្យថយក្រោយម្តងមួយៗដើម្បីទុកចន្លោះប្រហោង។ ប្រសិនបើមានទិន្នន័យ ១ លានតួ ម៉ាស៊ីនត្រូវធ្វើការរុញរាប់លានដង ដែលធ្វើឲ្យល្បឿនធ្លាក់ចុះដល់កម្រិត O(n)។</span>
+            </div>
+        </div>
+
+        <!-- Question 3 -->
+        <div class="qa-box" style="margin-bottom: 8px;">
+            <div class="qa-question" style="padding: 6px 12px;">
+                <i class="fa-solid fa-q qa-icon-q"></i> 
+                <span>៣. ហេតុអ្វីយើងមិនគួរប្រើ List ធម្មតា ធ្វើជា Queue នៅក្នុងភាសា Python? តើយើងគួរប្រើអ្វីជំនួស?</span>
+            </div>
+            <div class="qa-answer" style="padding: 6px 12px; font-size:11.5px;">
+                <i class="fa-solid fa-a qa-icon-a"></i>
+                <span><b>ការបកស្រាយ៖</b> នៅក្នុង Queue យើងត្រូវទាញទិន្នន័យចេញពី "ខាងមុខ (Front)"។ ប្រសិនបើយើងប្រើ List ធម្មតា ហើយហៅកូដ <code>list.pop(0)</code> វានឹងស៊ីពេលយឺត O(n) ព្រោះវាត្រូវទាញទិន្នន័យទាំងអស់ឲ្យរំកិលមកមុខវិញ។ ដើម្បីដោះស្រាយបញ្ហានេះ វិស្វករ Python ប្រើប្រាស់ Module <code>collections.deque</code> ជំនួសវិញ ព្រោះការហៅ <code>deque.popleft()</code> ត្រូវបានរចនាឡើងពិសេសឲ្យមានល្បឿនលឿនកម្រិត O(1) ជានិច្ច។</span>
+            </div>
+        </div>
+
+        <!-- Question 4 -->
+        <div class="qa-box" style="margin-bottom: 0;">
+            <div class="qa-question" style="padding: 6px 12px;">
+                <i class="fa-solid fa-q qa-icon-q"></i> 
+                <span>៤. នៅក្នុងការស្វែងរកផ្លូវ (Pathfinding) ក្នុងវិស័យ AI តើក្បួន DFS និង BFS ប្រើប្រាស់ Data Structures មួយណាខ្លះ?</span>
+            </div>
+            <div class="qa-answer" style="padding: 6px 12px; font-size:11.5px;">
+                <i class="fa-solid fa-a qa-icon-a"></i>
+                <span>• ក្បួន <b>DFS (Depth-First Search)</b> ប្រើប្រាស់ <b>Stack</b> ព្រោះវាត្រូវចងចាំទីតាំងចុងក្រោយបំផុត ដើម្បីអាចត្រឡប់ក្រោយ (Backtrack) បានពេលដើរដល់ផ្លូវទាល់ ដូចជាការដើរក្នុងវង្កត់ Maze ជាដើម។<br>
+                • ក្បួន <b>BFS (Breadth-First Search)</b> ប្រើប្រាស់ <b>Queue</b> ព្រោះវាត្រូវត្រួតពិនិត្យផ្លូវដែលនៅជិតៗខ្លួនជាមុនតាមលំដាប់លំដោយ មុននឹងឈានទៅផ្លូវឆ្ងាយ ដែលសាកសមបំផុតសម្រាប់ការរកផ្លូវដែលខ្លីបំផុត (Shortest Path) លើផែនទី។</span>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="global-footer">
+        <div class="footer-left"><img src="Lim.jpg" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'"><span>សាស្ត្រាចារ្យ៖ សឿង លីម (Soeurng LIM)</span></div>
+        <div class="footer-right">ទំព័រទី ១០ នៃ ១៤</div>
+    </div>
+</div>
+
+<!-- ================= PAGE 11: Q&A 5-8 + Practice ================= -->
+<div class="a4-page">
+    <div class="global-header">
+        <div class="header-item"><img src="https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png" onerror="this.src='Logo.png'"><span>សាកលវិទ្យាល័យអង្គរ</span></div>
+        <div class="header-center">
+            <h1>សៀវភៅមគ្គទ្ទេសក៍ (Guidebook) - ជំពូកទី ៣</h1>
+            <p>ADVANCED DATA STRUCTURES AND ALGORITHMS FOR AI</p>
+        </div>
+        <div class="header-item"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg"><span>Python Pro</span></div>
+    </div>
+
+    <div class="page-content">
+        
+        <!-- Question 5 -->
+        <div class="qa-box" style="margin-bottom: 8px; margin-top:0;">
+            <div class="qa-question" style="padding: 6px 12px;">
+                <i class="fa-solid fa-q qa-icon-q"></i> 
+                <span>៥. តើពាក្យ Push និង Pop ខុសគ្នាពី Enqueue និង Dequeue ដូចម្តេច?</span>
+            </div>
+            <div class="qa-answer" style="padding: 6px 12px; font-size:11.5px;">
+                <i class="fa-solid fa-a qa-icon-a"></i>
+                <span>• <b>Push / Pop:</b> ប្រើសម្រាប់ <b>Stack</b>។ Push គឺដាក់បញ្ជាន់ពីលើ, ចំណែក Pop គឺទាញយកអ្នកដែលនៅ<b>លើគេ</b>ចេញមកវិញ។<br>
+                • <b>Enqueue / Dequeue:</b> ប្រើសម្រាប់ <b>Queue</b>។ Enqueue គឺតម្រង់ជួរនៅខាងកន្ទុយ, ចំណែក Dequeue គឺហៅអ្នកដែលនៅ<b>ក្បាលជួរមុនគេ</b>ចេញមកបម្រើ។</span>
+            </div>
+        </div>
+
+        <!-- Question 6 -->
+        <div class="qa-box" style="margin-bottom: 8px;">
+            <div class="qa-question" style="padding: 6px 12px;">
+                <i class="fa-solid fa-q qa-icon-q"></i> 
+                <span>៦. តើអ្វីទៅជា Circular Queue? ហើយហេតុអ្វីបានជាគេត្រូវការវា?</span>
+            </div>
+            <div class="qa-answer" style="padding: 6px 12px; font-size:11.5px;">
+                <i class="fa-solid fa-a qa-icon-a"></i>
+                <span><b>ការបកស្រាយ៖</b> Circular Queue (ជួររង្វង់) គឺជាទម្រង់ពង្រីកនៃ Queue ធម្មតា ដែលធាតុចុងក្រោយត្រូវបានភ្ជាប់ត្រឡប់មកធាតុដើមវិញជារាងរង្វង់។ គេត្រូវការវាដើម្បីដោះស្រាយបញ្ហា "ខាតទំហំ Memory" នៅក្នុង Queue ធម្មតា (ប្រភេទ Static Array) ដែលនៅពេលយើងលុបទិន្នន័យពីខាងមុខ (Dequeue) ចន្លោះទំនេរខាងមុខនោះមិនអាចយកមកប្រើឡើងវិញបានទេ លុះត្រាតែរុញទិន្នន័យទាំងអស់មកមុខ ឬប្រើប្រាស់ Circular Queue នេះដើម្បីអនុញ្ញាតឱ្យធាតុថ្មីចូលមកជំនួសកន្លែងទំនេរខាងមុខវិញ។</span>
+            </div>
+        </div>
+
+        <!-- Question 7 -->
+        <div class="qa-box" style="margin-bottom: 8px;">
+            <div class="qa-question" style="padding: 6px 12px;">
+                <i class="fa-solid fa-q qa-icon-q"></i> 
+                <span>៧. តើ Stack ដើរតួនាទីយ៉ាងដូចម្តេចនៅក្នុងដំណើរការដោះស្រាយ Call Stack?</span>
+            </div>
+            <div class="qa-answer" style="padding: 6px 12px; font-size:11.5px;">
+                <i class="fa-solid fa-a qa-icon-a"></i>
+                <span><b>ការបកស្រាយ៖</b> នៅក្នុងប្រព័ន្ធកុំព្យូទ័រ រាល់ពេលដែលអនុគមន៍ (Function) មួយត្រូវបានហៅ (Call) ព័ត៌មាន និងស្ថានភាពរបស់វាត្រូវបានរក្សាទុកនៅក្នុង "Call Stack" (ដែលជារចនាសម្ព័ន្ធ Stack)។ នៅក្នុង Recursion (អនុគមន៍ហៅខ្លួនឯង) កុំព្យូទ័រនឹងបន្ត Push ស្ថានភាពអនុគមន៍នីមួយៗចូលទៅក្នុង Stack រហូតដល់ជួបលក្ខខណ្ឌបញ្ឈប់ (Base case) ទើបវាចាប់ផ្តើម Pop យកលទ្ធផលត្រឡប់មកវិញម្តងមួយៗតាមលំដាប់ផ្ទុយ (LIFO)។ បើគ្មានលក្ខខណ្ឌបញ្ឈប់ច្បាស់លាស់ទេ វានឹងហៀរ Stack ហៅថា Stack Overflow។</span>
+            </div>
+        </div>
+
+        <!-- Question 8 -->
+        <div class="qa-box" style="margin-bottom: 12px;">
+            <div class="qa-question" style="padding: 6px 12px;">
+                <i class="fa-solid fa-q qa-icon-q"></i> 
+                <span>៨. តើអ្វីទៅជា Priority Queue (ជួរអាទិភាព)? ហើយវាខុសពី Queue ធម្មតាយ៉ាងដូចម្តេច?</span>
+            </div>
+            <div class="qa-answer" style="padding: 6px 12px; font-size:11.5px;">
+                <i class="fa-solid fa-a qa-icon-a"></i>
+                <span><b>ការបកស្រាយ៖</b> នៅក្នុង Queue ធម្មតា ធាតុដែលចូលមុនគេត្រូវចេញមុនគេជានិច្ច (FIFO) ដោយមិនខ្វល់ពីលក្ខណៈទិន្នន័យឡើយ។ ប៉ុន្តែនៅក្នុង Priority Queue ធាតុនីមួយៗត្រូវបានកំណត់តម្លៃអាទិភាព (Priority Value)។ ទិន្នន័យដែលមានអាទិភាពខ្ពស់ជាងគេ នឹងត្រូវចេញមកមុនគេ (Dequeue) ទោះបីជាវាទើបតែចូលមកក្រោយគេក៏ដោយ។ ឧទាហរណ៍៖ ប្រព័ន្ធបន្ទប់សង្គ្រោះបន្ទាន់ (ER) ដែលអ្នកជំងឺធ្ងន់ធ្ងរជាងគេ ត្រូវទទួលបានការព្យាបាលមុនគេ។</span>
+            </div>
+        </div>
+
+        <div class="highlight-note" style="margin-bottom: 0; padding: 8px 12px;">
+            <p style="margin: 0; font-size: 11.5px; line-height:1.5;">
+                <i class="fa-solid fa-bell text-yellow"></i> <b>ផ្នែកអនុវត្តន៍ជាក់ស្តែងសរុបប្រចាំជំពូកទី ៣៖</b><br>
+                បន្ទាប់ពីយល់ទ្រឹស្តី និស្សិតត្រូវអនុវត្តការវាស់ស្ទង់ល្បឿនរវាង <code>list.pop(0)</code> និង <code>deque.popleft()</code> ដោយប្រើ Module <code>time</code> របស់ Python។ បន្ថែមពីនេះ ត្រូវសរសេរកូដបង្កើតប្រព័ន្ធ Undo ខ្នាតតូចដោយប្រើ Stack។ លំហាត់អនុវត្តន៍កូដ និងការបកស្រាយលម្អិត ត្រូវបានរៀបចំនៅក្នុង <b>"សៀវភៅលំហាត់អនុវត្តន៍ (Workbook) - ជំពូកទី ៣"</b>។
+            </p>
+        </div>
+
+    </div>
+
+    <div class="global-footer">
+        <div class="footer-left"><img src="Lim.jpg" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'"><span>សាស្ត្រាចារ្យ៖ សឿង លីម (Soeurng LIM)</span></div>
+        <div class="footer-right">ទំព័រទី ១១ នៃ ១៤</div>
+    </div>
+</div>
+
+<!-- ================= PAGE 12: Glossary & Key Terms ================= -->
+<div class="a4-page">
+    <div class="global-header">
+        <div class="header-item"><img src="https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png" onerror="this.src='Logo.png'"><span>សាកលវិទ្យាល័យអង្គរ</span></div>
+        <div class="header-center">
+            <h1>សៀវភៅមគ្គទ្ទេសក៍ (Guidebook) - ជំពូកទី ៣</h1>
+            <p>ADVANCED DATA STRUCTURES AND ALGORITHMS FOR AI</p>
+        </div>
+        <div class="header-item"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg"><span>Python Pro</span></div>
+    </div>
+
+    <div class="page-content">
+        
+        <div class="section-title" style="margin-top: 0;"><i class="fa-solid fa-spell-check"></i> ១១. សទ្ទានុក្រម និងពាក្យគន្លឹះ (Key Terms & Glossary)</div>
+        <div class="grid-2">
+            <div class="card">
+                <p><b><i class="fa-solid fa-list-ol text-blue"></i> Array:</b> រចនាសម្ព័ន្ធទិន្នន័យដែលផ្ទុកធាតុជាបន្តបន្ទាប់គ្នានៅក្នុង Memory។ Access ទិន្នន័យបានលឿនតាមរយៈ Index (O(1))។</p>
+                <p><b><i class="fa-solid fa-arrow-up-right-dots text-blue"></i> Dynamic Array:</b> ជា Array ឆ្លាតវៃដែលអាចពង្រីក ឬរួមតូចទំហំ Memory របស់វាដោយស្វ័យប្រវត្តិ ដូចជា <code>list</code> ក្នុង Python។</p>
+                <p><b><i class="fa-solid fa-layer-group text-blue"></i> LIFO (Stack):</b> <b>L</b>ast <b>I</b>n, <b>F</b>irst <b>O</b>ut។ យន្តការអ្នកចូលក្រោយគេ ត្រូវចេញមកបម្រើមុនគេ (ប្រៀបដូចជាការត្រួតចាន)។</p>
+            </div>
+            <div class="card">
+                <p><b><i class="fa-solid fa-users-line text-blue"></i> FIFO (Queue):</b> <b>F</b>irst <b>I</b>n, <b>F</b>irst <b>O</b>ut។ យន្តការអ្នកចូលមុនគេ ត្រូវចេញមកបម្រើមុនគេ (ប្រៀបដូចជាការតម្រង់ជួរ)។</p>
+                <p><b><i class="fa-solid fa-arrows-left-right text-blue"></i> Deque:</b> អានថា "ដែក" (Double-Ended Queue)។ ជារចនាសម្ព័ន្ធពិសេសក្នុង Python អនុញ្ញាតឲ្យបញ្ចូល ឬដកទិន្នន័យពីចុងសងខាងបានលឿន (O(1))។</p>
+                <p><b><i class="fa-solid fa-magnifying-glass-location text-blue"></i> DFS / BFS:</b> ក្បួនដោះស្រាយសម្រាប់ស្វែងរកក្នុងក្រាហ្វ ដែល DFS ពឹងផ្អែកលើ Stack ហើយ BFS ពឹងផ្អែកលើ Queue។</p>
+            </div>
+        </div>
+
+        <div class="narrative-box warning" style="margin-top: 15px;">
+            <div class="narrative-header"><i class="fa-solid fa-microchip"></i> ការយល់ដឹងពីគ្រឹះ Hardware</div>
+            <p class="narrative-text">ក្នុងនាមជាវិស្វករ AI កម្រិតខ្ពស់ ការយល់ដឹងពីរបៀបដែលទិន្នន័យត្រូវបានរៀបចំនៅក្នុង RAM (ដូចជា Contiguous Memory របស់ Array ធៀបនឹង Scattered Memory Address) ជួយឱ្យយើងអាចសរសេរកូដដែលមានប្រសិទ្ធភាពខ្ពស់ និងចៀសវាងការខ្ជះខ្ជាយធនធានម៉ាស៊ីន (CPU Cache Misses) ពេលដំណើរការទិន្នន័យខ្នាតយក្ស។</p>
+        </div>
+
+    </div>
+
+    <div class="global-footer">
+        <div class="footer-left"><img src="Lim.jpg" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'"><span>សាស្ត្រាចារ្យ៖ សឿង លីម (Soeurng LIM)</span></div>
+        <div class="footer-right">ទំព័រទី ១២ នៃ ១៤</div>
+    </div>
+</div>
+
+<!-- ================= PAGE 13: Conclusion & References ================= -->
+<div class="a4-page">
+    <div class="global-header">
+        <div class="header-item"><img src="https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png" onerror="this.src='Logo.png'"><span>សាកលវិទ្យាល័យអង្គរ</span></div>
+        <div class="header-center">
+            <h1>សៀវភៅមគ្គទ្ទេសក៍ (Guidebook) - ជំពូកទី ៣</h1>
+            <p>ADVANCED DATA STRUCTURES AND ALGORITHMS FOR AI</p>
+        </div>
+        <div class="header-item"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg"><span>Python Pro</span></div>
+    </div>
+
+    <div class="page-content">
+        
+        <div class="section-title" style="margin-top: 0;"><i class="fa-solid fa-clipboard-list"></i> ១២. សេចក្តីសន្និដ្ឋាននៃជំពូកទី ៣ (Conclusion)</div>
+        <div class="card" style="border-top-color: var(--accent-green); background: #F0FDF4; margin-bottom: 20px;">
+            <ul style="line-height: 1.8; color: var(--text-main); font-size: 13px;">
+                <li><b><i class="fa-solid fa-hand-pointer text-green"></i> គ្មានឧបករណ៍ណាដែលល្អឥតខ្ចោះទេ:</b> ការជ្រើសរើស Data Structure គឺជាការថ្លឹងថ្លែង (Trade-off)។ បើគម្រោងរបស់អ្នកទាមទារការលោតទៅអានទិន្នន័យ (Access) ញឹកញាប់ អ្នកត្រូវជ្រើសរើស <b>Array</b>។ តែបើអ្នកចង់បានល្បឿនលឿនក្នុងការបញ្ចូលនិងដកចេញពីចុង អ្នកត្រូវមើលទៅកាន់ <b>Stack ឬ Queue</b>។</li>
+                <li><b><i class="fa-solid fa-rocket text-green"></i> ត្រូវស្គាល់អាវុធរបស់ Python:</b> ក្នុងនាមជា Data Scientist អ្នកមិនគួរសរសេរកូដ `list.pop(0)` នោះទេ។ ការស្គាល់ និងចេះទាញយក <b><code>collections.deque</code></b> មកប្រើប្រាស់ នឹងជួយឲ្យកូដរបស់អ្នករត់លឿនជាងមុនរាប់រយដង ពេលទិន្នន័យកើនឡើងដល់រាប់លាន។</li>
+                <li><b><i class="fa-solid fa-brain text-green"></i> មូលដ្ឋានគ្រឹះនៃ AI:</b> Stacks និង Queues មើលទៅសាមញ្ញ ប៉ុន្តែពួកវាគឺជាកម្លាំងចលករនៅពីក្រោយក្បួនដោះស្រាយ AI ធំៗដូចជាការស្វែងរកផ្លូវ (Pathfinding) និងប្រព័ន្ធវេយ្យាករណ៍ភាសា (NLP)។</li>
+            </ul>
+        </div>
+
+        <div class="section-title"><i class="fa-solid fa-book-bookmark"></i> ១៣. ឯកសារយោង និងគន្ថនិទ្ទេស (References & Further Reading)</div>
+        <div class="text-block">
+            <!-- 💡 FIX: Added text-align: left !important; here to fix the visual spacing/justification bug in references block -->
+            <ul style="list-style: none; padding-left: 0; line-height: 1.8; text-align: left !important;">
+                <li style="margin-bottom: 8px;"><b><i class='fa-solid fa-book text-blue'></i> Goodrich, M. T., Tamassia, R. (2013).</b> <i>Data Structures and Algorithms in Python</i>. Wiley. (Chapter 5: Array-Based Sequences, Chapter 6: Stacks, Queues, and Deques).</li>
+                <li style="margin-bottom: 8px;"><b><i class='fa-brands fa-python text-blue'></i> Python Docs:</b> <code>collections.deque</code> (High-performance container): <a href='https://docs.python.org/3/library/collections.html#collections.deque' style='color:var(--accent-blue); text-decoration:none;'>docs.python.org/3/library/collections.html</a></li>
+                <li style="margin-bottom: 8px;"><b><i class='fa-brands fa-youtube text-blue'></i> CS Dojo (YouTube):</b> <i>Data Structures: Arrays, Stacks, and Queues</i> - Video explanation with visual analogies.</li>
+                <li style="margin-bottom: 8px;"><b><i class='fa-solid fa-globe text-blue'></i> Big-O Cheat Sheet:</b> <i>Time Complexity comparisons for Arrays, Stacks, and Queues:</i> <a href='https://www.bigocheatsheet.com/' style='color:var(--accent-blue); text-decoration:none;'>www.bigocheatsheet.com</a></li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="global-footer">
+        <div class="footer-left"><img src="Lim.jpg" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'"><span>សាស្ត្រាចារ្យ៖ សឿង លីម (Soeurng LIM)</span></div>
+        <div class="footer-right">ទំព័រទី ១៣ នៃ ១៤</div>
+    </div>
+</div>
+
+<!-- ================= PAGE 14: BACK COVER ================= -->
+<div class="a4-page cover-page" style="justify-content: center;">
+    <img src="https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png" alt="Angkor University Logo" class="cover-logo" onerror="this.src='Logo.png'" style="width: 100px;">
+    <h1 class="cover-uni-kh" style="font-size: 24px;">សាកលវិទ្យាល័យអង្គរ</h1>
+    <p class="cover-uni-en" style="font-size: 14px; margin-bottom: 20px;">ANGKOR UNIVERSITY</p>
+
+    <div style="width: 50px; height: 3px; background-color: var(--accent-blue); margin: 20px auto;"></div>
+    
+    <h1 class="cover-main-title" style="font-size: 22px; color: var(--accent-green);"><i class="fa-solid fa-flag-checkered"></i> បញ្ចប់ជំពូកទី ៣</h1>
+    <p class="cover-sub-title" style="font-size: 14px; margin-bottom: 30px; color: var(--text-muted);">(End of Chapter 3 Guidebook)</p>
+    
+    <div style="background: #FFFFFF; padding: 15px 30px; border-radius: 50px; border: 2px solid var(--accent-blue); display: inline-block; box-shadow: 0 4px 10px rgba(0,0,0,0.05);">
+        <p style="margin: 0; font-weight: bold; font-size: 14px; color: var(--accent-blue); font-family: 'Lato';"><i class="fa-solid fa-envelope" style="margin-right: 8px;"></i> soeurnglim@gmail.com</p>
+    </div>
+
+    <div class="global-footer" style="position: absolute; bottom: 0;">
+        <div class="footer-left"><img src="Lim.jpg" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'"><span>សាស្ត្រាចារ្យ៖ សឿង លីម (Soeurng LIM)</span></div>
+        <div class="footer-right">ទំព័រទី ១៤ នៃ ១៤</div>
+    </div>
+</div>
+
+</body>
+</html>

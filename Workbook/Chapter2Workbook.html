@@ -1,0 +1,896 @@
+<!DOCTYPE html>
+<html lang="km">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Workbook Chapter 2 - OOP & Memory Management</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Battambang:wght@400;700&family=Suwannaphum:wght@400;700;900&family=Lato:wght@400;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <style>
+        :root {
+            --bg-color: #E2E8F0;
+            --paper-white: #FFFFFF;
+            --text-main: #0F172A;
+            --text-muted: #475569;
+            --accent-blue: #0284C7; 
+            --accent-green: #059669;
+            --answer-color: #0369A1; 
+            --header-footer-bg: #F0F9FF;
+            --code-bg: #111827; 
+            --low: #059669; --mid: #D97706; --high: #DC2626;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            background-color: var(--bg-color);
+            font-family: 'Battambang', sans-serif;
+            color: var(--text-main);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 40px 20px;
+        }
+
+        /* A4 Page Layout - STRICT FIXED HEIGHT */
+        .a4-page {
+            width: 210mm; 
+            height: 297mm; 
+            background: var(--paper-white);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1); 
+            margin-bottom: 30px;
+            display: block; 
+            position: relative; 
+            border-radius: 8px;
+            page-break-after: always;
+            overflow: hidden; 
+        }
+
+        /* COVER PAGE STYLES */
+        .cover-page {
+            display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; 
+            padding: 30mm 20mm;
+            background-image: linear-gradient(to bottom, #F0F9FF, #FFFFFF);
+        }
+        .cover-logo { width: 140px; margin-bottom: 15px; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1)); }
+        .cover-uni-kh { font-family: 'Suwannaphum'; color: var(--accent-blue); font-size: 38px; margin: 0 0 5px 0; font-weight: 900; }
+        .cover-uni-en { font-family: 'Lato'; color: #475569; font-size: 18px; margin: 0 0 40px 0; letter-spacing: 1px; font-weight: bold; }
+        .cover-program { font-family: 'Suwannaphum'; font-size: 20px; color: var(--accent-green); margin-bottom: 25px; font-weight: bold; }
+        .cover-chapter-badge { background: var(--accent-blue); color: white; padding: 10px 40px; border-radius: 50px; font-size: 22px; font-weight: bold; margin-bottom: 40px; font-family: 'Suwannaphum'; box-shadow: 0 5px 15px rgba(2,132,199,0.3); display: inline-block;}
+        .cover-main-title { font-family: 'Suwannaphum'; font-size: 34px; color: var(--text-main); line-height: 1.4; margin-bottom: 10px; font-weight: 900; }
+        .cover-sub-title { font-family: 'Lato'; font-size: 22px; color: var(--accent-blue); margin-bottom: 50px; font-weight: bold; }
+        
+        .cover-author-wrapper { display: flex; flex-direction: column; align-items: center; gap: 15px; margin-bottom: 40px; }
+        .cover-author-img { width: 100px; height: 100px; border-radius: 50%; border: 4px solid var(--accent-blue); object-fit: cover; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        .cover-author-text { font-size: 20px; color: var(--text-muted); font-family: 'Suwannaphum'; }
+        .cover-author-text strong { color: var(--accent-blue); font-size: 24px; }
+
+        .cover-icons-wrapper { display: flex; gap: 60px; justify-content: center; margin-top: auto; border-top: 1px solid #E2E8F0; padding-top: 20px; width: 100%; }
+        .cover-icon-item img { height: 70px; margin-bottom: 10px; object-fit: contain; }
+        .cover-icon-item p { font-size: 16px; font-weight: bold; color: var(--accent-blue); font-family: 'Lato'; }
+
+        /* HEADER */
+        .global-header {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 12px 25px; border-bottom: 3px solid var(--accent-blue); background-color: var(--header-footer-bg);
+            height: 75px; box-sizing: border-box;
+        }
+        .header-item { display: flex; flex-direction: column; align-items: center; gap: 3px; width: 120px; }
+        .header-item img { height: 40px; object-fit: contain; }
+        .header-item span { font-size: 10px; font-weight: bold; color: var(--accent-blue); text-align: center; font-family: 'Suwannaphum'; }
+        .header-center { text-align: center; }
+        .header-center h1 { font-family: 'Suwannaphum'; font-size: 18px; color: var(--accent-blue); margin: 0; }
+        .header-center p { font-family: 'Battambang'; font-size: 11px; color: #64748B; margin: 0; font-weight: bold; text-transform: uppercase;}
+
+        /* CONTENT */
+        .page-content { 
+            padding: 10mm 15mm; 
+            height: calc(297mm - 75px - 55px); 
+            overflow: hidden; 
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .student-info {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px;
+            border: 1px solid #CBD5E1; padding: 12px 18px; border-radius: 8px; background: #F8FAFC;
+            flex-shrink: 0;
+        }
+        .info-line { font-size: 14.5px; display: flex; align-items: flex-end; font-weight: bold;}
+        .info-line span { flex-grow: 1; border-bottom: 1px dotted #94A3B8; margin-left: 10px; height: 18px; color: var(--answer-color); font-weight: normal; padding-left: 10px;}
+
+        .case-title {
+            background: var(--header-footer-bg); border-left: 5px solid var(--accent-blue);
+            padding: 10px 15px; margin: 10px 0 15px 0; font-family: 'Suwannaphum';
+            font-size: 17px; display: flex; align-items: center; gap: 10px; font-weight: bold;
+            border-radius: 0 6px 6px 0; color: var(--accent-blue); flex-shrink: 0;
+        }
+        
+        .exercise-block { margin-bottom: 15px; border: 1px solid #E2E8F0; padding: 12px 15px; border-radius: 8px; background: white; flex-shrink: 0;}
+        .exercise-block p { margin-bottom: 8px; font-size: 14.5px; font-weight: bold; color: #1E293B; display: flex; align-items: center; gap: 8px;}
+        
+        .level-badge { font-size: 12px; color: white; padding: 4px 10px; border-radius: 4px; font-weight: bold; display: inline-block; margin-right: 8px; font-family: 'Battambang';}
+        .bg-low { background-color: var(--low); }
+        .bg-mid { background-color: var(--mid); }
+        .bg-high { background-color: var(--high); }
+
+        /* CODE DISPLAY */
+        .code-container {
+            background: var(--code-bg); border-radius: 6px; padding: 12px 15px; margin: 8px 0;
+            overflow-x: auto; border: 1px solid #374151; position: relative;
+        }
+        .code-header { background: #1F2937; padding: 5px 10px; font-size: 12px; font-family: 'Battambang'; color: #38BDF8; border-bottom: 1px solid #374151; margin: -12px -15px 10px -15px; border-radius: 6px 6px 0 0; display: flex; align-items: center; gap: 8px;}
+        pre { font-family: 'Fira Code', monospace; font-size: 12.5px; line-height: 1.45; color: #f8f8f2; margin: 0; }
+        .kw { color: #ff79c6; font-weight: bold; } 
+        .fn { color: #50fa7b; } 
+        .str { color: #f1fa8c; } 
+        .com { color: #6272a4; font-style: italic; } 
+        .num { color: #bd93f9; } 
+
+        .answer-box { margin-top: 10px; font-size: 14px; display: flex; align-items: flex-start; }
+        .answer-box label { font-family: 'Battambang', sans-serif; font-weight: bold; margin-right: 10px; color: #475569; white-space: nowrap;}
+        .filled-answer { 
+            flex-grow: 1; border-bottom: 1px dotted #94A3B8; color: var(--answer-color); 
+            font-family: 'Battambang', sans-serif; line-height: 1.6; padding-bottom: 2px;
+        }
+
+        /* Note Area */
+        .note-area {
+            flex-grow: 1; border: 1px dashed #CBD5E1; background: #F8FAFC; border-radius: 8px;
+            padding: 15px; margin-top: 5px; color: #94A3B8; font-size: 13.5px; display: flex; flex-direction: column;
+        }
+
+        /* FOOTER - FIXED TO ABSOLUTE BOTTOM */
+        .global-footer {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 10px 25px; border-top: 3px solid var(--accent-blue);
+            background-color: var(--header-footer-bg); 
+            position: absolute; bottom: 0; left: 0; width: 100%; height: 55px; box-sizing: border-box;
+        }
+        .footer-left { display: flex; align-items: center; gap: 10px; }
+        .footer-left img { border-radius: 50%; border: 2px solid var(--accent-blue); width: 30px; height: 30px; object-fit: cover; background-color: #fff; }
+        .footer-left span { font-size: 12px; font-weight: bold; color: var(--text-main); font-family: 'Suwannaphum'; }
+        .footer-right { font-size: 12px; color: var(--accent-blue); font-weight: bold; font-family: 'Battambang'; }
+
+        /* PRINT MEDIA QUERY */
+        @page { size: A4; margin: 0; }
+        @media print {
+            body { background: white; padding: 0; margin: 0; }
+            .a4-page { box-shadow: none; margin: 0; width: 210mm; height: 297mm; border: none; border-radius: 0; page-break-after: always; }
+            .a4-page:last-child { page-break-after: auto; }
+            .no-print { display: none !important; }
+            * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+        }
+    </style>
+</head>
+<body>
+
+<button class="no-print" onclick="window.print()" style="margin-bottom: 20px; padding: 12px 25px; cursor: pointer; background: var(--accent-blue); color: white; border: none; border-radius: 8px; font-family: 'Battambang'; font-weight: bold; font-size: 16px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); transition: all 0.3s;">
+    <i class="fa-solid fa-print"></i> បោះពុម្ពសៀវភៅលំហាត់ (Print as PDF)
+</button>
+
+<!-- COVER PAGE -->
+<div class="a4-page cover-page">
+    <img src="Logo.png" class="cover-logo" onerror="this.src='https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png'">
+    <h1 class="cover-uni-kh">សាកលវិទ្យាល័យអង្គរ</h1>
+    <p class="cover-uni-en">ANGKOR UNIVERSITY</p>
+
+    <div class="cover-program">
+        <i class="fa-solid fa-graduation-cap"></i> អនុបណ្ឌិតវិទ្យាសាស្ត្រទិន្នន័យ និងបញ្ញាសិប្បនិម្មិត (Master of Data Science and AI)
+    </div>
+
+    <div class="cover-chapter-badge">សៀវភៅលំហាត់អនុវត្តន៍ (Workbook) | ២០២៥-២០២៦</div>
+
+    <h1 class="cover-main-title">ជំពូកទី ២៖ ការសរសេរកម្មវិធីតម្រង់ទិសវត្ថុ<br>និងការគ្រប់គ្រងអង្គចងចាំ</h1>
+    <h2 class="cover-sub-title">(OOP and Memory Management)</h2>
+
+    <div class="cover-author-wrapper">
+        <img src="Lim.jpg" class="cover-author-img" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'">
+        <div class="cover-author-text">
+            សាស្ត្រាចារ្យ៖
+        </div>
+        <div class="cover-author-text">
+            <strong>សឿង លីម (Soeurng LIM)</strong>
+        </div>
+    </div>
+
+    <div class="cover-icons-wrapper">
+        <div class="cover-icon-item">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg">
+            <p>Pythons</p>
+        </div>
+        <div class="cover-icon-item">
+            <img src="https://cdn-icons-png.flaticon.com/512/2103/2103633.png">
+            <p>DSA in Pythons</p>
+        </div>
+    </div>
+</div>
+
+<!-- PAGE 1 : Intro to OOP (Part 1) -->
+<div class="a4-page">
+    <div class="global-header">
+        <div class="header-item"><img src="Logo.png" onerror="this.src='https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png'"><span>សាកលវិទ្យាល័យអង្គរ</span></div>
+        <div class="header-center">
+            <h1>សៀវភៅលំហាត់អនុវត្តន៍ - ជំពូកទី ២</h1>
+            <p>ADVANCED DATA STRUCTURES AND ALGORITHMS</p>
+        </div>
+        <div class="header-item"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg"><span>Python Pro</span></div>
+    </div>
+
+    <div class="page-content">
+        <div class="student-info">
+            <div class="info-line">អត្តលេខ (ID): <span>អត្រាកំណែផ្លូវការ</span></div>
+            <div class="info-line">ឈ្មោះ (Name): <span>សន្លឹកចម្លើយ</span></div>
+        </div>
+
+        <div class="case-title"><i class="fa-solid fa-cube"></i> ១. ករណីសិក្សា៖ មូលដ្ឋានគ្រឹះនៃ Class និង Object</div>
+        
+        <div class="exercise-block">
+            <p><span class="level-badge bg-low">ស្រាល ១</span> ការបង្កើត Class និង Object ធម្មតា</p>
+            <div class="code-container">
+                <div class="code-header"><i class="fa-brands fa-python"></i> Copy & Run Code</div>
+<pre><span class="kw">class</span> <span class="fn">Car</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="kw">self</span>, brand):
+        <span class="kw">self</span>.brand = brand
+
+<span class="com"># បង្កើត Object ថ្មីចេញពីពុម្ព Car</span>
+my_car = Car(<span class="str">"Toyota"</span>)
+<span class="fn">print</span>(<span class="str">"ម៉ាករថយន្តគឺ:"</span>, my_car.brand)</pre>
+            </div>
+            <div class="answer-box">
+                <label>ការពន្យល់កូដ ៖</label> 
+                <div class="filled-answer"><code>Car</code> គឺជាប្លង់រចនា ឬពុម្ពគំរូ។ ចំណែកឯ <code>my_car</code> គឺជាវត្ថុពិតប្រាកដ (Object) ដែលផ្ទុកតម្លៃ "Toyota" នៅខាងក្នុង Attribute <code>brand</code> របស់វា។</div>
+            </div>
+        </div>
+
+        <div class="exercise-block">
+            <p><span class="level-badge bg-low">ស្រាល ២</span> ការបង្កើត Method នៅក្នុង Class</p>
+            <div class="code-container">
+                <div class="code-header"><i class="fa-brands fa-python"></i> Copy & Run Code</div>
+<pre><span class="kw">class</span> <span class="fn">Student</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="kw">self</span>, name):
+        <span class="kw">self</span>.name = name
+        
+    <span class="kw">def</span> <span class="fn">greet</span>(<span class="kw">self</span>):
+        <span class="fn">print</span>(<span class="str">f"សួស្តី! ខ្ញុំឈ្មោះ {self.name}"</span>)
+
+s = Student(<span class="str">"សុខ"</span>)
+s.greet()</pre>
+            </div>
+            <div class="answer-box">
+                <label>មុខងាររបស់ <code>self</code> ៖</label> 
+                <div class="filled-answer">ពាក្យ <code>self</code> ជួយតំណាងឱ្យ Object ដែលកំពុងហៅ Method នោះ ដើម្បីឱ្យវាស្គាល់ទិន្នន័យ (name) ដែលវាមាននៅក្នុងខ្លួនពិតប្រាកដ។</div>
+            </div>
+        </div>
+
+        <div class="note-area">
+            <i class="fa-solid fa-pen"></i> កន្លែងសម្រាប់កត់ត្រាបន្ថែម (Notes / Scratchpad)...
+        </div>
+    </div>
+
+    <div class="global-footer">
+        <div class="footer-left"><img src="Lim.jpg" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'"><span>សាស្ត្រាចារ្យ៖ សឿង លីម (Soeurng LIM)</span></div>
+        <div class="footer-right">ទំព័រទី ១ នៃ ១០</div>
+    </div>
+</div>
+
+<!-- PAGE 2 : Intro to OOP (Part 2) -->
+<div class="a4-page">
+    <div class="global-header">
+        <div class="header-item"><img src="Logo.png" onerror="this.src='https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png'"><span>សាកលវិទ្យាល័យអង្គរ</span></div>
+        <div class="header-center">
+            <h1>សៀវភៅលំហាត់អនុវត្តន៍ - ជំពូកទី ២</h1>
+            <p>ADVANCED DATA STRUCTURES AND ALGORITHMS</p>
+        </div>
+        <div class="header-item"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg"><span>Python Pro</span></div>
+    </div>
+
+    <div class="page-content">
+        <div class="case-title"><i class="fa-solid fa-cube"></i> ១. ករណីសិក្សា៖ មូលដ្ឋានគ្រឹះនៃ Class និង Object (ត)</div>
+        
+        <div class="exercise-block">
+            <p><span class="level-badge bg-mid">មធ្យម ១</span> ការគ្រប់គ្រង Objects ច្រើនក្នុង List</p>
+            <div class="code-container">
+                <div class="code-header"><i class="fa-brands fa-python"></i> Copy & Run Code</div>
+<pre><span class="kw">class</span> <span class="fn">Book</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="kw">self</span>, title, author):
+        <span class="kw">self</span>.title = title
+        <span class="kw">self</span>.author = author
+
+books = [
+    Book(<span class="str">"Python 101"</span>, <span class="str">"Lim"</span>),
+    Book(<span class="str">"AI Basics"</span>, <span class="str">"Sok"</span>)
+]
+<span class="kw">for</span> b <span class="kw">in</span> books:
+    <span class="fn">print</span>(<span class="str">f"សៀវភៅ: {b.title} ដោយ {b.author}"</span>)</pre>
+            </div>
+            <div class="answer-box">
+                <label>អត្ថប្រយោជន៍ ៖</label> 
+                <div class="filled-answer">អនុញ្ញាតឱ្យយើងរៀបចំទិន្នន័យបានយ៉ាងមានរបៀប ជាជាងការប្រើប្រាស់ List ឬ Dictionary ធម្មតា ព្រោះ Object នីមួយៗធានាបាននូវទម្រង់ទិន្នន័យដូចគ្នាជានិច្ច។</div>
+            </div>
+        </div>
+
+        <div class="exercise-block">
+            <p><span class="level-badge bg-high">ធ្ងន់ ១</span> ការបង្កើតប្រអប់ Node និងតភ្ជាប់គ្នា (DSA Link)</p>
+            <div class="code-container">
+                <div class="code-header"><i class="fa-brands fa-python"></i> Copy & Run Code</div>
+<pre><span class="kw">class</span> <span class="fn">Node</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="kw">self</span>, data):
+        <span class="kw">self</span>.data = data
+        <span class="kw">self</span>.next = <span class="kw">None</span>
+
+node1 = Node(<span class="num">10</span>)
+node2 = Node(<span class="num">20</span>)
+node1.next = node2 <span class="com"># តភ្ជាប់ខ្សែ</span>
+
+<span class="fn">print</span>(<span class="str">"ទិន្នន័យប្រអប់ទី២ តាមរយៈខ្សែប្រអប់ទី១:"</span>, node1.next.data)</pre>
+            </div>
+            <div class="answer-box">
+                <label>តួនាទីរបស់កូដនេះ ៖</label> 
+                <div class="filled-answer">នេះជាគ្រឹះដំបូងបំផុតនៃការបង្កើត Linked List ក្នុង Data Structures។ យើងប្រើប្រាស់ OOP ដើម្បីបង្កើត Object តភ្ជាប់គ្នាដោយប្រើប្រាស់ Pointer <code>next</code>។</div>
+            </div>
+        </div>
+
+        <div class="note-area">
+            <i class="fa-solid fa-pen"></i> កន្លែងសម្រាប់កត់ត្រាបន្ថែម (Notes / Scratchpad)...
+        </div>
+    </div>
+
+    <div class="global-footer">
+        <div class="footer-left"><img src="Lim.jpg" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'"><span>សាស្ត្រាចារ្យ៖ សឿង លីម (Soeurng LIM)</span></div>
+        <div class="footer-right">ទំព័រទី ២ នៃ ១០</div>
+    </div>
+</div>
+
+<!-- PAGE 3 : Encapsulation (Part 1) -->
+<div class="a4-page">
+    <div class="global-header">
+        <div class="header-item"><img src="Logo.png" onerror="this.src='https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png'"><span>សាកលវិទ្យាល័យអង្គរ</span></div>
+        <div class="header-center">
+            <h1>សៀវភៅលំហាត់អនុវត្តន៍ - ជំពូកទី ២</h1>
+            <p>ADVANCED DATA STRUCTURES AND ALGORITHMS</p>
+        </div>
+        <div class="header-item"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg"><span>Python Pro</span></div>
+    </div>
+
+    <div class="page-content">
+        <div class="case-title"><i class="fa-solid fa-shield-halved"></i> ២. ករណីសិក្សា៖ ការវេចខ្ចប់ទិន្នន័យ (Encapsulation)</div>
+        
+        <div class="exercise-block">
+            <p><span class="level-badge bg-low">ស្រាល ១</span> ការបង្កើត Private Attribute</p>
+            <div class="code-container">
+                <div class="code-header"><i class="fa-brands fa-python"></i> Copy & Run Code</div>
+<pre><span class="kw">class</span> <span class="fn">Wallet</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="kw">self</span>):
+        <span class="kw">self</span>.__money = <span class="num">500</span> <span class="com"># លាក់ទិន្នន័យមិនឱ្យគេឃើញ</span>
+
+my_wallet = Wallet()
+<span class="kw">try</span>:
+    <span class="fn">print</span>(my_wallet.__money)
+<span class="kw">except</span> AttributeError <span class="kw">as</span> e:
+    <span class="fn">print</span>(<span class="str">"កំហុស:"</span>, e)</pre>
+            </div>
+            <div class="answer-box">
+                <label>ការពន្យល់លទ្ធផលកំហុស ៖</label> 
+                <div class="filled-answer">ដោយសារយើងប្រើសញ្ញា <code>__</code> នៅពីមុខ <code>money</code> Python បានចាត់ទុកវាជា Private Attribute ធ្វើឱ្យកូដខាងក្រៅមិនអាចចូលទាញយកវាដោយផ្ទាល់បានឡើយ។</div>
+            </div>
+        </div>
+
+        <div class="exercise-block">
+            <p><span class="level-badge bg-low">ស្រាល ២</span> ការប្រើប្រាស់ Getter Method</p>
+            <div class="code-container">
+                <div class="code-header"><i class="fa-brands fa-python"></i> Copy & Run Code</div>
+<pre><span class="kw">class</span> <span class="fn">User</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="kw">self</span>, password):
+        <span class="kw">self</span>.__password = password
+        
+    <span class="kw">def</span> <span class="fn">check_password</span>(<span class="kw">self</span>, pwd):
+        <span class="kw">return self</span>.__password == pwd
+
+u = User(<span class="str">"admin123"</span>)
+<span class="fn">print</span>(<span class="str">"លេខកូដត្រូវទេ?"</span>, u.check_password(<span class="str">"admin123"</span>))</pre>
+            </div>
+            <div class="answer-box">
+                <label>គោលបំណងនៃកូដនេះ ៖</label> 
+                <div class="filled-answer">យើងមិនអនុញ្ញាតឱ្យអ្នកប្រើប្រាស់មើលឃើញ Password ផ្ទាល់ទេ តែយើងបង្កើត Method មួយឱ្យពួកគេបញ្ជូនកូដមកផ្ទៀងផ្ទាត់ (Verification) ដើម្បីធានាសុវត្ថិភាព។</div>
+            </div>
+        </div>
+
+        <div class="note-area">
+            <i class="fa-solid fa-pen"></i> កន្លែងសម្រាប់កត់ត្រាបន្ថែម (Notes / Scratchpad)...
+        </div>
+    </div>
+
+    <div class="global-footer">
+        <div class="footer-left"><img src="Lim.jpg" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'"><span>សាស្ត្រាចារ្យ៖ សឿង លីម (Soeurng LIM)</span></div>
+        <div class="footer-right">ទំព័រទី ៣ នៃ ១០</div>
+    </div>
+</div>
+
+<!-- PAGE 4 : Encapsulation (Part 2) -->
+<div class="a4-page">
+    <div class="global-header">
+        <div class="header-item"><img src="Logo.png" onerror="this.src='https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png'"><span>សាកលវិទ្យាល័យអង្គរ</span></div>
+        <div class="header-center">
+            <h1>សៀវភៅលំហាត់អនុវត្តន៍ - ជំពូកទី ២</h1>
+            <p>ADVANCED DATA STRUCTURES AND ALGORITHMS</p>
+        </div>
+        <div class="header-item"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg"><span>Python Pro</span></div>
+    </div>
+
+    <div class="page-content">
+        <div class="case-title"><i class="fa-solid fa-shield-halved"></i> ២. ករណីសិក្សា៖ ការវេចខ្ចប់ទិន្នន័យ (Encapsulation) (ត)</div>
+        
+        <div class="exercise-block">
+            <p><span class="level-badge bg-mid">មធ្យម ១</span> ការប្រើប្រាស់ Setter Method មានលក្ខខណ្ឌ</p>
+            <div class="code-container">
+                <div class="code-header"><i class="fa-brands fa-python"></i> Copy & Run Code</div>
+<pre><span class="kw">class</span> <span class="fn">BankAccount</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="kw">self</span>):
+        <span class="kw">self</span>.__balance = <span class="num">0</span>
+        
+    <span class="kw">def</span> <span class="fn">deposit</span>(<span class="kw">self</span>, amount):
+        <span class="kw">if</span> amount > <span class="num">0</span>:
+            <span class="kw">self</span>.__balance += amount
+            <span class="fn">print</span>(<span class="str">f"ដាក់ប្រាក់ជោគជ័យ! សមតុល្យ: {self.__balance}"</span>)
+        <span class="kw">else</span>:
+            <span class="fn">print</span>(<span class="str">"ចំនួនទឹកប្រាក់មិនត្រឹមត្រូវ!"</span>)
+
+acc = BankAccount()
+acc.deposit(-<span class="num">50</span>) <span class="com"># នឹងបដិសេធ</span>
+acc.deposit(<span class="num">100</span>) <span class="com"># នឹងទទួលយក</span></pre>
+            </div>
+            <div class="answer-box">
+                <label>អត្ថប្រយោជន៍នៃ Setter ៖</label> 
+                <div class="filled-answer">វាជួយឱ្យយើងអាចត្រួតពិនិត្យ (Validate) ទិន្នន័យ មុននឹងអនុញ្ញាតឱ្យកែប្រែតម្លៃ Private Variable ដើម្បីការពារកុំឱ្យមានការកែប្រែខុសប្រក្រតី (ដូចជាដាក់លុយអវិជ្ជមាន)។</div>
+            </div>
+        </div>
+
+        <div class="exercise-block">
+            <p><span class="level-badge bg-high">ធ្ងន់ ១</span> ការប្រើប្រាស់ Decorator @property</p>
+            <div class="code-container">
+                <div class="code-header"><i class="fa-brands fa-python"></i> Copy & Run Code</div>
+<pre><span class="kw">class</span> <span class="fn">Temperature</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="kw">self</span>, c):
+        <span class="kw">self</span>.__celsius = c
+
+    <span class="kw">@property</span>
+    <span class="kw">def</span> <span class="fn">celsius</span>(<span class="kw">self</span>): 
+        <span class="kw">return self</span>.__celsius
+
+    <span class="kw">@celsius.setter</span>
+    <span class="kw">def</span> <span class="fn">celsius</span>(<span class="kw">self</span>, value):
+        <span class="kw">if</span> value < -<span class="num">273.15</span>: 
+            <span class="kw">raise</span> ValueError(<span class="str">"ត្រជាក់ពេក!"</span>)
+        <span class="kw">self</span>.__celsius = value
+
+t = Temperature(<span class="num">25</span>)
+t.celsius = <span class="num">30</span> <span class="com"># ហៅ Setter ដូចអថេរធម្មតា</span>
+<span class="fn">print</span>(<span class="str">"សីតុណ្ហភាព:"</span>, t.celsius)</pre>
+            </div>
+            <div class="answer-box">
+                <label>អត្ថប្រយោជន៍ Decorator ៖</label> 
+                <div class="filled-answer"><code>@property</code> ធ្វើឱ្យ Method ដំណើរការដូចជា Attribute ធម្មតា (មិនបាច់ប្រើវង់ក្រចក `()`) ដែលផ្តល់ភាពងាយស្រួលដល់អ្នកប្រើកូដ តែនៅរក្សាភាពសម្ងាត់បានល្អ។</div>
+            </div>
+        </div>
+
+        <div class="note-area">
+            <i class="fa-solid fa-pen"></i> កន្លែងសម្រាប់កត់ត្រាបន្ថែម (Notes / Scratchpad)...
+        </div>
+    </div>
+
+    <div class="global-footer">
+        <div class="footer-left"><img src="Lim.jpg" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'"><span>សាស្ត្រាចារ្យ៖ សឿង លីម (Soeurng LIM)</span></div>
+        <div class="footer-right">ទំព័រទី ៤ នៃ ១០</div>
+    </div>
+</div>
+
+<!-- PAGE 5 : Inheritance & Polymorphism (Part 1) -->
+<div class="a4-page">
+    <div class="global-header">
+        <div class="header-item"><img src="Logo.png" onerror="this.src='https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png'"><span>សាកលវិទ្យាល័យអង្គរ</span></div>
+        <div class="header-center">
+            <h1>សៀវភៅលំហាត់អនុវត្តន៍ - ជំពូកទី ២</h1>
+            <p>ADVANCED DATA STRUCTURES AND ALGORITHMS</p>
+        </div>
+        <div class="header-item"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg"><span>Python Pro</span></div>
+    </div>
+
+    <div class="page-content">
+        <div class="case-title"><i class="fa-solid fa-diagram-project"></i> ៣. ករណីសិក្សា៖ Inheritance និង Polymorphism</div>
+        
+        <div class="exercise-block">
+            <p><span class="level-badge bg-low">ស្រាល ១</span> មរតកភាពមូលដ្ឋាន (Basic Inheritance)</p>
+            <div class="code-container">
+                <div class="code-header"><i class="fa-brands fa-python"></i> Copy & Run Code</div>
+<pre><span class="kw">class</span> <span class="fn">Animal</span>:
+    <span class="kw">def</span> <span class="fn">eat</span>(<span class="kw">self</span>): 
+        <span class="fn">print</span>(<span class="str">"សត្វស៊ីចំណី"</span>)
+
+<span class="kw">class</span> <span class="fn">Dog</span>(Animal): <span class="com"># ទទួលមរតកពី Animal</span>
+    <span class="kw">def</span> <span class="fn">bark</span>(<span class="kw">self</span>): 
+        <span class="fn">print</span>(<span class="str">"ឆ្កែព្រុស"</span>)
+
+d = Dog()
+d.eat()  <span class="com"># ហៅ Method របស់មេ</span>
+d.bark() <span class="com"># ហៅ Method របស់ខ្លួនឯង</span></pre>
+            </div>
+            <div class="answer-box">
+                <label>ការពន្យល់កូដ ៖</label> 
+                <div class="filled-answer">Class កូន <code>Dog</code> អាចហៅ Method <code>eat()</code> របស់ Class មេ <code>Animal</code> មកប្រើបានដោយផ្ទាល់ដោយមិនចាំបាច់សរសេរកូដនោះឡើងវិញឡើយ។</div>
+            </div>
+        </div>
+
+        <div class="exercise-block">
+            <p><span class="level-badge bg-low">ស្រាល ២</span> ពហុទម្រង់ (Polymorphism) ជាមួយ For Loop</p>
+            <div class="code-container">
+                <div class="code-header"><i class="fa-brands fa-python"></i> Copy & Run Code</div>
+<pre><span class="kw">class</span> <span class="fn">Bird</span>:
+    <span class="kw">def</span> <span class="fn">speak</span>(<span class="kw">self</span>):
+        <span class="kw">return</span> <span class="str">"ជីបៗ"</span>
+
+<span class="kw">class</span> <span class="fn">Duck</span>:
+    <span class="kw">def</span> <span class="fn">speak</span>(<span class="kw">self</span>):
+        <span class="kw">return</span> <span class="str">"កាបៗ"</span>
+
+animals = [Bird(), Duck()]
+<span class="kw">for</span> a <span class="kw">in</span> animals:
+    <span class="fn">print</span>(<span class="str">"សត្វបន្លឺសំឡេង:"</span>, a.speak())</pre>
+            </div>
+            <div class="answer-box">
+                <label>ការពន្យល់ពហុទម្រង់ ៖</label> 
+                <div class="filled-answer">ពេលយើងប្រើ For Loop ហៅ `a.speak()` ទៅកាន់ Objects ផ្សេងៗគ្នា លទ្ធផលចេញមកគឺខុសគ្នាអាស្រ័យលើប្រភេទសត្វនីមួយៗ ទោះបីឈ្មោះ Method ដូចគ្នាក៏ដោយ។</div>
+            </div>
+        </div>
+
+        <div class="note-area">
+            <i class="fa-solid fa-pen"></i> កន្លែងសម្រាប់កត់ត្រាបន្ថែម (Notes / Scratchpad)...
+        </div>
+    </div>
+
+    <div class="global-footer">
+        <div class="footer-left"><img src="Lim.jpg" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'"><span>សាស្ត្រាចារ្យ៖ សឿង លីម (Soeurng LIM)</span></div>
+        <div class="footer-right">ទំព័រទី ៥ នៃ ១០</div>
+    </div>
+</div>
+
+<!-- PAGE 6 : Inheritance & Polymorphism (Part 2) -->
+<div class="a4-page">
+    <div class="global-header">
+        <div class="header-item"><img src="Logo.png" onerror="this.src='https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png'"><span>សាកលវិទ្យាល័យអង្គរ</span></div>
+        <div class="header-center">
+            <h1>សៀវភៅលំហាត់អនុវត្តន៍ - ជំពូកទី ២</h1>
+            <p>ADVANCED DATA STRUCTURES AND ALGORITHMS</p>
+        </div>
+        <div class="header-item"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg"><span>Python Pro</span></div>
+    </div>
+
+    <div class="page-content">
+        <div class="case-title"><i class="fa-solid fa-diagram-project"></i> ៣. ករណីសិក្សា៖ Inheritance និង Polymorphism (ត)</div>
+        
+        <div class="exercise-block">
+            <p><span class="level-badge bg-mid">មធ្យម ១</span> ការប្រើប្រាស់អនុគមន៍ super()</p>
+            <div class="code-container">
+                <div class="code-header"><i class="fa-brands fa-python"></i> Copy & Run Code</div>
+<pre><span class="kw">class</span> <span class="fn">Person</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="kw">self</span>, name):
+        <span class="kw">self</span>.name = name
+
+<span class="kw">class</span> <span class="fn">Employee</span>(Person):
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="kw">self</span>, name, salary):
+        <span class="fn">super</span>().__init__(name) <span class="com"># ហៅ Constructor មេ</span>
+        <span class="kw">self</span>.salary = salary
+
+emp = Employee(<span class="str">"សុខ"</span>, <span class="num">500</span>)
+<span class="fn">print</span>(<span class="str">f"បុគ្គលិក {emp.name} ប្រាក់ខែ {emp.salary}$"</span>)</pre>
+            </div>
+            <div class="answer-box">
+                <label>តួនាទីរបស់ <code>super()</code> ៖</label> 
+                <div class="filled-answer">អនុញ្ញាតឱ្យ Class កូនហៅ Constructor របស់ Class មេមកដំណើរការ ដើម្បីផ្ទុកតម្លៃ <code>name</code> ដោយកាត់បន្ថយការសរសេរកូដជាន់គ្នា។</div>
+            </div>
+        </div>
+
+        <div class="exercise-block">
+            <p><span class="level-badge bg-high">ធ្ងន់ ១</span> ការបង្កើត Abstract Base Class (ABC)</p>
+            <div class="code-container">
+                <div class="code-header"><i class="fa-brands fa-python"></i> Copy & Run Code</div>
+<pre><span class="kw">from</span> abc <span class="kw">import</span> ABC, abstractmethod
+
+<span class="kw">class</span> <span class="fn">Shape</span>(ABC):
+    <span class="kw">@abstractmethod</span>
+    <span class="kw">def</span> <span class="fn">area</span>(<span class="kw">self</span>):
+        <span class="kw">pass</span>
+
+<span class="kw">class</span> <span class="fn">Square</span>(Shape):
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="kw">self</span>, side):
+        <span class="kw">self</span>.side = side
+    <span class="kw">def</span> <span class="fn">area</span>(<span class="kw">self</span>):
+        <span class="kw">return self</span>.side * <span class="kw">self</span>.side
+
+s = Square(<span class="num">4</span>)
+<span class="fn">print</span>(<span class="str">"ក្រឡាផ្ទៃ:"</span>, s.area())</pre>
+            </div>
+            <div class="answer-box">
+                <label>គោលការណ៍ Abstraction ៖</label> 
+                <div class="filled-answer"><code>Shape</code> ជាពុម្ពគំរូអរូបី ដែលមិនអាចបង្កើត Object បាន។ វាបង្ខំឱ្យរាល់ Class កូនទាំងអស់ (ដូចជា Square) ត្រូវតែបង្កើត Method <code>area()</code> ជាដាច់ខាត។</div>
+            </div>
+        </div>
+
+        <div class="note-area">
+            <i class="fa-solid fa-pen"></i> កន្លែងសម្រាប់កត់ត្រាបន្ថែម (Notes / Scratchpad)...
+        </div>
+    </div>
+
+    <div class="global-footer">
+        <div class="footer-left"><img src="Lim.jpg" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'"><span>សាស្ត្រាចារ្យ៖ សឿង លីម (Soeurng LIM)</span></div>
+        <div class="footer-right">ទំព័រទី ៦ នៃ ១០</div>
+    </div>
+</div>
+
+<!-- PAGE 7 : Copying (Part 1) -->
+<div class="a4-page">
+    <div class="global-header">
+        <div class="header-item"><img src="Logo.png" onerror="this.src='https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png'"><span>សាកលវិទ្យាល័យអង្គរ</span></div>
+        <div class="header-center">
+            <h1>សៀវភៅលំហាត់អនុវត្តន៍ - ជំពូកទី ២</h1>
+            <p>ADVANCED DATA STRUCTURES AND ALGORITHMS</p>
+        </div>
+        <div class="header-item"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg"><span>Python Pro</span></div>
+    </div>
+
+    <div class="page-content">
+        <div class="case-title"><i class="fa-solid fa-copy"></i> ៤. ករណីសិក្សា៖ ទិន្នន័យ References និង ការ Copy</div>
+        
+        <div class="exercise-block">
+            <p><span class="level-badge bg-low">ស្រាល ១</span> ការចងខ្សែ Reference (Assignment)</p>
+            <div class="code-container">
+                <div class="code-header"><i class="fa-brands fa-python"></i> Copy & Run Code</div>
+<pre>a = [<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>]
+b = a
+b.append(<span class="num">4</span>)
+
+<span class="fn">print</span>(<span class="str">"បញ្ជី A:"</span>, a)
+<span class="fn">print</span>(<span class="str">"បញ្ជី B:"</span>, b)</pre>
+            </div>
+            <div class="answer-box">
+                <label>លទ្ធផល និងការពន្យល់ ៖</label> 
+                <div class="filled-answer">បញ្ជីទាំងពីរចេញលទ្ធផល [1, 2, 3, 4] ដូចគ្នា។ ការប្រើ <code>b = a</code> គ្រាន់តែបង្កើតស្លាកឈ្មោះ <code>b</code> ទៅចង្អុលប្រអប់ List តែមួយជាមួយ <code>a</code> ប៉ុណ្ណោះ។</div>
+            </div>
+        </div>
+
+        <div class="exercise-block">
+            <p><span class="level-badge bg-low">ស្រាល ២</span> ការបញ្ជូនទិន្នន័យចូល Function (Pass by Reference)</p>
+            <div class="code-container">
+                <div class="code-header"><i class="fa-brands fa-python"></i> Copy & Run Code</div>
+<pre><span class="kw">def</span> <span class="fn">add_item</span>(arr):
+    arr.append(<span class="num">4</span>)
+    <span class="fn">print</span>(<span class="str">"ក្នុង Function:"</span>, arr)
+
+my_list = [<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>]
+add_item(my_list)
+<span class="fn">print</span>(<span class="str">"ក្រៅ Function:"</span>, my_list)</pre>
+            </div>
+            <div class="answer-box">
+                <label>លទ្ធផលដែលទទួលបាន ៖</label> 
+                <div class="filled-answer">ការបញ្ជូន List ចូល Function ក្នុង Python គឺបញ្ជូនត្រឹម Reference ប៉ុណ្ណោះ។ ដូច្នេះការកែប្រែនៅខាងក្នុង ធ្វើឱ្យ List ដើមនៅខាងក្រៅប្រែប្រួលដែរ។</div>
+            </div>
+        </div>
+
+        <div class="note-area">
+            <i class="fa-solid fa-pen"></i> កន្លែងសម្រាប់កត់ត្រាបន្ថែម (Notes / Scratchpad)...
+        </div>
+    </div>
+
+    <div class="global-footer">
+        <div class="footer-left"><img src="Lim.jpg" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'"><span>សាស្ត្រាចារ្យ៖ សឿង លីម (Soeurng LIM)</span></div>
+        <div class="footer-right">ទំព័រទី ៧ នៃ ១០</div>
+    </div>
+</div>
+
+<!-- PAGE 8 : Copying (Part 2) -->
+<div class="a4-page">
+    <div class="global-header">
+        <div class="header-item"><img src="Logo.png" onerror="this.src='https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png'"><span>សាកលវិទ្យាល័យអង្គរ</span></div>
+        <div class="header-center">
+            <h1>សៀវភៅលំហាត់អនុវត្តន៍ - ជំពូកទី ២</h1>
+            <p>ADVANCED DATA STRUCTURES AND ALGORITHMS</p>
+        </div>
+        <div class="header-item"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg"><span>Python Pro</span></div>
+    </div>
+
+    <div class="page-content">
+        <div class="case-title"><i class="fa-solid fa-copy"></i> ៤. ករណីសិក្សា៖ ទិន្នន័យ References និង ការ Copy (ត)</div>
+        
+        <div class="exercise-block">
+            <p><span class="level-badge bg-mid">មធ្យម ១</span> បញ្ហានៃការថតចម្លងសំបកក្រៅ (Shallow Copy)</p>
+            <div class="code-container">
+                <div class="code-header"><i class="fa-brands fa-python"></i> Copy & Run Code</div>
+<pre>list1 = [[<span class="num">1</span>, <span class="num">2</span>], <span class="num">3</span>]
+list2 = list1.copy() <span class="com"># Shallow copy</span>
+
+list2[<span class="num">0</span>].append(<span class="num">9</span>) <span class="com"># កែប្រែធាតុខាងក្នុង</span>
+list2[<span class="num">1</span>] = <span class="num">99</span>      <span class="com"># កែប្រែធាតុខាងក្រៅ</span>
+
+<span class="fn">print</span>(<span class="str">"List 1 ដើម:"</span>, list1)
+<span class="fn">print</span>(<span class="str">"List 2 ថ្មី:"</span>, list2)</pre>
+            </div>
+            <div class="answer-box">
+                <label>លទ្ធផលដែលទទួលបាន ៖</label> 
+                <div class="filled-answer">លេខ 99 ដូរតែក្នុង list2 ទេ ព្រោះវាជាសំបកក្រៅ។ ប៉ុន្តែលេខ 9 លោតចូលទាំងសងខាង ព្រោះ Shallow copy មិនបានក្លូន List តូចខាងក្នុងនោះទេ វាគ្រាន់តែ Copy Reference។</div>
+            </div>
+        </div>
+
+        <div class="exercise-block">
+            <p><span class="level-badge bg-high">ធ្ងន់ ១</span> ការផ្តាច់ខ្លួនឯករាជ្យដោយប្រើ Deep Copy</p>
+            <div class="code-container">
+                <div class="code-header"><i class="fa-brands fa-python"></i> Copy & Run Code</div>
+<pre><span class="kw">import</span> copy
+
+orig = [[<span class="num">1</span>, <span class="num">2</span>], <span class="num">3</span>]
+cloned = copy.deepcopy(orig)
+
+cloned[<span class="num">0</span>].append(<span class="num">9</span>)
+
+<span class="fn">print</span>(<span class="str">"Original:"</span>, orig)
+<span class="fn">print</span>(<span class="str">"Cloned:"</span>, cloned)</pre>
+            </div>
+            <div class="answer-box">
+                <label>ប្រសិទ្ធភាពនៃ Deep Copy ៖</label> 
+                <div class="filled-answer"><code>deepcopy()</code> បានក្លូនគ្រប់សមាសធាតុខាងក្នុងទាំងអស់ បង្កើតជា Object ថ្មីស្រឡាងមិនប៉ះពាល់គ្នាឡើយ។ ទើប orig នៅរក្សាភាពដើម [[1, 2], 3]។</div>
+            </div>
+        </div>
+
+        <div class="note-area">
+            <i class="fa-solid fa-pen"></i> កន្លែងសម្រាប់កត់ត្រាបន្ថែម (Notes / Scratchpad)...
+        </div>
+    </div>
+
+    <div class="global-footer">
+        <div class="footer-left"><img src="Lim.jpg" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'"><span>សាស្ត្រាចារ្យ៖ សឿង លីម (Soeurng LIM)</span></div>
+        <div class="footer-right">ទំព័រទី ៨ នៃ ១០</div>
+    </div>
+</div>
+
+<!-- PAGE 9 : Memory Management (Part 1) -->
+<div class="a4-page">
+    <div class="global-header">
+        <div class="header-item"><img src="Logo.png" onerror="this.src='https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png'"><span>សាកលវិទ្យាល័យអង្គរ</span></div>
+        <div class="header-center">
+            <h1>សៀវភៅលំហាត់អនុវត្តន៍ - ជំពូកទី ២</h1>
+            <p>ADVANCED DATA STRUCTURES AND ALGORITHMS</p>
+        </div>
+        <div class="header-item"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg"><span>Python Pro</span></div>
+    </div>
+
+    <div class="page-content">
+        <div class="case-title"><i class="fa-solid fa-broom"></i> ៥. ករណីសិក្សា៖ Stack, Heap និង Garbage Collection</div>
+        
+        <div class="exercise-block">
+            <p><span class="level-badge bg-low">ស្រាល ១</span> អាយុកាលនៃអថេរក្នុង Stack Memory</p>
+            <div class="code-container">
+                <div class="code-header"><i class="fa-brands fa-python"></i> Copy & Run Code</div>
+<pre><span class="kw">def</span> <span class="fn">my_calculation</span>():
+    temp_val = <span class="num">500</span> <span class="com"># បង្កើតក្នុង Stack</span>
+    <span class="kw">return</span> temp_val * <span class="num">2</span>
+
+<span class="fn">print</span>(my_calculation())
+
+<span class="kw">try</span>:
+    <span class="fn">print</span>(temp_val)
+<span class="kw">except</span> NameError <span class="kw">as</span> e:
+    <span class="fn">print</span>(<span class="str">"កំហុស:"</span>, e)</pre>
+            </div>
+            <div class="answer-box">
+                <label>ការពន្យល់ពី Stack ៖</label> 
+                <div class="filled-answer">អថេរ <code>temp_val</code> ត្រូវបានបង្កើតនៅក្នុង Stack Memory (Local frame)។ ពេល Function ដំណើរការចប់ វាត្រូវរលាយបាត់ភ្លាមៗ ទើបមិនអាច print ពីក្រៅបាន។</div>
+            </div>
+        </div>
+
+        <div class="exercise-block">
+            <p><span class="level-badge bg-low">ស្រាល ២</span> ការឆែកមើលចំនួនអ្នកប្រើប្រាស់ (Reference Count)</p>
+            <div class="code-container">
+                <div class="code-header"><i class="fa-brands fa-python"></i> Copy & Run Code</div>
+<pre><span class="kw">import</span> sys
+
+my_list = [<span class="num">10</span>, <span class="num">20</span>, <span class="num">30</span>]
+other_list = my_list
+
+<span class="com"># រាប់បញ្ចូលទាំង parameter ខ្លួនវា</span>
+count = sys.getrefcount(my_list)
+<span class="fn">print</span>(<span class="str">"ចំនួន Reference ដែលកំពុងចង្អុល:"</span>, count)</pre>
+            </div>
+            <div class="answer-box">
+                <label>តើកូដនេះបង្ហាញអ្វី? ៖</label> 
+                <div class="filled-answer">បង្ហាញចំនួនស្លាកឈ្មោះដែលកំពុងចង្អុលទៅកាន់ Object ក្នុង Heap។ នៅទីនេះវាមានតម្លៃស្មើ 3 (មកពី my_list, other_list និង argument របស់ sys ផ្ទាល់)។</div>
+            </div>
+        </div>
+
+        <div class="note-area">
+            <i class="fa-solid fa-pen"></i> កន្លែងសម្រាប់កត់ត្រាបន្ថែម (Notes / Scratchpad)...
+        </div>
+    </div>
+
+    <div class="global-footer">
+        <div class="footer-left"><img src="Lim.jpg" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'"><span>សាស្ត្រាចារ្យ៖ សឿង លីម (Soeurng LIM)</span></div>
+        <div class="footer-right">ទំព័រទី ៩ នៃ ១០</div>
+    </div>
+</div>
+
+<!-- PAGE 10 : Memory Management (Part 2) -->
+<div class="a4-page">
+    <div class="global-header">
+        <div class="header-item"><img src="Logo.png" onerror="this.src='https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png'"><span>សាកលវិទ្យាល័យអង្គរ</span></div>
+        <div class="header-center">
+            <h1>សៀវភៅលំហាត់អនុវត្តន៍ - ជំពូកទី ២</h1>
+            <p>ADVANCED DATA STRUCTURES AND ALGORITHMS</p>
+        </div>
+        <div class="header-item"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg"><span>Python Pro</span></div>
+    </div>
+
+    <div class="page-content">
+        <div class="case-title"><i class="fa-solid fa-broom"></i> ៥. ករណីសិក្សា៖ Stack, Heap និង Garbage Collection (ត)</div>
+        
+        <div class="exercise-block">
+            <p><span class="level-badge bg-mid">មធ្យម ១</span> ការកាត់ផ្តាច់ Reference ដោយប្រើ del</p>
+            <div class="code-container">
+                <div class="code-header"><i class="fa-brands fa-python"></i> Copy & Run Code</div>
+<pre>a = [<span class="str">"Hello"</span>]
+b = a
+<span class="kw">del</span> a <span class="com"># កាត់ខ្សែទី១ ចោល</span>
+
+<span class="kw">try</span>:
+    <span class="fn">print</span>(b) <span class="com"># តើមាន Error ទេ?</span>
+<span class="kw">except</span> Exception <span class="kw">as</span> e:
+    <span class="fn">print</span>(e)</pre>
+            </div>
+            <div class="answer-box">
+                <label>ហេតុអ្វី b នៅតែអាច Print បាន? ៖</label> 
+                <div class="filled-answer">បញ្ជា <code>del a</code> គ្រាន់តែលុបខ្សែតភ្ជាប់ (ស្លាកឈ្មោះ <code>a</code>) ចេញពី Stack ប៉ុណ្ណោះ។ ប្រអប់ទិន្នន័យពិត <code>["Hello"]</code> នៅតែមានក្នុង Heap ព្រោះខ្សែ <code>b</code> នៅតែចង្អុលទៅវា។</div>
+            </div>
+        </div>
+
+        <div class="exercise-block">
+            <p><span class="level-badge bg-high">ធ្ងន់ ១</span> ការបង្ខំឱ្យ Garbage Collection ដើរបោសសម្អាត</p>
+            <div class="code-container">
+                <div class="code-header"><i class="fa-brands fa-python"></i> Copy & Run Code</div>
+<pre><span class="kw">import</span> gc
+
+<span class="kw">class</span> <span class="fn">Node</span>:
+    <span class="kw">pass</span>
+
+n1 = Node()
+n2 = Node()
+
+n1.ref = n2
+n2.ref = n1 <span class="com"># ចង្អុលកន្ទុយគ្នាឯង (Cyclic)</span>
+
+<span class="kw">del</span> n1
+<span class="kw">del</span> n2 <span class="com"># លុបឈ្មោះក្រៅ តែពួកវានៅចង្អុលគ្នា</span>
+
+collected = gc.collect() <span class="com"># បង្ខំ GC ឱ្យបោសសម្អាត</span>
+<span class="fn">print</span>(<span class="str">"ចំនួន Object ដែលលុបចោល:"</span>, collected)</pre>
+            </div>
+            <div class="answer-box">
+                <label>តួនាទីរបស់ <code>gc.collect()</code> ៖</label> 
+                <div class="filled-answer">ក្នុងករណី Cyclic Reference ទោះបីយើង <code>del</code> ឈ្មោះចោលក៏ Reference Count មិនស្មើ 0 ដែរ។ ដូច្នេះត្រូវប្រើ <code>gc.collect()</code> ដើម្បីបង្ខំឱ្យ Python រាវរក និងកម្ទេចពួកវាចោលពី Memory។</div>
+            </div>
+        </div>
+
+        <div class="note-area">
+            <i class="fa-solid fa-pen"></i> កន្លែងសម្រាប់កត់ត្រាបន្ថែម (Notes / Scratchpad)...
+        </div>
+    </div>
+
+    <div class="global-footer">
+        <div class="footer-left"><img src="Lim.jpg" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'"><span>សាស្ត្រាចារ្យ៖ សឿង លីម (Soeurng LIM)</span></div>
+        <div class="footer-right">ទំព័រទី ១០ នៃ ១០</div>
+    </div>
+</div>
+
+</body>
+</html>

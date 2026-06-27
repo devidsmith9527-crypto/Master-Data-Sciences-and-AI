@@ -1,0 +1,944 @@
+<!DOCTYPE html>
+<html lang="km">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guidebook Chapter 8 - Dynamic Programming & AI</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Battambang:wght@400;700&family=Suwannaphum:wght@400;700;900&family=Lato:wght@400;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <style>
+        :root {
+            --bg-color: #E2E8F0;
+            --paper-white: #FFFFFF;
+            --text-main: #0F172A;
+            --text-muted: #475569;
+            --accent-blue: #0284C7; 
+            --accent-green: #059669;
+            --accent-yellow: #D97706; 
+            --accent-red: #DC2626;
+            --accent-purple: #8B5CF6;
+            --header-footer-bg: #F0F9FF;
+            --code-bg: #111827;
+            --term-bg: #000000;
+            --term-text: #4ade80;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            background-color: var(--bg-color);
+            font-family: 'Battambang', sans-serif;
+            color: var(--text-main);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 40px 20px;
+        }
+
+        /* Utility Classes */
+        .text-blue { color: var(--accent-blue) !important; }
+        .text-green { color: var(--accent-green) !important; }
+        .text-red { color: var(--accent-red) !important; }
+        .text-yellow { color: var(--accent-yellow) !important; }
+        .text-purple { color: var(--accent-purple) !important; }
+
+        /* A4 Page Layout */
+        .a4-page {
+            width: 210mm; 
+            height: 297mm; 
+            background: var(--paper-white);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1); 
+            margin-bottom: 30mm;
+            display: flex; 
+            flex-direction: column; 
+            position: relative; 
+            border-radius: 8px;
+            overflow: hidden; 
+            page-break-after: always;
+        }
+
+        /* COVER PAGE STYLES */
+        .cover-page {
+            justify-content: center; 
+            align-items: center; 
+            text-align: center; 
+            padding: 30mm 20mm;
+            background-image: linear-gradient(to bottom, #F0F9FF, #FFFFFF);
+        }
+        .cover-logo { width: 140px; margin-bottom: 15px; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1)); }
+        .cover-uni-kh { font-family: 'Suwannaphum'; color: var(--accent-blue); font-size: 34px; margin: 0 0 5px 0; font-weight: 900; }
+        .cover-uni-en { font-family: 'Lato'; color: #475569; font-size: 18px; margin: 0 0 40px 0; letter-spacing: 1px; font-weight: bold; }
+        .cover-program { font-family: 'Suwannaphum'; font-size: 18px; color: var(--accent-green); margin-bottom: 25px; font-weight: bold; }
+        .cover-chapter-badge { background: var(--accent-red); color: white; padding: 10px 30px; border-radius: 50px; font-size: 20px; font-weight: bold; margin-bottom: 40px; font-family: 'Suwannaphum'; box-shadow: 0 5px 15px rgba(220,38,38,0.3); display: inline-block;}
+        .cover-main-title { font-family: 'Suwannaphum'; font-size: 30px; color: var(--text-main); line-height: 1.5; margin-bottom: 10px; font-weight: 900; }
+        .cover-sub-title { font-family: 'Lato'; font-size: 18px; color: var(--accent-blue); margin-bottom: 50px; font-weight: bold; line-height: 1.5;}
+        
+        .cover-author-wrapper { display: flex; flex-direction: column; align-items: center; gap: 15px; margin-bottom: 40px; }
+        .cover-author-img { width: 110px; height: 110px; border-radius: 50%; border: 4px solid var(--accent-blue); object-fit: cover; box-shadow: 0 6px 15px rgba(0,0,0,0.15); background-color: #fff;}
+        .cover-author-text { font-size: 18px; color: #64748B; font-family: 'Suwannaphum'; }
+        .cover-author-text strong { color: var(--text-main); font-size: 22px; }
+
+        .cover-icons-wrapper { display: flex; gap: 50px; justify-content: center; margin-top: auto; border-top: 1px solid #E2E8F0; padding-top: 20px; width: 100%; }
+        .cover-icon-item img { height: 60px; margin-bottom: 8px; object-fit: contain; }
+        .cover-icon-item p { font-size: 14px; font-weight: bold; color: var(--accent-blue); font-family: 'Lato'; }
+
+        /* HEADER & FOOTER */
+        .global-header {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 12px 25px; border-bottom: 3px solid var(--accent-blue); background-color: var(--header-footer-bg);
+            height: 25mm;
+        }
+        .header-item { display: flex; flex-direction: column; align-items: center; gap: 5px; width: 120px; }
+        .header-item img { height: 40px; object-fit: contain; }
+        .header-item span { font-size: 10px; font-weight: bold; color: var(--accent-blue); text-align: center; font-family: 'Suwannaphum'; }
+        .header-center { text-align: center; flex-grow: 1; padding: 0 10px;}
+        .header-center h1 { font-family: 'Suwannaphum'; font-size: 15px; color: var(--accent-blue); margin: 0; }
+        .header-center p { font-family: 'Battambang'; font-size: 10px; color: #64748B; margin: 0; font-weight: bold; text-transform: uppercase;}
+
+        .global-footer {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 10px 25px; border-top: 3px solid var(--accent-blue);
+            background-color: var(--header-footer-bg);
+            position: absolute; bottom: 0; left: 0; width: 100%; height: 15mm;
+        }
+        .footer-left { display: flex; align-items: center; gap: 12px; }
+        .footer-left img { border-radius: 50%; border: 2px solid var(--accent-blue); width: 30px; height: 30px; object-fit: cover; background-color: #fff; }
+        .footer-left span { font-size: 11px; font-weight: bold; color: var(--text-main); font-family: 'Suwannaphum'; }
+        .footer-right { font-size: 11px; color: var(--accent-blue); font-weight: bold; font-family: 'Battambang'; }
+
+        /* CONTENT */
+        .page-content { flex-grow: 1; padding: 8mm 15mm; height: 257mm; overflow: hidden; } 
+        
+        .section-title {
+            background: var(--header-footer-bg); border-left: 5px solid var(--accent-blue);
+            padding: 8px 15px; margin: 10px 0; font-family: 'Suwannaphum';
+            font-size: 16px; display: flex; align-items: center; gap: 10px; font-weight: bold;
+            border-radius: 0 6px 6px 0; color: var(--accent-blue); page-break-after: avoid;
+        }
+
+        .text-block { font-size: 13px; line-height: 1.8; margin-bottom: 12px; color: var(--text-main); text-align: justify; }
+        
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
+        
+        .card { background: #F8FAFC; border: 1px solid #CBD5E1; border-top: 3px solid var(--accent-blue); padding: 12px; border-radius: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); page-break-inside: avoid; }
+        .card h4 { font-family: 'Suwannaphum'; font-size: 14px; color: var(--accent-blue); margin-bottom: 6px; display: flex; align-items: center; gap: 8px;}
+        .card.red-card { border-top-color: var(--accent-red); }
+        .card.red-card h4 { color: var(--accent-red); }
+        .card.green-card { border-top-color: var(--accent-green); }
+        .card.green-card h4 { color: var(--accent-green); }
+        .card.yellow-card { border-top-color: var(--accent-yellow); }
+        .card.yellow-card h4 { color: var(--accent-yellow); }
+        .card.purple-card { border-top-color: var(--accent-purple); }
+        .card.purple-card h4 { color: var(--accent-purple); }
+        .card ul { padding-left: 20px; margin-top: 5px; font-size: 12px; line-height: 1.8;}
+
+        /* Narrative Boxes */
+        .narrative-box { background: #FFFFFF; border-radius: 6px; border: 1px solid #CBD5E1; border-left: 4px solid var(--accent-blue); padding: 10px 12px; margin-bottom: 12px; box-shadow: 0 2px 5px rgba(0,0,0,0.02); page-break-inside: avoid;}
+        .narrative-header { font-weight: bold; color: var(--accent-blue); font-size: 13.5px; border-bottom: 1px solid #E2E8F0; padding-bottom: 5px; margin-bottom: 6px; font-family: 'Suwannaphum'; display: flex; align-items: center; gap: 8px;}
+        .narrative-text { font-size: 12px; color: var(--text-main); line-height: 1.8; margin: 0; text-align: justify;}
+        
+        .narrative-box.danger { background: #FEF2F2; border-left-color: var(--accent-red); border-color: #FECACA;}
+        .narrative-box.danger .narrative-header { color: var(--accent-red); border-bottom-color: #FCA5A5; }
+        
+        .narrative-box.warning { background: #FFFBEB; border-left-color: var(--accent-yellow); border-color: #FDE68A;}
+        .narrative-box.warning .narrative-header { color: var(--accent-yellow); border-bottom-color: #FCD34D; }
+
+        /* Compare Blocks */
+        .compare-block { border: 1px solid #CBD5E1; border-radius: 8px; overflow: hidden; margin-bottom: 15px; background: #fff; box-shadow: 0 3px 8px rgba(0,0,0,0.05); page-break-inside: avoid;}
+        .compare-img { width: 100%; height: 110px; object-fit: cover; border-bottom: 2px solid var(--accent-blue); }
+        .compare-title { font-family: 'Suwannaphum'; font-size: 14.5px; color: var(--text-main); padding: 6px 12px; background: #F8FAFC; border-bottom: 1px solid #CBD5E1; font-weight: bold; text-align: center;}
+        .compare-grid { display: grid; grid-template-columns: 1fr 1fr; }
+        .compare-col { padding: 10px 12px; font-size: 12px; line-height: 1.8; text-align: justify; }
+        .compare-col:first-child { border-right: 1px dashed #CBD5E1; background: #F8FAFC; }
+        .compare-col h5 { font-family: 'Suwannaphum'; font-size: 13px; margin-bottom: 6px; display: flex; align-items: center; gap: 6px;}
+
+        /* Table Styles */
+        table { width: 100%; border-collapse: collapse; margin-bottom: 15px; font-size: 12px; background: #fff; box-shadow: 0 2px 5px rgba(0,0,0,0.05); border-radius: 6px; overflow: hidden; page-break-inside: avoid;}
+        th { background: var(--header-footer-bg); color: var(--accent-blue); font-family: 'Suwannaphum'; font-size: 13px; text-align: left; padding: 10px 12px; border-bottom: 2px solid var(--accent-blue); }
+        td { padding: 10px 12px; border-bottom: 1px solid #E2E8F0; color: var(--text-main); }
+        tr:last-child td { border-bottom: none; }
+        tr:nth-child(even) { background-color: #F8FAFC; }
+
+        /* Q&A Boxes */
+        .qa-box { border: 1px solid #CBD5E1; border-radius: 8px; margin-bottom: 12px; background: #fff; overflow: hidden; page-break-inside: avoid; box-shadow: 0 3px 6px rgba(0,0,0,0.02);}
+        .qa-question { background: #F0F9FF; padding: 10px 15px; border-bottom: 1px dashed #CBD5E1; font-weight: bold; color: var(--accent-blue); font-family: 'Suwannaphum'; font-size: 13.5px; display: flex; gap: 10px; align-items: flex-start; line-height: 1.6;}
+        .qa-answer { padding: 10px 15px; font-size: 12.5px; line-height: 1.8; color: var(--text-main); display: flex; gap: 10px; text-align: justify;}
+        .qa-icon-q { color: var(--accent-red); font-size: 16px; margin-top: 2px;}
+        .qa-icon-a { color: var(--accent-green); font-size: 16px; margin-top: 2px;}
+
+        .highlight-note { background-color: #FEF9C3; border: 1px dashed var(--accent-yellow); padding: 10px 15px; border-radius: 6px; margin-bottom: 12px; font-weight: bold; color: #854D0E; font-size: 12.5px; display: flex; align-items: center; gap: 10px; page-break-inside: avoid; line-height: 1.6;}
+
+        /* Fully Runnable Python Code Block Design */
+        .visual-img { width: 100%; height: 140px; object-fit: cover; border-radius: 4px; margin-bottom: 10px; border: 1px solid #E2E8F0; }
+        
+        .code-wrapper { background: var(--code-bg); border-radius: 8px; border: 1px solid #374151; overflow: hidden; width: 100%; box-shadow: 0 4px 10px rgba(0,0,0,0.15); margin-top: 10px; margin-bottom: 15px; page-break-inside: avoid;}
+        .code-header { background: #1F2937; padding: 6px 12px; font-size: 11.5px; font-family: 'Battambang', sans-serif; color: #9CA3AF; border-bottom: 1px solid #374151; display: flex; justify-content: space-between; align-items: center;}
+        .code-header span { font-weight: bold; color: #38BDF8; display: flex; align-items: center; gap: 5px; }
+        .code-content { padding: 10px 12px; }
+        
+        .code-content pre { font-family: 'Fira Code', monospace; font-size: 11.5px; line-height: 1.8; color: #f8f8f2; margin: 0; white-space: pre-wrap; word-break: break-word;}
+        .com { color: #6272a4; font-style: italic; font-family: 'Battambang', sans-serif !important; } 
+        .str { color: #f1fa8c; font-family: 'Battambang', sans-serif !important; }
+        
+        /* Terminal Output Design */
+        .code-output { background: var(--term-bg); padding: 10px 12px; border-top: 1px dashed #4B5563; }
+        .code-output pre { font-family: 'Battambang', sans-serif !important; font-size: 11.5px; color: var(--term-text); margin: 0; white-space: pre-wrap; line-height: 1.8; word-break: break-word;}
+        .code-output-title { font-size: 10px; color: #9CA3AF; margin-bottom: 5px; font-family: 'Battambang'; text-transform: uppercase;}
+
+        .kw { color: #ff79c6; font-weight: bold; } .fn { color: #50fa7b; } .num { color: #bd93f9; } .bult { color: #8be9fd; } .cls { color: #8be9fd; font-style: italic; }
+
+        /* PRINT MEDIA QUERY */
+        @page { size: A4; margin: 0; }
+        @media print {
+            body { background: white; padding: 0; margin: 0; }
+            .a4-page { box-shadow: none; margin: 0; width: 210mm; height: 297mm; border: none; border-radius: 0; page-break-after: always; }
+            .no-print { display: none !important; }
+            * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+        }
+    </style>
+</head>
+<body>
+
+<button class="no-print" onclick="window.print()" style="margin-bottom: 20px; padding: 12px 25px; cursor: pointer; background: var(--accent-blue); color: white; border: none; border-radius: 8px; font-family: 'Battambang'; font-weight: bold; font-size: 16px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); transition: all 0.3s;">
+    <i class="fa-solid fa-print"></i> បោះពុម្ពសៀវភៅមគ្គទ្ទេសក៍ (Print Guidebook)
+</button>
+
+<!-- ================= PAGE 1: COVER ================= -->
+<div class="a4-page cover-page">
+    <img src="https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png" alt="Angkor University Logo" class="cover-logo" onerror="this.src='Logo.png'">
+    <h1 class="cover-uni-kh">សាកលវិទ្យាល័យអង្គរ</h1>
+    <p class="cover-uni-en">ANGKOR UNIVERSITY</p>
+
+    <div class="cover-program">
+        <i class="fa-solid fa-graduation-cap"></i> អនុបណ្ឌិតវិទ្យាសាស្ត្រទិន្នន័យ និងបញ្ញាសិប្បនិម្មិត
+    </div>
+
+    <div class="cover-chapter-badge">សៀវភៅមគ្គទ្ទេសក៍ (Guidebook) | ជំពូកទី ៨ (បញ្ចប់)</div>
+
+    <h1 class="cover-main-title">Dynamic Programming និងក្បួន AI<br>ក្បួនដោះស្រាយ DP, Dijkstra និង KNN</h1>
+    <h2 class="cover-sub-title">(Dynamic Programming & Core AI Algorithms in Python)</h2>
+
+    <div class="cover-author-wrapper">
+        <img src="Lim.jpg" alt="Professor" class="cover-author-img" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'">
+        <div class="cover-author-text">
+            រៀបចំដោយសាស្ត្រាចារ្យ៖ <strong>សឿង លីម (Soeurng LIM)</strong>
+        </div>
+    </div>
+
+    <div class="cover-icons-wrapper">
+        <div class="cover-icon-item">
+            <i class="fa-solid fa-memory" style="font-size: 60px; color: var(--accent-blue); margin-bottom: 8px;"></i>
+            <p>Dynamic Prog.</p>
+        </div>
+        <div class="cover-icon-item">
+            <i class="fa-solid fa-robot" style="font-size: 60px; color: var(--accent-purple); margin-bottom: 8px;"></i>
+            <p>AI Algorithms</p>
+        </div>
+    </div>
+</div>
+
+<!-- ================= PAGE 2: Objectives & TOC ================= -->
+<div class="a4-page">
+    <div class="global-header">
+        <div class="header-item"><img src="https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png" onerror="this.src='Logo.png'"><span>សាកលវិទ្យាល័យអង្គរ</span></div>
+        <div class="header-center">
+            <h1>សៀវភៅមគ្គទ្ទេសក៍ (Guidebook) - ជំពូកទី ៨</h1>
+            <p>ADVANCED DATA STRUCTURES AND ALGORITHMS FOR AI</p>
+        </div>
+        <div class="header-item"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg"><span>Python Pro</span></div>
+    </div>
+
+    <div class="page-content">
+        <!-- Banner Image for Chapter 8 -->
+        <img src="https://images.unsplash.com/photo-1596495578065-6e0763fa1178?auto=format&fit=crop&w=1200&q=80" class="visual-img" alt="Machine Learning Logic Banner" style="height: 120px; object-fit: cover; margin-bottom: 15px; border-bottom: 3px solid var(--accent-red);">
+
+        <!-- Learning Objectives -->
+        <div class="section-title" style="margin-top: 0; border-left-color: var(--accent-red);"><i class="fa-solid fa-bullseye"></i> វត្ថុបំណងនៃមេរៀន (Learning Objectives)</div>
+        <div class="card red-card" style="margin-bottom: 15px;">
+            <p class="text-block" style="margin-bottom: 10px; font-weight: bold;">បន្ទាប់ពីបញ្ចប់ការសិក្សានៅក្នុងជំពូកទី ៨ នេះ និស្សិតនឹងមានសមត្ថភាព៖</p>
+            <ul style="line-height: 1.7; color: var(--text-main); font-size: 12.5px; padding-left: 25px;">
+                <li><b class="text-red">យល់ពីគ្រឹះរបស់ Dynamic Programming៖</b> ស្គាល់ច្បាស់ពីយន្តការបង្កើនប្រសិទ្ធភាពកូដដោយ "ចងចាំចម្លើយចាស់" ដើម្បីកាត់បន្ថយស្វ័យគុណ O($2^n$) មកកម្រិតលីនេអ៊ែរ O($n$)។</li>
+                <li><b class="text-red">បែងចែក Memoization vs Tabulation៖</b> យល់ពីភាពខុសគ្នារវាងការសន្សំចម្លើយពីលើចុះក្រោម (Top-Down) និងការតាក់តែងតារាងពីក្រោមឡើងលើ (Bottom-Up)។</li>
+                <li><b class="text-red">ដោះស្រាយ Knapsack Problem៖</b> យល់ដឹងពីបញ្ហាបែងចែកធនធានឱ្យចំគោលដៅចំណេញខ្ពស់បំផុត (0/1 Knapsack) តាមរយៈ Dynamic Programming។</li>
+                <li><b class="text-red">ប្រៀបធៀប Greedy vs DP៖</b> វិភាគដឹងច្បាស់ពីច្បាប់សម្រេចចិត្តយកល្អចំពោះមុខ (Greedy) ធៀបនឹងការគិតគូរវែងឆ្ងាយគ្រប់លទ្ធភាព (Dynamic Programming)។</li>
+                <li><b class="text-red">គ្រប់គ្រង Dijkstra's Algorithm៖</b> ស្គាល់យន្តការគណនាស្វែងរកផ្លូវខ្លីបំផុតនៅក្នុង Graphs (Shortest Path for GPS/Logistics)។</li>
+                <li><b class="text-red">សរសេរកូដ AI គ្រឹះ (KNN)៖</b> យល់ពីក្បួន Machine Learning ដំបូងបង្អស់គឺ K-Nearest Neighbors សម្រាប់ការធ្វើចំណាត់ថ្នាក់ និង Recommendation Systems។</li>
+            </ul>
+        </div>
+
+        <!-- Table of Contents -->
+        <div class="section-title" style="border-left-color: var(--accent-red);"><i class="fa-solid fa-list"></i> មាតិកា (Table of Contents)</div>
+        <div class="narrative-box" style="padding: 12px 20px; border-left-color: var(--accent-red); margin-bottom: 0;">
+            <div class="grid-2" style="margin-bottom: 0;">
+                <div style="font-size: 13px; line-height: 2.1; color: var(--text-main);">
+                    <div style="border-bottom: 1px dashed #E2E8F0;"><b class="text-red">១.</b> សេចក្តីផ្តើមអំពី Dynamic Programming (DP) និងយន្តការចងចាំ</div>
+                    <div style="border-bottom: 1px dashed #E2E8F0;"><b class="text-red">២.</b> យន្តការ Memoization (Top-Down) ធៀបនឹង Tabulation (Bottom-Up)</div>
+                    <div style="border-bottom: 1px dashed #E2E8F0;"><b class="text-red">៣.</b> ការអនុវត្តកូដ DP លើលំដាប់លេខ Fibonacci ក្នុង Python</div>
+                    <div style="border-bottom: 1px dashed #E2E8F0;"><b class="text-red">៤.</b> បញ្ហាកាតាបស្ពាយ (The 0/1 Knapsack Problem) និងទ្រឹស្តីសម្រេចចិត្ត</div>
+                    <div style="border-bottom: 1px dashed #E2E8F0;"><b class="text-red">៥.</b> ករណីសិក្សា Knapsack ក្នុងវិស័យកសិកម្ម និងហិរញ្ញវត្ថុ</div>
+                    <div style="border-bottom: 1px dashed #E2E8F0;"><b class="text-red">៦.</b> ក្បួនដោះស្រាយបែបលោភលន់ (Greedy Algorithms) និងការអាប់លុយ</div>
+                </div>
+                <div style="font-size: 13px; line-height: 2.1; color: var(--text-main);">
+                    <div style="border-bottom: 1px dashed #E2E8F0;"><b class="text-red">៧.</b> ការប្រៀបធៀបលក្ខណៈបច្ចេកទេសរវាង Greedy vs Dynamic Programming</div>
+                    <div style="border-bottom: 1px dashed #E2E8F0;"><b class="text-red">៨.</b> ក្បួនដោះស្រាយរបស់ Dijkstra (ស្វែងរកផ្លូវខ្លីបំផុតសម្រាប់ Google Maps)</div>
+                    <div style="border-bottom: 1px dashed #E2E8F0;"><b class="text-red">៩.</b> ក្បួនដោះស្រាយ K-Nearest Neighbors (KNN) សម្រាប់ប្រព័ន្ធ AI</div>
+                    <div style="border-bottom: 1px dashed #E2E8F0;"><b class="text-red">១០.</b> តារាងវិភាគ Time & Space Complexity នៃគ្រប់ក្បួនដោះស្រាយ</div>
+                    <div style="border-bottom: 1px dashed #E2E8F0;"><b class="text-red">១១.</b> សំណួររំលឹកមេរៀនប្រចាំជំពូកទី ៨ និងការបកស្រាយលម្អិត (Q&A)</div>
+                    <div style="border-bottom: 1px dashed #E2E8F0;"><b class="text-red">១២.</b> សទ្ទានុក្រមគន្លឹះ និងគន្ថនិទ្ទេសបញ្ចប់មុខវិជ្ជា (References)</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="global-footer">
+        <div class="footer-left"><img src="Lim.jpg" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'"><span>សាស្ត្រាចារ្យ៖ សឿង លីម (Soeurng LIM)</span></div>
+        <div class="footer-right">ទំព័រទី ២ នៃ ១៤</div>
+    </div>
+</div>
+
+<!-- ================= PAGE 3: Intro to Dynamic Programming ================= -->
+<div class="a4-page">
+    <div class="global-header">
+        <div class="header-item"><img src="https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png" onerror="this.src='Logo.png'"><span>សាកលវិទ្យាល័យអង្គរ</span></div>
+        <div class="header-center">
+            <h1>សៀវភៅមគ្គទ្ទេសក៍ (Guidebook) - ជំពូកទី ៨</h1>
+            <p>ADVANCED DATA STRUCTURES AND ALGORITHMS FOR AI</p>
+        </div>
+        <div class="header-item"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg"><span>Python Pro</span></div>
+    </div>
+
+    <div class="page-content">
+        <div class="section-title" style="margin-top: 0; border-left-color: var(--accent-red);"><i class="fa-solid fa-memory"></i> ១. សេចក្តីផ្តើមអំពី Dynamic Programming (DP)</div>
+        <div class="text-block">
+            <b>Dynamic Programming (DP ឬវិធីសាស្ត្រដោះស្រាយកម្មវិធីបែបឌីណាមិក)</b> គឺជាបច្ចេកទេសបង្កើនប្រសិទ្ធភាពកូដ (Optimization Technique) ដ៏មានឥទ្ធិពលបំផុតនៅក្នុងវិទ្យាសាស្ត្រកុំព្យូទ័រ។ គោលការណ៍គ្រឹះរបស់ DP គឺសាមញ្ញបំផុត៖ <b>"ការចងចាំចម្លើយចាស់ ដើម្បីកុំឱ្យគណនាបញ្ហាដដែលៗឡើងវិញ (Solve subproblems once and store the results)"</b>។ វាធ្វើការបំបែកបញ្ហាធំៗស្មុគស្មាញ ទៅជាបញ្ហាតូចៗតម្រួតលើគ្នា (Overlapping Subproblems) រួចរក្សាទុកលទ្ធផលគណនាតូចៗទាំងនោះនៅក្នុង Memory។
+        </div>
+
+        <div class="analogy-box" style="margin-top: 15px; margin-bottom: 15px;">
+            <div class="analogy-header"><i class="fa-solid fa-school"></i> ករណីសិក្សា៖ របៀបដែលមនុស្សគិតគូរបូកលេខ (Human Intuition)</div>
+            <p class="analogy-text" style="font-size: 13px;">សាកល្បងសួរក្មេងម្នាក់ថា៖ តើផលបូក <b>1 + 1 + 1 + 1 + 1</b> ស្មើនឹងប៉ុន្មាន?
+            <br>ក្មេងនោះនឹងចាប់ផ្តើមរាប់ថា "មួយ ពីរ បី បួន ប្រាំ" រួចឆ្លើយយ៉ាងលឿនថា៖ <b>ស្មើ ៥</b>។
+            <br>ចុះប្រសិនបើយើងសរសេរថែម <b>"+ 1"</b> នៅខាងចុងសមីការនោះមួយទៀត តើក្មេងនោះត្រូវការចាប់ផ្តើមរាប់តាំងពី "មួយ ពីរ បី..." ឡើងវិញដែរឬទេ?
+            <br><b>ចម្លើយពិតប្រាកដគឺ ទេ!</b> ព្រោះខួរក្បាលរបស់គេបាន **"ចងចាំចម្លើយចាស់"** រួចស្រាប់ទៅហើយថាបណ្តុំមុនស្មើ ៥ ដូចនេះគេគ្រាន់តែយក ៥ បូកបន្ថែម ១ ស្មើ ៦ ភ្លាមៗ O(1)។ <b>នេះហើយជាគោលការណ៍គ្រឹះរបស់ Dynamic Programming នៅក្នុងកុំព្យូទ័រ!</b></p>
+        </div>
+
+        <div class="text-block">
+            នៅក្នុងការសរសេរកូដធម្មតា (ដូចជាការគណនា Recursion ធម្មតា) កុំព្យូទ័រអត់មានខួរក្បាលចងចាំចម្លើយចាស់ឡើយ។ វានឹងរត់គណនាផលបូកចាស់ៗឡើងវិញរាប់លានដង ដែលជារឿយៗធ្វើឱ្យល្បឿនកូដធ្លាក់ចុះដល់កម្រិតយឺតបំផុតគឺស្វ័យគុណ <b>O($2^n$)</b>។ ការប្រើប្រាស់ DP ជួយបង្កើនល្បឿនឱ្យមកនៅត្រឹមលីនេអ៊ែរ <b>O($n$)</b> ដែលលឿនជាងមុនរាប់លានដង។
+        </div>
+    </div>
+
+    <div class="global-footer">
+        <div class="footer-left"><img src="Lim.jpg" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'"><span>សាស្ត្រាចារ្យ៖ សឿង លីម (Soeurng LIM)</span></div>
+        <div class="footer-right">ទំព័រទី ៣ នៃ ១៤</div>
+    </div>
+</div>
+
+<!-- ================= PAGE 4: Memoization vs Tabulation ================= -->
+<div class="a4-page">
+    <div class="global-header">
+        <div class="header-item"><img src="https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png" onerror="this.src='Logo.png'"><span>សាកលវិទ្យាល័យអង្គរ</span></div>
+        <div class="header-center">
+            <h1>សៀវភៅមគ្គទ្ទេសក៍ (Guidebook) - ជំពូកទី ៨</h1>
+            <p>ADVANCED DATA STRUCTURES AND ALGORITHMS FOR AI</p>
+        </div>
+        <div class="header-item"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg"><span>Python Pro</span></div>
+    </div>
+
+    <div class="page-content">
+        <div class="section-title" style="margin-top: 0; border-left-color: var(--accent-red);"><i class="fa-solid fa-arrows-split-up-and-left"></i> ២. យន្តការ Memoization (Top-Down) ធៀបនឹង Tabulation (Bottom-Up)</div>
+        <div class="text-block">
+            នៅក្នុងការអនុវត្ត Dynamic Programming វិស្វករ DSA ប្រើប្រាស់វិធីសាស្ត្រធំៗពីរក្នុងការបង្កើតប្រព័ន្ធចងចាំ (Cache System) ទៅតាមទម្រង់ការសរសេរកូដ៖
+        </div>
+
+        <div class="compare-block" style="margin-bottom: 15px;">
+            <div class="compare-title" style="text-align: left;"><i class="fa-solid fa-right-left text-blue"></i> ភាពខុសគ្នារវាងការសរសេរកូដបែប Top-Down និង Bottom-Up</div>
+            <div class="compare-grid">
+                <div class="compare-col">
+                    <h5><i class="fa-solid fa-arrow-down text-blue"></i> ១. Top-Down (Memoization)</h5>
+                    - <b>គោលការណ៍៖</b> ចាប់ផ្តើមគិតពីបញ្ហាធំបង្អស់ រួចប្រើប្រាស់យន្តការ Recursion ដើម្បីបំបែកបញ្ហានោះទៅជាបញ្ហាតូចៗបំផុត (Base Cases)។
+                    <br>- <b>យន្តការចងចាំ៖</b> រាល់ពេលដែលរកឃើញចម្លើយតូចណាមួយ ប្រព័ន្ធនឹងយកចម្លើយនោះទៅ **កត់ត្រាទុកក្នុង Dictionary ឬ Hash Table** (ហៅថា `memo`) មុននឹង Return។ ពេលជួបបញ្ហានោះម្តងទៀត វានឹងទាញយកចម្លើយមកប្រើភ្លាម O(1)។
+                </div>
+                <div class="compare-col">
+                    <h5><i class="fa-solid fa-arrow-up text-green"></i> ២. Bottom-Up (Tabulation)</h5>
+                    - <b>គោលការណ៍៖</b> ចាប់ផ្តើមដោះស្រាយពីបញ្ហាតូចបំផុតជាមុន រួចបន្តសន្សំចម្លើយឡើងលើរហូតដល់សម្រេចបានបញ្ហាធំ (លែងប្រើ Recursion)។
+                    <br>- <b>យន្តការចងចាំ៖</b> ប្រព័ន្ធប្រើប្រាស់ **តារាង Array ឬ List** (ហៅថា `table`) ដើម្បីរៀបចំគណនាទិន្នន័យពីលំដាប់តូចទៅធំដោយប្រើប្រាស់ Loop `for` ធម្មតា។ វិធីសាស្ត្រនេះមានស្ថេរភាពខ្ពស់ ព្រោះមិនបារម្ភបញ្ហា Stack Overflow (Recursion Limit) ឡើយ។
+                </div>
+            </div>
+        </div>
+
+        <!-- Inline Memoization vs Tabulation Concept SVG -->
+        <div style="text-align: center;">
+            <svg viewBox="0 0 500 120" style="width: 75%; height: auto; display: inline-block;">
+                <!-- Memoization Box -->
+                <rect x="20" y="30" width="210" height="60" rx="6" fill="#F0F9FF" stroke="#0284C7" stroke-width="2"/>
+                <text x="125" y="55" font-family="'Suwannaphum'" font-size="12" font-weight="bold" fill="#0284C7" text-anchor="middle">Memoization (Top-Down)</text>
+                <text x="125" y="75" font-family="'Fira Code'" font-size="10" fill="#475569" text-anchor="middle">Recursion + Dictionary Cache</text>
+
+                <!-- Tabulation Box -->
+                <rect x="270" y="30" width="210" height="60" rx="6" fill="#F0FDF4" stroke="#059669" stroke-width="2"/>
+                <text x="375" y="55" font-family="'Suwannaphum'" font-size="12" font-weight="bold" fill="#059669" text-anchor="middle">Tabulation (Bottom-Up)</text>
+                <text x="375" y="75" font-family="'Fira Code'" font-size="10" fill="#475569" text-anchor="middle">Iteration (Loop) + Array Table</text>
+            </svg>
+        </div>
+    </div>
+
+    <div class="global-footer">
+        <div class="footer-left"><img src="Lim.jpg" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'"><span>សាស្ត្រាចារ្យ៖ សឿង លីម (Soeurng LIM)</span></div>
+        <div class="footer-right">ទំព័រទី ៤ នៃ ១៤</div>
+    </div>
+</div>
+
+<!-- ================= PAGE 5: Fibonacci Code ================= -->
+<div class="a4-page">
+    <div class="global-header">
+        <div class="header-item"><img src="https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png" onerror="this.src='Logo.png'"><span>សាកលវិទ្យាល័យអង្គរ</span></div>
+        <div class="header-center">
+            <h1>សៀវភៅមគ្គទ្ទេសក៍ (Guidebook) - ជំពូកទី ៨</h1>
+            <p>ADVANCED DATA STRUCTURES AND ALGORITHMS FOR AI</p>
+        </div>
+        <div class="header-item"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg"><span>Python Pro</span></div>
+    </div>
+
+    <div class="page-content">
+        <div class="section-title" style="margin-top: 0; border-left-color: var(--accent-red);"><i class="fa-solid fa-code"></i> ៣. ការអនុវត្តកូដ DP លើលំដាប់លេខ Fibonacci ក្នុង Python</div>
+        <div class="text-block" style="margin-bottom: 5px;">
+            លំដាប់លេខ Fibonacci (0, 1, 1, 2, 3, 5, 8...) គឺជាករណីសិក្សាល្អបំផុតក្នុងការបង្ហាញពីអនុភាពរបស់ Dynamic Programming។ ខាងក្រោមនេះជាកូដប្រៀបធៀបរវាងការសរសេរ Recursion ធម្មតា និងការប្រើប្រាស់ DP (Memoization)៖
+        </div>
+
+        <!-- Runnable Code -->
+        <div class="code-wrapper" style="margin-top: 10px; margin-bottom: 10px;">
+            <div class="code-header"><span><i class="fa-brands fa-python"></i> 1_fibonacci_dp.py</span><span>Recursive vs DP Fibonacci</span></div>
+            <div class="code-content"><pre>
+<span class="kw">import</span> time
+
+<span class="com"># ១. វិធីសាស្ត្រ Recursion ធម្មតា (អត់មានការចងចាំ - យឺតខ្លាំង O(2ⁿ))</span>
+<span class="kw">def</span> <span class="fn">fib_recursive</span>(n):
+    <span class="kw">if</span> n <= <span class="num">1</span>:
+        <span class="kw">return</span> n
+    <span class="kw">return</span> fib_recursive(n-<span class="num">1</span>) + fib_recursive(n-<span class="num">2</span>)
+
+<span class="com"># ២. វិធីសាស្ត្រ Dynamic Programming (Memoization - លឿន O(n))</span>
+<span class="kw">def</span> <span class="fn">fib_dp</span>(n, memo={}):
+    <span class="com"># បើមានចម្លើយចាស់ក្នុង Dictionary រួចហើយ ទាញយកមកប្រើភ្លាម O(1)</span>
+    <span class="kw">if</span> n <span class="kw">in</span> memo:
+        <span class="kw">return</span> memo[n]
+    <span class="kw">if</span> n <= <span class="num">1</span>:
+        <span class="kw">return</span> n
+    
+    <span class="com"># គណនា រួចកត់ត្រាទុកក្នុង Dictionary memo</span>
+    memo[n] = fib_dp(n-<span class="num">1</span>, memo) + fib_dp(n-<span class="num">2</span>, memo)
+    <span class="kw">return</span> memo[n]
+
+<span class="com"># វាស់ស្ទង់ល្បឿនជាក់ស្តែង</span>
+<span class="fn">print</span>(<span class="str">"--- ប្រៀបធៀបល្បឿនគណនា Fibonacci ទី ៣៥ ---"</span>)
+
+start = time.time()
+ans1 = fib_recursive(<span class="num">35</span>)
+<span class="fn">print</span>(<span class="str">f"Recursion ធម្មតា គណនាឃើញ {ans1} ប្រើពេល: {time.time() - start:.4f} វិនាទី"</span>)
+
+start = time.time()
+ans2 = fib_dp(<span class="num">35</span>)
+<span class="fn">print</span>(<span class="str">f"DP (Memoization) គណនាឃើញ {ans2} ប្រើពេល: {time.time() - start:.4f} វិនាទី"</span>)
+</pre></div>
+            <div class="code-output">
+                <div class="code-output-title">>_ Terminal Output</div>
+                <pre>--- ប្រៀបធៀបល្បឿនគណនា Fibonacci ទី ៣៥ ---
+Recursion ធម្មតា គណនាឃើញ 9227465 ប្រើពេល: 1.8450 វិនាទី
+DP (Memoization) គណនាឃើញ 9227465 ប្រើពេល: 0.0001 វិនាទី</pre>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="global-footer">
+        <div class="footer-left"><img src="Lim.jpg" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'"><span>សាស្ត្រាចារ្យ៖ សឿង លីម (Soeurng LIM)</span></div>
+        <div class="footer-right">ទំព័រទី ៥ នៃ ១៤</div>
+    </div>
+</div>
+
+<!-- ================= PAGE 6: The Knapsack Problem ================= -->
+<div class="a4-page">
+    <div class="global-header">
+        <div class="header-item"><img src="https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png" onerror="this.src='Logo.png'"><span>សាកលវិទ្យាល័យអង្គរ</span></div>
+        <div class="header-center">
+            <h1>សៀវភៅមគ្គទ្ទេសក៍ (Guidebook) - ជំពូកទី ៨</h1>
+            <p>ADVANCED DATA STRUCTURES AND ALGORITHMS FOR AI</p>
+        </div>
+        <div class="header-item"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg"><span>Python Pro</span></div>
+    </div>
+
+    <div class="page-content">
+        <div class="section-title" style="margin-top: 0; border-left-color: var(--accent-red);"><i class="fa-solid fa-briefcase"></i> ៤. បញ្ហាកាតាបស្ពាយ (The 0/1 Knapsack Problem)</div>
+        <div class="text-block">
+            <b>0/1 Knapsack Problem (បញ្ហាកាតាបស្ពាយ)</b> គឺជាបញ្ហាបុរាណ និងល្បីល្បាញបំផុតក្នុងការបង្កើនប្រសិទ្ធភាពធនធាន (Combinatorial Optimization)។ បញ្ហានេះត្រូវបានចោទសួរឡើងថា៖
+            <br><span class="text-red" style="font-weight: bold; font-size: 13.5px;">"តើយើងគួរជ្រើសរើសវត្ថុណាខ្លះ ដាក់ចូលទៅក្នុងកាតាបស្ពាយដែលមានដែនកំណត់ទម្ងន់ជាក់លាក់មួយ ដើម្បីទទួលបានតម្លៃលុយសរុបខ្ពស់បំផុត ដោយមិនឱ្យលើសទម្ងន់ដែលកាតាបអាចទ្រទ្រង់បាន?"</span>
+        </div>
+
+        <div class="narrative-box danger" style="margin-top: 15px;">
+            <div class="narrative-header"><i class="fa-solid fa-mask"></i> ករណីសិក្សា៖ យន្តការសម្រេចចិត្តរបស់ចោរលួចផ្ទះ</div>
+            <p class="narrative-text">ចោរម្នាក់បានលួចចូលផ្ទះមួយដែលផ្ទុករបស់មានតម្លៃជាច្រើន។ គាត់មានកាតាបស្ពាយមួយដែលអាចផ្ទុកទម្ងន់បានយ៉ាងច្រើនបំផុតត្រឹមតែ **១៥ គីឡូក្រាម**។ នៅក្នុងផ្ទះនោះមានរបស់មានតម្លៃ ៣ មុខរួមមាន៖
+            <br>១. <b>Laptop៖</b> ទម្ងន់ ៣ គីឡូក្រាម, តម្លៃ $1500
+            <br>២. <b>ទូរទស្សន៍៖</b> ទម្ងន់ ១០ គីឡូក្រាម, តម្លៃ $800
+            <br>៣. <b>នាឡិកាមាស៖</b> ទម្ងន់ ១ គីឡូក្រាម, តម្លៃ $2000
+            <br>ពាក្យថា **"0/1"** មានន័យថា របស់នីមួយៗចោរមានសិទ្ធិជ្រើសរើសយក (1) ឬមិនយក (0) គឺមិនអនុញ្ញាតឱ្យហែកយកពាក់កណ្តាលឡើយ។ ប្រសិនបើចោរលោភលន់យកទូរទស្សន៍មុន គាត់នឹងសល់កាតាបតែ ៥ គីឡូ ដែលមិនអាចដាក់របស់ធំៗដទៃទៀតបានឡើយ។ ដូចនេះគាត់ត្រូវប្រើប្រាស់ Dynamic Programming ដើម្បីគណនាគ្រប់លទ្ធភាពជម្រើសយកតម្លៃខ្ពស់បំផុត O(n × W)។</p>
+        </div>
+
+        <!-- Knapsack Analogy Figures Inline SVG -->
+        <div style="text-align: center; margin-top: 15px;">
+            <svg viewBox="0 0 500 100" style="width: 75%; height: auto; display: inline-block;">
+                <rect x="20" y="25" width="130" height="50" rx="6" fill="#FEE2E2" stroke="#DC2626" stroke-width="2"/>
+                <text x="85" y="48" font-family="'Suwannaphum'" font-size="11" font-weight="bold" fill="#DC2626" text-anchor="middle">កាតាប (Knapsack)</text>
+                <text x="85" y="65" font-family="sans-serif" font-size="10" fill="#64748B" text-anchor="middle">Max Weight: 15kg</text>
+
+                <path d="M 160 50 L 210 50" stroke="#475569" stroke-width="2" stroke-dasharray="4,4"/>
+
+                <rect x="220" y="15" width="260" height="70" rx="6" fill="#F8FAFC" stroke="#CBD5E1" stroke-width="2"/>
+                <text x="350" y="38" font-family="'Suwannaphum'" font-size="11" font-weight="bold" fill="#0F172A" text-anchor="middle">បញ្ជីរបស់មានតម្លៃ (Items to choose)</text>
+                <text x="350" y="58" font-family="'Battambang'" font-size="9" fill="#475569" text-anchor="middle">- Laptop: 3kg ($1500) | - TV: 10kg ($800)</text>
+                <text x="350" y="73" font-family="'Battambang'" font-size="9" fill="#475569" text-anchor="middle">- Gold Watch: 1kg ($2000)</text>
+            </svg>
+        </div>
+    </div>
+
+    <div class="global-footer">
+        <div class="footer-left"><img src="Lim.jpg" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'"><span>សាស្ត្រាចារ្យ៖ សឿង លីម (Soeurng LIM)</span></div>
+        <div class="footer-right">ទំព័រទី ៦ នៃ ១៤</div>
+    </div>
+</div>
+
+<!-- ================= PAGE 7: Knapsack Case Studies ================= -->
+<div class="a4-page">
+    <div class="global-header">
+        <div class="header-item"><img src="https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png" onerror="this.src='Logo.png'"><span>សាកលវិទ្យាល័យអង្គរ</span></div>
+        <div class="header-center">
+            <h1>សៀវភៅមគ្គទ្ទេសក៍ (Guidebook) - ជំពូកទី ៨</h1>
+            <p>ADVANCED DATA STRUCTURES AND ALGORITHMS FOR AI</p>
+        </div>
+        <div class="header-item"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg"><span>Python Pro</span></div>
+    </div>
+
+    <div class="page-content">
+        <div class="section-title" style="margin-top: 0; border-left-color: var(--accent-red);"><i class="fa-solid fa-briefcase"></i> ៥. ករណីសិក្សា Knapsack ក្នុងវិស័យកសិកម្ម និងហិរញ្ញវត្ថុ</div>
+        <div class="text-block">
+            បញ្ហា Knapsack មើលទៅដូចជាល្បែងដោះស្រាយចោរលួចរបស់ ប៉ុន្តែនៅក្នុងពិភពធុរកិច្ចពិតប្រាកដ វាត្រូវបានវិស្វករទិន្នន័យ (Data Scientists) យកមកប្រើប្រាស់ដើម្បីដោះស្រាយបញ្ហាបែងចែកធនធានដែលមានដែនកំណត់៖
+        </div>
+
+        <div class="grid-2">
+            <div class="narrative-box">
+                <div class="narrative-header"><i class="fa-solid fa-seedling"></i> ករណីសិក្សាទី១៖ ការចាត់ចែងដំណាំលើផ្ទៃដីកសិកម្ម</div>
+                <p class="narrative-text">កសិករម្នាក់មានផ្ទៃដីដាំដុះសរុបកំណត់ត្រឹមតែ <b>៥ ហិកតា (តំណាងឱ្យទំហំកាតាប)</b>។ គាត់មានជម្រើសដាំដំណាំច្រើនមុខ ដែលដំណាំនីមួយៗចំណាយទំហំដី និងផ្តល់ផលចំណេញលុយខុសៗគ្នា៖
+                <br>• ម្រេច៖ ប្រើដី ១ ហិកតា, ផលចំណេញ $៥,០០០
+                <br>• ពោត៖ ប្រើដី ៣ ហិកតា, ផលចំណេញ $២,០០០
+                <br>• សណ្តែក៖ ប្រើដី ៤ ហិកតា, ផលចំណេញ $៤,០០០
+                <br>តាមរយៈក្បួន Knapsack DP ប្រព័ន្ធនឹងជួយកសិករគណនាសម្រេចចិត្តជ្រើសរើសដាំដុះចម្រុះដំណាំណាដែលផ្តល់ប្រាក់ចំណេញខ្ពស់បំផុតដោយមិនឱ្យលើសទំហំដី ៥ ហិកតាឡើយ។</p>
+            </div>
+            <div class="narrative-box warning">
+                <div class="narrative-header"><i class="fa-solid fa-chart-line"></i> ករណីសិក្សាទី២៖ ការវិនិយោគភាគហ៊ុន (Asset Allocation)</div>
+                <p class="narrative-text">នៅក្នុងក្រុមហ៊ុនហិរញ្ញវត្ថុ អ្នកវិភាគមានទុនវិនិយោគសរុប <b>$100,000 (តំណាងឱ្យទំហំកាតាប)</b>។ គាត់មានជម្រើសទិញភាគហ៊ុនក្រុមហ៊ុនរាប់សិប ដែលភាគហ៊ុននីមួយៗទាមទារទុនទិញអប្បបរមា និងផ្តល់អត្រាភាគលាភរំពឹងទុកខុសៗគ្នា។
+                <br>ប្រព័ន្ធវិភាគទិន្នន័យឆ្លាតវៃនឹងរៀបចំបញ្ហាសម្រេចចិត្តនេះទៅជា **0/1 Knapsack Problem** រួចដំណើរការកូដគណនាដើម្បីជ្រើសរើសក្រុមហ៊ុនភាគហ៊ុនណាខ្លះដែលគួរទិញដើម្បីទទួលបានភាគលាភខ្ពស់បំផុត និងកាត់បន្ថយហានិភ័យមកទាបបំផុត O(n × W)។</p>
+            </div>
+        </div>
+
+        <div class="highlight-note" style="margin-top: 15px; margin-bottom: 0;">
+            <i class="fa-solid fa-bell text-yellow"></i> <b>គន្លឹះគណនា Knapsack DP៖</b> ដើម្បីដោះស្រាយ Knapsack, គេប្រើប្រាស់វិធីសាស្ត្រតាក់តែងតារាងពីរវិមាត្រ **(2D Array Tabulation Table)**។ ជួរដេកតំណាងឱ្យវត្ថុដែលត្រូវរើស (Items) រីឯជួរឈរតំណាងឱ្យទម្ងន់កាតាបចាប់ពី 0, 1, 2 គីឡូ រហូតដល់ទម្ងន់អតិបរមា W។ ចម្លើយចុងក្រោយស្ថិតនៅប្រអប់បាតក្រោមគេបង្អស់នៃតារាង។
+        </div>
+    </div>
+
+    <div class="global-footer">
+        <div class="footer-left"><img src="Lim.jpg" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'"><span>សាស្ត្រាចារ្យ៖ សឿង លីម (Soeurng LIM)</span></div>
+        <div class="footer-right">ទំព័រទី ៧ នៃ ១៤</div>
+    </div>
+</div>
+
+<!-- ================= PAGE 8: Greedy Algorithms ================= -->
+<div class="a4-page">
+    <div class="global-header">
+        <div class="header-item"><img src="https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png" onerror="this.src='Logo.png'"><span>សាកលវិទ្យាល័យអង្គរ</span></div>
+        <div class="header-center">
+            <h1>សៀវភៅមគ្គទ្ទេសក៍ (Guidebook) - ជំពូកទី ៨</h1>
+            <p>ADVANCED DATA STRUCTURES AND ALGORITHMS FOR AI</p>
+        </div>
+        <div class="header-item"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg"><span>Python Pro</span></div>
+    </div>
+
+    <div class="page-content">
+        <div class="section-title" style="margin-top: 0; border-left-color: var(--accent-red);"><i class="fa-solid fa-hand-holding-dollar"></i> ៦. ក្បួនដោះស្រាយបែបលោភលន់ (Greedy Algorithms)</div>
+        <div class="text-block">
+            <b>Greedy Algorithm (ក្បួនដោះស្រាយបែបលោភលន់)</b> គឺជាវិធីសាស្ត្រដោះស្រាយបញ្ហាសម្រេចចិត្តសម្របសម្រួលដ៏សាមញ្ញ និងលឿនបំផុត។ គោលការណ៍ស្នូលរបស់ Greedy គឺ៖
+            <br><span class="text-yellow" style="font-weight: bold; font-size: 13.5px;">"ធ្វើការសម្រេចចិត្តជ្រើសរើសយកជម្រើសណាដែល 'ល្អបំផុតនៅចំពោះមុខភ្លាមៗ' (Local Optimum) នៅរាល់គ្រប់ជំហាន ដោយសង្ឃឹមថានឹងនាំទៅរកចម្លើយដែលល្អបំផុតជាសកល (Global Optimum) នៅចុងបញ្ចប់។"</span>
+        </div>
+
+        <div class="narrative-box warning" style="margin-top: 15px; margin-bottom: 15px;">
+            <div class="narrative-header"><i class="fa-solid fa-coins"></i> ករណីសិក្សា៖ យន្តការអាប់លុយរបស់ប្រព័ន្ធ POS (Coin Change)</div>
+            <p class="narrative-text">បុគ្គលិកគិតលុយនៅផ្សារទំនើបត្រូវការអាប់លុយចំនួន **៦,០០០៛** ទៅឱ្យអតិថិជន។ នៅក្នុងថតលុយរបស់គាត់មានក្រដាសប្រាក់៖ ៥,០០០៛, ១,០០០៛, និង ៥០០៛។
+            <br>ដើម្បីឱ្យការអាប់លុយប្រើប្រាស់ **ចំនួនសន្លឹកក្រដាសប្រាក់តិចបំផុត** តាមក្បួនលោភលន់ Greedy គាត់នឹងជ្រើសរើសក្រដាសប្រាក់ដែលធំជាងគេបំផុតនៅចំពោះមុខជាមុនជានិច្ច៖
+            <br>• ជំហានទី១៖ ជ្រើសរើសយកក្រដាស <b>៥,០០០៛</b> (ធំបំផុតដែលតូចជាង ៦,០០០៛) -> នៅសល់លុយត្រូវអាប់ ១,០០០៛។
+            <br>• ជំហានទី២៖ ជ្រើសរើសយកក្រដាស <b>១,០០០៛</b> (ធំបំផុតដែលតូចជាង ១,០០០៛) -> នៅសល់លុយត្រូវអាប់ ០៛ (បញ្ចប់)។
+            <br><b>លទ្ធផលសម្រេចបាន៖</b> អាប់លុយក្រដាសប្រាក់ត្រឹមតែ **២ សន្លឹក** ជូនអតិថិជនបានយ៉ាងលឿន និងត្រឹមត្រូវកម្រិត O(n)។</p>
+        </div>
+
+        <div class="text-block">
+            ក្បួន Greedy មានចំណុចខ្លាំងត្រង់ល្បឿនដំណើរការគឺលឿនរហ័សខ្លាំង O(n) និងងាយស្រួលសរសេរកូដ។ ប៉ុន្តែនៅក្នុងបញ្ហាសម្រេចចិត្តដ៏ស្មុគស្មាញជាច្រើន យន្តការលោភលន់ចំពោះមុខនេះ ជារឿយៗតែងតែ **ចាញ់បោក** និងផ្តល់ចម្លើយសម្រេចចិត្តខុសឆ្ងាយពីចំណុចល្អបំផុតពិតប្រាកដ។
+        </div>
+    </div>
+
+    <div class="global-footer">
+        <div class="footer-left"><img src="Lim.jpg" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'"><span>សាស្ត្រាចារ្យ៖ សឿង លីម (Soeurng LIM)</span></div>
+        <div class="footer-right">ទំព័រទី ៨ នៃ ១៤</div>
+    </div>
+</div>
+
+<!-- ================= PAGE 9: Greedy vs DP Comparison ================= -->
+<div class="a4-page">
+    <div class="global-header">
+        <div class="header-item"><img src="https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png" onerror="this.src='Logo.png'"><span>សាកលវិទ្យាល័យអង្គរ</span></div>
+        <div class="header-center">
+            <h1>សៀវភៅមគ្គទ្ទេសក៍ (Guidebook) - ជំពូកទី ៨</h1>
+            <p>ADVANCED DATA STRUCTURES AND ALGORITHMS FOR AI</p>
+        </div>
+        <div class="header-item"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg"><span>Python Pro</span></div>
+    </div>
+
+    <div class="page-content">
+        <div class="section-title" style="margin-top: 0; border-left-color: var(--accent-red);"><i class="fa-solid fa-scale-balanced"></i> ៧. ការប្រៀបធៀបបច្ចេកទេសរវាង Greedy vs Dynamic Programming</div>
+        <div class="text-block">
+            ការយល់ដឹងពីភាពខុសគ្នារវាងក្បួនដោះស្រាយទាំងពីរជួយឱ្យយើងអាចវាយតម្លៃបានត្រឹមត្រូវពីល្បឿន និងភាគរយភាពត្រឹមត្រូវនៃប្រព័ន្ធ៖
+        </div>
+
+        <div class="compare-block" style="margin-bottom: 15px;">
+            <div class="compare-title" style="text-align: left;"><i class="fa-solid fa-right-left text-blue"></i> ការដោះដូរ (Trade-offs) រវាងល្បឿនរត់ និងភាពច្បាស់លាស់នៃចម្លើយ</div>
+            <div class="compare-grid">
+                <div class="compare-col">
+                    <h5><i class="fa-solid fa-bolt text-yellow"></i> ១. Greedy Algorithm (ល្បឿនជាធំ)</h5>
+                    - <b>យន្តការសម្រេចចិត្ត៖</b> ជ្រើសរើសយកចម្លើយដែលល្អបំផុតនៅចំពោះមុខរាល់ជំហាន (Local Optimum)។
+                    <br>- <b>ល្បឿន (Time Complexity)៖</b> លឿនខ្លាំងណាស់ O($n$) ឬ O($n \log n$) ព្រោះដំណើរការតែមួយជុំ។
+                    <br>- <b>ភាគរយត្រឹមត្រូវ៖</b> មិនធានាថាចម្លើយដែលទទួលបានគឺល្អបំផុតជាសកល (Global Optimum) នោះឡើយ ជារឿយៗតែងតែចាញ់បោកក្នុងបញ្ហា Knapsack ព្រោះវាប្រញាប់យករបស់ធំថ្លៃមុនគេ ធ្វើឱ្យកាតាបពេញគ្មានចន្លោះ។
+                </div>
+                <div class="compare-col">
+                    <h5><i class="fa-solid fa-brain text-green"></i> ២. Dynamic Programming (ចម្លើយជាធំ)</h5>
+                    - <b>យន្តការសម្រេចចិត្ត៖</b> ពិចារណារាល់គ្រប់លទ្ធភាពជម្រើសតូចៗទាំងអស់ (Overlapping Subproblems)។
+                    <br>- <b>ល្បឿន (Time Complexity)៖</b> យឺតជាង Greedy កម្រិត O($n \times W$) និងប្រើប្រាស់ទំហំ RAM ច្រើនជាងដើម្បីសង់តារាង Tabulation។
+                    <br>- <b>ភាគរយត្រឹមត្រូវ៖</b> <b class="text-green">ធានាភាពត្រឹមត្រូវដាច់ខាត ១០០%</b> ថាចម្លើយសម្រេចចិត្តដែលទទួលបានគឺល្អបំផុតជាសកល (Global Optimum) គ្មានចម្លើយណាអាចល្អជាងនេះឡើយ។
+                </div>
+            </div>
+        </div>
+
+        <div class="narrative-box danger" style="margin-bottom: 0;">
+            <div class="narrative-header"><i class="fa-solid fa-triangle-exclamation"></i> ករណីចាញ់បោករបស់ Greedy លើ Coin Change Problem</div>
+            <p class="narrative-text">ឧបមាថាយើងត្រូវអាប់លុយចំនួន **៦,០០០៛** ដូចមុន។ ប៉ុន្តែក្នុងថតលុយមានតែក្រដាសប្រាក់៖ **៤,០០០៛, ៣,០០០៛, និង ១,០០០៛**។
+            <br>• ប្រសិនបើប្រើប្រាស់ក្បួន Greedy៖ វានឹងរើសក្រដាសធំមុនគេគឺ **៤,០០០៛** (សល់ ២,០០០៛) រួចបន្តអាប់ក្រដាស **១,០០០៛** ចំនួន ២ សន្លឹក។ សរុបប្រើប្រាស់ក្រដាសប្រាក់អស់ **៣ សន្លឹក**។
+            <br>• ប្រសិនបើប្រើប្រាស់ក្បួន Dynamic Programming៖ វានឹងគណនាឃើញជម្រើសល្អបំផុតគឺការអាប់ក្រដាស **៣,០០០៛** ចំនួន **២ សន្លឹក**។ សរុបប្រើប្រាស់ក្រដាសប្រាក់អស់តែ **២ សន្លឹក** ប៉ុណ្ណោះ។ នេះសរបញ្ជាក់ថា Greedy មិនអាចផ្តល់ចម្លើយល្អបំផុតគ្រប់ពេលឡើយ។</p>
+        </div>
+    </div>
+
+    <div class="global-footer">
+        <div class="footer-left"><img src="Lim.jpg" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'"><span>សាស្ត្រាចារ្យ៖ សឿង លីម (Soeurng LIM)</span></div>
+        <div class="footer-right">ទំព័រទី ៩ នៃ ១៤</div>
+    </div>
+</div>
+
+<!-- ================= PAGE 10: Dijkstra's Algorithm ================= -->
+<div class="a4-page">
+    <div class="global-header">
+        <div class="header-item"><img src="https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png" onerror="this.src='Logo.png'"><span>សាកលវិទ្យាល័យអង្គរ</span></div>
+        <div class="header-center">
+            <h1>សៀវភៅមគ្គទ្ទេសក៍ (Guidebook) - ជំពូកទី ៨</h1>
+            <p>ADVANCED DATA STRUCTURES AND ALGORITHMS FOR AI</p>
+        </div>
+        <div class="header-item"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg"><span>Python Pro</span></div>
+    </div>
+
+    <div class="page-content">
+        <div class="section-title" style="margin-top: 0; border-left-color: var(--accent-red);"><i class="fa-solid fa-route"></i> ៨. ក្បួនដោះស្រាយរបស់ Dijkstra (Dijkstra's Shortest Path)</div>
+        <div class="text-block">
+            <b>Dijkstra's Algorithm (ក្បួនដោះស្រាយរបស់ឌីកស្ត្រា)</b> គឺជាក្បួនដោះស្រាយដ៏ល្បីល្បាញបំផុតនៅក្នុងទ្រឹស្តីក្រាហ្វ (Graph Theory) សម្រាប់ស្វែងរក <b>ផ្លូវខ្លីបំផុត (Shortest Path)</b> ពីចំណុចចាប់ផ្តើម (Source Vertex) ទៅកាន់ចំណុចគោលដៅផ្សេងទៀតទាំងអស់ នៅក្នុងក្រាហ្វដែលមានទម្ងន់ខុសៗគ្នា (Weighted Graph)។
+        </div>
+
+        <div class="grid-2">
+            <div class="narrative-box">
+                <div class="narrative-header"><i class="fa-solid fa-gas-pump"></i> ការយល់ដឹងពី "Cost / Weight" (ទម្ងន់ខ្សែ)</div>
+                <p class="narrative-text">នៅក្នុងការស្វែងរកផ្លូវពិតប្រាកដ ពាក្យថា "ផ្លូវខ្លីបំផុត" មិនមែនគិតទៅលើចម្ងាយផ្លូវ (គីឡូម៉ែត្រ) តែម្ខាងនោះឡើយ។ តម្លៃទម្ងន់ (Cost) អាចតំណាងឱ្យ៖
+                <br>• <b>រយៈពេលធ្វើដំណើរ៖</b> ផ្លូវខ្លីតែបើជួបការស្ទះចរាចរណ៍ខ្លាំង នោះ Cost នឹងកើនឡើងខ្ពស់ខ្លាំង។
+                <br>• <b>កម្រិតស៊ីប្រេង ឬថ្លៃផ្លូវល្បឿនលឿន៖</b> ផ្លូវវាងអាចឆ្ងាយ បើឡានរត់លឿនមិនសូវស៊ីសាំង នោះកុំព្យូទ័រនឹងជ្រើសរើសផ្លូវវាងនោះ។</p>
+            </div>
+            <div class="narrative-box warning">
+                <div class="narrative-header"><i class="fa-solid fa-map-location-dot"></i> ករណីសិក្សានៃប្រព័ន្ធផែនទី Google Maps</div>
+                <p class="narrative-text">រាល់ពេលដែលអ្នកវាយបញ្ចូលទីតាំងធ្វើដំណើរពី "ភ្នំពេញ ទៅ សៀមរាប" នៅក្នុង Google Maps ប្រព័ន្ធបញ្ញាសិប្បនិម្មិតនឹងដំណើរការក្បួនកូនកាត់របស់ Dijkstra (ហៅថា A* Search) ដើម្បីវិភាគទិន្នន័យចរាចរណ៍រស់ (Real-time traffic) រួចផ្តល់នូវជម្រើសខ្សែផ្លូវដែលចំណាយពេលតិចបំផុតជូនអ្នក O(E + V $\log$ V)។</p>
+            </div>
+        </div>
+
+        <!-- Dijkstra Visual Graph Inline SVG -->
+        <div style="text-align: center; margin-top: 15px;">
+            <svg viewBox="0 0 500 110" style="width: 75%; height: auto; display: inline-block;">
+                <line x1="80" y1="50" x2="200" y2="20" stroke="#DC2626" stroke-width="3"/>
+                <line x1="80" y1="50" x2="200" y2="80" stroke="#64748B" stroke-width="1.5"/>
+                <line x1="200" y1="20" x2="320" y2="50" stroke="#DC2626" stroke-width="3"/>
+                <line x1="200" y1="80" x2="320" y2="50" stroke="#64748B" stroke-width="1.5"/>
+                <line x1="200" y1="20" x2="200" y2="80" stroke="#64748B" stroke-width="1.5"/>
+
+                <circle cx="80" cy="50" r="15" fill="#1E293B"/>
+                <text x="80" y="54" font-family="sans-serif" font-size="11" font-weight="bold" fill="#FFF" text-anchor="middle">A</text>
+                
+                <circle cx="200" cy="20" r="15" fill="#F8FAFC" stroke="#1E293B" stroke-width="2"/>
+                <text x="200" y="24" font-family="sans-serif" font-size="11" font-weight="bold" fill="#1E293B" text-anchor="middle">B</text>
+                
+                <circle cx="200" cy="80" r="15" fill="#F8FAFC" stroke="#1E293B" stroke-width="2"/>
+                <text x="200" y="84" font-family="sans-serif" font-size="11" font-weight="bold" fill="#1E293B" text-anchor="middle">C</text>
+                
+                <circle cx="320" cy="50" r="15" fill="#10B981"/>
+                <text x="320" y="54" font-family="sans-serif" font-size="11" font-weight="bold" fill="#FFF" text-anchor="middle">D</text>
+
+                <text x="140" y="27" font-family="sans-serif" font-size="10" font-weight="bold" fill="#DC2626">4</text>
+                <text x="140" y="75" font-family="sans-serif" font-size="10" fill="#64748B">8</text>
+                <text x="260" y="27" font-family="sans-serif" font-size="10" font-weight="bold" fill="#DC2626">2</text>
+                <text x="260" y="75" font-family="sans-serif" font-size="10" fill="#64748B">3</text>
+                <text x="210" y="55" font-family="sans-serif" font-size="10" fill="#64748B">1</text>
+                
+                <text x="410" y="45" font-family="'Suwannaphum'" font-size="10" font-weight="bold" fill="#DC2626" text-anchor="middle">ផ្លូវខ្លីបំផុត (Shortest Path):</text>
+                <text x="410" y="65" font-family="monospace" font-size="11" fill="#0F172A" text-anchor="middle">A &rarr; B &rarr; D (Cost 6)</text>
+            </svg>
+        </div>
+    </div>
+
+    <div class="global-footer">
+        <div class="footer-left"><img src="Lim.jpg" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'"><span>សាស្ត្រាចារ្យ៖ សឿង លីម (Soeurng LIM)</span></div>
+        <div class="footer-right">ទំព័រទី ១០ នៃ ១៤</div>
+    </div>
+</div>
+
+<!-- ================= PAGE 11: KNN Algorithm ================= -->
+<div class="a4-page">
+    <div class="global-header">
+        <div class="header-item"><img src="https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png" onerror="this.src='Logo.png'"><span>សាកលវិទ្យាល័យអង្គរ</span></div>
+        <div class="header-center">
+            <h1>សៀវភៅមគ្គទ្ទេសក៍ (Guidebook) - ជំពូកទី ៨</h1>
+            <p>ADVANCED DATA STRUCTURES AND ALGORITHMS FOR AI</p>
+        </div>
+        <div class="header-item"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg"><span>Python Pro</span></div>
+    </div>
+
+    <div class="page-content">
+        <div class="section-title" style="margin-top: 0; border-left-color: var(--accent-red);"><i class="fa-solid fa-robot"></i> ៩. ក្បួនដោះស្រាយ K-Nearest Neighbors (KNN) សម្រាប់ប្រព័ន្ធ AI</div>
+        <div class="text-block">
+            <b>K-Nearest Neighbors (KNN ឬក្បួនស្វែងរកអ្នកជិតខាងជិតបំផុតចំនួន K នាក់)</b> គឺជាក្បួនដោះស្រាយការរៀនសូត្ររបស់ម៉ាស៊ីន (Machine Learning) បែបមូលដ្ឋាន និងងាយស្រួលយល់បំផុត។ វាត្រូវបានចាត់ទុកថាជា **"Lazy Learner"** ព្រោះវាមិនមានការហ្វឹកហាត់បង្កើតជាគំរូស្មុគស្មាញ (Model-free) ឡើយ គឺវាគ្រាន់តែរក្សារក្សាទុកទិន្នន័យចាស់ៗទាំងអស់នៅក្នុង RAM។
+        </div>
+
+        <div class="card purple-card" style="margin-bottom: 12px;">
+            <h4 style="font-size: 13.5px;"><i class="fa-solid fa-users"></i> ទស្សនៈគ្រឹះរបស់ KNN៖ "You are who your friends are"</h4>
+            <p class="text-block" style="font-size: 12px; margin-bottom: 0; text-align: justify;">
+                ដើម្បីកំណត់អត្តសញ្ញាណទិន្នន័យថ្មីមួយ (ឧ. ចង់ដឹងថាអតិថិជនថ្មីចូលចិត្តមើលកុនបែបណា?) KNN នឹងគណនាចម្ងាយគម្លាត **(Euclidean Distance - ចម្ងាយវាស់ដោយខ្សែបន្ទាត់ត្រង់)** ពីអតិថិជនថ្មីនោះ ទៅកាន់អតិថិជនចាស់ៗទាំងអស់។ រួចទាញយកអតិថិជនចាស់ៗដែលនៅកៀកក្បែរគាត់បំផុតចំនួន **K នាក់** (ឧ. K = 5 នាក់) រួចធ្វើការសម្រេចចិត្តវិនិច្ឆ័យទៅតាម **មតិភាគច្រើន (Majority Vote)** របស់អតិថិជនទាំង ៥ នាក់នោះ។
+            </p>
+        </div>
+
+        <div class="grid-2" style="margin-top: 10px;">
+            <div class="narrative-box">
+                <div class="narrative-header"><i class="fa-solid fa-film"></i> ករណីសិក្សាទី១៖ ប្រព័ន្ធណែនាំភាពយន្ត Netflix</div>
+                <p class="narrative-text">នៅពេលអ្នកទើបតែបង្កើតគណនី Netflix ប្រព័ន្ធនឹងមិនស្គាល់ចំណង់ចំណូលចិត្តអ្នកឡើយ។ ពេលអ្នកចុចមើលរឿងគំនូរជីវចល (Anime) ១ រឿង ប្រព័ន្ធ KNN នឹងស្វែងរកអតិថិជនចាស់ៗ ៥ នាក់ផ្សេងទៀត (K=5) ដែលចូលចិត្តមើល Anime ដូចអ្នកពិតប្រាកដ។ រួចវានឹងទាញយករឿងដែលអ្នកទាំង ៥ នោះធ្លាប់មើល យកមកបង្ហាញណែនាំ (Recommend) ឱ្យអ្នកមើលដែរ។</p>
+            </div>
+            <div class="narrative-box">
+                <div class="narrative-header"><i class="fa-solid fa-house-chimney"></i> ករណីសិក្សាទី២៖ ការវាយតម្លៃតម្លៃផ្ទះ (Real Estate)</div>
+                <p class="narrative-text">ដើម្បីវាយតម្លៃតម្លៃទីផ្សារផ្ទះរបស់អតិថិជនម្នាក់ ភ្នាក់ងារវាយតម្លៃប្រើប្រាស់ KNN ដើម្បីស្វែងរកផ្ទះចំនួន ៣ ទីតាំងនៅក្បែរនោះបំផុត (K=3) ដែលមានទំហំដី និងចំនួនបន្ទប់ប្រហាក់ប្រហែលគ្នា រួចយកតម្លៃលក់ចេញពិតប្រាកដរបស់ផ្ទះទាំង ៣ នោះ មកគណនាជាមធ្យមភាគ នោះប្រព័ន្ធនឹងបានតម្លៃទីផ្សារផ្ទះថ្មីយ៉ាងត្រឹមត្រូវ។</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="global-footer">
+        <div class="footer-left"><img src="Lim.jpg" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'"><span>សាស្ត្រាចារ្យ៖ សឿង លីម (Soeurng LIM)</span></div>
+        <div class="footer-right">ទំព័រទី ១១ នៃ ១៤</div>
+    </div>
+</div>
+
+<!-- ================= PAGE 12: Time Complexity Table ================= -->
+<div class="a4-page">
+    <div class="global-header">
+        <div class="header-item"><img src="https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png" onerror="this.src='Logo.png'"><span>សាកលវិទ្យាល័យអង្គរ</span></div>
+        <div class="header-center">
+            <h1>សៀវភៅមគ្គទ្ទេសក៍ (Guidebook) - ជំពូកទី ៨</h1>
+            <p>ADVANCED DATA STRUCTURES AND ALGORITHMS FOR AI</p>
+        </div>
+        <div class="header-item"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg"><span>Python Pro</span></div>
+    </div>
+
+    <div class="page-content">
+        <div class="section-title" style="margin-top: 0; border-left-color: var(--accent-red);"><i class="fa-solid fa-scale-balanced"></i> ១០. តារាងវិភាគ Time & Space Complexity នៃគ្រប់ក្បួនដោះស្រាយ</div>
+        <div class="text-block">
+            ការយល់ដឹងពីប្រសិទ្ធភាព Big-O ជួយឱ្យថ្នាក់ដឹកនាំបច្ចេកវិទ្យា និងវិស្វករ AI សម្រេចចិត្តបានត្រឹមត្រូវថា តើក្បួនដោះស្រាយណាមួយមានតុល្យភាពល្អរវាងល្បឿនរត់ និងការចំណាយ Memory RAM៖
+        </div>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>ក្បួនដោះស្រាយ (Algorithms)</th>
+                    <th style="text-align: center;">ការប្រើប្រាស់ជាក់ស្តែង<br>(Use Cases)</th>
+                    <th style="text-align: center;">ល្បឿនដំណើរការ<br>(Time Complexity)</th>
+                    <th style="text-align: center;">ទំហំផ្ទុកបន្ថែម<br>(Space Complexity)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><b>DP: Fibonacci (Memoized)</b></td>
+                    <td>ការដោះស្រាយសមីការដដែលៗលូតលាស់</td>
+                    <td align="center"><b class="text-green">O(n)</b> ⚡ លឿនរហ័ស</td>
+                    <td align="center"><span class="text-red">O(n)</span> (ផ្ទុក Dictionary ក្នុង RAM)</td>
+                </tr>
+                <tr>
+                    <td><b>0/1 Knapsack (DP Tabulation)</b></td>
+                    <td>ការចាត់ចែងធនធាន (កសិកម្ម/វិនិយោគទុន)</td>
+                    <td align="center">O($n \times W$) (ធៀបទម្ងន់)</td>
+                    <td align="center"><span class="text-red">O($n \times W$)</span> (ប្រើតារាង 2D Array)</td>
+                </tr>
+                <tr>
+                    <td><b>Dijkstra's Algorithm (Min-Heap)</b></td>
+                    <td>ប្រព័ន្ធផែនទី Google Maps / Delivery Apps</td>
+                    <td align="center"><b class="text-green">O(E + V log V)</b> ⚡ លឿន</td>
+                    <td align="center"><b class="text-green">O(V)</b> (V = ចំនួនចំណុចទីតាំង)</td>
+                </tr>
+                <tr>
+                    <td><b>Greedy: Coin Change</b></td>
+                    <td>ប្រព័ន្ធ POS គិតលុយអាប់លុយស្វ័យប្រវត្ត</td>
+                    <td align="center"><b class="text-green">O(n log n)</b> ⚡ លឿន</td>
+                    <td align="center"><b class="text-green">O(1)</b> (សន្សំសំចៃ Memory បំផុត)</td>
+                </tr>
+                <tr>
+                    <td><b>AI: K-Nearest Neighbors (KNN)</b></td>
+                    <td>Machine Learning / Recommendation AI</td>
+                    <td align="center"><span class="text-red">O(n × d)</span> 🐌 យឺតពេល Data ធំ</td>
+                    <td align="center"><span class="text-red">O(n)</span> (ត្រូវរក្សា Data ចាស់ទាំងអស់)</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="narrative-box warning" style="margin-bottom: 0;">
+            <div class="narrative-header"><i class="fa-solid fa-lightbulb"></i> តុល្យភាពបច្ចេកវិទ្យារបស់ KNN នៅក្នុងប្រព័ន្ធទិន្នន័យខ្នាតយក្ស</div>
+            <p class="narrative-text">ទោះបីជា KNN ងាយស្រួលសរសេរកូដ និងមានភាគរយភាពត្រឹមត្រូវខ្ពស់ក៏ដោយ ក៏វាមានបញ្ហាដ៏ធំមួយគឺ **ល្បឿនយឺត O(n × d) និងស៊ី Memory ខ្លាំង O(n)** ពេលទិន្នន័យចាស់ៗកើនឡើងដល់រាប់លាន។ មូលហេតុគឺដោយសារតែរាល់ពេលដែលមានទិន្នន័យថ្មីមួយចូលមក កុំព្យូទ័រត្រូវបង្ខំចិត្តគណនា Euclid Distance ទៅកាន់គ្រប់ទិន្នន័យចាស់ៗទាំងអស់ម្តងមួយៗ O(n)។ ដើម្បីដោះស្រាយបញ្ហានេះ នៅក្នុងប្រព័ន្ធ AI ខ្នាតយក្ស គេប្រើប្រាស់ក្បួនចម្លង **Approximate Nearest Neighbor (ANN)** ជំនួសវិញ ដើម្បីបង្កើនល្បឿនឲ្យលឿន O($\log n$)។</p>
+        </div>
+    </div>
+
+    <div class="global-footer">
+        <div class="footer-left"><img src="Lim.jpg" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'"><span>សាស្ត្រាចារ្យ៖ សឿង លីម (Soeurng LIM)</span></div>
+        <div class="footer-right">ទំព័រទី ១២ នៃ ១៤</div>
+    </div>
+</div>
+
+<!-- ================= PAGE 13: Review Q&A ================= -->
+<div class="a4-page">
+    <div class="global-header">
+        <div class="header-item"><img src="https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png" onerror="this.src='Logo.png'"><span>សាកលវិទ្យាល័យអង្គរ</span></div>
+        <div class="header-center">
+            <h1>សៀវភៅមគ្គទ្ទេសក៍ (Guidebook) - ជំពូកទី ៨</h1>
+            <p>ADVANCED DATA STRUCTURES AND ALGORITHMS FOR AI</p>
+        </div>
+        <div class="header-item"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg"><span>Python Pro</span></div>
+    </div>
+
+    <div class="page-content">
+        <div class="section-title" style="margin-top: 0; border-left-color: var(--accent-red);"><i class="fa-solid fa-circle-question"></i> ១១. សំណួររំលឹកមេរៀនប្រចាំជំពូកទី ៨ និងការបកស្រាយលម្អិត (Q&A)</div>
+        <div class="text-block" style="margin-bottom: 8px; font-size:12.5px;">
+            ខាងក្រោមនេះគឺជាសំណួរ និងការបកស្រាយគំរូដ៏សំខាន់ៗដែលត្រូវបានរៀបចំឡើងដើម្បីវាស់ស្ទង់ការយល់ដឹងរបស់និស្សិតថ្នាក់អនុបណ្ឌិត៖
+        </div>
+
+        <!-- Question 1 -->
+        <div class="qa-box" style="margin-bottom: 8px;">
+            <div class="qa-question" style="padding: 6px 12px;">
+                <i class="fa-solid fa-q qa-icon-q"></i> 
+                <span>១. តើអ្វីជាភាពខុសគ្នាជាមូលដ្ឋានរវាងយន្តការ Memoization និង Tabulation នៅក្នុង DP?</span>
+            </div>
+            <div class="qa-answer" style="padding: 6px 12px; font-size:11.5px;">
+                <i class="fa-solid fa-a qa-icon-a"></i>
+                <span>• <b>Memoization (Top-Down):</b> ចាប់ផ្តើមពីបញ្ហាធំ បំបែកទៅបញ្ហាតូចៗដោយប្រើប្រាស់ Recursion និងកត់ត្រាចម្លើយចាស់ទុកនៅក្នុង Dictionary (ស៊ី Memory RAM ច្រើន និងអាចជួបបញ្ហា Stack Overflow)។
+                <br>• <b>Tabulation (Bottom-Up):</b> ចាប់ផ្តើមដោះស្រាយពីបញ្ហាតូចៗឡើងលើដោយប្រើប្រាស់ Loop `for` ធម្មតា និងកត់ត្រាចម្លើយទុកនៅក្នុងតារាង Array (មានលំនឹងល្អ និងលឿនជាង Memoization)។</span>
+            </div>
+        </div>
+
+        <!-- Question 2 -->
+        <div class="qa-box" style="margin-bottom: 8px;">
+            <div class="qa-question" style="padding: 6px 12px;">
+                <i class="fa-solid fa-q qa-icon-q"></i> 
+                <span>២. ហេតុអ្វីបានជា Greedy Algorithm ជារឿយៗតែងតែបរាជ័យក្នុងការដោះស្រាយ 0/1 Knapsack Problem?</span>
+            </div>
+            <div class="qa-answer" style="padding: 6px 12px; font-size:11.5px;">
+                <i class="fa-solid fa-a qa-icon-a"></i>
+                <span><b>ការបកស្រាយ៖</b> ដោយសារតែ Greedy សម្រេចចិត្តលោភលន់ចំពោះមុខ **(Local Optimum)** ដោយរើសយករបស់ណាដែលមានតម្លៃថ្លៃបំផុតដាក់កាតាបជាមុនជានិច្ច។ ការធ្វើបែបនេះអាចបណ្តាលឱ្យកាតាបពេញទម្ងន់ភ្លាមៗ ធ្វើឱ្យយើងបាត់បង់ឱកាសក្នុងការដាក់របស់តូចៗជាច្រើនមុខផ្សេងទៀត ដែលបើផ្គុំបញ្ជូលគ្នាទៅមានតម្លៃចំណេញលុយខ្ពស់ជាងរបស់ថ្លៃតែមួយនោះឆ្ងាយណាស់។ ដូចនេះមានតែការគណនាគ្រប់ជម្រើស Subproblems របស់ Dynamic Programming ទេ ទើបធានាបាននូវភាពត្រឹមត្រូវ Global Optimum ១០០%។</span>
+            </div>
+        </div>
+
+        <!-- Question 3 -->
+        <div class="qa-box" style="margin-bottom: 8px;">
+            <div class="qa-question" style="padding: 6px 12px;">
+                <i class="fa-solid fa-q qa-icon-q"></i> 
+                <span>៣. នៅក្នុង Dijkstra's Algorithm តើ "ទម្ងន់ខ្សែ (Cost / Weight)" ដើរតួនាទីយ៉ាងដូចម្តេចពិតប្រាកដ?</span>
+            </div>
+            <div class="qa-answer" style="padding: 6px 12px; font-size:11.5px;">
+                <i class="fa-solid fa-a qa-icon-a"></i>
+                <span><b>ការបកស្រាយ៖</b> Cost ដើរតួនាទីជា **តម្លៃចំណាយ ឬរយៈពេលរារាំង**។ នៅក្នុងការស្វែងរកផ្លូវពិតប្រាកដ ផ្លូវដែលខ្លីបំផុតមិនមែនគិតទៅលើចម្ងាយ (គីឡូម៉ែត្រ) តែម្ខាងនោះឡើយ។ តម្លៃ Cost អាចតំណាងឱ្យកម្រិតស្ទះចរាចរណ៍ ឬតម្លៃសាំង។ ដូចនេះ Dijkstra's Algorithm នឹងគណនារកខ្សែផ្លូវណាដែលមានតម្លៃរួមបញ្ចូល Cost តិចបំផុត O(E + V $\log$ V) ជួយឱ្យការធ្វើដំណើរកាន់តែលឿន ទោះជាត្រូវជិះផ្លូវវាងឆ្ងាយជាងក៏ដោយ។</span>
+            </div>
+        </div>
+
+        <!-- Question 4 -->
+        <div class="qa-box" style="margin-bottom: 0;">
+            <div class="qa-question" style="padding: 6px 12px;">
+                <i class="fa-solid fa-q qa-icon-q"></i> 
+                <span>៤. តើអ្វីទៅជាឥទ្ធិពលរបស់ "K" នៅក្នុងក្បួនដោះស្រាយ K-Nearest Neighbors (KNN) របស់ប្រព័ន្ធ AI?</span>
+            </div>
+            <div class="qa-answer" style="padding: 6px 12px; font-size:11.5px;">
+                <i class="fa-solid fa-a qa-icon-a"></i>
+                <span><b>ការបកស្រាយ៖</b> Value "K" គឺជា **ចំនួនអ្នកជិតខាងជិតបំផុតដែលត្រូវយកមកបោះឆ្នោតសម្រេចចិត្ត**៖
+                <br>• ប្រសិនបើ K តូចពេក (ឧ. K = 1)៖ ប្រព័ន្ធនឹងងាយរងគ្រោះថ្នាក់ដោយសារទិន្នន័យលម្អៀង ឬទិន្នន័យខូចខាត (Overfitting / High Variance)។
+                <br>• ប្រសិនបើ K ធំពេក (ឧ. K = 100)៖ ប្រព័ន្ធនឹងលែងសូវមានភាពត្រឹមត្រូវ ព្រោះវាទាញយកទិន្នន័យពីចម្ងាយឆ្ងាយដែលមិនពាក់ព័ន្ធ មកបោះឆ្នោតឡូឡាបញ្ជូលគ្នាបង្ខំយកតាមមតិភាគច្រើន (Underfitting / High Bias)។ ដូចនេះ វិស្វករ AI តែងតែរើសយកលេខសេសតូចល្មម (ឧ. K = 3, 5, 7) ដើម្បីរក្សាតុល្យភាព។</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="global-footer">
+        <div class="footer-left"><img src="Lim.jpg" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'"><span>សាស្ត្រាចារ្យ៖ សឿង លីម (Soeurng LIM)</span></div>
+        <div class="footer-right">ទំព័រទី ១៣ នៃ ១៤</div>
+    </div>
+</div>
+
+<!-- ================= PAGE 14: Conclusion & References ================= -->
+<div class="a4-page">
+    <div class="global-header">
+        <div class="header-item"><img src="https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png" onerror="this.src='Logo.png'"><span>សាកលវិទ្យាល័យអង្គរ</span></div>
+        <div class="header-center">
+            <h1>សៀវភៅមគ្គទ្ទេសក៍ (Guidebook) - ជំពូកទី ៨</h1>
+            <p>ADVANCED DATA STRUCTURES AND ALGORITHMS FOR AI</p>
+        </div>
+        <div class="header-item"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg"><span>Python Pro</span></div>
+    </div>
+
+    <div class="page-content">
+        <div class="section-title" style="margin-top: 0; border-left-color: var(--accent-red);"><i class="fa-solid fa-clipboard-list"></i> ១២. សេចក្តីសន្និដ្ឋានបញ្ចប់វគ្គសិក្សា (Course Conclusion)</div>
+        <div class="card" style="border-top-color: var(--accent-red); background: #FEF2F2; margin-bottom: 20px;">
+            <p class="text-block" style="font-weight: bold; margin-bottom: 10px; color: var(--accent-red);"><i class="fa-solid fa-medal"></i> អបអរសាទរថ្នាក់ដឹកនាំបច្ចេកវិទ្យា និងនិស្សិតថ្នាក់អនុបណ្ឌិតទាំងអស់!</p>
+            <ul style="line-height: 1.8; color: var(--text-main); font-size: 13px; padding-left: 20px;">
+                <li><b><i class="fa-solid fa-check text-red"></i> បញ្ចប់កម្មវិធីសិក្សា Advanced DSA៖</b> និស្សិតបានបញ្ចប់ទ្រឹស្តី និងកូដអនុវត្តជាក់ស្តែងទាំងអស់នៃមុខវិជ្ជា Advanced Data Structures and Algorithms ដោយជោគជ័យពេញលេញ។</li>
+                <li><b><i class="fa-solid fa-check text-red"></i> យល់ដឹងពីប្លង់រចនាសម្ព័ន្ធ RAM៖</b> ចេះវិភាគ Time & Space Complexity Big-O យ៉ាងច្បាស់លាស់ ចាប់តាំងពី Linear, Trees, Graphs, Hash Tables រហូតដល់ Dynamic Programming កម្រិតខ្ពស់។</li>
+                <li><b><i class="fa-solid fa-check text-red"></i> គ្រឹះឆ្ពោះទៅកាន់ប្រព័ន្ធ AI ពិតប្រាកដ៖</b> រាល់គ្រប់កូដដោះស្រាយទាំងអស់ដែលបានរៀន គឺជាខួរក្បាលក្រោយខ្នងដែលជួយឱ្យប្រព័ន្ធបញ្ញាសិប្បនិម្មិតដំណើរការបានយ៉ាងត្រឹមត្រូវ និងលឿនរហ័សជាទីបំផុត O($n \log n$) ឬ O($1$)។</li>
+            </ul>
+        </div>
+
+        <div class="section-title" style="border-left-color: var(--accent-red);"><i class="fa-solid fa-book-bookmark"></i> ១៣. ឯកសារយោង និងគន្ថនិទ្ទេសបញ្ចប់មុខវិជ្ជា (Course References)</div>
+        <div class="text-block">
+            <ul style="list-style: none; padding-left: 0; line-height: 1.8; text-align: left !important;">
+                <li style="margin-bottom: 8px;"><b><i class='fa-solid fa-book text-blue'></i> Goodrich, M. T., Tamassia, R. (2013).</b> <i>Data Structures and Algorithms in Python</i>. Wiley. (Chapter 13: Text Processing & Dynamic Programming).</li>
+                <li style="margin-bottom: 8px;"><b><i class='fa-solid fa-book text-blue'></i> Cormen, T. H., Leiserson, C. E. (2022).</b> <i>Introduction to Algorithms</i> (4th ed.). MIT Press. (Chapter 15: Dynamic Programming, Chapter 24: Single-Source Shortest Paths - Dijkstra).</li>
+                <li style="margin-bottom: 8px;"><b><i class='fa-solid fa-robot text-blue'></i> Russell, S., Norvig, P. (2020).</b> <i>Artificial Intelligence: A Modern Approach</i> (4th ed.). Pearson. (Core search and machine learning algorithms).</li>
+                <li style="margin-bottom: 8px;"><b><i class='fa-brands fa-youtube text-blue'></i> MIT OpenCourseWare (YouTube)៖</b> <i>Introduction to Algorithms - Dynamic Programming & Dijkstra Lecture series</i>.</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="global-footer" style="position: absolute; bottom: 0;">
+        <div class="footer-left"><img src="Lim.jpg" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'"><span>សាស្ត្រាចារ្យ៖ សឿង លីម (Soeurng LIM)</span></div>
+        <div class="footer-right">ទំព័រទី ១៤ នៃ ១៤</div>
+    </div>
+</div>
+
+</body>
+</html>

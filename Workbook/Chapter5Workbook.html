@@ -1,0 +1,1191 @@
+<!DOCTYPE html>
+<html lang="km">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Workbook Chapter 5 - Trees and BST</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Battambang:wght@400;700&family=Suwannaphum:wght@400;700;900&family=Lato:wght@400;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <style>
+        :root {
+            --bg-color: #E2E8F0;
+            --paper-white: #FFFFFF;
+            --text-main: #0F172A;
+            --text-muted: #475569;
+            --accent-blue: #0284C7; 
+            --accent-green: #059669;
+            --answer-color: #0369A1; 
+            --header-footer-bg: #F0F9FF;
+            --code-bg: #111827; 
+            --low: #059669; --mid: #D97706; --high: #DC2626;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            background-color: var(--bg-color);
+            font-family: 'Battambang', sans-serif;
+            color: var(--text-main);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 40px 20px;
+        }
+
+        /* A4 Page Layout - STRICT FIXED HEIGHT */
+        .a4-page {
+            width: 210mm; 
+            height: 297mm; 
+            background: var(--paper-white);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1); 
+            margin-bottom: 30px;
+            display: block; 
+            position: relative; 
+            border-radius: 8px;
+            page-break-after: always;
+            overflow: hidden; 
+        }
+
+        /* COVER PAGE STYLES */
+        .cover-page {
+            display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; 
+            padding: 30mm 20mm;
+            background-image: linear-gradient(to bottom, #F0F9FF, #FFFFFF);
+        }
+        .cover-logo { width: 140px; margin-bottom: 15px; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1)); }
+        .cover-uni-kh { font-family: 'Suwannaphum'; color: var(--accent-blue); font-size: 38px; margin: 0 0 5px 0; font-weight: 900; }
+        .cover-uni-en { font-family: 'Lato'; color: #475569; font-size: 18px; margin: 0 0 40px 0; letter-spacing: 1px; font-weight: bold; }
+        .cover-program { font-family: 'Suwannaphum'; font-size: 20px; color: var(--accent-green); margin-bottom: 25px; font-weight: bold; }
+        .cover-chapter-badge { background: var(--accent-blue); color: white; padding: 10px 40px; border-radius: 50px; font-size: 22px; font-weight: bold; margin-bottom: 40px; font-family: 'Suwannaphum'; box-shadow: 0 5px 15px rgba(2,132,199,0.3); display: inline-block;}
+        .cover-main-title { font-family: 'Suwannaphum'; font-size: 34px; color: var(--text-main); line-height: 1.4; margin-bottom: 10px; font-weight: 900; }
+        .cover-sub-title { font-family: 'Lato'; font-size: 22px; color: var(--accent-blue); margin-bottom: 50px; font-weight: bold; }
+        
+        .cover-author-wrapper { display: flex; flex-direction: column; align-items: center; gap: 15px; margin-bottom: 40px; }
+        .cover-author-img { width: 100px; height: 100px; border-radius: 50%; border: 4px solid var(--accent-blue); object-fit: cover; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        .cover-author-text { font-size: 20px; color: var(--text-muted); font-family: 'Suwannaphum'; }
+        .cover-author-text strong { color: var(--accent-blue); font-size: 24px; }
+
+        .cover-icons-wrapper { display: flex; gap: 60px; justify-content: center; margin-top: auto; border-top: 1px solid #E2E8F0; padding-top: 20px; width: 100%; }
+        .cover-icon-item img { height: 70px; margin-bottom: 10px; object-fit: contain; }
+        .cover-icon-item p { font-size: 16px; font-weight: bold; color: var(--accent-blue); font-family: 'Lato'; }
+
+        /* HEADER */
+        .global-header {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 12px 25px; border-bottom: 3px solid var(--accent-blue); background-color: var(--header-footer-bg);
+            height: 75px; box-sizing: border-box;
+        }
+        .header-item { display: flex; flex-direction: column; align-items: center; gap: 3px; width: 120px; }
+        .header-item img { height: 40px; object-fit: contain; }
+        .header-item span { font-size: 10px; font-weight: bold; color: var(--accent-blue); text-align: center; font-family: 'Suwannaphum'; }
+        .header-center { text-align: center; }
+        .header-center h1 { font-family: 'Suwannaphum'; font-size: 16px; color: var(--accent-blue); margin: 0; }
+        .header-center p { font-family: 'Battambang'; font-size: 11px; color: #64748B; margin: 0; font-weight: bold; text-transform: uppercase;}
+
+        /* CONTENT */
+        .page-content { padding: 8mm 15mm; height: calc(297mm - 75px - 55px); overflow: hidden; box-sizing: border-box; display: flex; flex-direction: column;}
+        
+        .student-info {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 12px;
+            border: 1px solid #CBD5E1; padding: 10px 15px; border-radius: 8px; background: #F8FAFC; flex-shrink: 0;
+        }
+        .info-line { font-size: 14px; display: flex; align-items: flex-end; font-weight: bold;}
+        .info-line span { flex-grow: 1; border-bottom: 1px dotted #94A3B8; margin-left: 10px; height: 18px; color: var(--answer-color); font-weight: normal; padding-left: 10px;}
+
+        .case-title {
+            background: var(--header-footer-bg); border-left: 5px solid var(--accent-blue);
+            padding: 8px 15px; margin: 12px 0 10px 0; font-family: 'Suwannaphum';
+            font-size: 16px; display: flex; align-items: center; gap: 10px; font-weight: bold;
+            border-radius: 0 6px 6px 0; color: var(--accent-blue); page-break-after: avoid; flex-shrink: 0;
+        }
+        
+        .exercise-block { margin-bottom: 10px; border: 1px solid #E2E8F0; padding: 10px 12px; border-radius: 6px; background: white; page-break-inside: avoid; flex-shrink: 0;}
+        .exercise-block p { margin-bottom: 6px; font-size: 13.5px; font-weight: bold; color: #1E293B; display: flex; align-items: center; gap: 8px;}
+        
+        .level-badge { font-size: 11px; color: white; padding: 3px 8px; border-radius: 4px; font-weight: bold; display: inline-block; margin-right: 8px; font-family: 'Battambang';}
+        .bg-low { background-color: var(--low); }
+        .bg-mid { background-color: var(--mid); }
+        .bg-high { background-color: var(--high); }
+
+        /* CODE DISPLAY */
+        .code-container {
+            background: var(--code-bg); border-radius: 6px; padding: 10px 12px; margin: 6px 0;
+            overflow-x: auto; border: 1px solid #374151; position: relative;
+        }
+        .code-header { background: #1F2937; padding: 4px 8px; font-size: 11px; font-family: 'Battambang'; color: #38BDF8; border-bottom: 1px solid #374151; margin: -10px -12px 8px -12px; border-radius: 6px 6px 0 0; display: flex; align-items: center; gap: 8px;}
+        pre { font-family: 'Fira Code', monospace; font-size: 11.5px; line-height: 1.45; color: #f8f8f2; margin: 0; }
+        .kw { color: #ff79c6; font-weight: bold; } 
+        .fn { color: #50fa7b; } 
+        .str { color: #f1fa8c; } 
+        .com { color: #6272a4; font-style: italic; } 
+        .num { color: #bd93f9; } 
+
+        .answer-box { margin-top: 8px; font-size: 13.5px; display: flex; align-items: flex-start; }
+        .answer-box label { font-family: 'Battambang', sans-serif; font-weight: bold; margin-right: 10px; color: #475569; white-space: nowrap;}
+        .filled-answer { 
+            flex-grow: 1; border-bottom: 1px dotted #94A3B8; color: var(--answer-color); 
+            font-family: 'Battambang', sans-serif; line-height: 1.5; padding-bottom: 2px;
+        }
+
+        /* Note Area */
+        .note-area {
+            flex-grow: 1; border: 1px dashed #CBD5E1; background: #F8FAFC; border-radius: 8px;
+            padding: 15px; margin-top: 5px; color: #94A3B8; font-size: 13.5px; display: flex; flex-direction: column;
+        }
+
+        /* FOOTER - FIXED TO ABSOLUTE BOTTOM */
+        .global-footer {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 10px 25px; border-top: 3px solid var(--accent-blue);
+            background-color: var(--header-footer-bg); 
+            position: absolute; bottom: 0; left: 0; width: 100%; height: 55px; box-sizing: border-box;
+        }
+        .footer-left { display: flex; align-items: center; gap: 10px; }
+        .footer-left img { border-radius: 50%; border: 2px solid var(--accent-blue); width: 30px; height: 30px; object-fit: cover; background-color: #fff; }
+        .footer-left span { font-size: 11px; font-weight: bold; color: var(--text-main); font-family: 'Suwannaphum'; }
+        .footer-right { font-size: 11px; color: var(--accent-blue); font-weight: bold; font-family: 'Battambang'; }
+
+        /* PRINT MEDIA QUERY */
+        @page { size: A4; margin: 0; }
+        @media print {
+            body { background: white; padding: 0; margin: 0; }
+            .a4-page { box-shadow: none; margin: 0; width: 210mm; height: 297mm; border: none; border-radius: 0; page-break-after: always; }
+            .a4-page:last-child { page-break-after: auto; }
+            .no-print { display: none !important; }
+            * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+        }
+    </style>
+</head>
+<body>
+
+<button class="no-print" onclick="window.print()" style="margin-bottom: 20px; padding: 12px 25px; cursor: pointer; background: var(--accent-blue); color: white; border: none; border-radius: 8px; font-family: 'Battambang'; font-weight: bold; font-size: 16px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); transition: all 0.3s;">
+    <i class="fa-solid fa-print"></i> បោះពុម្ពសៀវភៅលំហាត់ (Print as PDF)
+</button>
+
+<!-- COVER PAGE -->
+<div class="a4-page cover-page">
+    <img src="Logo.png" class="cover-logo" onerror="this.src='https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png'">
+    <h1 class="cover-uni-kh">សាកលវិទ្យាល័យអង្គរ</h1>
+    <p class="cover-uni-en">ANGKOR UNIVERSITY</p>
+
+    <div class="cover-program">
+        <i class="fa-solid fa-graduation-cap"></i> អនុបណ្ឌិតវិទ្យាសាស្ត្រទិន្នន័យ និងបញ្ញាសិប្បនិម្មិត (Master of Data Science and AI)
+    </div>
+
+    <div class="cover-chapter-badge">សៀវភៅលំហាត់អនុវត្តន៍ (Workbook) | ២០២៥-២០២៦</div>
+
+    <h1 class="cover-main-title">ជំពូកទី ៥៖ រចនាសម្ព័ន្ធទិន្នន័យ Trees និង BST</h1>
+    <h2 class="cover-sub-title">(Trees and Binary Search Trees)</h2>
+
+    <div class="cover-author-wrapper">
+        <img src="Lim.jpg" class="cover-author-img" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'">
+        <div class="cover-author-text">
+            សាស្ត្រាចារ្យ៖
+        </div>
+        <div class="cover-author-text">
+            <strong>សឿង លីម (Soeurng LIM)</strong>
+        </div>
+    </div>
+
+    <div class="cover-icons-wrapper">
+        <div class="cover-icon-item">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg">
+            <p>Pythons</p>
+        </div>
+        <div class="cover-icon-item">
+            <img src="https://cdn-icons-png.flaticon.com/512/2103/2103633.png">
+            <p>DSA in Pythons</p>
+        </div>
+    </div>
+</div>
+
+<!-- PAGE 1 : Tree Basics -->
+<div class="a4-page">
+    <div class="global-header">
+        <div class="header-item"><img src="Logo.png" onerror="this.src='https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png'"><span>សាកលវិទ្យាល័យអង្គរ</span></div>
+        <div class="header-center">
+            <h1>សៀវភៅលំហាត់អនុវត្តន៍ - ជំពូកទី ៥</h1>
+            <p>ADVANCED DATA STRUCTURES AND ALGORITHMS</p>
+        </div>
+        <div class="header-item"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg"><span>Python Pro</span></div>
+    </div>
+
+    <div class="page-content">
+        <div class="student-info">
+            <div class="info-line">អត្តលេខ (ID): <span>អត្រាកំណែផ្លូវការ</span></div>
+            <div class="info-line">ឈ្មោះ (Name): <span>សន្លឹកចម្លើយ</span></div>
+        </div>
+
+        <div class="case-title"><i class="fa-solid fa-folder-tree"></i> ១. ករណីសិក្សា៖ មូលដ្ឋានគ្រឹះនៃ Tree និង Node Class</div>
+        
+        <div class="exercise-block">
+            <p><span class="level-badge bg-low">ស្រាល ១</span> ការបង្កើតប្រអប់ទិន្នន័យ (TreeNode Class)</p>
+            <div class="code-container">
+                <div class="code-header"><i class="fa-brands fa-python"></i> Copy & Run Code</div>
+<pre><span class="kw">class</span> <span class="fn">TreeNode</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="kw">self</span>, val):
+        <span class="kw">self</span>.val = val
+        <span class="kw">self</span>.left = <span class="kw">None</span>  <span class="com"># ខ្សែចង្អុលទៅកូនឆ្វេង</span>
+        <span class="kw">self</span>.right = <span class="kw">None</span> <span class="com"># ខ្សែចង្អុលទៅកូនស្តាំ</span>
+
+<span class="com"># បង្កើតមេកំពូល (Root) មួយ</span>
+root = TreeNode(<span class="num">10</span>)
+<span class="fn">print</span>(<span class="str">"តម្លៃមេ (Root) គឺ:"</span>, root.val)</pre>
+            </div>
+            <div class="answer-box">
+                <label>ការពន្យល់កូដ ៖</label> 
+                <div class="filled-answer">កូដនេះបានបង្កើតពុម្ព <code>TreeNode</code> ដែលជាមូលដ្ឋានគ្រឹះនៃ Binary Tree ដោយមានទិន្នន័យនៅកណ្តាល និងខ្សែ Pointer ពីរសម្រាប់ចង្អុលទៅឆ្វេង និងស្តាំដែលដើមឡើយមានតម្លៃ None។</div>
+            </div>
+        </div>
+
+        <div class="exercise-block">
+            <p><span class="level-badge bg-low">ស្រាល ២</span> ការតភ្ជាប់ Nodes បង្កើតជា Tree សាមញ្ញ</p>
+            <div class="code-container">
+                <div class="code-header"><i class="fa-brands fa-python"></i> Copy & Run Code</div>
+<pre><span class="kw">class</span> <span class="fn">TreeNode</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="kw">self</span>, val): <span class="kw">self</span>.val=val; <span class="kw">self</span>.left=<span class="kw">self</span>.right=<span class="kw">None</span>
+
+root = TreeNode(<span class="num">1</span>)
+root.left = TreeNode(<span class="num">2</span>)
+root.right = TreeNode(<span class="num">3</span>)
+
+<span class="fn">print</span>(<span class="str">"កូនខាងឆ្វេងគឺ:"</span>, root.left.val)
+<span class="fn">print</span>(<span class="str">"កូនខាងស្តាំគឺ:"</span>, root.right.val)</pre>
+            </div>
+            <div class="answer-box">
+                <label>ទម្រង់នៃ Tree នេះ ៖</label> 
+                <div class="filled-answer">យើងបានបង្កើត Tree មួយមានកម្ពស់ ២ ជាន់ ដោយមានលេខ 1 ជា Root, លេខ 2 ជាកូនឆ្វេង និងលេខ 3 ជាកូនស្តាំ ដែលពួកវាទាំងពីរនេះគឺជា Leaf Nodes ព្រោះគ្មានកូនបន្ត។</div>
+            </div>
+        </div>
+
+        <div class="note-area">
+            <i class="fa-solid fa-pen"></i> កន្លែងសម្រាប់កត់ត្រាបន្ថែម (Notes / Scratchpad)...
+        </div>
+    </div>
+
+    <div class="global-footer">
+        <div class="footer-left"><img src="Lim.jpg" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'"><span>សាស្ត្រាចារ្យ៖ សឿង លីម (Soeurng LIM)</span></div>
+        <div class="footer-right">ទំព័រទី ១ នៃ ១៤</div>
+    </div>
+</div>
+
+<!-- PAGE 2 : Tree Operations (Basic) -->
+<div class="a4-page">
+    <div class="global-header">
+        <div class="header-item"><img src="Logo.png" onerror="this.src='https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png'"><span>សាកលវិទ្យាល័យអង្គរ</span></div>
+        <div class="header-center">
+            <h1>សៀវភៅលំហាត់អនុវត្តន៍ - ជំពូកទី ៥</h1>
+            <p>ADVANCED DATA STRUCTURES AND ALGORITHMS</p>
+        </div>
+        <div class="header-item"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg"><span>Python Pro</span></div>
+    </div>
+
+    <div class="page-content">
+        <div class="case-title"><i class="fa-solid fa-calculator"></i> ២. ករណីសិក្សា៖ ប្រតិបត្តិការរាប់ចំនួនក្នុង Tree</div>
+        
+        <div class="exercise-block">
+            <p><span class="level-badge bg-mid">មធ្យម ១</span> ការរាប់ចំនួន Nodes សរុបនៅក្នុង Tree</p>
+            <div class="code-container">
+                <div class="code-header"><i class="fa-brands fa-python"></i> Copy & Run Code</div>
+<pre><span class="kw">class</span> <span class="fn">TreeNode</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="kw">self</span>, val): <span class="kw">self</span>.val=val; <span class="kw">self</span>.left=<span class="kw">self</span>.right=<span class="kw">None</span>
+
+<span class="kw">def</span> <span class="fn">countNodes</span>(root):
+    <span class="kw">if not</span> root: <span class="kw">return</span> <span class="num">0</span>
+    <span class="com"># យក ១ (ខ្លួនឯង) បូកចំនួនកូនឆ្វេង និងកូនស្តាំ</span>
+    <span class="kw">return</span> <span class="num">1</span> + countNodes(root.left) + countNodes(root.right)
+
+r = TreeNode(<span class="num">1</span>); r.left = TreeNode(<span class="num">2</span>); r.right = TreeNode(<span class="num">3</span>)
+<span class="fn">print</span>(<span class="str">"ចំនួន Nodes សរុប:"</span>, countNodes(r))</pre>
+            </div>
+            <div class="answer-box">
+                <label>ដំណើរការ Recursive ៖</label> 
+                <div class="filled-answer">អនុគមន៍នេះវាចុះទៅរាប់គ្រប់មែកទាំងអស់រហូតដល់ចុងបញ្ចប់ (O(n)) ដោយយក ១ តំណាងឱ្យមេម្នាក់ៗបូកបញ្ចូលគ្នាដើម្បីបានចំនួនសរុប។</div>
+            </div>
+        </div>
+
+        <div class="exercise-block">
+            <p><span class="level-badge bg-mid">មធ្យម ២</span> ការរាប់ចំនួន Leaf Nodes ទាំងអស់ (Nodes គ្មានកូន)</p>
+            <div class="code-container">
+                <div class="code-header"><i class="fa-brands fa-python"></i> Copy & Run Code</div>
+<pre><span class="kw">class</span> <span class="fn">TreeNode</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="kw">self</span>, val): <span class="kw">self</span>.val=val; <span class="kw">self</span>.left=<span class="kw">self</span>.right=<span class="kw">None</span>
+
+<span class="kw">def</span> <span class="fn">countLeaves</span>(root):
+    <span class="kw">if not</span> root: <span class="kw">return</span> <span class="num">0</span>
+    <span class="com"># បើគ្មានកូនឆ្វេង និងកូនស្តាំ គឺវាជា Leaf (ស្លឹក)</span>
+    <span class="kw">if not</span> root.left <span class="kw">and not</span> root.right: <span class="kw">return</span> <span class="num">1</span>
+    <span class="kw">return</span> countLeaves(root.left) + countLeaves(root.right)
+
+r = TreeNode(<span class="num">1</span>); r.left = TreeNode(<span class="num">2</span>); r.right = TreeNode(<span class="num">3</span>)
+r.left.left = TreeNode(<span class="num">4</span>) <span class="com"># បន្ថែមកូនឲ្យលេខ 2</span>
+<span class="fn">print</span>(<span class="str">"ចំនួនស្លឹក (Leaves) សរុប:"</span>, countLeaves(r))</pre>
+            </div>
+            <div class="answer-box">
+                <label>ការវិភាគលទ្ធផល ៖</label> 
+                <div class="filled-answer">លទ្ធផលចេញមកគឺ ២ (គឺប្រអប់លេខ 4 និងលេខ 3 ដែលគ្មានកូន)។ កូដនេះឆែកមើលលក្ខខណ្ឌ <code>not left and not right</code> ដើម្បីប្រាកដថាវាជាស្លឹក។</div>
+            </div>
+        </div>
+
+        <div class="note-area">
+            <i class="fa-solid fa-pen"></i> កន្លែងសម្រាប់កត់ត្រាបន្ថែម (Notes / Scratchpad)...
+        </div>
+    </div>
+
+    <div class="global-footer">
+        <div class="footer-left"><img src="Lim.jpg" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'"><span>សាស្ត្រាចារ្យ៖ សឿង លីម (Soeurng LIM)</span></div>
+        <div class="footer-right">ទំព័រទី ២ នៃ ១៤</div>
+    </div>
+</div>
+
+<!-- PAGE 3 : Tree Operations (Advanced) -->
+<div class="a4-page">
+    <div class="global-header">
+        <div class="header-item"><img src="Logo.png" onerror="this.src='https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png'"><span>សាកលវិទ្យាល័យអង្គរ</span></div>
+        <div class="header-center">
+            <h1>សៀវភៅលំហាត់អនុវត្តន៍ - ជំពូកទី ៥</h1>
+            <p>ADVANCED DATA STRUCTURES AND ALGORITHMS</p>
+        </div>
+        <div class="header-item"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg"><span>Python Pro</span></div>
+    </div>
+
+    <div class="page-content">
+        <div class="case-title"><i class="fa-solid fa-ruler-combined"></i> ៣. ករណីសិក្សា៖ ការវាស់វែងកម្ពស់ និងផលបូក</div>
+        
+        <div class="exercise-block">
+            <p><span class="level-badge bg-high">ធ្ងន់ ១</span> ការគណនាកម្ពស់ (Max Depth/Height) នៃ Tree</p>
+            <div class="code-container">
+                <div class="code-header"><i class="fa-brands fa-python"></i> Copy & Run Code</div>
+<pre><span class="kw">class</span> <span class="fn">TreeNode</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="kw">self</span>, val): <span class="kw">self</span>.val=val; <span class="kw">self</span>.left=<span class="kw">self</span>.right=<span class="kw">None</span>
+
+<span class="kw">def</span> <span class="fn">maxDepth</span>(root):
+    <span class="kw">if not</span> root: <span class="kw">return</span> <span class="num">0</span>
+    <span class="kw">return</span> <span class="num">1</span> + <span class="fn">max</span>(maxDepth(root.left), maxDepth(root.right))
+
+r = TreeNode(<span class="num">1</span>); r.left = TreeNode(<span class="num">2</span>); r.left.left = TreeNode(<span class="num">4</span>)
+<span class="fn">print</span>(<span class="str">"កម្ពស់អតិបរមារបស់ Tree គឺ:"</span>, maxDepth(r))</pre>
+            </div>
+            <div class="answer-box">
+                <label>របៀបកូដដំណើរការ ៖</label> 
+                <div class="filled-answer">អនុគមន៍នេះវាចុះទៅរាប់ជម្រៅនៃមែកឆ្វេង និងមែកស្តាំឱ្យដល់ក្រោមគេបង្អស់ រួចយកជម្រៅណាដែលវែងជាងគេ (max) មកបូកបន្ថែម 1 (តំណាងឱ្យខ្លួនឯង) ទើបវាបានកម្ពស់សរុបស្មើ 3។</div>
+            </div>
+        </div>
+
+        <div class="exercise-block">
+            <p><span class="level-badge bg-low">ស្រាល ៣</span> រកផលបូកនៃតម្លៃ Nodes ទាំងអស់ (Sum Tree)</p>
+            <div class="code-container">
+                <div class="code-header"><i class="fa-brands fa-python"></i> Copy & Run Code</div>
+<pre><span class="kw">class</span> <span class="fn">TreeNode</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="kw">self</span>, val): <span class="kw">self</span>.val=val; <span class="kw">self</span>.left=<span class="kw">self</span>.right=<span class="kw">None</span>
+
+<span class="kw">def</span> <span class="fn">sumTree</span>(root):
+    <span class="kw">if not</span> root: <span class="kw">return</span> <span class="num">0</span>
+    <span class="com"># យកតម្លៃខ្លួនឯង បូកនឹងកូនចៅឆ្វេង និងស្តាំទាំងអស់</span>
+    <span class="kw">return</span> root.val + sumTree(root.left) + sumTree(root.right)
+
+r = TreeNode(<span class="num">10</span>); r.left = TreeNode(<span class="num">5</span>); r.right = TreeNode(<span class="num">15</span>)
+<span class="fn">print</span>(<span class="str">"ផលបូកតម្លៃ Nodes ទាំងអស់គឺ:"</span>, sumTree(r))</pre>
+            </div>
+            <div class="answer-box">
+                <label>ការវិភាគល្បឿន ៖</label> 
+                <div class="filled-answer">កូដនេះដើរទៅរុករកគ្រប់ Node ទាំងអស់នៅក្នុង Tree ម្តងមួយៗដោយគ្មានរំលង ទើបវាមានកម្រិត Time Complexity ស្មើនឹង O(n) (n ជាចំនួន Nodes សរុប)។</div>
+            </div>
+        </div>
+
+        <div class="note-area">
+            <i class="fa-solid fa-pen"></i> កន្លែងសម្រាប់កត់ត្រាបន្ថែម (Notes / Scratchpad)...
+        </div>
+    </div>
+
+    <div class="global-footer">
+        <div class="footer-left"><img src="Lim.jpg" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'"><span>សាស្ត្រាចារ្យ៖ សឿង លីម (Soeurng LIM)</span></div>
+        <div class="footer-right">ទំព័រទី ៣ នៃ ១៤</div>
+    </div>
+</div>
+
+<!-- PAGE 4 : BST Insertion -->
+<div class="a4-page">
+    <div class="global-header">
+        <div class="header-item"><img src="Logo.png" onerror="this.src='https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png'"><span>សាកលវិទ្យាល័យអង្គរ</span></div>
+        <div class="header-center">
+            <h1>សៀវភៅលំហាត់អនុវត្តន៍ - ជំពូកទី ៥</h1>
+            <p>ADVANCED DATA STRUCTURES AND ALGORITHMS</p>
+        </div>
+        <div class="header-item"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg"><span>Python Pro</span></div>
+    </div>
+
+    <div class="page-content">
+        <div class="case-title"><i class="fa-solid fa-sitemap"></i> ៤. ករណីសិក្សា៖ Binary Search Tree (BST) ការបញ្ចូលទិន្នន័យ</div>
+        
+        <div class="exercise-block">
+            <p><span class="level-badge bg-low">ស្រាល ៤</span> ការបញ្ចូលទិន្នន័យទៅក្នុង BST (Recursive Insert)</p>
+            <div class="code-container">
+                <div class="code-header"><i class="fa-brands fa-python"></i> Copy & Run Code</div>
+<pre><span class="kw">class</span> <span class="fn">TreeNode</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="kw">self</span>, val): <span class="kw">self</span>.val=val; <span class="kw">self</span>.left=<span class="kw">self</span>.right=<span class="kw">None</span>
+
+<span class="kw">def</span> <span class="fn">insert</span>(root, key):
+    <span class="kw">if not</span> root: <span class="kw">return</span> TreeNode(key)
+    <span class="kw">if</span> key < root.val: root.left = insert(root.left, key)
+    <span class="kw">elif</span> key > root.val: root.right = insert(root.right, key)
+    <span class="kw">return</span> root
+
+r = TreeNode(<span class="num">50</span>)
+r = insert(r, <span class="num">30</span>); r = insert(r, <span class="num">70</span>)
+<span class="fn">print</span>(<span class="str">"កូនឆ្វេង:"</span>, r.left.val, <span class="str">" | កូនស្តាំ:"</span>, r.right.val)</pre>
+            </div>
+            <div class="answer-box">
+                <label>ច្បាប់របស់ BST ៖</label> 
+                <div class="filled-answer">លេខដែលតូចជាង 50 (គឺ 30) ត្រូវធ្លាក់ទៅមែកខាងឆ្វេងជានិច្ច។ ចំណែកលេខដែលធំជាង 50 (គឺ 70) ត្រូវធ្លាក់ទៅមែកខាងស្តាំ។ នេះជាច្បាប់មាសដែលធ្វើឱ្យ BST ស្វែងរកលឿន។</div>
+            </div>
+        </div>
+
+        <div class="exercise-block">
+            <p><span class="level-badge bg-mid">មធ្យម ៣</span> បង្កើត BST ពី List នៃលេខចម្រុះ</p>
+            <div class="code-container">
+                <div class="code-header"><i class="fa-brands fa-python"></i> Copy & Run Code</div>
+<pre><span class="kw">class</span> <span class="fn">TreeNode</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="kw">self</span>, val): <span class="kw">self</span>.val=val; <span class="kw">self</span>.left=<span class="kw">self</span>.right=<span class="kw">None</span>
+<span class="kw">def</span> <span class="fn">insert</span>(root, key):
+    <span class="kw">if not</span> root: <span class="kw">return</span> TreeNode(key)
+    <span class="kw">if</span> key < root.val: root.left = insert(root.left, key)
+    <span class="kw">elif</span> key > root.val: root.right = insert(root.right, key)
+    <span class="kw">return</span> root
+
+nums = [<span class="num">50</span>, <span class="num">20</span>, <span class="num">60</span>, <span class="num">10</span>, <span class="num">30</span>, <span class="num">55</span>, <span class="num">70</span>]
+bst_root = <span class="kw">None</span>
+<span class="kw">for</span> n <span class="kw">in</span> nums:
+    bst_root = insert(bst_root, n)
+
+<span class="fn">print</span>(<span class="str">"Root ពិតប្រាកដគឺ:"</span>, bst_root.val)</pre>
+            </div>
+            <div class="answer-box">
+                <label>ដំណើរការបញ្ចូល ៖</label> 
+                <div class="filled-answer">លេខ 50 ចូលមុនគេ វានឹងក្លាយជា Root អចិន្ត្រៃយ៍។ លេខបន្ទាប់ៗនឹងរត់ទៅឆ្វេង ឬស្តាំដោយស្វ័យប្រវត្តិ។ វិធីនេះមានប្រសិទ្ធភាពសរុប O(n log n) សម្រាប់ការតម្រៀប Tree។</div>
+            </div>
+        </div>
+
+        <div class="note-area">
+            <i class="fa-solid fa-pen"></i> កន្លែងសម្រាប់កត់ត្រាបន្ថែម (Notes / Scratchpad)...
+        </div>
+    </div>
+
+    <div class="global-footer">
+        <div class="footer-left"><img src="Lim.jpg" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'"><span>សាស្ត្រាចារ្យ៖ សឿង លីម (Soeurng LIM)</span></div>
+        <div class="footer-right">ទំព័រទី ៤ នៃ ១៤</div>
+    </div>
+</div>
+
+<!-- PAGE 5 : BST Iterative & Validation -->
+<div class="a4-page">
+    <div class="global-header">
+        <div class="header-item"><img src="Logo.png" onerror="this.src='https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png'"><span>សាកលវិទ្យាល័យអង្គរ</span></div>
+        <div class="header-center">
+            <h1>សៀវភៅលំហាត់អនុវត្តន៍ - ជំពូកទី ៥</h1>
+            <p>ADVANCED DATA STRUCTURES AND ALGORITHMS</p>
+        </div>
+        <div class="header-item"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg"><span>Python Pro</span></div>
+    </div>
+
+    <div class="page-content">
+        <div class="case-title"><i class="fa-solid fa-shield-halved"></i> ៥. ករណីសិក្សា៖ ការបញ្ចូល Iterative និងការត្រួតពិនិត្យ BST</div>
+        
+        <div class="exercise-block">
+            <p><span class="level-badge bg-mid">មធ្យម ៤</span> ការបញ្ចូលទិន្នន័យដោយមិនប្រើ Recursive (Iterative Insert)</p>
+            <div class="code-container">
+                <div class="code-header"><i class="fa-brands fa-python"></i> Copy & Run Code</div>
+<pre><span class="kw">class</span> <span class="fn">TreeNode</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="kw">self</span>, val): <span class="kw">self</span>.val=val; <span class="kw">self</span>.left=<span class="kw">self</span>.right=<span class="kw">None</span>
+
+<span class="kw">def</span> <span class="fn">insertIter</span>(root, key):
+    <span class="kw">if not</span> root: <span class="kw">return</span> TreeNode(key)
+    curr = root
+    <span class="kw">while True</span>:
+        <span class="kw">if</span> key < curr.val:
+            <span class="kw">if not</span> curr.left: curr.left = TreeNode(key); <span class="kw">break</span>
+            curr = curr.left
+        <span class="kw">else</span>:
+            <span class="kw">if not</span> curr.right: curr.right = TreeNode(key); <span class="kw">break</span>
+            curr = curr.right
+    <span class="kw">return</span> root
+
+r = insertIter(<span class="kw">None</span>, <span class="num">10</span>); insertIter(r, <span class="num">5</span>)
+<span class="fn">print</span>(<span class="str">"កូនឆ្វេង:"</span>, r.left.val)</pre>
+            </div>
+            <div class="answer-box">
+                <label>អត្ថប្រយោជន៍របស់ Iterative ៖</label> 
+                <div class="filled-answer">កូដនេះប្រើ While Loop ដើររកកន្លែងទំនេរដោយផ្ទាល់។ វាជួយសន្សំសំចៃ Memory (Space O(1)) ព្រោះវាមិនមានផ្ទុក Call Stack រាប់លានដងដូចវិធី Recursive ឡើយ។</div>
+            </div>
+        </div>
+
+        <div class="exercise-block">
+            <p><span class="level-badge bg-high">ធ្ងន់ ២</span> ការត្រួតពិនិត្យថាវាជា BST ត្រឹមត្រូវឬទេ (Validate BST)</p>
+            <div class="code-container">
+                <div class="code-header"><i class="fa-brands fa-python"></i> Copy & Run Code</div>
+<pre><span class="kw">class</span> <span class="fn">TreeNode</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="kw">self</span>, val): <span class="kw">self</span>.val=val; <span class="kw">self</span>.left=<span class="kw">self</span>.right=<span class="kw">None</span>
+
+<span class="kw">def</span> <span class="fn">isValidBST</span>(root, min_val=<span class="fn">float</span>(<span class="str">'-inf'</span>), max_val=<span class="fn">float</span>(<span class="str">'inf'</span>)):
+    <span class="kw">if not</span> root: <span class="kw">return True</span>
+    <span class="kw">if not</span> (min_val < root.val < max_val): <span class="kw">return False</span>
+    
+    <span class="com"># ឆែកកូនឆ្វេង (ត្រូវតូចជាង Root) និង កូនស្តាំ (ត្រូវធំជាង Root)</span>
+    <span class="kw">return</span> isValidBST(root.left, min_val, root.val) <span class="kw">and</span> \
+           isValidBST(root.right, root.val, max_val)
+
+r = TreeNode(<span class="num">2</span>); r.left = TreeNode(<span class="num">1</span>); r.right = TreeNode(<span class="num">3</span>)
+<span class="fn">print</span>(<span class="str">"តើ Tree នេះជា BST ត្រឹមត្រូវទេ?"</span>, isValidBST(r))</pre>
+            </div>
+            <div class="answer-box">
+                <label>ហេតុអ្វីត្រូវបញ្ជូន <code>min_val</code> និង <code>max_val</code>? ៖</label> 
+                <div class="filled-answer">យើងមិនអាចឆែកត្រឹមតែមេ និងកូនផ្ទាល់បានទេ ព្រោះកូនចៅជំនាន់ក្រោយខាងឆ្វេង មិនអាចមានតម្លៃធំជាងជីតាទួតរបស់វាបានឡើយ។ ការកំណត់ព្រំដែនជួយទប់ស្កាត់កំហុសនេះ។</div>
+            </div>
+        </div>
+
+        <div class="note-area">
+            <i class="fa-solid fa-pen"></i> កន្លែងសម្រាប់កត់ត្រាបន្ថែម (Notes / Scratchpad)...
+        </div>
+    </div>
+
+    <div class="global-footer">
+        <div class="footer-left"><img src="Lim.jpg" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'"><span>សាស្ត្រាចារ្យ៖ សឿង លីម (Soeurng LIM)</span></div>
+        <div class="footer-right">ទំព័រទី ៥ នៃ ១៤</div>
+    </div>
+</div>
+
+<!-- PAGE 6 : BST Search -->
+<div class="a4-page">
+    <div class="global-header">
+        <div class="header-item"><img src="Logo.png" onerror="this.src='https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png'"><span>សាកលវិទ្យាល័យអង្គរ</span></div>
+        <div class="header-center">
+            <h1>សៀវភៅលំហាត់អនុវត្តន៍ - ជំពូកទី ៥</h1>
+            <p>ADVANCED DATA STRUCTURES AND ALGORITHMS</p>
+        </div>
+        <div class="header-item"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg"><span>Python Pro</span></div>
+    </div>
+
+    <div class="page-content">
+        <div class="case-title"><i class="fa-solid fa-magnifying-glass"></i> ៦. ករណីសិក្សា៖ ការស្វែងរកទិន្នន័យក្នុង BST (Search)</div>
+        
+        <div class="exercise-block">
+            <p><span class="level-badge bg-low">ស្រាល ៥</span> ស្វែងរកលេខក្នុង BST (Recursive Search)</p>
+            <div class="code-container">
+                <div class="code-header"><i class="fa-brands fa-python"></i> Copy & Run Code</div>
+<pre><span class="kw">class</span> <span class="fn">TreeNode</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="kw">self</span>, val): <span class="kw">self</span>.val=val; <span class="kw">self</span>.left=<span class="kw">self</span>.right=<span class="kw">None</span>
+
+<span class="kw">def</span> <span class="fn">search</span>(root, key):
+    <span class="kw">if not</span> root <span class="kw">or</span> root.val == key: <span class="kw">return</span> root
+    
+    <span class="com"># បើលេខដែលចង់រកតូចជាង ត្រូវទៅឆ្វេង ឯលេខធំជាងទៅស្តាំ</span>
+    <span class="kw">if</span> key < root.val: <span class="kw">return</span> search(root.left, key)
+    <span class="kw">return</span> search(root.right, key)
+
+r = TreeNode(<span class="num">50</span>); r.left = TreeNode(<span class="num">30</span>); r.right = TreeNode(<span class="num">70</span>)
+result = search(r, <span class="num">30</span>)
+<span class="fn">print</span>(<span class="str">"រកឃើញ:"</span>, result.val <span class="kw">if</span> result <span class="kw">else</span> <span class="str">"គ្មាន"</span>)</pre>
+            </div>
+            <div class="answer-box">
+                <label>ប្រសិទ្ធភាព O(log n) ៖</label> 
+                <div class="filled-answer">នៅរាល់ជំហាននីមួយៗ យើងបានកាត់បោះចោលមែកម្ខាងទាំងស្រុង (កាត់ចោល ៥០% នៃទិន្នន័យ) ធ្វើឱ្យល្បឿននៃការស្វែងរករហ័សខ្លាំងបំផុត ដូចការស្វែងរកពាក្យក្នុងវចនានុក្រម។</div>
+            </div>
+        </div>
+
+        <div class="exercise-block">
+            <p><span class="level-badge bg-low">ស្រាល ៦</span> ស្វែងរកលេខក្នុង BST (Iterative Search)</p>
+            <div class="code-container">
+                <div class="code-header"><i class="fa-brands fa-python"></i> Copy & Run Code</div>
+<pre><span class="kw">class</span> <span class="fn">TreeNode</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="kw">self</span>, val): <span class="kw">self</span>.val=val; <span class="kw">self</span>.left=<span class="kw">self</span>.right=<span class="kw">None</span>
+
+<span class="kw">def</span> <span class="fn">searchIter</span>(root, key):
+    curr = root
+    <span class="kw">while</span> curr <span class="kw">and</span> curr.val != key:
+        <span class="kw">if</span> key < curr.val: curr = curr.left
+        <span class="kw">else</span>: curr = curr.right
+    <span class="kw">return</span> curr
+
+r = TreeNode(<span class="num">50</span>); r.left = TreeNode(<span class="num">30</span>); r.right = TreeNode(<span class="num">70</span>)
+<span class="fn">print</span>(<span class="str">"រកឃើញលេខ 99 ទេ?:"</span>, searchIter(r, <span class="num">99</span>) <span class="kw">is not None</span>)</pre>
+            </div>
+            <div class="answer-box">
+                <label>ភាពខុសគ្នាពី Recursive ៖</label> 
+                <div class="filled-answer">វាមានល្បឿនស្មើគ្នា O(log n) ប៉ុន្តែ Iterative ប្រើ While Loop ដែលមិនស៊ី Memory របស់កុំព្យូទ័រ (No Call Stack Overhead) ទើបគេនិយមប្រើក្នុងប្រព័ន្ធធំៗជាង។</div>
+            </div>
+        </div>
+
+        <div class="note-area">
+            <i class="fa-solid fa-pen"></i> កន្លែងសម្រាប់កត់ត្រាបន្ថែម (Notes / Scratchpad)...
+        </div>
+    </div>
+
+    <div class="global-footer">
+        <div class="footer-left"><img src="Lim.jpg" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'"><span>សាស្ត្រាចារ្យ៖ សឿង លីម (Soeurng LIM)</span></div>
+        <div class="footer-right">ទំព័រទី ៦ នៃ ១៤</div>
+    </div>
+</div>
+
+<!-- PAGE 7 : BST Min/Max & Closest -->
+<div class="a4-page">
+    <div class="global-header">
+        <div class="header-item"><img src="Logo.png" onerror="this.src='https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png'"><span>សាកលវិទ្យាល័យអង្គរ</span></div>
+        <div class="header-center">
+            <h1>សៀវភៅលំហាត់អនុវត្តន៍ - ជំពូកទី ៥</h1>
+            <p>ADVANCED DATA STRUCTURES AND ALGORITHMS</p>
+        </div>
+        <div class="header-item"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg"><span>Python Pro</span></div>
+    </div>
+
+    <div class="page-content">
+        <div class="case-title"><i class="fa-solid fa-arrow-down-up-across-line"></i> ៧. ករណីសិក្សា៖ ការស្វែងរកតម្លៃតូច/ធំបំផុត និងតម្លៃក្បែរបំផុត</div>
+        
+        <div class="exercise-block">
+            <p><span class="level-badge bg-mid">មធ្យម ៥</span> ស្វែងរកតម្លៃតូចបំផុត និងធំបំផុត (Min/Max in BST)</p>
+            <div class="code-container">
+                <div class="code-header"><i class="fa-brands fa-python"></i> Copy & Run Code</div>
+<pre><span class="kw">class</span> <span class="fn">TreeNode</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="kw">self</span>, val): <span class="kw">self</span>.val=val; <span class="kw">self</span>.left=<span class="kw">self</span>.right=<span class="kw">None</span>
+
+<span class="kw">def</span> <span class="fn">findMin</span>(root):
+    curr = root
+    <span class="kw">while</span> curr <span class="kw">and</span> curr.left: curr = curr.left <span class="com"># លេខតូចនៅឆ្វេង</span>
+    <span class="kw">return</span> curr.val <span class="kw">if</span> curr <span class="kw">else None</span>
+
+<span class="kw">def</span> <span class="fn">findMax</span>(root):
+    curr = root
+    <span class="kw">while</span> curr <span class="kw">and</span> curr.right: curr = curr.right <span class="com"># លេខធំនៅស្តាំ</span>
+    <span class="kw">return</span> curr.val <span class="kw">if</span> curr <span class="kw">else None</span>
+
+r = TreeNode(<span class="num">50</span>); r.left = TreeNode(<span class="num">30</span>); r.right = TreeNode(<span class="num">70</span>)
+<span class="fn">print</span>(<span class="str">f"Min: {findMin(r)}, Max: {findMax(r)}"</span>)</pre>
+            </div>
+            <div class="answer-box">
+                <label>ការវិភាគល្បឿន ៖</label> 
+                <div class="filled-answer">ការរុករកតម្លៃតូចបំផុត (ឆ្វេងបង្អស់) ឬធំបំផុត (ស្តាំបង្អស់) ក្នុង BST ដែលមានតុល្យភាព ចំណាយពេលត្រឹមតែ O(log n) ប៉ុណ្ណោះ។</div>
+            </div>
+        </div>
+
+        <div class="exercise-block">
+            <p><span class="level-badge bg-low">ស្រាល ៦</span> ស្វែងរកតម្លៃដែលជិតជាងគេបង្អស់ (Closest Value in BST)</p>
+            <div class="code-container">
+                <div class="code-header"><i class="fa-brands fa-python"></i> Copy & Run Code</div>
+<pre><span class="kw">def</span> <span class="fn">closestValue</span>(root, target):
+    closest = root.val
+    curr = root
+    <span class="kw">while</span> curr:
+        <span class="kw">if</span> <span class="fn">abs</span>(curr.val - target) < <span class="fn">abs</span>(closest - target):
+            closest = curr.val
+        curr = curr.left <span class="kw">if</span> target < curr.val <span class="kw">else</span> curr.right
+    <span class="kw">return</span> closest
+
+r = TreeNode(<span class="num">50</span>); r.left = TreeNode(<span class="num">30</span>); r.right = TreeNode(<span class="num">70</span>)
+<span class="fn">print</span>(<span class="str">"លេខជិត 35 បំផុតគឺ:"</span>, closestValue(r, <span class="num">35</span>))</pre>
+            </div>
+            <div class="answer-box">
+                <label>ការប្រើប្រាស់ក្នុង AI ៖</label> 
+                <div class="filled-answer">នេះគឺជាគ្រឹះនៃក្បួន K-Nearest Neighbors (KNN)។ នៅពេលប្រព័ន្ធអត់មានលេខ Target ចំៗទេ វានឹងព្យាយាមរកអ្នកដែលនៅជិត Target នោះបំផុតយកមកជំនួស។</div>
+            </div>
+        </div>
+
+        <div class="note-area">
+            <i class="fa-solid fa-pen"></i> កន្លែងសម្រាប់កត់ត្រាបន្ថែម (Notes / Scratchpad)...
+        </div>
+    </div>
+
+    <div class="global-footer">
+        <div class="footer-left"><img src="Lim.jpg" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'"><span>សាស្ត្រាចារ្យ៖ សឿង លីម (Soeurng LIM)</span></div>
+        <div class="footer-right">ទំព័រទី ៧ នៃ ១៤</div>
+    </div>
+</div>
+
+<!-- PAGE 8 : Tree Traversals (DFS 1) -->
+<div class="a4-page">
+    <div class="global-header">
+        <div class="header-item"><img src="Logo.png" onerror="this.src='https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png'"><span>សាកលវិទ្យាល័យអង្គរ</span></div>
+        <div class="header-center">
+            <h1>សៀវភៅលំហាត់អនុវត្តន៍ - ជំពូកទី ៥</h1>
+            <p>ADVANCED DATA STRUCTURES AND ALGORITHMS</p>
+        </div>
+        <div class="header-item"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg"><span>Python Pro</span></div>
+    </div>
+
+    <div class="page-content">
+        <div class="case-title"><i class="fa-solid fa-route"></i> ៨. ករណីសិក្សា៖ ការរុករកបង្ហាញទិន្នន័យ (DFS Traversals)</div>
+        
+        <div class="exercise-block">
+            <p><span class="level-badge bg-low">ស្រាល ៧</span> In-order Traversal (ឆ្វេង, កណ្តាល, ស្តាំ)</p>
+            <div class="code-container">
+                <div class="code-header"><i class="fa-brands fa-python"></i> Copy & Run Code</div>
+<pre><span class="kw">class</span> <span class="fn">TreeNode</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="kw">self</span>, val): <span class="kw">self</span>.val=val; <span class="kw">self</span>.left=<span class="kw">self</span>.right=<span class="kw">None</span>
+
+<span class="kw">def</span> <span class="fn">inorder</span>(root):
+    <span class="kw">if</span> root:
+        inorder(root.left)
+        <span class="fn">print</span>(root.val, end=<span class="str">" "</span>)
+        inorder(root.right)
+
+r = TreeNode(<span class="num">50</span>); r.left = TreeNode(<span class="num">30</span>); r.right = TreeNode(<span class="num">70</span>)
+<span class="fn">print</span>(<span class="str">"In-order:"</span>); inorder(r)</pre>
+            </div>
+            <div class="answer-box">
+                <label>លក្ខណៈពិសេសនៃ In-order ៖</label> 
+                <div class="filled-answer">សម្រាប់ Binary Search Tree (BST) ការប្រើ In-order នឹងទាញលេខចេញមកដោយតម្រៀបពីតូចទៅធំ (Sorted) យ៉ាងស្អាតជានិច្ច ព្រោះវាទៅអានមែកឆ្វេង (តូច) ឱ្យអស់សិន។</div>
+            </div>
+        </div>
+
+        <div class="exercise-block">
+            <p><span class="level-badge bg-low">ស្រាល ៨</span> Pre-order Traversal (កណ្តាល, ឆ្វេង, ស្តាំ)</p>
+            <div class="code-container">
+                <div class="code-header"><i class="fa-brands fa-python"></i> Copy & Run Code</div>
+<pre><span class="kw">class</span> <span class="fn">TreeNode</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="kw">self</span>, val): <span class="kw">self</span>.val=val; <span class="kw">self</span>.left=<span class="kw">self</span>.right=<span class="kw">None</span>
+
+<span class="kw">def</span> <span class="fn">preorder</span>(root):
+    <span class="kw">if</span> root:
+        <span class="fn">print</span>(root.val, end=<span class="str">" "</span>)
+        preorder(root.left)
+        preorder(root.right)
+
+r = TreeNode(<span class="num">50</span>); r.left = TreeNode(<span class="num">30</span>); r.right = TreeNode(<span class="num">70</span>)
+<span class="fn">print</span>(<span class="str">"Pre-order:"</span>); preorder(r)</pre>
+            </div>
+            <div class="answer-box">
+                <label>លក្ខណៈពិសេសនៃ Pre-order ៖</label> 
+                <div class="filled-answer">វា Print យក Root មុនគេ។ វាមានប្រយោជន៍ខ្លាំងណាស់សម្រាប់ការថតចម្លង (Copy) Tree ទាំងមូលបង្កើតជា Tree ថ្មីមួយទៀត ព្រោះវាបង្កើត Root មុនទើបបង្កើតមែកតាមក្រោយ។</div>
+            </div>
+        </div>
+
+        <div class="note-area">
+            <i class="fa-solid fa-pen"></i> កន្លែងសម្រាប់កត់ត្រាបន្ថែម (Notes / Scratchpad)...
+        </div>
+    </div>
+
+    <div class="global-footer">
+        <div class="footer-left"><img src="Lim.jpg" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'"><span>សាស្ត្រាចារ្យ៖ សឿង លីម (Soeurng LIM)</span></div>
+        <div class="footer-right">ទំព័រទី ៨ នៃ ១៤</div>
+    </div>
+</div>
+
+<!-- PAGE 9 : Tree Traversals (DFS 2 & BFS) -->
+<div class="a4-page">
+    <div class="global-header">
+        <div class="header-item"><img src="Logo.png" onerror="this.src='https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png'"><span>សាកលវិទ្យាល័យអង្គរ</span></div>
+        <div class="header-center">
+            <h1>សៀវភៅលំហាត់អនុវត្តន៍ - ជំពូកទី ៥</h1>
+            <p>ADVANCED DATA STRUCTURES AND ALGORITHMS</p>
+        </div>
+        <div class="header-item"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg"><span>Python Pro</span></div>
+    </div>
+
+    <div class="page-content">
+        <div class="case-title"><i class="fa-solid fa-route"></i> ៩. ករណីសិក្សា៖ Post-order និង Level-order Traversal</div>
+        
+        <div class="exercise-block">
+            <p><span class="level-badge bg-mid">មធ្យម ៦</span> Post-order Traversal (ឆ្វេង, ស្តាំ, កណ្តាល)</p>
+            <div class="code-container">
+                <div class="code-header"><i class="fa-brands fa-python"></i> Copy & Run Code</div>
+<pre><span class="kw">class</span> <span class="fn">TreeNode</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="kw">self</span>, val): <span class="kw">self</span>.val=val; <span class="kw">self</span>.left=<span class="kw">self</span>.right=<span class="kw">None</span>
+
+<span class="kw">def</span> <span class="fn">postorder</span>(root):
+    <span class="kw">if</span> root:
+        postorder(root.left)
+        postorder(root.right)
+        <span class="fn">print</span>(root.val, end=<span class="str">" "</span>)
+
+r = TreeNode(<span class="num">50</span>); r.left = TreeNode(<span class="num">30</span>); r.right = TreeNode(<span class="num">70</span>)
+<span class="fn">print</span>(<span class="str">"Post-order:"</span>); postorder(r)</pre>
+            </div>
+            <div class="answer-box">
+                <label>លក្ខណៈពិសេសនៃ Post-order ៖</label> 
+                <div class="filled-answer">ដើម្បីលុប Folder ធំមួយចោល យើងត្រូវលុបឯកសារ និង Folder កូនៗខាងក្នុងឲ្យអស់ជាមុនសិន (Left & Right) ទើបយើងអាចលុប Folder មេ (Root) បានដោយជោគជ័យ។</div>
+            </div>
+        </div>
+
+        <div class="exercise-block">
+            <p><span class="level-badge bg-high">ធ្ងន់ ៥</span> Level-order Traversal (ស្វែងរកតាមទទឹង / BFS)</p>
+            <div class="code-container">
+                <div class="code-header"><i class="fa-brands fa-python"></i> Copy & Run Code</div>
+<pre><span class="kw">def</span> <span class="fn">levelOrder</span>(root):
+    <span class="kw">if not</span> root: <span class="kw">return</span>
+    queue = [root]
+    <span class="kw">while</span> queue:
+        node = queue.pop(<span class="num">0</span>)
+        <span class="fn">print</span>(node.val, end=<span class="str">" "</span>)
+        <span class="kw">if</span> node.left: queue.append(node.left)
+        <span class="kw">if</span> node.right: queue.append(node.right)
+
+r = TreeNode(<span class="num">50</span>); r.left = TreeNode(<span class="num">30</span>); r.right = TreeNode(<span class="num">70</span>)
+<span class="fn">print</span>(<span class="str">"Level-order:"</span>); levelOrder(r)</pre>
+            </div>
+            <div class="answer-box">
+                <label>យន្តការ Queue ក្នុង BFS ៖</label> 
+                <div class="filled-answer">BFS រុករកទិន្នន័យម្តងមួយជាន់ (Level) ផ្តេក ដោយប្រើប្រាស់ FIFO Queue ដើម្បីចងចាំទិសដៅរុករកបន្ទាប់។</div>
+            </div>
+        </div>
+
+        <div class="note-area">
+            <i class="fa-solid fa-pen"></i> កន្លែងសម្រាប់កត់ត្រាបន្ថែម (Notes / Scratchpad)...
+        </div>
+    </div>
+
+    <div class="global-footer">
+        <div class="footer-left"><img src="Lim.jpg" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'"><span>សាស្ត្រាចារ្យ៖ សឿង លីម (Soeurng LIM)</span></div>
+        <div class="footer-right">ទំព័រទី ៩ នៃ ១៤</div>
+    </div>
+</div>
+
+<!-- PAGE 10 : BST Node Deletion Concept & Successor -->
+<div class="a4-page">
+    <div class="global-header">
+        <div class="header-item"><img src="Logo.png" onerror="this.src='https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png'"><span>សាកលវិទ្យាល័យអង្គរ</span></div>
+        <div class="header-center">
+            <h1>សៀវភៅលំហាត់អនុវត្តន៍ - ជំពូកទី ៥</h1>
+            <p>ADVANCED DATA STRUCTURES AND ALGORITHMS</p>
+        </div>
+        <div class="header-item"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg"><span>Python Pro</span></div>
+    </div>
+
+    <div class="page-content">
+        <div class="case-title"><i class="fa-solid fa-trash"></i> ១០. ករណីសិក្សា៖ ការលុប Node និង In-order Successor</div>
+        
+        <div class="exercise-block">
+            <p><span class="level-badge bg-mid">មធ្យម ៧</span> ស្វែងរកអ្នកស្នងតំណែង (In-order Successor)</p>
+            <div class="code-container">
+                <div class="code-header"><i class="fa-brands fa-python"></i> Copy & Run Code</div>
+<pre><span class="kw">class</span> <span class="fn">TreeNode</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="kw">self</span>, val): <span class="kw">self</span>.val=val; <span class="kw">self</span>.left=<span class="kw">self</span>.right=<span class="kw">None</span>
+
+<span class="kw">def</span> <span class="fn">inorderSuccessor</span>(root, target_node):
+    successor = <span class="kw">None</span>
+    <span class="kw">while</span> root:
+        <span class="kw">if</span> target_node.val < root.val:
+            successor = root  <span class="com"># ចងចាំទុក ក្រែងលោវាជាអ្នកស្នង</span>
+            root = root.left
+        <span class="kw">else</span>:
+            root = root.right
+    <span class="kw">return</span> successor</pre>
+            </div>
+            <div class="answer-box">
+                <label>ហេតុអ្វីត្រូវមានអ្នកស្នង? ៖</label> 
+                <div class="filled-answer">បើយើងចង់លុបមេ (Root) មួយចោល យើងត្រូវរកអ្នកដែលមានតម្លៃធំជាងគេបន្ទាប់ពីមេនោះ មកជំនួសតំណែង ដើម្បីរក្សាច្បាប់ Left < Root < Right របស់ BST កុំឱ្យខូច។</div>
+            </div>
+        </div>
+
+        <div class="exercise-block">
+            <p><span class="level-badge bg-high">ធ្ងន់ ៦</span> ការលុប Node ពី BST (deleteNode)</p>
+            <div class="code-container">
+                <div class="code-header"><i class="fa-brands fa-python"></i> Copy & Run Code</div>
+<pre><span class="kw">def</span> <span class="fn">minValueNode</span>(node):
+    current = node
+    <span class="kw">while</span> current.left <span class="kw style="color:#ff79c6">is not</span> <span class="kw">None</span>:
+        current = current.left
+    <span class="kw">return</span> current
+
+<span class="kw">def</span> <span class="fn">deleteNode</span>(root, key):
+    <span class="kw">if not</span> root: <span class="kw">return</span> root
+    <span class="kw">if</span> key < root.val: root.left = deleteNode(root.left, key)
+    <span class="kw">elif</span> key > root.val: root.right = deleteNode(root.right, key)
+    <span class="kw">else</span>:
+        <span class="kw">if</span> root.left <span class="kw">is None</span>: <span class="kw">return</span> root.right
+        <span class="kw">elif</span> root.right <span class="kw">is None</span>: <span class="kw">return</span> root.left
+        temp = minValueNode(root.right)
+        root.val = temp.val
+        root.right = deleteNode(root.right, temp.val)
+    <span class="kw">return</span> root</pre>
+            </div>
+            <div class="answer-box">
+                <label>យន្តការលុប Case 3 ៖</label> 
+                <div class="filled-answer">នៅពេលលុប Node មានកូនពីរ យើងស្វែងរកតម្លៃតូចបំផុតនៃមែកស្តាំ (In-order Successor) មកជំនួសតម្លៃ Root រួចទើបលុប Successor នោះចោលពីមែកស្តាំជាលក្ខណៈ Recursive។</div>
+            </div>
+        </div>
+
+        <div class="note-area">
+            <i class="fa-solid fa-pen"></i> កន្លែងសម្រាប់កត់ត្រាបន្ថែម (Notes / Scratchpad)...
+        </div>
+    </div>
+
+    <div class="global-footer">
+        <div class="footer-left"><img src="Lim.jpg" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'"><span>សាស្ត្រាចារ្យ៖ សឿង លីម (Soeurng LIM)</span></div>
+        <div class="footer-right">ទំព័រទី ១០ នៃ ១៤</div>
+    </div>
+</div>
+
+<!-- PAGE 11 : Tree Reversal & Path Sum -->
+<div class="a4-page">
+    <div class="global-header">
+        <div class="header-item"><img src="Logo.png" onerror="this.src='https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png'"><span>សាកលវិទ្យាល័យអង្គរ</span></div>
+        <div class="header-center">
+            <h1>សៀវភៅលំហាត់អនុវត្តន៍ - ជំពូកទី ៥</h1>
+            <p>ADVANCED DATA STRUCTURES AND ALGORITHMS</p>
+        </div>
+        <div class="header-item"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg"><span>Python Pro</span></div>
+    </div>
+
+    <div class="page-content">
+        <div class="case-title"><i class="fa-solid fa-brain"></i> ១១. ករណីសិក្សា៖ ការត្រឡប់ Tree និងផលបូកគន្លង</div>
+        
+        <div class="exercise-block">
+            <p><span class="level-badge bg-mid">មធ្យម ៨</span> ការត្រឡប់ Tree ជាកញ្ចក់ (Invert Binary Tree)</p>
+            <div class="code-container">
+                <div class="code-header"><i class="fa-brands fa-python"></i> Copy & Run Code</div>
+<pre><span class="kw">class</span> <span class="fn">TreeNode</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="kw">self</span>, val): <span class="kw">self</span>.val=val; <span class="kw">self</span>.left=<span class="kw">self</span>.right=<span class="kw">None</span>
+
+<span class="kw">def</span> <span class="fn">invertTree</span>(root):
+    <span class="kw">if</span> root:
+        <span class="com"># ប្តូរមែកឆ្វេង និងស្តាំឱ្យគ្នាទៅវិញទៅមក (Swap)</span>
+        root.left, root.right = root.right, root.left
+        invertTree(root.left)
+        invertTree(root.right)
+    <span class="kw">return</span> root
+
+r = TreeNode(<span class="num">50</span>); r.left = TreeNode(<span class="num">30</span>); r.right = TreeNode(<span class="num">70</span>)
+r = invertTree(r)
+<span class="fn">print</span>(<span class="str">"ឥឡូវកូនឆ្វេងគឺ:"</span>, r.left.val)</pre>
+            </div>
+            <div class="answer-box">
+                <label>ភាពល្បីល្បាញនៃលំហាត់នេះ ៖</label> 
+                <div class="filled-answer">នេះគឺជាលំហាត់សម្ភាសន៍ការងារដ៏ល្បីល្បាញរបស់ Google។ យើងគ្រាន់តែប្តូរទីតាំងកូនឆ្វេង និងកូនស្តាំគ្រប់ៗជាន់ នោះ Tree ទាំងមូលនឹងក្លាយជាកញ្ចក់ឆ្លុះភ្លាមៗ (O(n))។</div>
+            </div>
+        </div>
+
+        <div class="exercise-block">
+            <p><span class="level-badge bg-high">ធ្ងន់ ៧</span> ស្វែងរកគន្លងដែលមានផលបូកស្មើ Target (Path Sum)</p>
+            <div class="code-container">
+                <div class="code-header"><i class="fa-brands fa-python"></i> Copy & Run Code</div>
+<pre><span class="kw">class</span> <span class="fn">TreeNode</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="kw">self</span>, val): <span class="kw">self</span>.val=val; <span class="kw">self</span>.left=<span class="kw">self</span>.right=<span class="kw">None</span>
+
+<span class="kw">def</span> <span class="fn">hasPathSum</span>(root, target):
+    <span class="kw">if not</span> root: <span class="kw">return False</span>
+    
+    <span class="com"># ពេលចុះដល់ស្លឹក (Leaf) តើ Target ត្រូវដកអស់ស្មើ 0 ដែរឬទេ?</span>
+    <span class="kw">if not</span> root.left <span class="kw">and not</span> root.right:
+        <span class="kw">return</span> target == root.val
+        
+    <span class="kw">return</span> hasPathSum(root.left, target - root.val) <span class="kw">or</span> \
+           hasPathSum(root.right, target - root.val)
+
+r = TreeNode(<span class="num">5</span>); r.left = TreeNode(<span class="num">4</span>); r.right = TreeNode(<span class="num">8</span>)
+<span class="fn">print</span>(<span class="str">"មានផ្លូវបូកស្មើ 9 ទេ?"</span>, hasPathSum(r, <span class="num">9</span>))</pre>
+            </div>
+            <div class="answer-box">
+                <label>ការប្រើប្រាស់ក្នុង AI ៖</label> 
+                <div class="filled-answer">នេះគឺជា Decision Tree នៅក្នុងប្រព័ន្ធ AI/ML។ រាល់ពេលវាដើរឆ្លងកាត់ Node មួយ វាបានទាញយកតម្លៃ (ទម្ងន់/លក្ខខណ្ឌ) មកកាត់កងចេញរហូតដល់វាអាចសម្រេចចិត្តបាននៅឯ Leaf ខាងចុង។</div>
+            </div>
+        </div>
+
+        <div class="note-area">
+            <i class="fa-solid fa-pen"></i> កន្លែងសម្រាប់កត់ត្រាបន្ថែម (Notes / Scratchpad)...
+        </div>
+    </div>
+
+    <div class="global-footer">
+        <div class="footer-left"><img src="Lim.jpg" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'"><span>សាស្ត្រាចារ្យ៖ សឿង លីម (Soeurng LIM)</span></div>
+        <div class="footer-right">ទំព័រទី ១១ នៃ ១៤</div>
+    </div>
+</div>
+
+<!-- PAGE 12 : Advanced BST Challenges -->
+<div class="a4-page">
+    <div class="global-header">
+        <div class="header-item"><img src="Logo.png" onerror="this.src='https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png'"><span>សាកលវិទ្យាល័យអង្គរ</span></div>
+        <div class="header-center">
+            <h1>សៀវភៅលំហាត់អនុវត្តន៍ - ជំពូកទី ៥</h1>
+            <p>ADVANCED DATA STRUCTURES AND ALGORITHMS</p>
+        </div>
+        <div class="header-item"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg"><span>Python Pro</span></div>
+    </div>
+
+    <div class="page-content">
+        <div class="case-title"><i class="fa-solid fa-trophy"></i> ១២. ករណីសិក្សា៖ បញ្ហាប្រឈមកម្រិតខ្ពស់លើ BST</div>
+        
+        <div class="exercise-block">
+            <p><span class="level-badge bg-high">ធ្ងន់ ៨</span> បំប្លែង Array តម្រៀបរួច ទៅជា Balanced BST</p>
+            <div class="code-container">
+                <div class="code-header"><i class="fa-brands fa-python"></i> Copy & Run Code</div>
+<pre><span class="kw">class</span> <span class="fn">TreeNode</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="kw">self</span>, val): <span class="kw">self</span>.val=val; <span class="kw">self</span>.left=<span class="kw">self</span>.right=<span class="kw">None</span>
+
+<span class="kw">def</span> <span class="fn">sortedArrayToBST</span>(nums):
+    <span class="kw">if not</span> nums: <span class="kw">return None</span>
+    mid = <span class="fn">len</span>(nums) // <span class="num">2</span> <span class="com"># រកចំណុចកណ្តាលធ្វើជា Root</span>
+    
+    root = TreeNode(nums[mid])
+    root.left = sortedArrayToBST(nums[:mid])
+    root.right = sortedArrayToBST(nums[mid+1:])
+    <span class="kw">return</span> root
+
+nums = [<span class="num">10</span>, <span class="num">20</span>, <span class="num">30</span>, <span class="num">40</span>, <span class="num">50</span>]
+r = sortedArrayToBST(nums)
+<span class="fn">print</span>(<span class="str">"Root នៃ Balanced BST គឺ:"</span>, r.val)</pre>
+            </div>
+            <div class="answer-box">
+                <label>បច្ចេកទេស Divide & Conquer ៖</label> 
+                <div class="filled-answer">ដើម្បីកុំឱ្យ Tree ដុះមែកធ្លាក់ទៅតែម្ខាង (Skewed Tree) យើងត្រូវយកលេខកណ្តាលនៃ Array មកធ្វើជា Root ជានិច្ច ធ្វើឱ្យ Tree ថ្មីមានលំនឹងសងខាងស្មើគ្នា (Balanced O(log n))។</div>
+            </div>
+        </div>
+
+        <div class="exercise-block">
+            <p><span class="level-badge bg-high">ធ្ងន់ ៩</span> រកលេខតូចជាងគេទី K ក្នុង BST (Kth Smallest)</p>
+            <div class="code-container">
+                <div class="code-header"><i class="fa-brands fa-python"></i> Copy & Run Code</div>
+<pre><span class="kw">class</span> <span class="fn">TreeNode</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="kw">self</span>, val): <span class="kw">self</span>.val=val; <span class="kw">self</span>.left=<span class="kw">self</span>.right=<span class="kw">None</span>
+
+<span class="kw">def</span> <span class="fn">kthSmallest</span>(root, k):
+    stack = []
+    <span class="kw">while True</span>:
+        <span class="kw">while</span> root:
+            stack.append(root)
+            root = root.left <span class="com"># ចុះទៅឆ្វេងឲ្យអស់លេខតូចៗ</span>
+        
+        root = stack.pop()
+        k -= <span class="num">1</span>
+        <span class="kw">if</span> k == <span class="num">0</span>: <span class="kw">return</span> root.val <span class="com"># រកឃើញអ្នកទី K</span>
+        
+        root = root.right
+
+r = TreeNode(<span class="num">50</span>); r.left = TreeNode(<span class="num">30</span>); r.right = TreeNode(<span class="num">70</span>)
+<span class="fn">print</span>(<span class="str">"អ្នកតូចជាងគេទី 2 គឺ:"</span>, kthSmallest(r, <span class="num">2</span>))</pre>
+            </div>
+            <div class="answer-box">
+                <label>ការប្រើប្រាស់ Stack ៖</label> 
+                <div class="filled-answer">នេះគឺជាការប្រើប្រាស់ In-order Traversal (Iterative)។ យើងដឹងស្រាប់ហើយថា In-order ទាញលេខពីតូចទៅធំ ដូច្នេះយើងគ្រាន់តែ Pop ចេញម្តងមួយៗរហូតដល់គ្រប់ K ដងជាការស្រេច។</div>
+            </div>
+        </div>
+
+        <div class="note-area">
+            <i class="fa-solid fa-pen"></i> កន្លែងសម្រាប់កត់ត្រាបន្ថែម (Notes / Scratchpad)...
+        </div>
+    </div>
+
+    <div class="global-footer">
+        <div class="footer-left"><img src="Lim.jpg" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'"><span>សាស្ត្រាចារ្យ៖ សឿង លីម (Soeurng LIM)</span></div>
+        <div class="footer-right">ទំព័រទី ១២ នៃ ១៤</div>
+    </div>
+</div>
+
+<!-- PAGE 13 : Trie Tree for Autocomplete [NEW] -->
+<div class="a4-page">
+    <div class="global-header">
+        <div class="header-item"><img src="Logo.png" onerror="this.src='https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png'"><span>សាកលវិទ្យាល័យអង្គរ</span></div>
+        <div class="header-center">
+            <h1>សៀវភៅលំហាត់អនុវត្តន៍ - ជំពូកទី ៥</h1>
+            <p>ADVANCED DATA STRUCTURES AND ALGORITHMS</p>
+        </div>
+        <div class="header-item"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg"><span>Python Pro</span></div>
+    </div>
+
+    <div class="page-content">
+        <div class="case-title"><i class="fa-solid fa-font"></i> ១៣. ករណីសិក្សា៖ Trie Tree សម្រាប់ប្រព័ន្ធ Autocomplete</div>
+        
+        <div class="exercise-block">
+            <p><span class="level-badge bg-mid">មធ្យម ៩</span> ការបង្កើតរចនាសម្ព័ន្ធ Trie Node (TrieNode Class)</p>
+            <div class="code-container">
+                <div class="code-header"><i class="fa-brands fa-python"></i> Copy & Run Code</div>
+<pre><span class="kw">class</span> <span class="fn">TrieNode</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="kw">self</span>):
+        <span class="kw">self</span>.children = {}  <span class="com"># Dictionary រក្សាទុកតួអក្សរ</span>
+        <span class="kw">self</span>.isEndOfWord = <span class="kw">False</span>  <span class="com"># បញ្ជាក់ចំណុចបញ្ចប់នៃពាក្យ</span></pre>
+            </div>
+            <div class="answer-box">
+                <label>យន្តការ Dictionary ក្នុង Trie ៖</label> 
+                <div class="filled-answer">Trie មិនមែនជា Binary Tree ឡើយ។ Node នីមួយៗអាចមានកូនច្រើនទៅតាមចំនួនតួអក្សរ (A-Z) ដូច្នេះយើងប្រើប្រាស់ Dictionary ដើម្បីចងភ្ជាប់រវាងអក្សរ និង Node បន្ទាប់។</div>
+            </div>
+        </div>
+
+        <div class="exercise-block">
+            <p><span class="level-badge bg-high">ធ្ងន់ ៧</span> ការបញ្ចូលពាក្យថ្មីទៅក្នុង Trie (Trie Insertion)</p>
+            <div class="code-container">
+                <div class="code-header"><i class="fa-brands fa-python"></i> Copy & Run Code</div>
+<pre><span class="kw">def</span> <span class="fn">insertWord</span>(root, word):
+    curr = root
+    <span class="kw">for</span> char <span class="kw">in</span> word:
+        <span class="kw">if</span> char <span class="kw style="color:#ff79c6">not in</span> curr.children:
+            curr.children[char] = TrieNode()
+        curr = curr.children[char]
+    curr.isEndOfWord = <span class="kw">True</span>  <span class="com"># សម្គាល់ថាពាក្យនេះត្រូវបានបញ្ចប់</span></pre></div>
+            </div>
+            <div class="answer-box">
+                <label>ការសន្សំសំចៃទំហំផ្ទុក (Memory Sharing) ៖</label> 
+                <div class="filled-answer">នៅពេលបញ្ចូលពាក្យ "CAT" និង "CAR" វានឹងប្រើប្រាស់អក្សរ "C" និង "A" រួមគ្នា។ កូដនេះនឹងបង្កើត Node ថ្មីតែលើអក្សរ "T" និង "R" ប៉ុណ្ណោះ ដែលធ្វើឱ្យចំណេញមេម៉ូរីកម្រិតខ្ពស់។</div>
+            </div>
+        </div>
+
+        <div class="note-area">
+            <i class="fa-solid fa-pen"></i> កន្លែងសម្រាប់កត់ត្រាបន្ថែម (Notes / Scratchpad)...
+        </div>
+    </div>
+
+    <div class="global-footer">
+        <div class="footer-left"><img src="Lim.jpg" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'"><span>សាស្ត្រាចារ្យ៖ សឿង លីម (Soeurng LIM)</span></div>
+        <div class="footer-right">ទំព័រទី ១៣ នៃ ១៤</div>
+    </div>
+</div>
+
+<!-- PAGE 14 : Decision Trees in AI & ML [NEW] -->
+<div class="a4-page">
+    <div class="global-header">
+        <div class="header-item"><img src="Logo.png" onerror="this.src='https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png'"><span>សាកលវិទ្យាល័យអង្គរ</span></div>
+        <div class="header-center">
+            <h1>សៀវភៅលំហាត់អនុវត្តន៍ - ជំពូកទី ៥</h1>
+            <p>ADVANCED DATA STRUCTURES AND ALGORITHMS</p>
+        </div>
+        <div class="header-item"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg"><span>Python Pro</span></div>
+    </div>
+
+    <div class="page-content">
+        <div class="case-title"><i class="fa-solid fa-brain"></i> ១៤. ករណីសិក្សា៖ ដើមឈើសម្រេចចិត្តក្នុង Machine Learning & AI</div>
+        
+        <div class="exercise-block">
+            <p><span class="level-badge bg-high">ធ្ងន់ ៨</span> ការវិភាគឡូជីខលនៃ AI Decision Tree (Loan Evaluation)</p>
+            <div class="code-container">
+                <div class="code-header"><i class="fa-brands fa-python"></i> Copy & Run Code</div>
+<pre><span class="kw">def</span> <span class="fn">evaluateLoan</span>(creditScore, hasCollateral):
+    <span class="com"># កម្រិតទី១: ពិនិត្យ Credit Score</span>
+    <span class="kw">if</span> creditScore < <span class="num">60</span>:
+        <span class="kw">return</span> <span class="str">"Reject"</span>  <span class="com"># Leaf Node ១</span>
+    <span class="kw">else</span>:
+        <span class="com"># កម្រិតទី២: ពិនិត្យទ្រព្យបញ្ចាំ</span>
+        <span class="kw">if</span> hasCollateral:
+            <span class="kw">return</span> <span class="str">"Approve"</span>  <span class="com"># Leaf Node ២</span>
+        <span class="kw">else</span>:
+            <span class="kw">return</span> <span class="str">"Reject"</span>   <span class="com"># Leaf Node ៣</span></pre>
+            </div>
+            <div class="answer-box">
+                <label>ទំនាក់ទំនងរវាងកូដ និងរចនាសម្ព័ន្ធ Tree ៖</label> 
+                <div class="filled-answer">រាល់លក្ខខណ្ឌ <code>if-else</code> តំណាងឱ្យមែកធាងបំបែក (Branch Split) នៃ Decision Tree។ រីឯលទ្ធផលត្រលប់មកវិញ (Return) គឺជា Leaf Nodes នៃ Tree សម្រេចចិត្តនេះ។</div>
+            </div>
+        </div>
+
+        <div class="exercise-block">
+            <p><span class="level-badge bg-mid">មធ្យម ១០</span> គំនិតនៃការបំបែកលក្ខខណ្ឌ (Splitting Logic: Entropy & Gini)</p>
+            <div class="answer-box" style="margin-top: 5px;">
+                <div class="filled-answer" style="border: 1px solid #CBD5E1; padding: 12px; border-radius: 6px; background: #F8FAFC; font-size: 13px; line-height: 1.6; color: var(--text-muted);">
+                    <b style="color: var(--accent-blue); display:block; margin-bottom: 5px;"><i class="fa-solid fa-chart-line"></i> ការយល់ដឹងកម្រិតអនុបណ្ឌិត (Master's Level Insight)</b>
+                    នៅក្នុងវិស័យ Data Science និង AI, គំរូ Machine Learning ដូចជា Decision Trees មិនសរសេរលក្ខខណ្ឌ <code>if-else</code> ដោយដៃឡើយ។ ក្បួនដោះស្រាយ (Algorithm) នឹងស្វែងរកលក្ខខណ្ឌបំបែកដោយស្វ័យប្រវត្តតាមរយៈការគណនាស្វែងរកតម្លៃ <b>Information Gain (ផ្អែកលើ Entropy)</b> ឬ <b>Gini Impurity</b> ដើម្បីធ្វើយ៉ាងណាឱ្យទិន្នន័យដែលបំបែករួចមានភាពសុទ្ធល្អបំផុត (Purest Data Split) នៅតាមមែកនីមួយៗ។
+                </div>
+            </div>
+        </div>
+
+        <div class="note-area">
+            <i class="fa-solid fa-pen"></i> កន្លែងសម្រាប់កត់ត្រាបន្ថែម (Notes / Scratchpad)...
+        </div>
+    </div>
+
+    <div class="global-footer">
+        <div class="footer-left"><img src="Lim.jpg" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'"><span>សាស្ត្រាចារ្យ៖ សឿង លីម (Soeurng LIM)</span></div>
+        <div class="footer-right">ទំព័រទី ១៤ នៃ ១៤</div>
+    </div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html lang="km">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chapter 1 - Intro to DSA & Big-O Notation</title>
+    <link href="https://fonts.googleapis.com/css2?family=Battambang:wght@400;700&family=Suwannaphum:wght@400;700;900&family=Lato:wght@400;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        :root {
+            --bg-dark: #0F172A; --bg-card: #F8FAFC; --text-main: #0F172A; --text-muted: #475569;
+            --accent-blue: #0284C7; --accent-green: #059669; --accent-yellow: #D97706; --accent-red: #DC2626;
+            --header-footer-bg: #F0F9FF; --code-bg: #111827;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        /* អនុញ្ញាតឲ្យ User Copy អក្សរបាន */
+        body { background-color: var(--bg-dark); font-family: 'Battambang', sans-serif; overflow: hidden; height: 100vh; width: 100vw; display: flex; align-items: center; justify-content: center; -webkit-user-select: auto; user-select: auto; }
+        
+        .slide-deck { width: 98vw; height: 95vh; position: relative; background: #FFFFFF; border-radius: 1.5vw; overflow: hidden; box-shadow: 0 40px 100px rgba(0,0,0,0.5); display: flex; flex-direction: column; }
+        .slide-wrapper { flex-grow: 1; position: relative; overflow: hidden; }
+        .slide { display: none; width: 100%; height: 100%; padding: 2vh 4vw; flex-direction: column; justify-content: flex-start; animation: slideIn 0.4s ease-out; position: absolute; top: 0; left: 0; }
+        .slide.active { display: flex; }
+        @keyframes slideIn { from { opacity: 0; transform: translateX(50px); } to { opacity: 1; transform: translateX(0); } }
+
+        /* Navigation Zones (សម្រាប់ចុចដូរស្លាយ) */
+        .nav-zone { position: absolute; top: 0; bottom: 0; width: 10%; z-index: 50; cursor: pointer; display: flex; align-items: center; opacity: 0; transition: opacity 0.3s; }
+        .nav-zone:hover { opacity: 1; }
+        .nav-left { left: 0; justify-content: flex-start; padding-left: 2vw; background: linear-gradient(to right, rgba(0,0,0,0.05), transparent); }
+        .nav-right { right: 0; justify-content: flex-end; padding-right: 2vw; background: linear-gradient(to left, rgba(0,0,0,0.05), transparent); }
+        .nav-zone i { font-size: 3vw; color: var(--accent-blue); filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2)); }
+
+        /* Header Branding */
+        .global-header { display: flex; justify-content: space-between; align-items: center; margin: -2vh -4vw 1.5vh -4vw; padding: 1.2vh 4vw; border-bottom: 3px solid var(--accent-blue); background-color: var(--header-footer-bg); }
+        .header-item { display: flex; flex-direction: column; align-items: center; gap: 4px; width: 15vw; }
+        .header-item img { height: 4vw; object-fit: contain; }
+        .header-item span { font-size: 0.76vw; font-weight: bold; color: var(--accent-blue); text-align: center; }
+        .header-center h1 { font-family: 'Suwannaphum'; font-size: 1.4vw; color: var(--accent-blue); margin: 0; }
+        .header-center p { font-family: 'Lato'; font-size: 0.85vw; color: #64748B; margin: 0; font-weight: bold; text-align: center; }
+
+        /* Typography */
+        h1 { font-family: 'Suwannaphum'; font-size: 3.15vw; text-align: center; color: var(--text-main); font-weight: 900; line-height: 1.3; }
+        h2.slide-title { font-family: 'Suwannaphum'; font-size: 2.2vw; font-weight: 900; border-bottom: 0.3vw solid var(--accent-blue); padding-bottom: 0.5vh; margin-bottom: 1.5vh; color: var(--text-main); display: inline-block; }
+        .content-body { flex-grow: 1; display: flex; flex-direction: column; justify-content: flex-start; gap: 1vh; width: 100%; overflow-y: auto; padding-bottom: 2vh; }
+        p, li, td { font-size: 1.4vw; line-height: 1.7; color: var(--text-main); }
+        
+        .keyword-icon { color: var(--accent-blue); margin-right: 0.5vw; width: 1.5vw; text-align: center; display: inline-block; }
+        .tech-icon { color: var(--accent-blue); margin-right: 6px; font-size: 1.1em; vertical-align: baseline; }
+        b .tech-icon, strong .tech-icon, .card h4 .tech-icon, h2 .tech-icon { color: inherit; } 
+
+        /* Layouts & Cards */
+        .two-column { display: grid; grid-template-columns: 1fr 1fr; gap: 2.5vw; height: 100%; align-items: center; }
+        .two-column-equal { display: grid; grid-template-columns: 1fr 1fr; gap: 2vw; height: 100%; align-items: start; }
+        .card-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5vw; }
+        .card { background: var(--bg-card); padding: 1.5vh 2.5vw; border-radius: 1vw; border-left: 0.8vw solid var(--accent-blue); box-shadow: 0 4px 10px rgba(0,0,0,0.05); display: flex; flex-direction: column; justify-content: center; }
+        .card h4 { font-size: 1.5vw; color: var(--accent-blue); margin-bottom: 0.5vh; font-family: 'Suwannaphum'; display: flex; align-items: center; gap: 10px;}
+
+        /* Visual Frame for Technical Diagrams & Images */
+        .visual-frame { background: #FFFFFF; border-radius: 1vw; border: 1px solid #CBD5E1; display: flex; align-items: center; justify-content: center; height: 100%; min-height: 250px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.05); position: relative;}
+        .visual-frame img { width: 100%; height: 100%; object-fit: cover; }
+        .visual-frame svg { width: 100%; height: 100%; max-height: 35vh; object-fit: contain; padding: 2vw;}
+
+        /* Case Study Narrative Box */
+        .narrative-box { background: #F8FAFC; border-radius: 0.6vw; border: 1px solid #CBD5E1; padding: 1vh 1.5vw; margin-bottom: 1vh; box-shadow: 0 2px 6px rgba(0,0,0,0.05); }
+        .narrative-header { font-weight: bold; color: var(--accent-blue); font-size: 1.2vw; border-bottom: 1px solid #E2E8F0; padding-bottom: 0.5vh; margin-bottom: 0.8vh; font-family: 'Suwannaphum'; }
+        .narrative-text { font-size: 1.25vw; color: var(--text-main); line-height: 1.7; margin: 0; }
+        
+        .narrative-box.danger { background: #FEF2F2; border-color: #FECACA; }
+        .narrative-box.danger .narrative-header { color: var(--accent-red); border-color: #FCA5A5; }
+
+        /* Code Block Wrapper */
+        .code-wrapper { background: var(--code-bg); border-radius: 0.6vw; border: 1px solid #374151; overflow: hidden; width: 100%; box-shadow: 0 5px 15px rgba(0,0,0,0.1); margin-top: 1vh;}
+        .code-header { background: #1F2937; padding: 0.6vh 1.2vw; font-size: 0.9vw; font-family: 'Battambang', sans-serif; color: #9CA3AF; border-bottom: 1px solid #374151; display: flex; justify-content: space-between; }
+        .code-header span { font-weight: bold; color: #38BDF8; font-size: 1vw; }
+        .code-content { padding: 1vh 1.5vw; overflow-x: auto; }
+        .code-content pre { font-family: 'Fira Code', monospace; font-size: 1.1vw; line-height: 1.5; color: #f8f8f2; margin: 0; }
+        .kw { color: #ff79c6; font-weight: bold; } .fn { color: #50fa7b; } .str { color: #f1fa8c; } .com { color: #6272a4; font-style: italic; } .num { color: #bd93f9; } .cls { color: #8be9fd; font-style: italic; }
+
+        /* Highlight Note */
+        .highlight-note { background-color: #FEF9C3; border-left: 4px solid var(--accent-yellow); padding: 1.5vh 1.5vw; border-radius: 0.5vw; margin-top: 1vh; font-weight: bold; color: #854D0E; font-size: 1.25vw; display: block; border: 1px dashed var(--accent-yellow); box-shadow: 0 2px 5px rgba(217,119,6,0.1); line-height: 1.7;}
+
+        /* Main Footer */
+        .global-footer { display: flex; justify-content: space-between; align-items: center; width: 100%; padding: 1vh 4vw; border-top: 3px solid var(--accent-blue); background-color: var(--header-footer-bg); z-index: 10; }
+        .footer-left { display: flex; align-items: center; gap: 1.5vw; }
+        .footer-left img { border-radius: 50%; border: 2px solid var(--accent-blue); width: 3vw; height: 3vw; object-fit: cover; }
+        .footer-left span { font-size: 1.2vw; font-weight: bold; color: var(--text-main); font-family: 'Suwannaphum'; }
+        .slide-counter { font-size: 1.1vw; color: var(--accent-blue); font-family: 'Suwannaphum'; font-weight: 900; background: #FFFFFF; padding: 0.5vh 1.5vw; border-radius: 5vw; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        
+        .print-only-footer { display: none; }
+
+        /* =========================================
+           A4 LANDSCAPE PRINT CSS (1 Slide per Page)
+           ========================================= */
+        @media print {
+            @page { size: A4 landscape; margin: 0; }
+            html, body { display: block !important; width: 100% !important; height: auto !important; background: white !important; overflow: visible !important; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; margin: 0 !important; padding: 0 !important; }
+            .slide-deck { display: block !important; width: 100% !important; height: auto !important; box-shadow: none !important; border: none !important; border-radius: 0 !important; }
+            .slide-wrapper { display: block !important; overflow: visible !important; }
+            .slide { display: flex !important; flex-direction: column !important; width: 297mm !important; height: 209mm !important; page-break-after: always !important; page-break-inside: avoid !important; position: relative !important; opacity: 1 !important; transform: none !important; animation: none !important; padding: 10mm 15mm !important; box-sizing: border-box !important; }
+            .nav-zone { display: none !important; }
+            .global-header { margin: -10mm -15mm 5mm -15mm !important; padding: 5mm 15mm !important; border-bottom: 2px solid var(--accent-blue) !important;}
+            .global-footer#mainFooter { display: none !important; }
+            .print-only-footer { display: flex !important; margin: auto -15mm -10mm -15mm !important; padding: 5mm 15mm !important; border-top: 2px solid var(--accent-blue) !important; background: var(--header-footer-bg) !important; width: 297mm !important; box-sizing: border-box !important; }
+            .card { box-shadow: 0 2px 5px rgba(0,0,0,0.05) !important; border: 1px solid #E2E8F0 !important; border-left-width: 0.8vw !important; page-break-inside: avoid !important;}
+            .visual-frame img { object-fit: contain !important; background: #fff !important; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="slide-deck" id="deck">
+
+    <!-- Navigation Overlays -->
+    <div class="nav-zone nav-left" title="ថយក្រោយ (Previous)">
+        <i class="fa-solid fa-chevron-left"></i>
+    </div>
+    <div class="nav-zone nav-right" title="ទៅមុខ (Next)">
+        <i class="fa-solid fa-chevron-right"></i>
+    </div>
+
+    <!-- Header Template applied dynamically to slides -->
+    <template id="headerTemplate">
+        <div class="global-header">
+            <div class="header-item">
+                <img src="Logo.png" onerror="this.src='https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png'">
+                <span>សាកលវិទ្យាល័យអង្គរ</span>
+            </div>
+            <div class="header-center" style="text-align: center;">
+                <h1 style="font-size: 1.4vw;">រចនាសម្ព័ន្ធទិន្នន័យកម្រិតខ្ពស់ និងក្បួនដោះស្រាយ (Advanced Data Structures and Algorithms - DSA)</h1>
+                <p>អនុបណ្ឌិតវិទ្យាសាស្ត្រទិន្នន័យ និងបញ្ញាសិប្បនិម្មិត (Master of Data Science & Artificial Intelligence)</p>
+            </div>
+            <div class="header-item">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg">
+                <span>Python Pro</span>
+            </div>
+        </div>
+    </template>
+
+    <div class="slide-wrapper" id="slideWrapper">
+        
+        <!-- Cover Slide -->
+        <div class="slide active">
+            <div style="text-align: center; margin: auto; width: 100%;">
+                <div style="display: flex; align-items: center; justify-content: center; gap: 3vw; margin-bottom: 2vh;">
+                    <img src="Logo.png" style="height: 12vw;" alt="AU Logo" onerror="this.src='https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png'">
+                    <div style="text-align: center;">
+                        <h2 style="font-family: 'Suwannaphum'; color: var(--accent-blue); font-size: 3.6vw; margin: 0;">សាកលវិទ្យាល័យអង្គរ</h2>
+                        <p style="font-family: 'Lato'; color: var(--text-muted); font-size: 1.8vw; margin: 0; font-weight: bold;">ANGKOR UNIVERSITY</p>
+                    </div>
+                </div>
+                
+                <div style="margin-bottom: 2vh;">
+                    <h3 style="font-family: 'Suwannaphum'; font-size: 1.7vw; color: var(--accent-green);"><i class="fa-solid fa-graduation-cap"></i> អនុបណ្ឌិតវិទ្យាសាស្ត្រទិន្នន័យ និងបញ្ញាសិប្បនិម្មិត (Master of Data Science and AI)</h3>
+                </div>
+
+                <div style="background: var(--accent-blue); color: white; padding: 1vh 5vw; border-radius: 5vw; display: inline-block; font-size: 2.2vw; font-weight: bold; margin-bottom: 3vh;">ជំពូកទី១ | Chapter 1</div>
+                
+                <h1 style="line-height: 1.5;">សេចក្តីផ្តើមពី DSA & ការវិភាគ Big-O Notation<br>
+                <span style="color:var(--accent-blue); font-size: 2.2vw; font-family:'Lato'">(Introduction to <i class='fa-solid fa-server tech-icon'></i>DSA & <i class='fa-solid fa-chart-line tech-icon'></i>Big-O Notation)</span></h1>
+                
+                <div style="margin-top: 3vh; display: flex; gap: 5vw; justify-content: center; align-items: center;">
+                    <div style="text-align: center;">
+                        <i class="fa-solid fa-server" style="font-size: 6vw; color: var(--accent-blue);"></i>
+                        <p style="font-size: 1.1vw; font-weight: bold; color: var(--accent-blue);">Data Structures</p>
+                    </div>
+                    <div style="text-align: center;">
+                        <i class="fa-solid fa-gauge-high" style="font-size: 6vw; color: #059669;"></i>
+                        <p style="font-size: 1.1vw; font-weight: bold; color: var(--accent-green);">Time Complexity</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Instructor Slide -->
+        <div class="slide">
+            <div id="h-placeholder-1"></div>
+            <h2 class="slide-title"><i class="fa-solid fa-user-tie"></i> ព័ត៌មានសាស្ត្រាចារ្យ និងមុខវិជ្ជា</h2>
+            <div class="content-body two-column">
+                <div style="position: relative; width: 20vw; height: 28vw; margin: auto;">
+                    <div style="position: absolute; top: 1.5vw; left: -1.5vw; width: 100%; height: 100%; background: rgba(2, 132, 199, 0.1); border-radius: 2vw; z-index: 0;"></div>
+                    <img src="Lim.jpg" style="position: relative; width: 100%; height: 100%; border-radius: 2vw; object-fit: cover; box-shadow: 0 15px 35px rgba(0,0,0,0.15); z-index: 1; border: 4px solid white;" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'">
+                </div>
+                <div style="padding-left: 2vw;">
+                    <h3 style="font-size: 2.8vw; color: var(--accent-blue); font-family: 'Suwannaphum'; margin-bottom: 2vh;">សាស្ត្រាចារ្យ៖ សឿង លីម <span style="font-size: 1.8vw; color: var(--text-muted);">(Soeurng LIM)</span></h3>
+                    <div class="card" style="border-left: none; border-top: 4px solid var(--accent-blue); padding: 3vh; background: #FFFFFF;">
+                        <p><b><i class="fa-solid fa-graduation-cap text-blue"></i> គុណវុឌ្ឍិ៖</b> បរិញ្ញាបត្រជាន់ខ្ពស់ (Master's Degree) - ព័ត៌មានវិទ្យា</p>
+                        <p><b><i class="fa-solid fa-phone text-blue"></i> ទូរស័ព្ទ៖</b> ០៦១ ២២៧ ៩៣៣</p>
+                        <p><b><i class="fa-solid fa-envelope text-blue"></i> អ៊ីម៉ែល៖</b> soeurnglim@gmail.com</p>
+                        <hr style="margin: 2vh 0; border: 1px solid #E2E8F0;">
+                        <p><b><i class="fa-solid fa-star text-blue"></i> ក្រេឌីត៖</b> ៣ ក្រេឌីត (3 Credits)</p>
+                        <p><b><i class="fa-solid fa-clipboard-check text-blue"></i> មុខវិជ្ជាមុន (Prerequisite)៖</b> ការសរសេរកម្មវិធី Python មូលដ្ឋាន</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Main Footer for Screen View -->
+    <div class="global-footer" id="mainFooter">
+        <div class="footer-left">
+            <img src="Lim.jpg" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'" alt="Professor">
+            <span>សាស្ត្រាចារ្យ៖ សឿង លីម (Soeurng LIM)</span>
+        </div>
+        <!-- ទុកអត្តសញ្ញាណនេះសម្រាប់កូដ JS រត់មក Update -->
+        <div class="slide-counter" id="screenSlideCounter">កំពុងរៀបចំ...</div>
+    </div>
+
+</div>
+
+<script>
+    const slideWrapper = document.getElementById('slideWrapper');
+    const headerHTML = document.getElementById('headerTemplate').innerHTML;
+    const khNums = ["០", "១", "២", "៣", "៤", "៥", "៦", "៧", "៨", "៩"];
+    function toKh(n) { return n.toString().split('').map(d => khNums[parseInt(d)]).join(''); }
+
+    // Big-O Chart SVG
+    const bigOSVG = `
+        <svg viewBox="0 0 600 350" xmlns="http://www.w3.org/2000/svg" style="width:100%; height:100%; font-family:'Lato', sans-serif;">
+            <defs>
+                <marker id="arrow" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                    <path d="M 0 0 L 10 5 L 0 10 z" fill="#475569" />
+                </marker>
+            </defs>
+            <line x1="50" y1="280" x2="550" y2="280" stroke="#CBD5E1" stroke-width="1" stroke-dasharray="4,4"/>
+            <line x1="50" y1="220" x2="550" y2="220" stroke="#CBD5E1" stroke-width="1" stroke-dasharray="4,4"/>
+            <line x1="50" y1="160" x2="550" y2="160" stroke="#CBD5E1" stroke-width="1" stroke-dasharray="4,4"/>
+            <line x1="50" y1="100" x2="550" y2="100" stroke="#CBD5E1" stroke-width="1" stroke-dasharray="4,4"/>
+
+            <line x1="50" y1="40" x2="50" y2="300" stroke="#475569" stroke-width="3" marker-start="url(#arrow)"/>
+            <line x1="50" y1="300" x2="560" y2="300" stroke="#475569" stroke-width="3" marker-end="url(#arrow)"/>
+            
+            <text x="35" y="170" transform="rotate(-90, 35, 170)" font-size="16" font-weight="bold" fill="#475569" text-anchor="middle">ប្រតិបត្តិការ (Operations/Time)</text>
+            <text x="300" y="335" font-size="16" font-weight="bold" fill="#475569" text-anchor="middle">ទំហំទិន្នន័យ (Elements 'n')</text>
+
+            <line x1="50" y1="280" x2="550" y2="280" stroke="#059669" stroke-width="4"/>
+            <text x="500" y="270" font-size="18" font-weight="bold" fill="#059669">O(1)</text>
+
+            <path d="M 50 300 Q 150 220 550 200" fill="none" stroke="#0284C7" stroke-width="4"/>
+            <text x="500" y="190" font-size="18" font-weight="bold" fill="#0284C7">O(log n)</text>
+
+            <line x1="50" y1="300" x2="450" y2="50" stroke="#D97706" stroke-width="4"/>
+            <text x="400" y="70" font-size="18" font-weight="bold" fill="#D97706">O(n)</text>
+
+            <path d="M 50 300 Q 150 300 250 50" fill="none" stroke="#DC2626" stroke-width="4"/>
+            <text x="210" y="70" font-size="18" font-weight="bold" fill="#DC2626">O(n²)</text>
+            
+            <polygon points="50,40 50,300 250,50" fill="#DC2626" opacity="0.05"/>
+        </svg>
+    `;
+
+    const chapter1Data = [
+        // 1. Syllabus
+        { t: "១. គម្រោងបង្រៀនប្រចាំឆមាស (Course Syllabus)", type: "grid", c: [
+            { h: "<i class='fa-solid fa-list-ol keyword-icon'></i> ពាក់កណ្តាលឆមាសទី ១", p: `
+                <ul style='list-style:none; line-height: 2.2; margin-left: 0; padding-left: 0;'>
+                    <li style='color: var(--accent-red); font-size: 1.35vw; font-weight: bold;'><i class='fa-solid fa-arrow-right text-red' style='margin-right: 8px;'></i> ជំពូក១: រំលឹកពី <b>Advanced Data Structures and Algorithms</b> (ថ្ងៃនេះ)</li>
+                    <li style='font-size: 1.35vw;'><i class='fa-regular fa-circle text-main' style='margin-right: 8px;'></i> ជំពូក២: ការសរសេរកម្មវិធីតម្រង់ទិសវត្ថុ (OOP) & Memory</li>
+                    <li style='font-size: 1.35vw;'><i class='fa-regular fa-circle text-main' style='margin-right: 8px;'></i> ជំពូក៣: <b>Linear Data Structures</b> (Arrays, Stacks, Queues)</li>
+                    <li style='font-size: 1.35vw;'><i class='fa-regular fa-circle text-main' style='margin-right: 8px;'></i> ជំពូក៤: <b>Linked Lists</b> (Singly, Doubly)</li>
+                </ul>` 
+            },
+            { h: "<i class='fa-solid fa-network-wired keyword-icon'></i> ពាក់កណ្តាលឆមាសទី ២", p: `
+                <ul style='list-style:none; line-height: 2.2; margin-left: 0; padding-left: 0;'>
+                    <li style='font-size: 1.35vw;'><i class='fa-regular fa-circle text-main' style='margin-right: 8px;'></i> ជំពូក៥: <b>Trees</b> & Binary Search Trees</li>
+                    <li style='font-size: 1.35vw;'><i class='fa-regular fa-circle text-main' style='margin-right: 8px;'></i> ជំពូក៦: <b>Graphs</b> & Hashing Tables</li>
+                    <li style='font-size: 1.35vw;'><i class='fa-regular fa-circle text-main' style='margin-right: 8px;'></i> ជំពូក៧: Sorting & Searching Algorithms</li>
+                    <li style='font-size: 1.35vw;'><i class='fa-regular fa-circle text-main' style='margin-right: 8px;'></i> ជំពូក៨: Dynamic Programming & <b>Artificial Intelligence (AI)</b></li>
+                </ul>` 
+            }
+        ]},
+
+        // 2. Objectives
+        { t: "២. វត្ថុបំណងនៃជំពូកទី ១ (Chapter Objectives)", type: "grid", c: [
+            { h: "<i class='fa-solid fa-server keyword-icon'></i> ស្វែងយល់ពី DSA", p: "យល់ច្បាស់ពីនិយមន័យនៃ <b><i class='fa-solid fa-sitemap tech-icon'></i>Data Structures</b> និង <b><i class='fa-solid fa-gears tech-icon'></i>Algorithms</b> ហើយដឹងពីមូលហេតុដែលយើងត្រូវសិក្សាវាក្នុងមុខវិជ្ជា Data Science។" },
+            { h: "<i class='fa-solid fa-gauge-high keyword-icon'></i> ការវិភាគប្រសិទ្ធភាព", p: "ចេះបែងចែករវាង <b><i class='fa-solid fa-stopwatch tech-icon'></i>Time Complexity</b> (ល្បឿនប្រតិបត្តិការ) និង <b><i class='fa-solid fa-memory tech-icon'></i>Space Complexity</b> (ទំហំអង្គចងចាំដែលប្រើប្រាស់)។" },
+            { h: "<i class='fa-solid fa-chart-line keyword-icon'></i> Big-O Notation", p: "ស្គាល់ និងអាចសរសេរ <b><i class='fa-solid fa-chart-line tech-icon'></i>Big-O Notation</b> ដើម្បីវាស់ស្ទង់ល្បឿននៃកូដក្នុងករណីអាក្រក់បំផុត (Worst-case Scenario)។" },
+            { h: "<i class='fa-solid fa-laptop-code keyword-icon'></i> ការអនុវត្តជាក់ស្តែង", p: "អាចវាស់ស្ទង់កូដ Python ថាតើវាដំណើរការក្នុងកម្រិត O(1), O(n), ឬ O(n²) ដើម្បីសរសេរកម្មវិធីឲ្យដើរលឿនបំផុត។" }
+        ]},
+
+        // 3. ToC
+        { t: "៣. មាតិកានៃជំពូក (Table of Contents)", type: "card", c: `
+            <ul style="list-style: none; padding-left: 2vw; line-height: 2.1;">
+                <li><i class="fa-solid fa-server text-blue" style="width:2vw;"></i> ៤ ដល់ ៥. សេចក្តីផ្តើមអំពី <b>Data Structures</b> និង <b>Algorithms</b></li>
+                <li><i class="fa-solid fa-gauge-high text-blue" style="width:2vw;"></i> ៦. ការវិភាគ <b>Time & Space Complexity</b></li>
+                <li><i class="fa-solid fa-chart-line text-blue" style="width:2vw;"></i> ៧ ដល់ ៨. ទិដ្ឋភាពទូទៅនៃ <b>Big-O Notation</b> និងករណី Worst-case</li>
+                <li><i class="fa-brands fa-python text-blue" style="width:2vw;"></i> ៩ ដល់ ១២. ករណីសិក្សា និងលំហាត់វាស់ស្ទង់ល្បឿនកូដ (O(1), O(n), O(n²), O(log n))</li>
+                <li><i class="fa-solid fa-book-open-reader text-blue" style="width:2vw;"></i> ១៣ ដល់ ១៥. សរុបការអនុវត្ត សទ្ទានុក្រម និងសង្ខេបមេរៀន</li>
+                <li><i class="fa-solid fa-book-bookmark text-blue" style="width:2vw;"></i> ១៦. ឯកសារយោង និងគន្ថនិទ្ទេស (References)</li>
+            </ul>
+        `},
+        
+        // 4. Data Structures Intro + 2 Case Studies
+        { t: "៤. សេចក្តីផ្តើមអំពី <b><i class='fa-solid fa-server tech-icon'></i> Data Structures</b>", type: "split", img: "https://images.unsplash.com/photo-1507842217343-583bb7270b66?auto=format&fit=crop&w=800&q=80", c: `
+            <div style="display:flex; flex-direction:column; height:100%; justify-content:center;">
+                <p><b><i class='fa-solid fa-server keyword-icon'></i> Data Structures:</b> ជារបៀបរៀបចំ និងស្តុកទុកទិន្នន័យក្នុងកុំព្យូទ័រ ដើម្បីឲ្យយើងអាចទាញយកមកប្រើប្រាស់ ឬកែប្រែបានលឿន និងមានប្រសិទ្ធភាព។</p>
+                <div class="narrative-box" style="margin-top:1.5vh;">
+                    <div class="narrative-header"><i class="fa-solid fa-kitchen-set"></i> ករណីសិក្សាទី១៖ ការរៀបចំទូទឹកកក</div>
+                    <p class="narrative-text">ការទិញបន្លែ ត្រីសាច់ មកគរទុកចោលក្នុងប្រអប់តែមួយ ធ្វើឱ្យពិបាករក។ ផ្ទុយទៅវិញ ការរៀបចំដាក់ថតដាច់ដោយឡែកពីគ្នា ជួយឱ្យអ្នករកឃើញវត្ថុធាតុដើមបានភ្លាមៗ។</p>
+                </div>
+                <div class="narrative-box">
+                    <div class="narrative-header"><i class="fa-solid fa-book"></i> ករណីសិក្សាទី២៖ បណ្ណាល័យសៀវភៅ</div>
+                    <p class="narrative-text">បើសៀវភៅរាប់ពាន់ក្បាលត្រូវគរចោលជាគំនរ អ្នកនឹងរកមិនឃើញទេ។ ប៉ុន្តែបណ្ណាល័យ (Data Structure) រៀបចំវាជាជួរ តាមផ្នែក និងអក្ខរក្រម ដែលធ្វើឲ្យការស្វែងរកលឿនបំផុត។</p>
+                </div>
+            </div>
+        `},
+
+        // 5. Algorithms Intro + 2 Case Studies
+        { t: "៥. សេចក្តីផ្តើមអំពី <b><i class='fa-solid fa-gears tech-icon'></i> Algorithms</b>", type: "split", img: "https://images.unsplash.com/photo-1512453979798-5ea266f8880c?auto=format&fit=crop&w=800&q=80", c: `
+            <div style="display:flex; flex-direction:column; height:100%; justify-content:center;">
+                <p><b><i class='fa-solid fa-gears keyword-icon'></i> Algorithms:</b> ជាសំណុំនៃជំហាន ឬរូបមន្តតក្កវិជ្ជាច្បាស់លាស់ សម្រាប់ដោះស្រាយបញ្ហាណាមួយពីចំណុចចាប់ផ្តើមដល់ចំណុចបញ្ចប់។</p>
+                <div class="narrative-box" style="margin-top:1.5vh;">
+                    <div class="narrative-header"><i class="fa-solid fa-utensils"></i> ករណីសិក្សាទី១៖ សៀវភៅធ្វើម្ហូប (Recipe)</div>
+                    <p class="narrative-text">ទោះអ្នកមានគ្រឿងផ្សំ (Data) ល្អយ៉ាងណា បើគ្មានជំហានចង្អុលបង្ហាញពីរបៀបឆា ឬស្ងោរឱ្យបានត្រឹមត្រូវទេនោះ ម្ហូបនឹងមិនឆ្ងាញ់ឡើយ។ សៀវភៅធ្វើម្ហូបគឺប្រៀបដូចជា <b>Algorithm</b>។</p>
+                </div>
+                <div class="narrative-box">
+                    <div class="narrative-header"><i class="fa-solid fa-map-location-dot"></i> ករណីសិក្សាទី២៖ Google Maps</div>
+                    <p class="narrative-text">ផែនទីមានទិន្នន័យផ្លូវទាំងអស់ (Data Structure)។ ពេលអ្នកចង់ទៅផ្សារទំនើប Google ប្រើប្រាស់ <b>Routing Algorithm</b> ដើម្បីគណនាជំហានរាប់ពាន់ រួចប្រាប់អ្នកពីផ្លូវដែលខ្លី និងចំណាយពេលតិចបំផុត។</p>
+                </div>
+            </div>
+        `},
+
+        // 6. Time and Space
+        { t: "៦. ការវិភាគប្រសិទ្ធភាពកូដ <b>(Complexity Analysis)</b>", type: "grid", c: [
+            { h: "<i class='fa-solid fa-stopwatch keyword-icon'></i> Time Complexity", p: "<b>(ល្បឿនដំណើរការ)</b><br>វាស់ស្ទង់ថាតើ ក្បួនដោះស្រាយនេះត្រូវប្រើពេលយូរប៉ុណ្ណា ឬត្រូវអនុវត្តប៉ុន្មានជំហាន ពេលដែលទិន្នន័យមានចំនួនកាន់តែច្រើន (n កើនឡើង)។<br><br><span style='color:var(--accent-blue); font-size:1.2vw;'><i class='fa-solid fa-download'></i> ឧទាហរណ៍៖ ការផ្ញើឯកសារ 1GB តាម Internet ប្រើពេល ១ម៉ោង បើ 10GB ប្រើពេល ១០ម៉ោង (Time)។</span>" },
+            { h: "<i class='fa-solid fa-memory keyword-icon'></i> Space Complexity", p: "<b>(ទំហំអង្គចងចាំ)</b><br>វាស់ស្ទង់ថាតើ ក្បួនដោះស្រាយនេះត្រូវប្រើប្រាស់ទំហំ RAM ប៉ុន្មានដើម្បីផ្ទុកទិន្នន័យបណ្តោះអាសន្ន ពេលកំពុងដំណើរការ។<br><br><span style='color:var(--accent-green); font-size:1.2vw;'><i class='fa-solid fa-microchip'></i> ឧទាហរណ៍៖ ការបើក Chrome ផ្ទាំងច្រើន ស៊ីទំហំ RAM ច្រើន ធ្វើឲ្យម៉ាស៊ីនគាំង (Space)។</span>" }
+        ]},
+
+        // 7. Big-O Overview (Chart)
+        { t: "៧. ទិដ្ឋភាពទូទៅនៃ <b><i class='fa-solid fa-chart-line tech-icon'></i>Big-O Notation</b>", type: "split", svg: bigOSVG, c: `
+            <div style="display:flex; flex-direction:column; height:100%; justify-content:center;">
+                <p><b><i class='fa-solid fa-chart-line keyword-icon'></i> Big-O Notation:</b> គឺជាភាសាគណិតវិទ្យាដែលប្រើសម្រាប់វាស់វែងល្បឿន និងប្រសិទ្ធភាពនៃកូដ ដោយគិតពីករណីដែលប្រើពេលយូរបំផុត <b>(Worst-case Scenario)</b>។</p>
+                <div class="narrative-box">
+                    <div class="narrative-header"><i class="fa-solid fa-layer-group"></i> ចំណាត់ថ្នាក់ល្បឿនកូដ (ពីលឿនទៅយឺត)</div>
+                    <ul style="margin-left:2vw; margin-top:0.5vh; font-size:1.15vw; line-height:1.7;">
+                        <li><b style="color:var(--accent-green);">O(1):</b> លឿនថេរ (Excellent)</li>
+                        <li><b style="color:var(--accent-blue);">O(log n):</b> លឿនខ្លាំង (Good)</li>
+                        <li><b style="color:var(--accent-yellow);">O(n):</b> ល្បឿនមធ្យម (Fair)</li>
+                        <li><b style="color:var(--accent-red);">O(n²):</b> យឺតខ្លាំង (Terrible)</li>
+                    </ul>
+                </div>
+            </div>
+        `},
+
+        // 8. Worst-case Concept
+        { t: "៨. ហេតុអ្វីយើងវាស់ <b>Worst-case Scenario</b>?", type: "card", c: `
+            <div class="two-column-equal">
+                <div>
+                    <div class="narrative-box">
+                        <div class="narrative-header"><i class="fa-solid fa-magnifying-glass"></i> ករណីទី១៖ ការស្វែងរកឈ្មោះក្នុងបញ្ជី</div>
+                        <p class="narrative-text">
+                            - <b>Best-case (O(1)):</b> ឈ្មោះដែលយើងរក នៅលេខរៀងទី១ លឿនបំផុត។<br>
+                            - <b>Worst-case (O(n)):</b> ឈ្មោះនៅចុងក្រោយគេ ឬគ្មានសោះ។ យើងត្រូវរកមើលតាំងពីដើមដល់ចប់ ដែលប្រើពេលយូរបំផុត។
+                        </p>
+                    </div>
+                </div>
+                <div>
+                    <div class="narrative-box">
+                        <div class="narrative-header"><i class="fa-solid fa-car"></i> ករណីទី២៖ ការរកកន្លែងចតឡាន</div>
+                        <p class="narrative-text">ពេលយើងរៀបចំគម្រោងធ្វើដំណើរ យើងមិនរំពឹងថាទៅដល់ផ្សារមានកន្លែងចតភ្លាមនោះទេ (Best-case)។ យើងត្រូវត្រៀមទុកពេលបើកឡានវិលរកគ្រប់ជាន់រហូតដល់កន្លែងចុងក្រោយ (Worst-case) ទើបមិនខកជើងយន្តហោះ។</p>
+                    </div>
+                </div>
+            </div>
+            <div class="highlight-note" style="margin-top:2vh;">
+                <p style="margin: 0; font-size: 1.3vw; text-align: center;"><i class="fa-solid fa-triangle-exclamation text-red" style="font-size:1.5vw; margin-right:1vw;"></i> ក្នុងវិស័យ <b>Software Engineering</b> យើងត្រូវសរសេរកូដទប់ទល់នឹងករណីដែលអាក្រក់បំផុត (Worst-case <b>O(...)</b>) ជានិច្ច ដើម្បីធានាថាកម្មវិធីមិនគាំងពេលមានទិន្នន័យប្រើប្រាស់ច្រើន។</p>
+            </div>
+        `},
+
+        // 9. O(1) Constant Time
+        { t: "៩. ករណីសិក្សា <b>O(1) - Constant Time</b>", type: "card", c: `
+            <div class="two-column-equal">
+                <div>
+                    <div class="narrative-box">
+                        <div class="narrative-header" style="color:var(--accent-green);"><i class="fa-solid fa-bolt"></i> ករណីទី១៖ យកទិន្នន័យតាម Index</div>
+                        <p class="narrative-text">ការទាញយក <code>arr[0]</code> គឺកុំព្យូទ័រលោតទៅយកនៅទីតាំងនោះភ្លាមៗ។ មិនថា Array នោះមានទំហំ ៥ ឬ ១លាន នោះទេ កូដប្រើប្រាស់តែ ១ជំហានដដែល។</p>
+                    </div>
+                    <div class="narrative-box">
+                        <div class="narrative-header" style="color:var(--accent-green);"><i class="fa-solid fa-calculator"></i> ករណីទី២៖ ឆែកលេខគូ ឬ សេស</div>
+                        <p class="narrative-text">ដើម្បីដឹងថាលេខមួយជាលេខគូ យើងគ្រាន់តែធ្វើប្រមាណវិធី <code>n % 2 == 0</code>។ វាធ្វើការគណនាតែម្តងគត់ ទទួលបានលទ្ធផល។</p>
+                    </div>
+                </div>
+                <div style="display:flex; flex-direction:column; gap:1vh;">
+                    <div class="visual-frame" style="height: 18vh; border-radius: 0.6vw;">
+                        <img src="https://images.unsplash.com/photo-1579567761406-4684ee0c75b6?auto=format&fit=crop&w=800&q=80">
+                    </div>
+                    <div class="code-wrapper" style="margin-top:0;">
+                        <div class="code-header"><span><i class="fa-brands fa-python"></i> O(1) Python Code</span></div>
+                        <div class="code-content"><pre>
+<span class="kw">def</span> is_even(number):
+    <span class="kw">return</span> number % <span class="num">2</span> == <span class="num">0</span> <span class="com"># O(1) ជំហានថេរ</span></pre></div>
+                    </div>
+                </div>
+            </div>
+            <div class="highlight-note"><i class="fa-solid fa-laptop-code"></i> <b>លំហាត់៖</b> សរសេរកូដ Python ដើម្បីទាញយកទិន្នន័យពី List តាម Index និងបញ្ជាក់ពីល្បឿន O(1) នេះនៅក្នុង Workbook។</div>
+        `},
+
+        // 10. O(n) Linear Time
+        { t: "១០. ករណីសិក្សា <b>O(n) - Linear Time</b>", type: "card", c: `
+            <div class="two-column-equal">
+                <div>
+                    <div class="narrative-box">
+                        <div class="narrative-header" style="color:var(--accent-yellow);"><i class="fa-solid fa-arrow-trend-up"></i> ករណីទី១៖ ការ Print ទិន្នន័យទាំងអស់</div>
+                        <p class="narrative-text">បើយើងមានសៀវភៅ ១០ទំព័រ យើងអាន ១០ដង។ បើយើងប្រើ <code>For Loop</code> បោះពុម្ពបញ្ជីឈ្មោះសិស្ស ១០០នាក់ នោះកូដត្រូវដើរ ១០០ដង តាមចំនួនទិន្នន័យ។</p>
+                    </div>
+                    <div class="narrative-box">
+                        <div class="narrative-header" style="color:var(--accent-yellow);"><i class="fa-solid fa-trophy"></i> ករណីទី២៖ រកពិន្ទុខ្ពស់បំផុត (Find Max)</div>
+                        <p class="narrative-text">ដើម្បីរកសិស្សដែលពូកែជាងគេក្នុងថ្នាក់ យើងមិនអាចលោតទៅមើលតែម្នាក់ហើយសម្រេចនោះទេ។ យើងត្រូវឆែកមើលពិន្ទុសិស្សគ្រប់គ្នាទាំងអស់ម្តងមួយៗ។</p>
+                    </div>
+                </div>
+                <div style="display:flex; flex-direction:column; gap:1vh;">
+                    <div class="visual-frame" style="height: 18vh; border-radius: 0.6vw;">
+                        <img src="https://images.unsplash.com/photo-1544441893-675973e31985?auto=format&fit=crop&w=800&q=80">
+                    </div>
+                    <div class="code-wrapper" style="margin-top:0;">
+                        <div class="code-header"><span><i class="fa-brands fa-python"></i> O(n) Python Code</span></div>
+                        <div class="code-content"><pre>
+<span class="kw">def</span> print_all(data):
+    <span class="kw">for</span> item <span class="kw">in</span> data: <span class="com"># Loop ដើរ 'n' ដង</span>
+        <span class="fn">print</span>(item)   <span class="com"># ល្បឿន O(n)</span></pre></div>
+                    </div>
+                </div>
+            </div>
+            <div class="highlight-note"><i class="fa-solid fa-laptop-code"></i> <b>លំហាត់៖</b> បង្កើត <code>For Loop</code> ដើម្បីបូកសរុបលេខទាំងអស់ក្នុង List មួយ និងវាស់ល្បឿន O(n) នៅក្នុង Workbook។</div>
+        `},
+
+        // 11. O(n^2) Quadratic Time
+        { t: "១១. ករណីសិក្សា <b>O(n²) - Quadratic Time</b>", type: "card", c: `
+            <div class="two-column-equal">
+                <div>
+                    <div class="narrative-box">
+                        <div class="narrative-header" style="color:var(--accent-red);"><i class="fa-solid fa-handshake"></i> ករណីទី១៖ ការចាប់ដៃគ្នាគ្រប់គ្នា</div>
+                        <p class="narrative-text">មនុស្ស ៥នាក់ចាប់ដៃគ្នាគ្រប់គ្នា ត្រូវចាប់ដៃ ២៥ដង (5x5)។ ទិន្នន័យកើនបន្តិច តែជំហាននៃកូដកើនឡើងគុណនឹងទ្វេដង។ ជារឿយៗកើតឡើងពេលប្រើ <code>Nested Loop</code> (២ជាន់)។</p>
+                    </div>
+                    <div class="narrative-box">
+                        <div class="narrative-header" style="color:var(--accent-red);"><i class="fa-solid fa-copy"></i> ករណីទី២៖ ការរកទិន្នន័យស្ទួន (Duplicates)</div>
+                        <p class="narrative-text">ដើម្បីដឹងថាក្នុងបញ្ជីមានឈ្មោះជាន់គ្នាឬទេ វិធីដែលអន់បំផុតគឺយកឈ្មោះទី១ ទៅផ្ទៀងជាមួយឈ្មោះផ្សេងទាំងអស់ រួចយកឈ្មោះទី២ ទៅផ្ទៀងម្តងទៀត វិលជុំ។</p>
+                    </div>
+                </div>
+                <div style="display:flex; flex-direction:column; gap:1vh;">
+                    <div class="visual-frame" style="height: 18vh; border-radius: 0.6vw;">
+                        <img src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=800&q=80">
+                    </div>
+                    <div class="code-wrapper" style="margin-top:0;">
+                        <div class="code-header"><span><i class="fa-brands fa-python"></i> O(n²) Python Code</span></div>
+                        <div class="code-content"><pre>
+<span class="kw">def</span> print_pairs(data):
+    <span class="kw">for</span> i <span class="kw">in</span> data:        <span class="com"># Loop ទី១ (n ដង)</span>
+        <span class="kw">for</span> j <span class="kw">in</span> data:    <span class="com"># Loop ទី២ (n ដង)</span>
+            <span class="fn">print</span>(i, j)   <span class="com"># ល្បឿន O(n * n) = O(n²)</span></pre></div>
+                    </div>
+                </div>
+            </div>
+            <div class="highlight-note"><i class="fa-solid fa-laptop-code"></i> <b>លំហាត់៖</b> សរសេរកូដ <code>Nested Loop</code> រកគូលេខដែលបូកចូលគ្នាស្មើ ១០ និងសង្កេតមើលភាពយឺតរបស់វាក្នុង Workbook។</div>
+        `},
+
+        // 12. O(log n) Logarithmic Time
+        { t: "១២. ករណីសិក្សា <b>O(log n) - Logarithmic Time</b>", type: "card", c: `
+            <div class="two-column-equal">
+                <div>
+                    <div class="narrative-box">
+                        <div class="narrative-header" style="color:var(--accent-blue);"><i class="fa-solid fa-book"></i> ករណីទី១៖ រកពាក្យក្នុងវចនានុក្រម</div>
+                        <p class="narrative-text">ពេលរកពាក្យ យើងបើកចំកណ្តាលសៀវភៅ។ បើអក្សរធំជាង យើងហែកសៀវភៅពាក់កណ្តាលចោល រួចយកពាក់កណ្តាលទៀតមកកាត់បន្តរហូតដល់ឃើញ។ នេះហៅថា <b>Binary Search</b>។</p>
+                    </div>
+                    <div class="narrative-box">
+                        <div class="narrative-header" style="color:var(--accent-blue);"><i class="fa-solid fa-gamepad"></i> ករណីទី២៖ ល្បែងទាយលេខ (Higher/Lower)</div>
+                        <p class="narrative-text">បើគេឲ្យទាយលេខពី ១ ដល់ ១០០ ជម្រើសដែលឆ្លាតបំផុតគឺទាយលេខ ៥០ សិន។ បើគេប្រាប់ថាធំជាងនេះ យើងកាត់ជម្រើសចោលបាន ៥០លេខភ្លាមៗ លឿនជាងការទាយលេខរៀងគ្នា។</p>
+                    </div>
+                </div>
+                <div style="display:flex; flex-direction:column; gap:1vh;">
+                    <div class="visual-frame" style="height: 18vh; border-radius: 0.6vw;">
+                        <img src="https://images.unsplash.com/photo-1457369804613-52c61a468e7d?auto=format&fit=crop&w=800&q=80">
+                    </div>
+                    <div class="code-wrapper" style="margin-top:0;">
+                        <div class="code-header"><span><i class="fa-brands fa-python"></i> Concept</span></div>
+                        <div class="code-content"><pre>
+<span class="com"># រាល់ការដំណើរការ ១ជំហាន ទិន្នន័យ (n)</span>
+<span class="com"># ត្រូវបានកាត់បន្ថយពាក់កណ្តាលជានិច្ច។</span>
+<span class="com"># ដូច្នេះទិន្នន័យ ១លាន រកយ៉ាងច្រើន ២០ដង។</span></pre></div>
+                    </div>
+                </div>
+            </div>
+            <div class="highlight-note"><i class="fa-solid fa-laptop-code"></i> <b>លំហាត់៖</b> សរសេរ Function ដើម្បីបោះពុម្ពទិន្នន័យម្តងពាក់កណ្តាលៗ (Divide by 2) ដើម្បីសង្កេតមើលជំហាន O(log n)។</div>
+        `},
+
+        // 13. Practice Note (General Recap)
+        { t: "១៣. សរុបផ្នែកអនុវត្តន៍ (Practice Overview)", type: "card", c: `
+            <div style="text-align:center; padding: 4vh 2vw;">
+                <i class="fa-solid fa-book-open-reader" style="font-size: 6vw; color: var(--accent-blue); margin-bottom: 2vh;"></i>
+                <h3 style="font-size: 2.5vw; color: var(--accent-blue); font-family: 'Suwannaphum'; margin-bottom: 1.5vh;">ផ្នែកអនុវត្តន៍ជាក់ស្តែងសរុបប្រចាំជំពូកទី ១</h3>
+                <p style="font-size: 1.8vw; color: var(--text-main); margin-bottom: 3vh;">បន្ទាប់ពីយល់ទ្រឹស្តី និស្សិតត្រូវអនុវត្តការវិភាគកូដ Python ថាតើវាដំណើរការក្នុងកម្រិត <b>O(1), O(n) ឬ O(n²)</b> និងប្រើប្រាស់ Module <code>time</code> ដើម្បីវាស់ល្បឿនប្រតិបត្តិការកូដពិតៗនៅលើកុំព្យូទ័រ។</p>
+                <div class="highlight-note" style="display:inline-block; text-align: left; padding: 2vh;">
+                    <p style="margin: 0; font-size: 1.6vw;">
+                        <i class="fa-solid fa-bell"></i> ចំណាំ៖ លំហាត់អនុវត្តន៍កូដ Python និងការវាស់ល្បឿន ត្រូវបានរៀបចំយ៉ាងលម្អិតនៅក្នុង <br><b>"សៀវភៅលំហាត់អនុវត្តន៍ (Workbook) - ជំពូកទី ១"</b>។
+                    </p>
+                </div>
+            </div>
+        `},
+
+        // 14. Key Terms
+        { t: "១៤. សទ្ទានុក្រម និងពាក្យគន្លឹះ (Key Terms)", type: "grid", c: [
+            { h: "<i class='fa-solid fa-gears keyword-icon'></i> <b>Algorithm</b>", p: "ក្បួនដោះស្រាយ ឬរូបមន្តសម្រាប់ប្រាប់កុំព្យូទ័រឲ្យធ្វើការពីជំហានមួយទៅជំហានមួយ ដើម្បីរកចម្លើយឱ្យបញ្ហាណាមួយ។" },
+            { h: "<i class='fa-solid fa-stopwatch keyword-icon'></i> <b>Time & Space Complexity</b>", p: "ការវាស់ស្ទង់ថាតើ Algorithm មួយស៊ីពេលដំណើរការ (Time) និងស៊ីទំហំ Memory (Space) ប៉ុន្មាន ពេលទិន្នន័យ (n) កើនឡើង។" },
+            { h: "<i class='fa-solid fa-chart-line keyword-icon'></i> <b>Big-O Notation</b>", p: "ភាសាគណិតវិទ្យាប្រើសម្រាប់កំណត់ល្បឿន ឬទំហំ Memory របស់កូដ ក្នុងករណីអាក្រក់បំផុត (Worst-case)។" },
+            { h: "<i class='fa-solid fa-triangle-exclamation keyword-icon'></i> <b>Worst-case Scenario</b>", p: "ស្ថានភាពអាក្រក់បំផុត ដែលកូដត្រូវប្រើប្រាស់ចំនួនជំហានច្រើនបំផុតទើបបញ្ចប់ការងារ (ឧទាហរណ៍ ទិន្នន័យនៅចុងបញ្ជីគេបង្អស់)។" }
+        ]},
+
+        // 15. Summary
+        { t: "១៥. សង្ខេបជំពូកទី ១ (Chapter Summary)", type: "card", c: `
+            <div style="line-height:1.8;">
+                <p><i class="fa-solid fa-check text-blue"></i> <b>DSA គឺចាំបាច់សម្រាប់ AI & Big Data:</b> ពេលទិន្នន័យមានរាប់លាន របៀបដែលអ្នករៀបចំវា (Data Structure) និងរបៀបដែលអ្នកទាញវា (Algorithm) ជាអ្នកកាត់សេចក្តីថាកម្មវិធីរបស់អ្នកដើរ ឬគាំង។</p>
+                <p><i class="fa-solid fa-check text-blue"></i> <b>Big-O ប្រាប់ពី Scale មិនមែនវិនាទីទេ:</b> វាស់ស្ទង់ Big-O គឺវាស់ថាតើកូដមានជំហានកើនឡើងរបៀបណា មិនមែនវាស់ថាវាដើរប៉ុន្មានវិនាទីនោះទេ ព្រោះកុំព្យូទ័រម្នាក់ៗមានល្បឿនខុសគ្នា។</p>
+                <p><i class="fa-solid fa-check text-blue"></i> <b>ជៀសវាង Nested Loops បើអាច:</b> កូដដែលស្ថិតក្នុងកម្រិត <b>O(n²)</b> នឹងដើរយឺតខ្លាំងបំផុតពេលទិន្នន័យមានច្រើន។ យើងត្រូវរកវិធីទម្លាក់វាឲ្យមកនៅត្រឹម O(n) ឬ O(log n) វិញ។</p>
+            </div>
+        `},
+
+        // 16. References
+        { t: "១៦. ឯកសារយោង និងគន្ថនិទ្ទេស (References)", type: "list", c: [
+            "<b><i class='fa-solid fa-book text-blue' style='margin-right:0.5vw;'></i> Goodrich, M. T. (2013).</b> <i>Data Structures and Algorithms in Python</i>. Wiley. (ជំពូកទី ៣: Algorithm Analysis).",
+            "<b><i class='fa-solid fa-book text-blue' style='margin-right:0.5vw;'></i> Cormen, T. H. (2022).</b> <i>Introduction to Algorithms</i> (4th ed.). MIT Press.",
+            "<b><i class='fa-solid fa-project-diagram text-blue' style='margin-right:0.5vw;'></i> Visualgo.net:</b> <i>Sorting & Searching Animations:</i> <a href='https://visualgo.net/' style='color:var(--accent-blue); text-decoration:none;'>visualgo.net</a>",
+            "<b><i class='fa-solid fa-laptop-code text-blue' style='margin-right:0.5vw;'></i> LeetCode:</b> វេទិកាសម្រាប់ការអនុវត្តកូដ DSA និងវាស់ស្ទង់ Time/Space Complexity ប្រកបដោយប្រសិទ្ធភាព។"
+        ]}
+    ];
+
+    const container = document.getElementById('slideWrapper');
+
+    // Create main slides dynamically
+    chapter1Data.forEach((item, index) => {
+        const slide = document.createElement('div');
+        slide.className = 'slide';
+        
+        let bodyContent = '';
+        if(item.type === "split") {
+            let visual = item.img ? `<img src="${item.img}">` : (item.svg ? item.svg : '');
+            bodyContent = `<div class="two-column"><div class="card" style="height:100%; border:none; padding:0; background:transparent; justify-content:start;">${item.c}</div><div class="visual-frame">${visual}</div></div>`;
+        } else if(item.type === "two-equal") {
+            bodyContent = `<div class="two-column-equal">${item.c}</div>`;
+        } else if(item.type === "grid") {
+            bodyContent = `<div class="card-grid">${item.c.map(c => `<div class="card"><h4>${c.h}</h4><p style="margin:0;">${c.p}</p></div>`).join('')}</div>`;
+        } else if(item.type === "card") {
+            bodyContent = `<div class="card" style="height: 100%; justify-content: center; background:#FFFFFF;">${item.c}</div>`;
+        } else if(item.type === "table") {
+            let th = `<tr>${item.rows[0].map(h => `<th style="text-align:center;">${h}</th>`).join('')}</tr>`;
+            let trs = item.rows.slice(1).map(r => `<tr>${r.map((td, i) => `<td ${i>0 ? 'align="center"' : ''}>${td}</td>`).join('')}</tr>`).join('');
+            bodyContent = `<table><thead>${th}</thead><tbody>${trs}</tbody></table>`;
+        } else if(item.type === "list") {
+            bodyContent = `<div class="card" style="padding: 3vh 4vw; background:#FFFFFF;"><ul style="list-style:none; padding-left:1vw; line-height:2.2;">${item.c.map(l => `<li>${l}</li>`).join('')}</ul></div>`;
+        }
+
+        slide.innerHTML = `<div id="h-placeholder-${index}"></div> <h2 class="slide-title">${item.t}</h2> <div class="content-body">${bodyContent}</div>`;
+        container.appendChild(slide);
+    });
+
+    // Create Q&A Slide
+    const qaSlide = document.createElement('div');
+    qaSlide.className = 'slide';
+    qaSlide.innerHTML = `
+        <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; text-align: center;">
+            <h1 style="font-size: 5.4vw; color: var(--accent-blue); margin-bottom: 2vh;"><i class="fa-solid fa-comments"></i> សំណួរ និងការពិភាក្សា</h1>
+            <p style="font-size: 2.25vw; color: var(--text-muted); margin-bottom: 5vh;">សូមអរគុណនិស្សិតទាំងអស់សម្រាប់ការយកចិត្តទុកដាក់!</p>
+            <div style="display: flex; gap: 2vw; justify-content: center;">
+                <div style="background: #FFFFFF; padding: 2vh 3vw; border-radius: 5vw; border: 2px solid var(--accent-blue); box-shadow: 0 10px 20px rgba(0,0,0,0.05);">
+                    <p style="margin: 0; font-weight: bold; font-size: 1.8vw; color: var(--accent-blue);"><i class="fa-solid fa-envelope"></i> soeurnglim@gmail.com</p>
+                </div>
+                <div style="background: #FFFFFF; padding: 2vh 3vw; border-radius: 5vw; border: 2px solid #0088cc; box-shadow: 0 10px 20px rgba(0,0,0,0.05);">
+                    <p style="margin: 0; font-weight: bold; font-size: 1.8vw; color: #0088cc;"><i class="fa-brands fa-telegram"></i> ០៦១ ២២៧ ៩៣៣</p>
+                </div>
+            </div>
+        </div>
+    `;
+    container.appendChild(qaSlide);
+
+    // Create End Slide
+    const endSlide = document.createElement('div');
+    endSlide.className = 'slide';
+    endSlide.innerHTML = `
+        <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; text-align: center;">
+            <i class="fa-solid fa-flag-checkered" style="font-size: 5vw; color: var(--accent-green); margin-bottom: 2vh;"></i>
+            <h1 style="font-size: 4.5vw; color: var(--accent-blue); margin-bottom: 1vh;">បញ្ចប់ជំពូកទី ១</h1>
+            <p style="font-size: 2vw; color: var(--text-muted); margin-bottom: 5vh;">សូមអរគុណនិស្សិតទាំងអស់សម្រាប់ការយកចិត្តទុកដាក់!</p>
+            <div style="display: flex; gap: 2vw; justify-content: center;">
+                <div style="background: #FFFFFF; padding: 2vh 3vw; border-radius: 5vw; border: 2px solid var(--accent-blue); box-shadow: 0 10px 20px rgba(0,0,0,0.05);">
+                    <p style="margin: 0; font-weight: bold; font-size: 1.8vw; color: var(--accent-blue);"><i class="fa-solid fa-envelope"></i> soeurnglim@gmail.com</p>
+                </div>
+                <div style="background: #FFFFFF; padding: 2vh 3vw; border-radius: 5vw; border: 2px solid #0088cc; box-shadow: 0 10px 20px rgba(0,0,0,0.05);">
+                    <p style="margin: 0; font-weight: bold; font-size: 1.8vw; color: #0088cc;"><i class="fa-brands fa-telegram"></i> ០៦១ ២២៧ ៩៣៣</p>
+                </div>
+            </div>
+        </div>
+    `;
+    container.appendChild(endSlide);
+
+    // Create Next Chapter Slide
+    const nextChapSlide = document.createElement('div');
+    nextChapSlide.className = 'slide';
+    nextChapSlide.innerHTML = `
+        <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; text-align: center;">
+            <h2 style="font-size: 2.5vw; color: var(--text-muted); margin-bottom: 2vh;"><i class="fa-solid fa-forward-step"></i> ត្រៀមសម្រាប់សប្តាហ៍បន្ទាប់</h2>
+            <div class="card" style="background: #FFFFFF; border-left: 1vw solid var(--accent-yellow); padding: 4vh 6vw; box-shadow: 0 15px 30px rgba(0,0,0,0.1); border-radius: 1.5vw; margin-top: 2vh;">
+                <h1 style="font-size: 3.5vw; color: var(--accent-blue); margin-bottom: 1.5vh; font-family: 'Suwannaphum';">ជំពូកទី ២</h1>
+                <h2 style="font-size: 2.5vw; color: var(--text-main); margin: 0; font-family: 'Suwannaphum';">ការសរសេរកម្មវិធីតម្រង់ទិសវត្ថុ & អង្គចងចាំ<br><span style="font-size: 1.8vw; color: var(--text-muted); font-family: 'Lato';">(Object-Oriented Programming & Memory)</span></h2>
+            </div>
+            <p style="font-size: 1.6vw; color: var(--text-muted); margin-top: 4vh;"><i class="fa-solid fa-book-open"></i> សូមអានសៀវភៅគោលជំពូកទី២ ជាមុន ដើម្បីងាយស្រួលក្នុងការអនុវត្តកូដ!</p>
+        </div>
+    `;
+    container.appendChild(nextChapSlide);
+
+    // -----------------------------------------------------
+    // Initialize Navigation and Print Layouts (BUG FIXED)
+    // -----------------------------------------------------
+
+    // 1. Apply Global Header to all slides
+    document.querySelectorAll('[id^="h-placeholder"]').forEach(p => p.outerHTML = headerHTML);
+
+    // 2. Count Total Slides AFTER all dynamic injections are done
+    const slides = document.querySelectorAll('.slide');
+    const totalSlides = slides.length;
+    
+    // 3. Setup Print Footers & Avoid ID Duplication Bug
+    const mainFooter = document.getElementById('mainFooter');
+    const screenCounter = document.getElementById('screenSlideCounter'); // យកអត្តសញ្ញាណមេ មុនពេល Clone
+
+    slides.forEach((slide, index) => {
+        let printFooter = mainFooter.cloneNode(true);
+        printFooter.id = ''; // Remove ID from the wrapper
+        
+        let printCounter = printFooter.querySelector('.slide-counter');
+        printCounter.id = ''; // ដក ID ចេញពី Clone ដើម្បីកុំឲ្យជាន់គ្នា
+        printCounter.innerHTML = `ស្លាយទី ${toKh(index + 1)} នៃ ${toKh(totalSlides)}`; // ប្រើ "ស្លាយទី" ទាំងព្រីន ទាំងអេក្រង់
+        
+        printFooter.className = 'global-footer print-only-footer';
+        slide.appendChild(printFooter);
+    });
+
+    // 4. Update function for Screen display
+    let currentIdx = 0;
+    function update(idx) { 
+        slides.forEach(s => s.classList.remove('active')); 
+        slides[idx].classList.add('active'); 
+        currentIdx = idx; 
+        
+        // បញ្ចូលលេខទៅកាន់អេក្រង់មេដោយផ្ទាល់ (ធានាថាមិនខុសកន្លែង)
+        screenCounter.innerHTML = `ស្លាយទី ${toKh(idx + 1)} នៃ ${toKh(totalSlides)}`;
+    }
+
+    // 5. Allow Navigation by Clicking ONLY the arrows (So users can copy text elsewhere)
+    document.querySelector('.nav-right').addEventListener('click', (e) => { 
+        e.stopPropagation(); 
+        if (currentIdx < totalSlides - 1) update(currentIdx + 1); 
+    });
+    
+    document.querySelector('.nav-left').addEventListener('click', (e) => { 
+        e.stopPropagation(); 
+        if (currentIdx > 0) update(currentIdx - 1); 
+    });
+
+    // 6. Keyboard Navigation Support
+    document.addEventListener('keydown', (e) => {
+        if (e.key === "ArrowRight" || e.key === " " || e.key === "PageDown") { 
+            if (currentIdx < totalSlides - 1) update(currentIdx + 1); 
+        } else if (e.key === "ArrowLeft" || e.key === "PageUp") { 
+            if (currentIdx > 0) update(currentIdx - 1); 
+        }
+    });
+
+    // Start presentation at Slide 0
+    update(0); 
+
+</script>
+</body>
+</html>

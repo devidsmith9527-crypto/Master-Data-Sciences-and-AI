@@ -1,0 +1,920 @@
+<!DOCTYPE html>
+<html lang="km">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Course Syllabus - Advanced DSA in Python</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Khmer+OS+Siemreab&family=Battambang:wght@400;700&family=Suwannaphum:wght@400;700;900&family=Lato:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <style>
+        :root {
+            --paper-white: #FFFFFF;
+            --table-header-bg: #E2E8F0; 
+            --ms-blue: #0284C7;
+            --text-main: #0F172A;
+            --text-muted: #475569;
+            --accent-main: #0284C7; 
+            --accent-green: #059669;
+            --header-footer-bg: #F0F9FF;
+            --border-color: #CBD5E1;
+            --clo-table-head: #E0F2FE;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        /* ជួសជុលបញ្ហាអក្សរខ្មែរដាច់ និងដកឃ្លាខុស (Khmer Text Fixes) */
+        body, p, li, h1, h2, h3, h4, td, th, span {
+            word-break: normal !important;
+            overflow-wrap: normal !important;
+            white-space: normal !important;
+            letter-spacing: normal !important;
+        }
+
+        body {
+            background-color: #E2E8F0;
+            font-family: 'Battambang', 'Khmer OS Siemreab', sans-serif;
+            color: var(--text-main);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 40px 20px;
+        }
+
+        .no-print {
+            background: #FFFBEB; border: 2px dashed #F59E0B; padding: 15px 20px; border-radius: 8px;
+            margin-bottom: 20px; width: 210mm; color: #92400E; font-size: 14px; text-align: center;
+            line-height: 1.6;
+        }
+
+        .print-btn {
+            background: var(--accent-main); color: white; border: none; padding: 12px 25px; border-radius: 6px; 
+            font-family: 'Battambang'; font-size: 15px; font-weight: bold; cursor: pointer; margin-top: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .print-btn:hover { background: #0369A1; }
+
+        /* ---------------- STRICT ABSOLUTE PAGE LAYOUT ---------------- */
+        .a4-page {
+            width: 210mm; height: 297mm;
+            background: var(--paper-white); box-shadow: 0 5px 15px rgba(0,0,0,0.2); 
+            margin-bottom: 30px; position: relative; border-radius: 4px; page-break-after: always;
+            overflow: hidden;
+        }
+
+        .a4-page-landscape {
+            width: 297mm; height: 210mm;
+            background: var(--paper-white); box-shadow: 0 5px 15px rgba(0,0,0,0.2); 
+            margin-bottom: 30px; position: relative; border-radius: 4px; page-break-after: always;
+            overflow: hidden;
+        }
+
+        /* ---------------- FIXED HEADER & FOOTER ZONES ---------------- */
+        .header-wrapper {
+            position: absolute; top: 12mm; left: 15mm; right: 15mm; height: 22mm;
+        }
+        .global-header {
+            height: 100%; display: flex; justify-content: space-between; align-items: center;
+            padding: 0 20px; border-bottom: 3px solid var(--accent-main); background-color: var(--header-footer-bg);
+            border-radius: 4px 4px 0 0;
+        }
+        .header-item { display: flex; flex-direction: column; align-items: center; gap: 3px; width: 120px; }
+        .header-item img { height: 35px; object-fit: contain; }
+        .header-item span { font-size: 9.5pt; font-weight: bold; color: var(--accent-main); text-align: center; font-family: 'Suwannaphum'; line-height:1;}
+        .header-center { text-align: center; }
+        .header-center h1 { font-family: 'Suwannaphum'; font-size: 14pt; color: var(--accent-main); margin: 0 0 2px 0; }
+        .header-center p { font-family: 'Battambang'; font-size: 8.5pt; color: var(--text-muted); margin: 0; font-weight: bold; text-transform: uppercase;}
+
+        .footer-wrapper {
+            position: absolute; bottom: 10mm; left: 15mm; right: 15mm; height: 14mm;
+        }
+        .global-footer {
+            height: 100%; display: flex; justify-content: space-between; align-items: center;
+            padding: 0 20px; border-top: 2px solid var(--accent-main); background-color: var(--header-footer-bg);
+            border-radius: 0 0 4px 4px;
+        }
+        .footer-left { display: flex; align-items: center; gap: 10px; }
+        .footer-left img { border-radius: 50%; border: 2px solid var(--accent-main); width: 28px; height: 28px; object-fit: cover; }
+        .footer-left span { font-size: 10.5pt; font-weight: bold; color: var(--text-main); font-family: 'Suwannaphum'; }
+        .footer-right { font-size: 10.5pt; color: var(--accent-main); font-weight: bold; font-family: 'Battambang'; }
+
+        /* ---------------- FIXED CONTENT ZONE ---------------- */
+        .page-content {
+            position: absolute;
+            top: 37mm; 
+            bottom: 26mm; 
+            left: 15mm; right: 15mm;
+            overflow: hidden; 
+        }
+
+        /* ---------------- COVER PAGE ---------------- */
+        .cover-page { display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 20mm; text-align: center; background-image: linear-gradient(to bottom, #F0F9FF, #FFFFFF);}
+        .cover-header img { width: 140px; margin-bottom: 15px; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1)); }
+        .cover-header h1 { font-family: 'Suwannaphum'; font-size: 28pt; color: var(--accent-main); margin: 0 0 5px 0; font-weight: 900; }
+        .cover-header p { font-family: 'Lato'; font-size: 14pt; color: var(--text-muted); margin: 0 0 30px 0; font-weight: bold; letter-spacing: 1px; }
+        .cover-program { font-family: 'Suwannaphum'; font-size: 14pt; color: var(--text-main); margin-bottom: 20px; font-weight: bold; }
+        .badge { background: var(--accent-main); color: white; padding: 10px 30px; border-radius: 50px; font-size: 14pt; font-family: 'Suwannaphum'; font-weight: bold; display: inline-block; margin-bottom: 30px; box-shadow: 0 4px 10px rgba(2, 132, 199, 0.3); }
+        .cover-title-box h2 { font-family: 'Suwannaphum'; font-size: 22pt; color: var(--text-main); margin: 0 0 10px 0; font-weight: 900; line-height: 1.4; padding: 0 20px;}
+        .cover-title-box h3 { font-family: 'Lato'; font-size: 13pt; color: var(--accent-main); margin-bottom: 40px; font-weight: bold; }
+        .cover-author { display: flex; flex-direction: column; align-items: center; gap: 12px;}
+        .cover-author img { width: 120px; height: 120px; border-radius: 50%; border: 4px solid var(--accent-main); object-fit: cover; box-shadow: 0 6px 15px rgba(0,0,0,0.15); }
+        .cover-author p { font-family: 'Suwannaphum'; font-size: 14pt; color: var(--text-muted); margin: 0;}
+        .cover-author strong { color: var(--text-main); font-size: 16pt; }
+        .cover-icons { display: flex; gap: 60px; justify-content: center; border-top: 1px solid var(--border-color); padding-top: 25px; width: 85%; margin-top: 30px;}
+        .cover-icon-box { text-align: center; display: flex; flex-direction: column; align-items: center; gap: 8px;}
+        .cover-icon-box img, .cover-icon-box i { height: 65px; font-size: 65px; margin-bottom: 5px; display: block; color: var(--text-main);}
+        .cover-icon-box p { color: var(--accent-main); font-weight: bold; font-size: 11pt; font-family: 'Lato'; margin: 0;}
+
+        /* ---------------- TYPOGRAPHY & COMPONENTS ---------------- */
+        .section-title {
+            background: var(--header-footer-bg); border-left: 5px solid var(--accent-main);
+            padding: 8px 15px; margin: 10px 0 10px 0; font-family: 'Suwannaphum';
+            font-size: 13.5pt; display: flex; align-items: center; gap: 10px; font-weight: bold;
+            color: var(--accent-main); border-radius: 0 4px 4px 0;
+        }
+
+        .text-block { font-size: 11pt; line-height: 1.8; margin-bottom: 12px; color: var(--text-main); text-align: justify; }
+        
+        .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px; }
+        .info-card { border: 1px solid var(--border-color); border-top: 3px solid var(--accent-main); padding: 12px; border-radius: 4px; background: var(--paper-white); }
+        .info-card h4 { font-family: 'Suwannaphum'; font-size: 12pt; color: var(--accent-main); margin-bottom: 8px; display: flex; align-items: center; gap: 8px;}
+        .info-card p { font-size: 10.5pt; line-height: 1.7; margin: 0; }
+
+        /* ---------------- TABLES (FIXED PADDING & LAYOUT) ---------------- */
+        table { width: 100%; border-collapse: collapse; margin-bottom: 10px; background: white; border-radius: 4px; border: 1px solid var(--border-color); }
+        /* បន្ថយ Padding ដើម្បីកុំឱ្យអក្សរដាច់ឃ្លា */
+        th, td { border: 1px solid var(--border-color); padding: 10px 8px; text-align: left; vertical-align: middle; }
+        th { background: var(--table-head); color: var(--text-main); font-family: 'Battambang'; font-size: 10.5pt; text-align: center; font-weight: bold;}
+        td { font-size: 10.5pt; line-height: 1.6; color: var(--text-main); }
+        
+        .clo-table th { background-color: var(--clo-table-head); padding: 12px; font-size: 11.5pt;}
+        .clo-table td { padding: 12px; font-size: 11.5pt;}
+
+        .outline-table td { font-size: 11pt; } 
+        .outline-table th { font-size: 11pt; }
+        
+        /* Preferred widths for Landscape layout */
+        .col-week { width: 6%; text-align: center; font-weight: bold; background: #F8FAFC; }
+        .col-day { width: 9%; font-weight: bold; text-align: center; }
+        .col-clo { width: 7%; text-align: center; font-weight: bold; }
+        .col-llo { width: 22%; }
+        .col-topics { width: 33%; vertical-align: top;}
+        .col-teach { width: 11%; text-align: center;}
+        .col-assess { width: 12%; text-align: center;}
+
+        .exercise-text { color: var(--accent-green); font-size: 10pt; display: block; margin-top: 10px; font-style: italic;}
+        .exam-row td { background-color: #FEF2F2; color: #BE123C; }
+        .exam-row td b { color: #BE123C; }
+
+        .tech-icon { color: var(--accent-main); margin-right: 6px; font-size: 1.1em; vertical-align: baseline; }
+        .bold-heading { font-family: 'Suwannaphum', sans-serif; font-weight: 900; font-size: 12pt; color: var(--text-main); margin-top: 15px; margin-bottom: 8px; }
+
+        /* ---------------- PRINT SETTINGS ---------------- */
+        @media print {
+            body { background: none; padding: 0; margin: 0; display: block; }
+            .no-print { display: none !important; }
+            
+            /* CSS Paged Media */
+            @page { size: A4 portrait; margin: 0; }
+            @page landscape_page { size: A4 landscape; margin: 0; }
+            
+            .a4-page { 
+                page: auto;
+                width: 210mm !important; height: 297mm !important;
+                margin: 0 !important; box-shadow: none !important; border: none !important;
+                page-break-after: always;
+            }
+            .a4-page-landscape { 
+                page: landscape_page;
+                width: 297mm !important; height: 210mm !important;
+                margin: 0 !important; box-shadow: none !important; border: none !important;
+                page-break-after: always;
+            }
+            
+            /* ការពារកុំឱ្យលោតក្រដាសសនៅទំព័រចុងក្រោយ */
+            .last-page {
+                page-break-after: auto !important;
+            }
+
+            * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="no-print">
+    <b><i class="fa-solid fa-circle-info"></i> ណែនាំមុនពេលបោះពុម្ពជា PDF៖</b><br>
+    សូមចុច <code>Ctrl + P</code> ហើយកំណត់៖<br>
+    ១. <b>Layout: Portrait (បញ្ឈរ)</b> <i>(កុំជ្រើសរើស Landscape ព្រោះកូដនឹងបង្វិលតារាងដោយស្វ័យប្រវត្តិហើយ)</i><br>
+    ២. <b>Paper Size: A4</b> | <b>Margins: None</b><br>
+    ៣. ត្រូវបើក <b>Background graphics</b>។
+    <br>
+    <button class="print-btn" onclick="window.print()"><i class="fa-solid fa-print"></i> បោះពុម្ពឯកសារជា PDF</button>
+</div>
+
+<!-- Page 1: Cover -->
+<div class="a4-page cover-page">
+    <div class="cover-header">
+        <img src="https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png" onerror="this.src='Logo.png'" alt="AU Logo">
+        <h1>សាកលវិទ្យាល័យអង្គរ</h1>
+        <p>ANGKOR UNIVERSITY</p>
+    </div>
+
+    <div class="cover-program">
+        <i class="fa-solid fa-graduation-cap"></i> កម្មវិធីសម្រាប់ថ្នាក់អនុបណ្ឌិត (Master of Data Science and AI)
+    </div>
+
+    <div class="cover-title-box">
+        <div class="badge">គម្រោងមុខវិជ្ជា (Course Syllabus) | ២០២៥-២០២៦</div>
+        <h2>រចនាសម្ព័ន្ធទិន្នន័យកម្រិតខ្ពស់<br>និងក្បួនដោះស្រាយជាភាសា Python</h2>
+        <h3>(Advanced Data Structures and Algorithms in Python)</h3>
+    </div>
+
+    <div class="cover-author">
+        <img src="Lim.jpg" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'" alt="Prof. Image">
+        <p>រៀបចំដោយសាស្ត្រាចារ្យ៖</p>
+        <strong>សាស្ត្រាចារ្យបង្រៀន សឿង លីម(Soeurng LIM)</strong>
+    </div>
+
+    <div class="cover-icons">
+        <div class="cover-icon-box">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg" alt="Python Icon" style="height: 65px; object-fit: contain;">
+            <p>Python 3</p>
+        </div>
+        <div class="cover-icon-box">
+            <img src="https://cdn-icons-png.flaticon.com/512/2103/2103633.png" alt="DSA Icon" style="height: 65px; object-fit: contain;">
+            <p>Advanced DSA</p>
+        </div>
+        <div class="cover-icon-box">
+            <i class="fa-brands fa-github" style="font-size: 65px; color: #0F172A;"></i>
+            <p>GitHub Repo</p>
+        </div>
+    </div>
+</div>
+
+<!-- Page 2: Info & Section 1 -->
+<div class="a4-page">
+    <div class="header-wrapper">
+        <div class="global-header">
+            <div class="header-item"><img src="https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png" onerror="this.src='Logo.png'"><span>សាកលវិទ្យាល័យអង្គរ</span></div>
+            <div class="header-center">
+                <h1>គម្រោងបង្រៀនប្រចាំឆមាស (Syllabus)</h1>
+                <p>ADVANCED DATA STRUCTURES AND ALGORITHMS</p>
+            </div>
+            <div class="header-item"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg" onerror="this.src='Logo.png'"><span>Python Pro</span></div>
+        </div>
+    </div>
+
+    <div class="page-content">
+        <div class="info-grid">
+            <div class="info-card">
+                <h4><i class="fa-solid fa-book-open-reader tech-icon"></i> ព័ត៌មានមុខវិជ្ជា</h4>
+                <p><b>កម្មវិធីសិក្សា៖</b> អនុបណ្ឌិត វិទ្យាសាស្ត្រទិន្នន័យ (Master of Data Science and AI)</p>
+                <p><b>ម៉ោងសិក្សា៖</b> សរុប ៤៥ ម៉ោង (រយៈពេល ៦សប្តាហ៍)</p>
+                <p><b>ក្រេឌីត៖</b> ៣ ក្រេឌីត (3 Credits)</p>
+            </div>
+            <div class="info-card">
+                <h4><i class="fa-solid fa-user-tie tech-icon"></i> ព័ត៌មានសាស្ត្រាចារ្យ</h4>
+                <p><b>សាស្ត្រាចារ្យ៖</b> សាស្ត្រាចារ្យបង្រៀន សឿង លីម(Soeurng LIM)</p>
+                <p><b>អ៊ីម៉ែល៖</b> soeurnglim@gmail.com</p>
+                <p><b>ទូរស័ព្ទ៖</b> ០៦១ ២២៧ ៩៣៣</p>
+            </div>
+        </div>
+
+        <div class="section-title"><i class="fa-solid fa-info-circle"></i> ១. ការពិពណ៌នាមុខវិជ្ជា (Course Description)</div>
+        <div class="text-block">
+            មុខវិជ្ជានេះត្រូវបានរចនាឡើងយ៉ាងពិសេសសម្រាប់និស្សិតថ្នាក់អនុបណ្ឌិត ដើម្បីផ្តល់ចំណេះដឹងស៊ីជម្រៅលើការរចនា និងវិភាគក្បួនដោះស្រាយ <b>(Algorithm Design)</b> សម្រាប់ <b>Artificial Intelligence (AI)</b> & <b>Data Science</b> ក្នុងបរិបទប្រទេសកម្ពុជា។ ចំណុចផ្តោតសំខាន់រួមមាន ការបង្កើនប្រសិទ្ធភាពកូដ (Code Efficiency), កាត់បន្ថយការប្រើប្រាស់អង្គចងចាំ (Memory Management), និងការដោះស្រាយបញ្ហាស្មុគស្មាញ (Time and Space Complexity) តាមរយៈភាសា Python។
+        </div>
+
+        <div class="text-block" style="margin-top: 25px; font-weight: bold; color: var(--accent-main); text-decoration: underline;">
+            សទ្ទានុក្រម និងពាក្យគន្លឹះ (Key Terms)
+        </div>
+        <div class="info-grid">
+            <div class="info-card" style="padding: 15px;">
+                <h4 style="font-size: 11.5pt;"><i class="fa-solid fa-database tech-icon"></i> Data Structures (រចនាសម្ព័ន្ធទិន្នន័យ)</h4>
+                <p style="font-size: 11pt;">វិធីសាស្ត្រក្នុងការរៀបចំ និងផ្ទុកទិន្នន័យនៅក្នុងអង្គចងចាំ។ ឧទាហរណ៍៖ Array, Stack, Queue, Hash Table, Trees។</p>
+            </div>
+            <div class="info-card" style="padding: 15px;">
+                <h4 style="font-size: 11.5pt;"><i class="fa-solid fa-stopwatch tech-icon"></i> Time / Space Complexity</h4>
+                <p style="font-size: 11pt;"><b>Time Complexity:</b> រយៈពេលដំណើរការ។ <b>Space Complexity:</b> ទំហំ Memory ដែលកូដប្រើប្រាស់ប្រៀបធៀបនឹង <b>Big-O Notation</b>។</p>
+            </div>
+            <div class="info-card" style="padding: 15px;">
+                <h4 style="font-size: 11.5pt;"><i class="fa-solid fa-gears tech-icon"></i> Algorithms (ក្បួនដោះស្រាយ)</h4>
+                <p style="font-size: 11pt;">សំណុំនៃជំហានដោះស្រាយបញ្ហាច្បាស់លាស់។ ឧទាហរណ៍៖ ការតម្រៀប (Sorting) និងការស្វែងរក (Searching)។</p>
+            </div>
+            <div class="info-card" style="padding: 15px;">
+                <h4 style="font-size: 11.5pt;"><i class="fa-solid fa-brain tech-icon"></i> AI / ML / NLP / OOP</h4>
+                <p style="font-size: 11pt;"><b>AI:</b> Artificial Intelligence, <b>ML:</b> Machine Learning, <b>NLP:</b> Natural Language Processing, <b>OOP:</b> Object-Oriented Programming។</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer-wrapper">
+        <div class="global-footer">
+            <div class="footer-left"><img src="Lim.jpg" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'"><span>សាស្ត្រាចារ្យបង្រៀន សឿង លីម(Soeurng LIM)</span></div>
+            <div class="footer-right">ទំព័រទី ២ នៃ ១៣</div>
+        </div>
+    </div>
+</div>
+
+<!-- Page 3: CLO -->
+<div class="a4-page">
+    <div class="header-wrapper">
+        <div class="global-header">
+            <div class="header-item"><img src="https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png" onerror="this.src='Logo.png'"><span>សាកលវិទ្យាល័យអង្គរ</span></div>
+            <div class="header-center">
+                <h1>គម្រោងបង្រៀនប្រចាំឆមាស (Syllabus)</h1>
+                <p>ADVANCED DATA STRUCTURES AND ALGORITHMS</p>
+            </div>
+            <div class="header-item"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg" onerror="this.src='Logo.png'"><span>Python Pro</span></div>
+        </div>
+    </div>
+
+    <div class="page-content">
+        <div class="section-title"><i class="fa-solid fa-bullseye"></i> ២. លទ្ធផលសិក្សារំពឹងទុក (Course Learning Outcomes - CLO)</div>
+        <p style="font-size: 11.5pt; margin-bottom: 20px;">ក្រោយបញ្ចប់ការសិក្សាលើមុខវិជ្ជានេះ និស្សិតថ្នាក់អនុបណ្ឌិតនឹងទទួលបានសមត្ថភាព និងលទ្ធផលរំពឹងទុកដូចខាងក្រោម៖</p>
+        
+        <table class="clo-table">
+            <thead>
+                <tr>
+                    <th style="width: 25%;">លទ្ធផលសិក្សានៃមុខវិជ្ជា (CLO)</th>
+                    <th style="width: 75%;">លទ្ធផលនៃកម្មវិធីអប់រំ​ (PLO) ដែលត្រូវបានវាស់វែង</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="bold"><b>CLO 1</b><br><span style="font-size: 10.5pt; color: var(--text-muted);">(ការវិភាគកូដ)</span></td>
+                    <td>វិភាគ និងវាយតម្លៃភាពស្មុគស្មាញនៃកូដ (Time and Space Complexity, Big-O Notation) ឱ្យស្របតាមស្តង់ដារការសរសេរកូដ <b>Object-Oriented Programming (OOP)</b> នៅក្នុងភាសា Python។</td>
+                </tr>
+                <tr>
+                    <td class="bold"><b>CLO 2</b><br><span style="font-size: 10.5pt; color: var(--text-muted);">(រចនាសម្ព័ន្ធលីនេអ៊ែរ)</span></td>
+                    <td>អនុវត្តការរៀបចំទិន្នន័យដោយប្រើប្រាស់ Linear Data Structures ដូចជា Arrays, Linked Lists, Stacks (LIFO), និង Queues (FIFO) ដើម្បីគ្រប់គ្រងអង្គចងចាំប្រកបដោយប្រសិទ្ធភាព។</td>
+                </tr>
+                <tr>
+                    <td class="bold"><b>CLO 3</b><br><span style="font-size: 10.5pt; color: var(--text-muted);">(Non-Linear)</span></td>
+                    <td>ដោះស្រាយបញ្ហាបណ្តាញទិន្នន័យធំៗដែលមានភាពស្មុគស្មាញដោយប្រើប្រាស់ Trees (Binary Search Tree - BST), Hash Tables កម្រិតខ្ពស់, និង Graphs (BFS, DFS)។</td>
+                </tr>
+                <tr>
+                    <td class="bold"><b>CLO 4</b><br><span style="font-size: 10.5pt; color: var(--text-muted);">(Optimization & Sorting)</span></td>
+                    <td>អភិវឌ្ឍប្រព័ន្ធ <b>Artificial Intelligence (AI)</b> និងការតម្រៀប (Sorting & Searching Algorithms ដូចជា Quick Sort, Merge Sort) ប្រកបដោយប្រសិទ្ធភាពល្បឿនខ្ពស់។</td>
+                </tr>
+                <tr>
+                    <td class="bold"><b>CLO 5</b><br><span style="font-size: 10.5pt; color: var(--text-muted);">(Dynamic Programming)</span></td>
+                    <td>ប្រើប្រាស់បច្ចេកទេស Dynamic Programming (DP) និង Greedy Algorithms ដើម្បីស្វែងរកផ្លូវខ្លីបំផុត ដោះស្រាយបញ្ហាអាជីវកម្ម និងស្រាវជ្រាវ (<b>Machine Learning / NLP</b>)។</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="footer-wrapper">
+        <div class="global-footer">
+            <div class="footer-left"><img src="Lim.jpg" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'"><span>សាស្ត្រាចារ្យបង្រៀន សឿង លីម(Soeurng LIM)</span></div>
+            <div class="footer-right">ទំព័រទី ៣ នៃ ១៣</div>
+        </div>
+    </div>
+</div>
+
+<!-- Page 4: Lesson Plan Week 1 -->
+<div class="a4-page-landscape">
+    <div class="header-wrapper">
+        <div class="global-header">
+            <div class="header-item"><img src="https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png" onerror="this.src='Logo.png'"><span>សាកលវិទ្យាល័យអង្គរ</span></div>
+            <div class="header-center">
+                <h1>គម្រោងបង្រៀនប្រចាំឆមាស (Syllabus)</h1>
+                <p>ADVANCED DATA STRUCTURES AND ALGORITHMS</p>
+            </div>
+            <div class="header-item"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg" onerror="this.src='Logo.png'"><span>Python Pro</span></div>
+        </div>
+    </div>
+
+    <div class="page-content">
+        <div class="section-title"><i class="fa-solid fa-calendar-week"></i> ៣. ប្លង់មេរៀនលម្អិត (Lesson Plan: សប្តាហ៍ទី ១) | សរុប ៧.៥ ម៉ោង</div>
+        <table class="outline-table" style="height: 80%;">
+            <thead>
+                <tr style="background-color: #E2E8F0;">
+                    <th class="col-week">សប្តាហ៍</th>
+                    <th class="col-day">ថ្ងៃ/ម៉ោង</th>
+                    <th class="col-clo">CLO</th>
+                    <th class="col-llo">លទ្ធផលសិក្សារំពឹងទុក (LLO)</th>
+                    <th class="col-topics">ខ្លឹមសារមេរៀន និងលំហាត់ (Topics & Exercises)</th>
+                    <th class="col-teach">សកម្មភាពបង្រៀន</th>
+                    <th class="col-assess">វាយតម្លៃ / សម្ភារៈ</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td rowspan="2" class="col-week" style="font-size: 18pt;">១</td>
+                    <td class="col-day" style="color:var(--ms-blue);">សៅរ៍<br>(៣ ម៉ោង)</td>
+                    <td class="col-clo"><b>CLO 1</b></td>
+                    <td>យល់ពីទិដ្ឋភាពទូទៅនៃ DSA និងវាស់ល្បឿនកូដ (Asymptotic)។</td>
+                    <td><div style="padding: 5px 0;"><b>ជំពូកទី ១៖ DSA & Big-O Notation</b><br><br>- សេចក្តីផ្តើមនៃ Data Structures & Algorithms<br>- ការគណនា Time & Space Complexity<br><span class="exercise-text"><br>▶ លំហាត់៖ សរសេរកូដវាស់ល្បឿន O(1), O(n), O(n²)។</span></div></td>
+                    <td>ការបង្ហាញ / Live Coding</td>
+                    <td>សំណួរខ្លីៗ<hr style="margin:10px 0; border:0; border-top:1px dashed #ccc;">VS Code / Git</td>
+                </tr>
+                <tr>
+                    <td class="col-day" style="color:var(--accent-green);">អាទិត្យ<br>(៤.៥ ម៉ោង)</td>
+                    <td class="col-clo"><b>CLO 1</b></td>
+                    <td>យល់ពីការគ្រប់គ្រង Memory និង <b>OOP</b> ក្នុងភាសា Python។</td>
+                    <td><div style="padding: 5px 0;"><b>ជំពូកទី ២៖ Python OOP & Memory Management</b><br><br>- គោលការណ៍ OOP ទាំង ៤ (Pillars)<br>- គ្រប់គ្រង Memory (Stack vs Heap)<br><span class="exercise-text"><br>▶ លំហាត់៖ បង្កើត Class 'Node' និងតេស្ត Deep vs Shallow Copy។</span></div></td>
+                    <td>អនុវត្តជាក់ស្តែងក្នុងថ្នាក់</td>
+                    <td>កិច្ចការផ្ទះ<hr style="margin:10px 0; border:0; border-top:1px dashed #ccc;">VS Code / PC</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="footer-wrapper">
+        <div class="global-footer">
+            <div class="footer-left"><img src="Lim.jpg" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'"><span>សាស្ត្រាចារ្យបង្រៀន សឿង លីម(Soeurng LIM)</span></div>
+            <div class="footer-right">ទំព័រទី ៤ នៃ ១៣</div>
+        </div>
+    </div>
+</div>
+
+<!-- Page 5: Lesson Plan Week 2 -->
+<div class="a4-page-landscape">
+    <div class="header-wrapper">
+        <div class="global-header">
+            <div class="header-item"><img src="https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png" onerror="this.src='Logo.png'"><span>សាកលវិទ្យាល័យអង្គរ</span></div>
+            <div class="header-center">
+                <h1>គម្រោងបង្រៀនប្រចាំឆមាស (Syllabus)</h1>
+                <p>ADVANCED DATA STRUCTURES AND ALGORITHMS</p>
+            </div>
+            <div class="header-item"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg" onerror="this.src='Logo.png'"><span>Python Pro</span></div>
+        </div>
+    </div>
+
+    <div class="page-content">
+        <div class="section-title"><i class="fa-solid fa-calendar-week"></i> ៣. ប្លង់មេរៀនលម្អិត (Lesson Plan: សប្តាហ៍ទី ២) | សរុប ៧.៥ ម៉ោង</div>
+        <table class="outline-table" style="height: 80%;">
+            <thead>
+                <tr style="background-color: #E2E8F0;">
+                    <th class="col-week">សប្តាហ៍</th>
+                    <th class="col-day">ថ្ងៃ/ម៉ោង</th>
+                    <th class="col-clo">CLO</th>
+                    <th class="col-llo">លទ្ធផលសិក្សារំពឹងទុក (LLO)</th>
+                    <th class="col-topics">ខ្លឹមសារមេរៀន និងលំហាត់ (Topics & Exercises)</th>
+                    <th class="col-teach">សកម្មភាពបង្រៀន</th>
+                    <th class="col-assess">វាយតម្លៃ / សម្ភារៈ</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td rowspan="2" class="col-week" style="font-size: 18pt;">២</td>
+                    <td class="col-day" style="color:var(--ms-blue);">សៅរ៍<br>(៣ ម៉ោង)</td>
+                    <td class="col-clo"><b>CLO 2</b></td>
+                    <td>អនុវត្ត Dynamic Arrays និងរចនាសម្ព័ន្ធ Linked Lists។</td>
+                    <td><div style="padding: 5px 0;"><b>ជំពូកទី ៣៖ Arrays & Linked Lists</b><br><br>- Static vs Dynamic Arrays (ការវាស់ល្បឿន Pop)<br>- Singly & Doubly Linked List (Prev/Next)<br><span class="exercise-text"><br>▶ លំហាត់៖ បង្កើតប្រព័ន្ធ History ក្នុង Browser (Undo/Redo) ដោយប្រើ Doubly Linked List។</span></div></td>
+                    <td>ការបង្ហាញ / ធ្វើលំហាត់រួមគ្នា</td>
+                    <td>កិច្ចការផ្ទះ<hr style="margin:10px 0; border:0; border-top:1px dashed #ccc;">VS Code / PC</td>
+                </tr>
+                <tr>
+                    <td class="col-day" style="color:var(--accent-green);">អាទិត្យ<br>(៤.៥ ម៉ោង)</td>
+                    <td class="col-clo"><b>CLO 2</b></td>
+                    <td>បង្កើត Stacks (LIFO) និង Queues (FIFO) សម្រាប់ប្រព័ន្ធល្បឿនលឿន។</td>
+                    <td><div style="padding: 5px 0;"><b>ជំពូកទី ៤៖ Stacks & Queues</b><br><br>- ទ្រឹស្តី Stack (LIFO) និង Queue (FIFO)<br>- ការប្រើប្រាស់ collections.deque<br><span class="exercise-text"><br>▶ លំហាត់៖ បញ្ច្រាសពាក្យ (Stack) និងបង្កើតប្រព័ន្ធធនាគារ (Bank Queue)។</span></div></td>
+                    <td>ការអនុវត្តជាក់ស្តែង / ពន្យល់</td>
+                    <td>សំណួរ / ចម្លើយ<hr style="margin:10px 0; border:0; border-top:1px dashed #ccc;">VS Code / PC</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="footer-wrapper">
+        <div class="global-footer">
+            <div class="footer-left"><img src="Lim.jpg" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'"><span>សាស្ត្រាចារ្យបង្រៀន សឿង លីម(Soeurng LIM)</span></div>
+            <div class="footer-right">ទំព័រទី ៥ នៃ ១៣</div>
+        </div>
+    </div>
+</div>
+
+<!-- Page 6: Lesson Plan Week 3 -->
+<div class="a4-page-landscape">
+    <div class="header-wrapper">
+        <div class="global-header">
+            <div class="header-item"><img src="https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png" onerror="this.src='Logo.png'"><span>សាកលវិទ្យាល័យអង្គរ</span></div>
+            <div class="header-center">
+                <h1>គម្រោងបង្រៀនប្រចាំឆមាស (Syllabus)</h1>
+                <p>ADVANCED DATA STRUCTURES AND ALGORITHMS</p>
+            </div>
+            <div class="header-item"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg" onerror="this.src='Logo.png'"><span>Python Pro</span></div>
+        </div>
+    </div>
+
+    <div class="page-content">
+        <div class="section-title"><i class="fa-solid fa-calendar-week"></i> ៣. ប្លង់មេរៀនលម្អិត (Lesson Plan: សប្តាហ៍ទី ៣) | សរុប ៧.៥ ម៉ោង</div>
+        <table class="outline-table" style="height: 80%;">
+            <thead>
+                <tr style="background-color: #E2E8F0;">
+                    <th class="col-week">សប្តាហ៍</th>
+                    <th class="col-day">ថ្ងៃ/ម៉ោង</th>
+                    <th class="col-clo">CLO</th>
+                    <th class="col-llo">លទ្ធផលសិក្សារំពឹងទុក (LLO)</th>
+                    <th class="col-topics">ខ្លឹមសារមេរៀន និងលំហាត់ (Topics & Exercises)</th>
+                    <th class="col-teach">សកម្មភាពបង្រៀន</th>
+                    <th class="col-assess">វាយតម្លៃ / សម្ភារៈ</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td rowspan="2" class="col-week" style="font-size: 18pt;">៣</td>
+                    <td class="col-day" style="color:var(--ms-blue);">សៅរ៍<br>(៣ ម៉ោង)</td>
+                    <td class="col-clo"><b>CLO 3</b></td>
+                    <td>យល់ពីចំណាត់ថ្នាក់ឋានានុក្រម (Trees) និងស្វែងរកទិន្នន័យ (BST)។</td>
+                    <td><div style="padding: 5px 0;"><b>ជំពូកទី ៥៖ Trees & Binary Search Tree (BST)</b><br><br>- Tree Traversals (In/Pre/Post-order)<br>- ច្បាប់រៀបចំកូនឆ្វេង-ស្តាំ និងការស្វែងរក O(log n)<br><span class="exercise-text"><br>▶ លំហាត់៖ សរសេរ Recursive Function ដើម្បីដើរអានទិន្នន័យ និងបញ្ជូលទិន្នន័យទៅក្នុង BST។</span></div></td>
+                    <td>ការបង្ហាញ / ការពិភាក្សា</td>
+                    <td>សំណួរខ្លីៗ<hr style="margin:10px 0; border:0; border-top:1px dashed #ccc;">VS Code / PC</td>
+                </tr>
+                <tr class="exam-row">
+                    <td class="col-day">អាទិត្យ<br>(៤.៥ ម៉ោង)</td>
+                    <td class="col-clo"><b>CLO 1-3</b></td>
+                    <td>វាស់ស្ទង់សមត្ថភាពចំណេះដឹងពីជំពូកទី ១ ដល់ទី ៥ ជារួម។</td>
+                    <td><div style="padding: 5px 0;"><b>រំលឹកមេរៀន និងប្រឡងពាក់កណ្តាលឆមាស</b><br><br>- រំលឹកមេរៀនសង្ខេបពីជំពូកទី ១ ដល់ ៥ (១.៥ ម៉ោង)<br><b>- ប្រឡង Midterm Exam (៣ ម៉ោង)</b><br><span class="exercise-text" style="color:#BE123C;"><br>▶ ការប្រឡងនឹងគ្របដណ្តប់ទាំងការសរសេរកូដ និងទ្រឹស្តី។</span></div></td>
+                    <td><b>ប្រឡង Midterm</b></td>
+                    <td><b>ដាក់ពិន្ទុ ២០%</b><br><span style="color:#475569; font-weight:normal; font-size:10pt;">(ទ្រឹស្តី & កូដ)</span></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="footer-wrapper">
+        <div class="global-footer">
+            <div class="footer-left"><img src="Lim.jpg" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'"><span>សាស្ត្រាចារ្យបង្រៀន សឿង លីម(Soeurng LIM)</span></div>
+            <div class="footer-right">ទំព័រទី ៦ នៃ ១៣</div>
+        </div>
+    </div>
+</div>
+
+<!-- Page 7: Lesson Plan Week 4 -->
+<div class="a4-page-landscape">
+    <div class="header-wrapper">
+        <div class="global-header">
+            <div class="header-item"><img src="https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png" onerror="this.src='Logo.png'"><span>សាកលវិទ្យាល័យអង្គរ</span></div>
+            <div class="header-center">
+                <h1>គម្រោងបង្រៀនប្រចាំឆមាស (Syllabus)</h1>
+                <p>ADVANCED DATA STRUCTURES AND ALGORITHMS</p>
+            </div>
+            <div class="header-item"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg" onerror="this.src='Logo.png'"><span>Python Pro</span></div>
+        </div>
+    </div>
+
+    <div class="page-content">
+        <div class="section-title"><i class="fa-solid fa-calendar-week"></i> ៣. ប្លង់មេរៀនលម្អិត (Lesson Plan: សប្តាហ៍ទី ៤) | សរុប ៧.៥ ម៉ោង</div>
+        <table class="outline-table" style="height: 80%;">
+            <thead>
+                <tr style="background-color: #E2E8F0;">
+                    <th class="col-week">សប្តាហ៍</th>
+                    <th class="col-day">ថ្ងៃ/ម៉ោង</th>
+                    <th class="col-clo">CLO</th>
+                    <th class="col-llo">លទ្ធផលសិក្សារំពឹងទុក (LLO)</th>
+                    <th class="col-topics">ខ្លឹមសារមេរៀន និងលំហាត់ (Topics & Exercises)</th>
+                    <th class="col-teach">សកម្មភាពបង្រៀន</th>
+                    <th class="col-assess">វាយតម្លៃ / សម្ភារៈ</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td rowspan="2" class="col-week" style="font-size: 18pt;">៤</td>
+                    <td class="col-day" style="color:var(--ms-blue);">សៅរ៍<br>(៣ ម៉ោង)</td>
+                    <td class="col-clo"><b>CLO 3</b></td>
+                    <td>សរសេរក្បួនស្វែងរកបណ្តាញ (Graphs) និងទាញទិន្នន័យ (Hash)។</td>
+                    <td><div style="padding: 5px 0;"><b>ជំពូកទី ៦៖ Graphs & Hash Tables</b><br><br>- Graph Representation & BFS/DFS Search<br>- Hash Function, Dictionaries & Collisions<br><span class="exercise-text"><br>▶ លំហាត់៖ អនុវត្ត BFS លើ Graph និងរក Two Sum O(n) ដោយប្រើ Dictionary។</span></div></td>
+                    <td>ការបង្ហាញ / ធ្វើលំហាត់រួមគ្នា</td>
+                    <td>កិច្ចការផ្ទះ<hr style="margin:10px 0; border:0; border-top:1px dashed #ccc;">VS Code / PC</td>
+                </tr>
+                <tr>
+                    <td class="col-day" style="color:var(--accent-green);">អាទិត្យ<br>(៤.៥ ម៉ោង)</td>
+                    <td class="col-clo"><b>CLO 4</b></td>
+                    <td>អនុវត្តក្បួនស្វែងរក និងតម្រៀបទិន្នន័យពីកម្រិតមូលដ្ឋានដល់ខ្ពស់។</td>
+                    <td><div style="padding: 5px 0;"><b>ជំពូកទី ៧៖ Searching & Sorting Algorithms</b><br><br>- Binary Search O(log n)<br>- O(n²) Sorts (Bubble, Insertion) vs O(n log n) Sorts (Merge, Quick Sort)<br><span class="exercise-text"><br>▶ លំហាត់៖ សរសេរ Quick Sort (In-place Swap) សាកល្បងល្បឿន។</span></div></td>
+                    <td>អនុវត្តជាក់ស្តែងក្នុងថ្នាក់</td>
+                    <td>សំណួរ / ចម្លើយ<hr style="margin:10px 0; border:0; border-top:1px dashed #ccc;">VS Code / PC</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="footer-wrapper">
+        <div class="global-footer">
+            <div class="footer-left"><img src="Lim.jpg" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'"><span>សាស្ត្រាចារ្យបង្រៀន សឿង លីម(Soeurng LIM)</span></div>
+            <div class="footer-right">ទំព័រទី ៧ នៃ ១៣</div>
+        </div>
+    </div>
+</div>
+
+<!-- Page 8: Lesson Plan Week 5 -->
+<div class="a4-page-landscape">
+    <div class="header-wrapper">
+        <div class="global-header">
+            <div class="header-item"><img src="https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png" onerror="this.src='Logo.png'"><span>សាកលវិទ្យាល័យអង្គរ</span></div>
+            <div class="header-center">
+                <h1>គម្រោងបង្រៀនប្រចាំឆមាស (Syllabus)</h1>
+                <p>ADVANCED DATA STRUCTURES AND ALGORITHMS</p>
+            </div>
+            <div class="header-item"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg" onerror="this.src='Logo.png'"><span>Python Pro</span></div>
+        </div>
+    </div>
+
+    <div class="page-content">
+        <div class="section-title"><i class="fa-solid fa-calendar-week"></i> ៣. ប្លង់មេរៀនលម្អិត (Lesson Plan: សប្តាហ៍ទី ៥) | សរុប ៧.៥ ម៉ោង</div>
+        <table class="outline-table" style="height: 80%;">
+            <thead>
+                <tr style="background-color: #E2E8F0;">
+                    <th class="col-week">សប្តាហ៍</th>
+                    <th class="col-day">ថ្ងៃ/ម៉ោង</th>
+                    <th class="col-clo">CLO</th>
+                    <th class="col-llo">លទ្ធផលសិក្សារំពឹងទុក (LLO)</th>
+                    <th class="col-topics">ខ្លឹមសារមេរៀន និងលំហាត់ (Topics & Exercises)</th>
+                    <th class="col-teach">សកម្មភាពបង្រៀន</th>
+                    <th class="col-assess">វាយតម្លៃ / សម្ភារៈ</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td rowspan="2" class="col-week" style="font-size: 18pt;">៥</td>
+                    <td class="col-day" style="color:var(--ms-blue);">សៅរ៍<br>(៣ ម៉ោង)</td>
+                    <td class="col-clo"><b>CLO 5</b></td>
+                    <td>ដោះស្រាយបញ្ហា Optimization និងកាត់បន្ថយពេលគណនាដោយ DP។</td>
+                    <td><div style="padding: 5px 0;"><b>ជំពូកទី ៨៖ Dynamic Programming (DP)</b><br><br>- ក្បួនចងចាំចម្លើយចាស់ (Memoization vs Tabulation)<br>- ដោះស្រាយបញ្ហាបែងចែកធនធាន (0/1 Knapsack)<br><span class="exercise-text"><br>▶ លំហាត់៖ អនុវត្ត DP ដើម្បីបង្កើនល្បឿនកូដ Fibonacci ពី O(2ⁿ) មក O(n)។</span></div></td>
+                    <td>ការបង្ហាញ / ការពិភាក្សា</td>
+                    <td>កិច្ចការផ្ទះ<hr style="margin:10px 0; border:0; border-top:1px dashed #ccc;">VS Code / PC</td>
+                </tr>
+                <tr>
+                    <td class="col-day" style="color:var(--accent-green);">អាទិត្យ<br>(៤.៥ ម៉ោង)</td>
+                    <td class="col-clo"><b>CLO 5</b></td>
+                    <td>អនុវត្តក្បួនស្វែងរកផ្លូវខ្លីបំផុត និង <b>Machine Learning (ML)</b>។</td>
+                    <td><div style="padding: 5px 0;"><b>ជំពូកទី ៨ (បន្ត)៖ Graph Path & AI Algorithms</b><br><br>- ការស្វែងរកផ្លូវខ្លីបំផុត (Dijkstra's Algorithm)<br>- K-Nearest Neighbors (KNN) & Game AI (Minimax)<br><span class="exercise-text"><br>▶ លំហាត់៖ សរសេរក្បួន Dijkstra ដើម្បីរកផ្លូវដឹកជញ្ជូន។</span></div></td>
+                    <td>អនុវត្តជាក់ស្តែង / ពន្យល់</td>
+                    <td>សំណួរខ្លីៗ<hr style="margin:10px 0; border:0; border-top:1px dashed #ccc;">VS Code / Git</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="footer-wrapper">
+        <div class="global-footer">
+            <div class="footer-left"><img src="Lim.jpg" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'"><span>សាស្ត្រាចារ្យបង្រៀន សឿង លីម(Soeurng LIM)</span></div>
+            <div class="footer-right">ទំព័រទី ៨ នៃ ១៣</div>
+        </div>
+    </div>
+</div>
+
+<!-- Page 9: Lesson Plan Week 6 -->
+<div class="a4-page-landscape">
+    <div class="header-wrapper">
+        <div class="global-header">
+            <div class="header-item"><img src="https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png" onerror="this.src='Logo.png'"><span>សាកលវិទ្យាល័យអង្គរ</span></div>
+            <div class="header-center">
+                <h1>គម្រោងបង្រៀនប្រចាំឆមាស (Syllabus)</h1>
+                <p>ADVANCED DATA STRUCTURES AND ALGORITHMS</p>
+            </div>
+            <div class="header-item"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg" onerror="this.src='Logo.png'"><span>Python Pro</span></div>
+        </div>
+    </div>
+
+    <div class="page-content">
+        <div class="section-title"><i class="fa-solid fa-calendar-week"></i> ៣. ប្លង់មេរៀនលម្អិត (Lesson Plan: សប្តាហ៍ទី ៦) | សរុប ៧.៥ ម៉ោង</div>
+        <table class="outline-table" style="height: 80%;">
+            <thead>
+                <tr style="background-color: #E2E8F0;">
+                    <th class="col-week">សប្តាហ៍</th>
+                    <th class="col-day">ថ្ងៃ/ម៉ោង</th>
+                    <th class="col-clo">CLO</th>
+                    <th class="col-llo">លទ្ធផលសិក្សារំពឹងទុក (LLO)</th>
+                    <th class="col-topics">ខ្លឹមសារមេរៀន និងលំហាត់ (Topics & Exercises)</th>
+                    <th class="col-teach">សកម្មភាពបង្រៀន</th>
+                    <th class="col-assess">វាយតម្លៃ / សម្ភារៈ</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td rowspan="2" class="col-week" style="font-size: 18pt;">៦</td>
+                    <td class="col-day" style="color:var(--ms-blue);">សៅរ៍<br>(៣ ម៉ោង)</td>
+                    <td class="col-clo"><b>CLO 1-5</b></td>
+                    <td>គ្រប់គ្រងកូដតាម GitHub និងត្រួតពិនិត្យគម្រោងស្រាវជ្រាវ (Project)។</td>
+                    <td><div style="padding: 5px 0;"><b>ការណែនាំគម្រោង (Project Mentoring & GitHub)</b><br><br>- ការត្រួតពិនិត្យកែលម្អកូដ (Optimization & Debugging)<br>- ត្រៀមខ្លួនឡើងការពារបទបង្ហាញ<br><span class="exercise-text"><br>▶ លំហាត់៖ បញ្ចប់កូដគម្រោងជាស្ថាពរ និង Push ចូល GitHub Repository។</span></div></td>
+                    <td>Mentoring / កែតម្រូវកូដ</td>
+                    <td>វាយតម្លៃក្រុម<hr style="margin:10px 0; border:0; border-top:1px dashed #ccc;">គម្រោងនិស្សិត</td>
+                </tr>
+                <tr class="exam-row">
+                    <td class="col-day">អាទិត្យ<br>(៤.៥ ម៉ោង)</td>
+                    <td class="col-clo"><b>CLO 1-5</b></td>
+                    <td>វាស់ស្ទង់ការអភិវឌ្ឍប្រព័ន្ធទាំងមូលកម្រិតខ្ពស់ ប្រកបដោយគុណភាព។</td>
+                    <td><div style="padding: 5px 0;"><b>បទបង្ហាញគម្រោង & ប្រឡងបញ្ចប់ឆមាស</b><br><br>- បទបង្ហាញគម្រោងស្រាវជ្រាវ (Final Project Defense)<br><b>- ប្រឡងបញ្ចប់ឆមាស (Final Exam)</b> គ្របដណ្តប់ទាំងមូល។<br><span class="exercise-text" style="color:#BE123C;"><br>▶ ការវាយតម្លៃបញ្ចប់ឆមាស ដោយបូកសរុបពិន្ទុ Project និងការប្រឡង។</span></div></td>
+                    <td><b>បទបង្ហាញ & ប្រឡង Final</b></td>
+                    <td><b>ដាក់ពិន្ទុ Final</b><br><span style="color:#475569; font-weight:normal; font-size:10pt;">(៤០% ប្រឡង + ៣០% Project)</span></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="footer-wrapper">
+        <div class="global-footer">
+            <div class="footer-left"><img src="Lim.jpg" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'"><span>សាស្ត្រាចារ្យបង្រៀន សឿង លីម(Soeurng LIM)</span></div>
+            <div class="footer-right">ទំព័រទី ៩ នៃ ១៣</div>
+        </div>
+    </div>
+</div>
+
+<!-- Page 10: Teaching Methods & Assessment -->
+<div class="a4-page">
+    <div class="header-wrapper">
+        <div class="global-header">
+            <div class="header-item"><img src="https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png" onerror="this.src='Logo.png'"><span>សាកលវិទ្យាល័យអង្គរ</span></div>
+            <div class="header-center">
+                <h1>គម្រោងបង្រៀនប្រចាំឆមាស (Syllabus)</h1>
+                <p>ADVANCED DATA STRUCTURES AND ALGORITHMS</p>
+            </div>
+            <div class="header-item"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg" onerror="this.src='Logo.png'"><span>Python Pro</span></div>
+        </div>
+    </div>
+
+    <div class="page-content">
+        <div class="section-title"><i class="fa-solid fa-chalkboard-user"></i> ៤. វិធីសាស្រ្តបង្រៀន (Teaching Methods)</div>
+        <p style="font-size: 11pt; margin-bottom: 10px;">មុខវិជ្ជានេះត្រូវបានអនុវត្តនូវវិធីសាស្រ្តបង្រៀន និងរៀនសំខាន់ៗដូចខាងក្រោម៖</p>
+        <ul style="padding-left: 20px; font-size: 11pt; line-height: 1.8; margin-bottom: 15px;">
+            <li>ការបង្រៀនបែបរិះរក (Problem-Based Learning) និងសហការ។</li>
+            <li>ចង្អុលបង្ហាញ និងសរសេរកូដផ្ទាល់ជាជំហានៗ (Live Coding & Step-by-Step) ក្នុងកម្មវិធី Visual Studio Code (VS Code)។</li>
+            <li><b>ផ្តោតលើការអនុវត្តជាក់ស្តែង (Hands-on Practice) យ៉ាងស៊ីជម្រៅ ដោយនិស្សិតត្រូវដោះស្រាយបញ្ហាពិតៗក្នុងបរិបទកម្ពុជា។</b></li>
+            <li>ពិភាក្សាក្រុមតូចៗក្នុងការជួយគ្នាដោះស្រាយបញ្ហា Error កូដនៅក្នុងថ្នាក់រៀន ការប្រើប្រាស់ <b>GitHub</b> ដើម្បីចែករំលែក និងបញ្ចូលកូដគ្នា។</li>
+            <li>អនុវត្តគោលវិធីសិស្សមជ្ឈមណ្ឌល ដោយផ្តល់គម្រោងខ្នាតតូចឱ្យនិស្សិតស្រាវជ្រាវ និងសរសេរកូដដោយខ្លួនឯង។ អនុវត្ត ៧០%។</li>
+        </ul>
+
+        <div class="section-title"><i class="fa-solid fa-chart-pie"></i> ៥. ​ការវាយតម្លៃ (Assessment)</div>
+        <p style="font-size: 11pt; margin-bottom: 10px;">ការវាយតម្លៃលើលទ្ធផលសិក្សារបស់និស្សិតសម្រាប់មុខវិជ្ជានេះគឺមានដូចខាងក្រោម ៖</p>
+
+        <table>
+            <tr>
+                <th style="width: 5%;">ល.រ</th>
+                <th style="width: 35%;">លក្ខណៈវិនិច្ឆ័យ</th>
+                <th style="width: 10%;">ពិន្ទុភាគរយ</th>
+                <th style="width: 50%;">លទ្ធផលសិក្សារំពឹងទុកនៃមុខវិជ្ជាដែលត្រូវបានវាស់វែង</th>
+            </tr>
+            <tr>
+                <td style="text-align: center;">១</td>
+                <td>វត្តមាន​ (Attendance)</td>
+                <td style="text-align: center; font-weight: bold; color: var(--accent-main);">១០%</td>
+                <td>ការចូលរួម និងសកម្មភាពក្នុងថ្នាក់រៀន។</td>
+            </tr>
+            <tr>
+                <td style="text-align: center;">២</td>
+                <td>ប្រឡងពាក់កណ្តាលឆមាស (Mid-Term Exam)</td>
+                <td style="text-align: center; font-weight: bold; color: var(--accent-yellow);">២០%</td>
+                <td>ប្រឡងពាក់កណ្ដាលឆមាស (ធ្វើនៅចុងសប្តាហ៍ទី ៣ ផ្តោតលើជំពូកទី ១ ដល់ទី ៥)។</td>
+            </tr>
+            <tr>
+                <td style="text-align: center;">៣</td>
+                <td>គម្រោងស្រាវជ្រាវ (Final Project / GitHub)</td>
+                <td style="text-align: center; font-weight: bold; color: var(--accent-blue);">៣០%</td>
+                <td>កិច្ចការសរសេរកូដ <b>Data Structures and Algorithms (DSA)</b> ជាក្រុម និងធ្វើបទបង្ហាញនៅសប្តាហ៍ទី ៦។</td>
+            </tr>
+            <tr>
+                <td style="text-align: center;">៤</td>
+                <td>ប្រឡងបញ្ចប់ឆមាស (Final Exam)</td>
+                <td style="text-align: center; font-weight: bold; color: var(--accent-green);">៤០%</td>
+                <td>ប្រឡងបញ្ចប់ឆមាស (ធ្វើនៅសប្តាហ៍ទី ៦ កម្រិតខ្ពស់ពេញលេញជំពូកទី ១ ដល់ទី ៨)។</td>
+            </tr>
+        </table>
+
+        <h4 class="bold-heading">៥.១- រង្វាយតម្លៃលើវត្តមាន និងការចូលរួម (Attendance Policy)</h4>
+        <p style="font-size: 10.5pt; text-align: left; line-height: 1.8;">និស្សិតត្រូវបានណែនាំឲ្យចូលរៀនទាន់ពេលវេលា។ និស្សិតចូលរៀនយឺតចន្លោះពី ១០នាទី ទៅ ២០នាទី នៃ session នីមួយៗ ត្រូវចាត់ទុកថាអវត្តមានចូលរៀនយឺតដែលសម្គាល់ដោយ (AL)។ ករណីនិស្សិតវត្តមានចូលរៀនយឺត (AL) ចំនួន៣ដង ស្មើនឹងនិស្សិតអវត្តមាន (A) មួយ session។ និស្សិតរៀនយឺត​លើស​ពី ២០នាទី មិនត្រូវអនុញ្ញាតឲ្យចូលរៀនក្នុងថ្នាក់ឡើយ ប៉ុន្តែអាចសិក្សាស្រាវជ្រាវក្នុងបណ្ណាល័យ​។ និស្សិតត្រូវបានសាស្ត្រាចារ្យស្រង់វត្តមាននៅរៀងរាល់ដើម session នីមួយៗ។ អវត្តមានលើសពី ៣០% នៃម៉ោងសរុប (៤៥ ម៉ោង) មិនអនុញ្ញាតឱ្យប្រឡងបញ្ចប់ឡើយ។</p>
+    </div>
+
+    <div class="footer-wrapper">
+        <div class="global-footer">
+            <div class="footer-left"><img src="Lim.jpg" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'"><span>សាស្ត្រាចារ្យបង្រៀន សឿង លីម(Soeurng LIM)</span></div>
+            <div class="footer-right">ទំព័រទី ១០ នៃ ១៣</div>
+        </div>
+    </div>
+</div>
+
+<!-- Page 11: Project details -->
+<div class="a4-page">
+    <div class="header-wrapper">
+        <div class="global-header">
+            <div class="header-item"><img src="https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png" onerror="this.src='Logo.png'"><span>សាកលវិទ្យាល័យអង្គរ</span></div>
+            <div class="header-center">
+                <h1>គម្រោងបង្រៀនប្រចាំឆមាស (Syllabus)</h1>
+                <p>ADVANCED DATA STRUCTURES AND ALGORITHMS</p>
+            </div>
+            <div class="header-item"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg" onerror="this.src='Logo.png'"><span>Python Pro</span></div>
+        </div>
+    </div>
+
+    <div class="page-content">
+        <h4 class="bold-heading" style="margin-top: 5px;">៥.២- កិច្ចការស្រាវជ្រាវ (Group Project) និងការប្រើប្រាស់ GitHub</h4>
+        <ul style="list-style-type: none; padding-left: 15px; font-size: 10.5pt; line-height: 1.8;">
+            <li>– កាលបរិច្ឆេទធ្វើបទបង្ហាញនៅ <b>ចុងសប្តាហ៍ទី ៦</b> (មានពិន្ទុសរុប ៣០%)។ តម្រូវឱ្យមានការ Push កូដចូល <b>GitHub</b> ជាប្រចាំដើម្បីវាយតម្លៃការចូលរួមរបស់សមាជិកម្នាក់ៗ។</li>
+            <li>– ប្រធានបទដែលដាក់ឲ្យស្រាវជ្រាវ (គម្រោង Algorithms) រួមមាន៖
+                <ol style="margin-top: 5px; margin-bottom: 10px;">
+                    <li><b>Logistics Optimization (CLO 3,4):</b> អនុវត្ត Dijkstra's Algorithm ដើម្បីស្វែងរកផ្លូវដឹកជញ្ជូនដែលខ្លី និងលឿនបំផុត (Delivery Route) នៅក្នុងក្រុងសៀមរាប ឬរាជធានីភ្នំពេញ។</li>
+                    <li><b>Customer Data Retrieval (CLO 3,5):</b> រចនាប្រព័ន្ធផ្ទុកទិន្នន័យអតិថិជនរាប់សែននាក់ សម្រាប់វិស័យធនាគារក្នុងស្រុក ដោយប្រើ Hash Table ផ្ទាល់ខ្លួន ដើម្បីទាញយកទិន្នន័យក្នុងល្បឿន O(1)។</li>
+                    <li><b>Khmer NLP Processing (CLO 3,5):</b> ប្រើប្រាស់ Tries Data Structure ដើម្បីកសាងប្រព័ន្ធកាត់ពាក្យភាសាខ្មែរ (Word Tokenizer) សាមញ្ញ ឬប្រព័ន្ធទស្សន៍ទាយពាក្យ (Auto-complete) ដោយប្រើ <b>Artificial Intelligence (AI)</b>។</li>
+                    <li><b>Tourism Recommendation (CLO 3,5):</b> អនុវត្ត K-D Trees (K-Dimensional Trees) ដើម្បីបង្កើត Recommendation System សម្រាប់ណែនាំសណ្ឋាគារ ឬកន្លែងកម្សាន្តនៅតំបន់អង្គរ ដោយផ្អែកលើទីតាំង GPS។</li>
+                    <li><b>Resource Allocation (CLO 4):</b> ដោះស្រាយបញ្ហា Knapsack Problem ដោយប្រើ Dynamic Programming (DP) ដើម្បីរៀបចំគម្រោងថវិកា ឬការបែងចែកធនធានកសិកម្មប្រកបដោយប្រសិទ្ធភាពចំណាយខ្ពស់បំផុត។</li>
+                </ol>
+            </li>
+            <li>– ភារកិច្ចនិស្សិត៖ ធ្វើការជាក្រុម (២-៣ នាក់), សរសេរកូដ <b>Data Structures and Algorithms (DSA)</b> ជាភាសា Python និងឡើងធ្វើបទបង្ហាញគម្រោងទាំងមូលក្នុងថ្នាក់។</li>
+        </ul>
+
+        <h4 class="bold-heading">៥.២.២- កិច្ចការពិភាក្សាជាក្រុមតូចៗនៅក្នុងថ្នាក់ (Group discussion)</h4>
+        <ul style="list-style-type: none; padding-left: 15px; font-size: 10.5pt; line-height: 1.8;">
+            <li>· កាលបរិច្ឆេទ ៖ អនុវត្តជាប្រចាំ។ វាយតម្លៃបូកបញ្ចូលក្នុងពិន្ទុវត្តមាន ១០%។</li>
+            <li>· ប្រធានបទ ៖ ពិភាក្សាពីភាពខុសគ្នារវាង Array vs Linked List, វិធីដោះស្រាយ Hash Table Collisions, និងការប្រៀបធៀប BFS vs DFS Search លើបណ្តាញទំនាក់ទំនងសង្គម។</li>
+        </ul>
+
+        <h4 class="bold-heading">៥.៣- ប្រឡងពាក់កណ្តាលឆមាស (Midterm Exam)</h4>
+        <ul style="list-style-type: none; padding-left: 15px; font-size: 10.5pt; line-height: 1.8;">
+            <li>· កាលបរិច្ឆេទ ៖ ប្រឡងនៅថ្ងៃអាទិត្យ នៃ <b>សប្តាហ៍ទី ៣</b> (មានពិន្ទុ ២០%)</li>
+            <li>· ប្រធានបទ ៖ ប្រឡងទ្រឹស្តី និងកូដ (គ្របដណ្តប់ពីជំពូក១ ដល់ទី ៥) រយៈពេល ៩០នាទី ទៅ ១៨០នាទី ។</li>
+        </ul>
+
+        <h4 class="bold-heading">៥.៤- ប្រឡងបញ្ចប់ឆមាស (Final Exam)</h4>
+        <ul style="list-style-type: none; padding-left: 15px; font-size: 10.5pt; line-height: 1.8;">
+            <li>· កាលបរិច្ឆេទ ៖ ប្រឡងនៅថ្ងៃអាទិត្យ នៃ <b>សប្តាហ៍ទី ៦</b> (មានពិន្ទុ ៤០%)</li>
+            <li>· ប្រធានបទ ៖ គ្របដណ្តប់មេរៀនទាំងមូល (ជំពូក១ ដល់ទី ៨) សម្រាប់ការវាយតម្លៃសមត្ថភាពជារួម។ រយៈពេល ១២០ នាទី។</li>
+        </ul>
+    </div>
+
+    <div class="footer-wrapper">
+        <div class="global-footer">
+            <div class="footer-left"><img src="Lim.jpg" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'"><span>សាស្ត្រាចារ្យបង្រៀន សឿង លីម(Soeurng LIM)</span></div>
+            <div class="footer-right">ទំព័រទី ១១ នៃ ១៣</div>
+        </div>
+    </div>
+</div>
+
+<!-- Page 12: Books & Bibliography -->
+<div class="a4-page">
+    <div class="header-wrapper">
+        <div class="global-header">
+            <div class="header-item"><img src="https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png" onerror="this.src='Logo.png'"><span>សាកលវិទ្យាល័យអង្គរ</span></div>
+            <div class="header-center">
+                <h1>គម្រោងបង្រៀនប្រចាំឆមាស (Syllabus)</h1>
+                <p>ADVANCED DATA STRUCTURES AND ALGORITHMS</p>
+            </div>
+            <div class="header-item"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg" onerror="this.src='Logo.png'"><span>Python Pro</span></div>
+        </div>
+    </div>
+
+    <div class="page-content">
+        <div class="section-title"><i class="fa-solid fa-book"></i> ៦. សៀវភៅសិក្សាគោល (Course Books)</div>
+        <div style="margin-bottom: 15px;">
+            <ul style="list-style: none; padding-left: 0; line-height: 1.8; margin-bottom: 0; font-size: 11pt;">
+                <li><i class='fa-solid fa-circle' style="color:var(--accent-main); font-size:6pt; vertical-align:middle; margin-right:8px;"></i> <b>Data Structures and Algorithms in Python</b> ដោយ Michael T. Goodrich (សៀវភៅគោលលម្អិត)។</li>
+                <li><i class='fa-solid fa-circle' style="color:var(--accent-main); font-size:6pt; vertical-align:middle; margin-right:8px;"></i> <b>Introduction to Algorithms (CLRS 4th Edition)</b> ដោយ Thomas H. Cormen (សម្រាប់ទ្រឹស្តីកម្រិតអនុបណ្ឌិត)។</li>
+                <li><i class='fa-solid fa-circle' style="color:var(--accent-main); font-size:6pt; vertical-align:middle; margin-right:8px;"></i> <b>Grokking Algorithms: An Illustrated Guide</b> ដោយ Aditya Bhargava (សម្រាប់ជំនួយការយល់ដឹងរហ័សតាមរយៈរូបភាព)។</li>
+            </ul>
+        </div>
+
+        <div class="section-title"><i class="fa-solid fa-link"></i> ៧. គន្ថនិទ្ទេស និងធនធានអនឡាញ (Bibliography)</div>
+        <div>
+            <ul style="list-style: none; padding-left: 0; line-height: 1.8; margin-bottom: 0; font-size: 11pt;">
+                <li><i class='fa-solid fa-circle' style="color:var(--accent-main); font-size:6pt; vertical-align:middle; margin-right:8px;"></i> <b>Python Official Documentation:</b> <i>https://docs.python.org/3/</i></li>
+                <li><i class='fa-solid fa-circle' style="color:var(--accent-main); font-size:6pt; vertical-align:middle; margin-right:8px;"></i> <b>LeetCode / HackerRank:</b> សម្រាប់ការអនុវត្តកូដជាក់ស្តែង និងត្រៀមសម្ភាសន៍ការងារជំនាញ។</li>
+                <li><i class='fa-solid fa-circle' style="color:var(--accent-main); font-size:6pt; vertical-align:middle; margin-right:8px;"></i> <b>Kaggle Datasets / គម្រោងស្រាវជ្រាវ (arXiv):</b> សម្រាប់ស្វែងរកទិន្នន័យពិតយកមកអនុវត្តជាមួយគម្រោងស្រាវជ្រាវ (Project)។</li>
+            </ul>
+        </div>
+        
+        <div style="margin-top: 50px; display: flex; justify-content: space-between; align-items: flex-end; page-break-inside: avoid;">
+            <div style="text-align: center; width: 200px;">
+                <p style="font-size: 11pt;">បានឃើញ និងឯកភាព</p>
+                <p style="font-size: 11pt; margin-top: 50px;">..........................................</p>
+                <p style="font-size: 11pt; font-weight: bold;">ព្រឹទ្ធបុរសមហាវិទ្យាល័យ</p>
+            </div>
+            <div style="text-align: center; width: 280px;">
+                <p style="font-size: 11pt;">ធ្វើនៅសៀមរាប ថ្ងៃទី.......ខែ.......ឆ្នាំ ២០២៦</p>
+                <p style="font-size: 11pt; margin-top: 50px; font-weight: bold;">សាស្ត្រាចារ្យបង្រៀន សឿង លីម</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer-wrapper">
+        <div class="global-footer">
+            <div class="footer-left"><img src="Lim.jpg" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'"><span>សាស្ត្រាចារ្យបង្រៀន សឿង លីម(Soeurng LIM)</span></div>
+            <div class="footer-right">ទំព័រទី ១២ នៃ ១៣</div>
+        </div>
+    </div>
+</div>
+
+<!-- Page 13: Back Cover -->
+<div class="a4-page last-page" style="display: flex; flex-direction: column; align-items: center; justify-content: center; background-image: linear-gradient(to bottom, #FFFFFF, #F0F9FF);">
+    <div style="text-align: center; opacity: 0.5; width: 100%;">
+        <img src="https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png" onerror="this.src='Logo.png'" alt="AU Logo" style="width: 100px; filter: grayscale(100%);">
+        <p style="font-family: 'Suwannaphum'; font-size: 14pt; margin-top: 15px; color: var(--text-muted);">សាកលវិទ្យាល័យអង្គរ</p>
+        <p style="font-family: 'Lato'; font-size: 10pt; color: var(--text-muted);">End of Syllabus Document</p>
+    </div>
+    
+    <div class="footer-wrapper">
+        <div class="global-footer">
+            <div class="footer-left"><img src="Lim.jpg" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'"><span>សាស្ត្រាចារ្យបង្រៀន សឿង លីម(Soeurng LIM)</span></div>
+            <div class="footer-right">ទំព័រទី ១៣ នៃ ១៣</div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,849 @@
+<!DOCTYPE html>
+<html lang="km">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Workbook Chapter 1 - Advanced DSA & Big-O</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Battambang:wght@400;700&family=Suwannaphum:wght@400;700;900&family=Lato:wght@400;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <style>
+        :root {
+            --bg-color: #E2E8F0;
+            --paper-white: #FFFFFF;
+            --text-main: #0F172A;
+            --text-muted: #475569;
+            --accent-blue: #0284C7; 
+            --accent-green: #059669;
+            --answer-color: #0369A1; 
+            --header-footer-bg: #F0F9FF;
+            --code-bg: #111827; 
+            --low: #059669; --mid: #D97706; --high: #DC2626;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            background-color: var(--bg-color);
+            font-family: 'Battambang', sans-serif;
+            color: var(--text-main);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 40px 20px;
+        }
+
+        /* A4 Page Layout - STRICT FIXED HEIGHT */
+        .a4-page {
+            width: 210mm; 
+            height: 297mm; 
+            background: var(--paper-white);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1); 
+            margin-bottom: 30px;
+            display: block; 
+            position: relative; 
+            border-radius: 8px;
+            page-break-after: always;
+            overflow: hidden; 
+        }
+
+        /* COVER PAGE STYLES */
+        .cover-page {
+            display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; 
+            padding: 30mm 20mm;
+            background-image: linear-gradient(to bottom, #F0F9FF, #FFFFFF);
+        }
+        .cover-logo { width: 140px; margin-bottom: 15px; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1)); }
+        .cover-uni-kh { font-family: 'Suwannaphum'; color: var(--accent-blue); font-size: 38px; margin: 0 0 5px 0; font-weight: 900; }
+        .cover-uni-en { font-family: 'Lato'; color: #475569; font-size: 18px; margin: 0 0 40px 0; letter-spacing: 1px; font-weight: bold; }
+        .cover-program { font-family: 'Suwannaphum'; font-size: 20px; color: var(--accent-green); margin-bottom: 25px; font-weight: bold; }
+        .cover-chapter-badge { background: var(--accent-blue); color: white; padding: 10px 40px; border-radius: 50px; font-size: 22px; font-weight: bold; margin-bottom: 40px; font-family: 'Suwannaphum'; box-shadow: 0 5px 15px rgba(2,132,199,0.3); display: inline-block;}
+        .cover-main-title { font-family: 'Suwannaphum'; font-size: 34px; color: var(--text-main); line-height: 1.4; margin-bottom: 10px; font-weight: 900; }
+        .cover-sub-title { font-family: 'Lato'; font-size: 22px; color: var(--accent-blue); margin-bottom: 50px; font-weight: bold; }
+        
+        .cover-author-wrapper { display: flex; flex-direction: column; align-items: center; gap: 15px; margin-bottom: 40px; }
+        .cover-author-img { width: 100px; height: 100px; border-radius: 50%; border: 4px solid var(--accent-blue); object-fit: cover; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        .cover-author-text { font-size: 20px; color: var(--text-muted); font-family: 'Suwannaphum'; }
+        .cover-author-text strong { color: var(--accent-blue); font-size: 24px; }
+
+        .cover-icons-wrapper { display: flex; gap: 60px; justify-content: center; margin-top: auto; border-top: 1px solid #E2E8F0; padding-top: 20px; width: 100%; }
+        .cover-icon-item img { height: 70px; margin-bottom: 10px; object-fit: contain; }
+        .cover-icon-item p { font-size: 16px; font-weight: bold; color: var(--accent-blue); font-family: 'Lato'; }
+
+        /* HEADER */
+        .global-header {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 12px 25px; border-bottom: 3px solid var(--accent-blue); background-color: var(--header-footer-bg);
+            height: 75px; box-sizing: border-box;
+        }
+        .header-item { display: flex; flex-direction: column; align-items: center; gap: 3px; width: 120px; }
+        .header-item img { height: 40px; object-fit: contain; }
+        .header-item span { font-size: 10px; font-weight: bold; color: var(--accent-blue); text-align: center; font-family: 'Suwannaphum'; }
+        .header-center { text-align: center; }
+        .header-center h1 { font-family: 'Suwannaphum'; font-size: 18px; color: var(--accent-blue); margin: 0; }
+        .header-center p { font-family: 'Battambang'; font-size: 11px; color: #64748B; margin: 0; font-weight: bold; text-transform: uppercase;}
+
+        /* CONTENT */
+        .page-content { 
+            padding: 10mm 15mm; 
+            height: calc(297mm - 75px - 55px); 
+            overflow: hidden; 
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .student-info {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px;
+            border: 1px solid #CBD5E1; padding: 12px 18px; border-radius: 8px; background: #F8FAFC;
+            flex-shrink: 0;
+        }
+        .info-line { font-size: 14.5px; display: flex; align-items: flex-end; font-weight: bold;}
+        .info-line span { flex-grow: 1; border-bottom: 1px dotted #94A3B8; margin-left: 10px; height: 18px; color: var(--answer-color); font-weight: normal; padding-left: 10px;}
+
+        .case-title {
+            background: var(--header-footer-bg); border-left: 5px solid var(--accent-blue);
+            padding: 10px 15px; margin: 10px 0 15px 0; font-family: 'Suwannaphum';
+            font-size: 17px; display: flex; align-items: center; gap: 10px; font-weight: bold;
+            border-radius: 0 6px 6px 0; color: var(--accent-blue); flex-shrink: 0;
+        }
+        
+        .exercise-block { margin-bottom: 15px; border: 1px solid #E2E8F0; padding: 12px 15px; border-radius: 8px; background: white; flex-shrink: 0;}
+        .exercise-block p { margin-bottom: 8px; font-size: 14.5px; font-weight: bold; color: #1E293B; display: flex; align-items: center; gap: 8px;}
+        
+        .level-badge { font-size: 12px; color: white; padding: 4px 10px; border-radius: 4px; font-weight: bold; display: inline-block; margin-right: 8px; font-family: 'Battambang';}
+        .bg-low { background-color: var(--low); }
+        .bg-mid { background-color: var(--mid); }
+        .bg-high { background-color: var(--high); }
+
+        /* CODE DISPLAY */
+        .code-container {
+            background: var(--code-bg); border-radius: 6px; padding: 12px 15px; margin: 8px 0;
+            overflow-x: auto; border: 1px solid #374151; position: relative;
+        }
+        .code-header { background: #1F2937; padding: 5px 10px; font-size: 12px; font-family: 'Battambang'; color: #38BDF8; border-bottom: 1px solid #374151; margin: -12px -15px 10px -15px; border-radius: 6px 6px 0 0; display: flex; align-items: center; gap: 8px;}
+        pre { font-family: 'Fira Code', monospace; font-size: 12.5px; line-height: 1.45; color: #f8f8f2; margin: 0; }
+        .kw { color: #ff79c6; font-weight: bold; } 
+        .fn { color: #50fa7b; } 
+        .str { color: #f1fa8c; } 
+        .com { color: #6272a4; font-style: italic; } 
+        .num { color: #bd93f9; } 
+
+        .answer-box { margin-top: 10px; font-size: 14px; display: flex; align-items: flex-start; }
+        .answer-box label { font-family: 'Battambang', sans-serif; font-weight: bold; margin-right: 10px; color: #475569; white-space: nowrap;}
+        .filled-answer { 
+            flex-grow: 1; border-bottom: 1px dotted #94A3B8; color: var(--answer-color); 
+            font-family: 'Battambang', sans-serif; line-height: 1.6; padding-bottom: 2px;
+        }
+
+        /* Note Area */
+        .note-area {
+            flex-grow: 1; border: 1px dashed #CBD5E1; background: #F8FAFC; border-radius: 8px;
+            padding: 15px; margin-top: 5px; color: #94A3B8; font-size: 13.5px; display: flex; flex-direction: column;
+        }
+
+        /* FOOTER - FIXED TO ABSOLUTE BOTTOM */
+        .global-footer {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 10px 25px; border-top: 3px solid var(--accent-blue);
+            background-color: var(--header-footer-bg); 
+            position: absolute; bottom: 0; left: 0; width: 100%; height: 55px; box-sizing: border-box;
+        }
+        .footer-left { display: flex; align-items: center; gap: 10px; }
+        .footer-left img { border-radius: 50%; border: 2px solid var(--accent-blue); width: 30px; height: 30px; object-fit: cover; background-color: #fff; }
+        .footer-left span { font-size: 12px; font-weight: bold; color: var(--text-main); font-family: 'Suwannaphum'; }
+        .footer-right { font-size: 12px; color: var(--accent-blue); font-weight: bold; font-family: 'Battambang'; }
+
+        /* PRINT MEDIA QUERY */
+        @page { size: A4; margin: 0; }
+        @media print {
+            body { background: white; padding: 0; margin: 0; }
+            .a4-page { box-shadow: none; margin: 0; width: 210mm; height: 297mm; border: none; border-radius: 0; page-break-after: always; }
+            .a4-page:last-child { page-break-after: auto; }
+            .no-print { display: none !important; }
+            * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+        }
+    </style>
+</head>
+<body>
+
+<button class="no-print" onclick="window.print()" style="margin-bottom: 20px; padding: 12px 25px; cursor: pointer; background: var(--accent-blue); color: white; border: none; border-radius: 8px; font-family: 'Battambang'; font-weight: bold; font-size: 16px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); transition: all 0.3s;">
+    <i class="fa-solid fa-print"></i> បោះពុម្ពសៀវភៅលំហាត់ (Print as PDF)
+</button>
+
+<!-- COVER PAGE -->
+<div class="a4-page cover-page">
+    <img src="Logo.png" class="cover-logo" onerror="this.src='https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png'">
+    <h1 class="cover-uni-kh">សាកលវិទ្យាល័យអង្គរ</h1>
+    <p class="cover-uni-en">ANGKOR UNIVERSITY</p>
+
+    <div class="cover-program">
+        <i class="fa-solid fa-graduation-cap"></i> អនុបណ្ឌិតវិទ្យាសាស្ត្រទិន្នន័យ និងបញ្ញាសិប្បនិម្មិត (Master of Data Science and AI)
+    </div>
+
+    <div class="cover-chapter-badge">សៀវភៅលំហាត់អនុវត្តន៍ (Workbook) | ២០២៥-២០២៦</div>
+
+    <h1 class="cover-main-title">ជំពូកទី ១៖ រំលឹកពី DSA និងការវិភាគក្បួនដោះស្រាយ</h1>
+    <h2 class="cover-sub-title">(Review of DSA & Big-O Notation)</h2>
+
+    <div class="cover-author-wrapper">
+        <img src="Lim.jpg" class="cover-author-img" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'">
+        <div class="cover-author-text">
+            សាស្ត្រាចារ្យ៖
+        </div>
+        <div class="cover-author-text">
+            <strong>សឿង លីម (Soeurng LIM)</strong>
+        </div>
+    </div>
+
+    <div class="cover-icons-wrapper">
+        <div class="cover-icon-item">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg">
+            <p>Pythons</p>
+        </div>
+        <div class="cover-icon-item">
+            <img src="https://cdn-icons-png.flaticon.com/512/2103/2103633.png">
+            <p>DSA in Pythons</p>
+        </div>
+    </div>
+</div>
+
+<!-- PAGE 1 : O(1) Part 1 -->
+<div class="a4-page">
+    <div class="global-header">
+        <div class="header-item"><img src="Logo.png" onerror="this.src='https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png'"><span>សាកលវិទ្យាល័យអង្គរ</span></div>
+        <div class="header-center">
+            <h1>សៀវភៅលំហាត់អនុវត្តន៍ - ជំពូកទី ១</h1>
+            <p>ADVANCED DATA STRUCTURES AND ALGORITHMS</p>
+        </div>
+        <div class="header-item"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg"><span>Python Pro</span></div>
+    </div>
+
+    <div class="page-content">
+        <div class="student-info">
+            <div class="info-line">អត្តលេខ (ID): <span>អត្រាកំណែផ្លូវការ</span></div>
+            <div class="info-line">ឈ្មោះ (Name): <span>សន្លឹកចម្លើយ</span></div>
+        </div>
+
+        <div class="case-title"><i class="fa-solid fa-bolt"></i> ១. ករណីសិក្សា៖ ពេលវេលាថេរ O(1) Constant Time</div>
+        
+        <div class="exercise-block">
+            <p><span class="level-badge bg-low">ស្រាល ១</span> ប្រតិបត្តិការគណិតវិទ្យាមូលដ្ឋាន (Math Ops)</p>
+            <div class="code-container">
+                <div class="code-header"><i class="fa-brands fa-python"></i> Copy & Run Code</div>
+<pre><span class="kw">def</span> <span class="fn">is_even</span>(n):
+    <span class="kw">return</span> n % <span class="num">2</span> == <span class="num">0</span>
+
+<span class="fn">print</span>(<span class="str">"លេខ 10 ជាលេខគូ? :"</span>, is_even(<span class="num">10</span>))
+<span class="fn">print</span>(<span class="str">"លេខ 15 ជាលេខគូ? :"</span>, is_even(<span class="num">15</span>))</pre>
+            </div>
+            <div class="answer-box">
+                <label>ការពន្យល់ពី Big-O O(1) ៖</label> 
+                <div class="filled-answer">ប្រតិបត្តិការចែកយកសំណល់ (`%`) ធ្វើការតែម្តងគត់ ដោយមិនខ្វល់ថាលេខនោះធំប៉ុណ្ណាឡើយ (10 ឬ 1 លាន) ដូច្នេះកម្រិត Time Complexity គឺ <b>O(1)</b> ជានិច្ច។</div>
+            </div>
+        </div>
+
+        <div class="exercise-block">
+            <p><span class="level-badge bg-low">ស្រាល ២</span> ការទាញយកទិន្នន័យពី Array តាមរយៈ Index</p>
+            <div class="code-container">
+                <div class="code-header"><i class="fa-brands fa-python"></i> Copy & Run Code</div>
+<pre>arr = [<span class="num">10</span>, <span class="num">20</span>, <span class="num">30</span>, <span class="num">40</span>, <span class="num">50</span>]
+
+<span class="com"># លោតទៅយកទិន្នន័យត្រង់ Index ទី 2</span>
+<span class="fn">print</span>(<span class="str">"តម្លៃនៅទីតាំងទី 2 គឺ:"</span>, arr[<span class="num">2</span>])</pre>
+            </div>
+            <div class="answer-box">
+                <label>ឆ្លើយតបលំហាត់ក្នុង Slide ៖</label> 
+                <div class="filled-answer">Array ផ្ទុកទិន្នន័យជាប់ៗគ្នាក្នុង Memory។ កុំព្យូទ័រអាចលោតទៅទីតាំង Index ទី 2 បានភ្លាមៗដោយការបូកលេខអាស័យដ្ឋាន Memory មិនបាច់រាប់ពីដើមនោះទេ ទើបល្បឿនវា O(1)។</div>
+            </div>
+        </div>
+
+        <div class="note-area">
+            <i class="fa-solid fa-pen"></i> កន្លែងសម្រាប់កត់ត្រាបន្ថែម (Notes / Scratchpad)...
+        </div>
+    </div>
+
+    <div class="global-footer">
+        <div class="footer-left"><img src="Lim.jpg" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'"><span>សាស្ត្រាចារ្យ៖ សឿង លីម (Soeurng LIM)</span></div>
+        <div class="footer-right">ទំព័រទី ១ នៃ ១០</div>
+    </div>
+</div>
+
+<!-- PAGE 2 : O(1) Part 2 -->
+<div class="a4-page">
+    <div class="global-header">
+        <div class="header-item"><img src="Logo.png" onerror="this.src='https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png'"><span>សាកលវិទ្យាល័យអង្គរ</span></div>
+        <div class="header-center">
+            <h1>សៀវភៅលំហាត់អនុវត្តន៍ - ជំពូកទី ១</h1>
+            <p>ADVANCED DATA STRUCTURES AND ALGORITHMS</p>
+        </div>
+        <div class="header-item"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg"><span>Python Pro</span></div>
+    </div>
+
+    <div class="page-content">
+        <div class="case-title"><i class="fa-solid fa-bolt"></i> ១. ករណីសិក្សា៖ ពេលវេលាថេរ O(1) Constant Time (ត)</div>
+        
+        <div class="exercise-block">
+            <p><span class="level-badge bg-mid">មធ្យម ១</span> ការទាញយកទិន្នន័យពី Dictionary តាមរយៈ Key</p>
+            <div class="code-container">
+                <div class="code-header"><i class="fa-brands fa-python"></i> Copy & Run Code</div>
+<pre>student_info = {
+    <span class="str">"id"</span>: <span class="str">"S001"</span>,
+    <span class="str">"name"</span>: <span class="str">"Sok Lim"</span>,
+    <span class="str">"major"</span>: <span class="str">"Data Science"</span>
+}
+
+<span class="fn">print</span>(<span class="str">"ឈ្មោះនិស្សិតគឺ:"</span>, student_info[<span class="str">"name"</span>])</pre>
+            </div>
+            <div class="answer-box">
+                <label>ក្បួន Hash Table (O(1)) ៖</label> 
+                <div class="filled-answer">Dictionary ក្នុង Python បង្កើតឡើងដោយ Hash Table។ ពេលយើងដាក់ Key ("name") វានឹងគណនា Hash ដើម្បីចង្អុលទៅយក Data បានភ្លាមៗក្នុងល្បឿន O(1)។</div>
+            </div>
+        </div>
+
+        <div class="exercise-block">
+            <p><span class="level-badge bg-high">ធ្ងន់ ១</span> ការផ្លាស់ប្តូរតម្លៃអថេរ (Swap Variables In-place)</p>
+            <div class="code-container">
+                <div class="code-header"><i class="fa-brands fa-python"></i> Copy & Run Code</div>
+<pre>a = <span class="num">5</span>
+b = <span class="num">10</span>
+
+<span class="com"># ដូរតម្លៃគ្នាដោយមិនប្រើអថេរទី 3 ជំនួយ (Pythonic way)</span>
+a, b = b, a
+
+<span class="fn">print</span>(<span class="str">f"តម្លៃ a={a} និង b={b}"</span>)</pre>
+            </div>
+            <div class="answer-box">
+                <label>ការវិភាគប្រសិទ្ធភាព ៖</label> 
+                <div class="filled-answer">កូដនេះប្រើប្រាស់ Time Complexity ស្មើ O(1) ព្រោះវាគ្រាន់តែប្តូរខ្សែ Pointer។ ហើយវាក៏មាន Space Complexity ស្មើ O(1) ព្រោះយើងមិនបានបង្កើតអថេរ (temp) ថ្មីដើម្បីផ្ទុកទិន្នន័យឡើយ។</div>
+            </div>
+        </div>
+
+        <div class="note-area">
+            <i class="fa-solid fa-pen"></i> កន្លែងសម្រាប់កត់ត្រាបន្ថែម (Notes / Scratchpad)...
+        </div>
+    </div>
+
+    <div class="global-footer">
+        <div class="footer-left"><img src="Lim.jpg" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'"><span>សាស្ត្រាចារ្យ៖ សឿង លីម (Soeurng LIM)</span></div>
+        <div class="footer-right">ទំព័រទី ២ នៃ ១០</div>
+    </div>
+</div>
+
+<!-- PAGE 3 : O(n) Part 1 -->
+<div class="a4-page">
+    <div class="global-header">
+        <div class="header-item"><img src="Logo.png" onerror="this.src='https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png'"><span>សាកលវិទ្យាល័យអង្គរ</span></div>
+        <div class="header-center">
+            <h1>សៀវភៅលំហាត់អនុវត្តន៍ - ជំពូកទី ១</h1>
+            <p>ADVANCED DATA STRUCTURES AND ALGORITHMS</p>
+        </div>
+        <div class="header-item"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg"><span>Python Pro</span></div>
+    </div>
+
+    <div class="page-content">
+        <div class="case-title"><i class="fa-solid fa-arrow-trend-up"></i> ២. ករណីសិក្សា៖ ពេលវេលាលីនេអ៊ែរ O(n) Linear Time</div>
+        
+        <div class="exercise-block">
+            <p><span class="level-badge bg-low">ស្រាល ១</span> ការដើរកាត់ទិន្នន័យម្តងមួយៗ (Iteration)</p>
+            <div class="code-container">
+                <div class="code-header"><i class="fa-brands fa-python"></i> Copy & Run Code</div>
+<pre>numbers = [<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>, <span class="num">4</span>, <span class="num">5</span>]
+
+<span class="kw">for</span> num <span class="kw">in</span> numbers:
+    <span class="fn">print</span>(<span class="str">"កំពុងអានលេខ:"</span>, num)</pre>
+            </div>
+            <div class="answer-box">
+                <label>ការពន្យល់ពី Big-O O(n) ៖</label> 
+                <div class="filled-answer">Loop នេះត្រូវដើរកាត់គ្រប់ធាតុទាំងអស់ក្នុង Array។ បើ Array មានធាតុ N កុំព្យូទ័រត្រូវធ្វើការងារ N ដង។ ដូច្នេះទើបវាត្រូវបានហៅថា លីនេអ៊ែរ O(n)។</div>
+            </div>
+        </div>
+
+        <div class="exercise-block">
+            <p><span class="level-badge bg-low">ស្រាល ២</span> រុករកលីនេអ៊ែរ (Linear Search រកតម្លៃធំបំផុត)</p>
+            <div class="code-container">
+                <div class="code-header"><i class="fa-brands fa-python"></i> Copy & Run Code</div>
+<pre><span class="kw">def</span> <span class="fn">find_max</span>(arr):
+    max_val = arr[<span class="num">0</span>]
+    <span class="kw">for</span> x <span class="kw">in</span> arr:
+        <span class="kw">if</span> x > max_val:
+            max_val = x
+    <span class="kw">return</span> max_val
+
+<span class="fn">print</span>(<span class="str">"លេខធំបំផុតគឺ:"</span>, find_max([<span class="num">3</span>, <span class="num">1</span>, <span class="num">4</span>, <span class="num">8</span>, <span class="num">2</span>]))</pre>
+            </div>
+            <div class="answer-box">
+                <label>វិភាគក្នុងករណី Worst-case ៖</label> 
+                <div class="filled-answer">ដើម្បីដឹងថាលេខណាធំជាងគេ យើងដាច់ខាតត្រូវមើលលេខទាំងអស់ដោយខានមិនបាន។ ទោះបីលេខធំនៅទីតាំងដំបូង ក៏យើងត្រូវមើលដល់ចុងបញ្ជីដែរ ទើបល្បឿនវាគឺ O(n) ជានិច្ច។</div>
+            </div>
+        </div>
+
+        <div class="note-area">
+            <i class="fa-solid fa-pen"></i> កន្លែងសម្រាប់កត់ត្រាបន្ថែម (Notes / Scratchpad)...
+        </div>
+    </div>
+
+    <div class="global-footer">
+        <div class="footer-left"><img src="Lim.jpg" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'"><span>សាស្ត្រាចារ្យ៖ សឿង លីម (Soeurng LIM)</span></div>
+        <div class="footer-right">ទំព័រទី ៣ នៃ ១០</div>
+    </div>
+</div>
+
+<!-- PAGE 4 : O(n) Part 2 -->
+<div class="a4-page">
+    <div class="global-header">
+        <div class="header-item"><img src="Logo.png" onerror="this.src='https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png'"><span>សាកលវិទ្យាល័យអង្គរ</span></div>
+        <div class="header-center">
+            <h1>សៀវភៅលំហាត់អនុវត្តន៍ - ជំពូកទី ១</h1>
+            <p>ADVANCED DATA STRUCTURES AND ALGORITHMS</p>
+        </div>
+        <div class="header-item"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg"><span>Python Pro</span></div>
+    </div>
+
+    <div class="page-content">
+        <div class="case-title"><i class="fa-solid fa-arrow-trend-up"></i> ២. ករណីសិក្សា៖ ពេលវេលាលីនេអ៊ែរ O(n) Linear Time (ត)</div>
+        
+        <div class="exercise-block">
+            <p><span class="level-badge bg-mid">មធ្យម ១</span> ការបូកសរុបតម្លៃក្នុង Array ដោយផ្ទាល់</p>
+            <div class="code-container">
+                <div class="code-header"><i class="fa-brands fa-python"></i> Copy & Run Code</div>
+<pre><span class="kw">def</span> <span class="fn">sum_array</span>(arr):
+    total = <span class="num">0</span>
+    <span class="kw">for</span> num <span class="kw">in</span> arr:
+        total += num
+    <span class="kw">return</span> total
+
+<span class="fn">print</span>(<span class="str">"ផលបូកសរុបគឺ:"</span>, sum_array([<span class="num">10</span>, <span class="num">20</span>, <span class="num">30</span>]))</pre>
+            </div>
+            <div class="answer-box">
+                <label>ឆ្លើយតបលំហាត់ក្នុង Slide ៖</label> 
+                <div class="filled-answer">ដើម្បីបូកសរុបលេខទាំងអស់បាន កូដនេះត្រូវប្រើ <code>For Loop</code> ដើរកាត់តាមចំនួនធាតុ N ដែលមាន។ ហេតុនេះកូដប្រើប្រាស់ពេលវេលា O(n)។</div>
+            </div>
+        </div>
+
+        <div class="exercise-block">
+            <p><span class="level-badge bg-high">ធ្ងន់ ១</span> បង្វិល Array ដោយប្រើ 2 Pointers O(n/2) -> O(n)</p>
+            <div class="code-container">
+                <div class="code-header"><i class="fa-brands fa-python"></i> Copy & Run Code</div>
+<pre><span class="kw">def</span> <span class="fn">reverse_arr</span>(arr):
+    left = <span class="num">0</span>
+    right = <span class="fn">len</span>(arr) - <span class="num">1</span>
+    <span class="kw">while</span> left < right:
+        arr[left], arr[right] = arr[right], arr[left]
+        left += <span class="num">1</span>
+        right -= <span class="num">1</span>
+    <span class="kw">return</span> arr
+
+<span class="fn">print</span>(<span class="str">"បង្វិល:"</span>, reverse_arr([<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>, <span class="num">4</span>, <span class="num">5</span>]))</pre>
+            </div>
+            <div class="answer-box">
+                <label>ហេតុអ្វី O(n/2) ចាត់ទុកជា O(n)? ៖</label> 
+                <div class="filled-answer">ដោយសារ Loop នេះរត់តែពាក់កណ្តាល Array (N/2) ព្រោះវាប្តូរទីតាំងសងខាង។ តែក្នុងច្បាប់ Big-O យើងលុបចោលមេគុណថេរ ទើបគេសន្និដ្ឋានថាវាជាល្បឿន O(n) ដដែល។</div>
+            </div>
+        </div>
+
+        <div class="note-area">
+            <i class="fa-solid fa-pen"></i> កន្លែងសម្រាប់កត់ត្រាបន្ថែម (Notes / Scratchpad)...
+        </div>
+    </div>
+
+    <div class="global-footer">
+        <div class="footer-left"><img src="Lim.jpg" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'"><span>សាស្ត្រាចារ្យ៖ សឿង លីម (Soeurng LIM)</span></div>
+        <div class="footer-right">ទំព័រទី ៤ នៃ ១០</div>
+    </div>
+</div>
+
+<!-- PAGE 5 : O(n^2) Part 1 -->
+<div class="a4-page">
+    <div class="global-header">
+        <div class="header-item"><img src="Logo.png" onerror="this.src='https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png'"><span>សាកលវិទ្យាល័យអង្គរ</span></div>
+        <div class="header-center">
+            <h1>សៀវភៅលំហាត់អនុវត្តន៍ - ជំពូកទី ១</h1>
+            <p>ADVANCED DATA STRUCTURES AND ALGORITHMS</p>
+        </div>
+        <div class="header-item"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg"><span>Python Pro</span></div>
+    </div>
+
+    <div class="page-content">
+        <div class="case-title"><i class="fa-solid fa-layer-group"></i> ៣. ករណីសិក្សា៖ ពេលវេលាការ៉េ O(n²) Quadratic Time</div>
+        
+        <div class="exercise-block">
+            <p><span class="level-badge bg-low">ស្រាល ១</span> ការប្រើប្រាស់ Nested Loop (រង្វិលជុំត្រួតគ្នា)</p>
+            <div class="code-container">
+                <div class="code-header"><i class="fa-brands fa-python"></i> Copy & Run Code</div>
+<pre>arr = [<span class="str">"A"</span>, <span class="str">"B"</span>]
+
+<span class="com"># Loop ក្រៅរត់ N ដង, Loop ក្នុងរត់ N ដង</span>
+<span class="kw">for</span> i <span class="kw">in</span> arr:
+    <span class="kw">for</span> j <span class="kw">in</span> arr:
+        <span class="fn">print</span>(i, j)</pre>
+            </div>
+            <div class="answer-box">
+                <label>ការពន្យល់ពី O(n²) ៖</label> 
+                <div class="filled-answer">នៅពេលយើងមាន Loop មួយនៅខាងក្នុង Loop មួយទៀត (Nested Loops) កុំព្យូទ័រនឹងធ្វើការ N * N ដង។ ដូច្នេះល្បឿននេះត្រូវបានគេហៅថា ពេលវេលាការ៉េ ឬ O(n²) វាយឺតណាស់ពេល N ធំ។</div>
+            </div>
+        </div>
+
+        <div class="exercise-block">
+            <p><span class="level-badge bg-low">ស្រាល ២</span> រកគូលេខដែលបូកចូលគ្នាស្មើ ១០ (Target Sum)</p>
+            <div class="code-container">
+                <div class="code-header"><i class="fa-brands fa-python"></i> Copy & Run Code</div>
+<pre><span class="kw">def</span> <span class="fn">find_pairs</span>(arr):
+    n = <span class="fn">len</span>(arr)
+    <span class="kw">for</span> i <span class="kw">in range</span>(n):
+        <span class="kw">for</span> j <span class="kw">in range</span>(i + <span class="num">1</span>, n):
+            <span class="kw">if</span> arr[i] + arr[j] == <span class="num">10</span>:
+                <span class="fn">print</span>(<span class="str">f"រកឃើញ: {arr[i]} និង {arr[j]}"</span>)
+
+find_pairs([<span class="num">2</span>, <span class="num">4</span>, <span class="num">6</span>, <span class="num">8</span>, <span class="num">5</span>, <span class="num">5</span>])</pre>
+            </div>
+            <div class="answer-box">
+                <label>ឆ្លើយតបលំហាត់ក្នុង Slide ៖</label> 
+                <div class="filled-answer">កូដនេះប្រើ Nested Loop ដើម្បីចាប់គូលេខផ្ទៀងផ្ទាត់ម្តងមួយគូៗ។ ពេល N កើនឡើង ចំនួននៃការផ្ទៀងផ្ទាត់កើនឡើងជាការ៉េ (O(n²)) ដែលធ្វើឲ្យវាយឺតខ្លាំងបើ List មានទំហំធំ។</div>
+            </div>
+        </div>
+
+        <div class="note-area">
+            <i class="fa-solid fa-pen"></i> កន្លែងសម្រាប់កត់ត្រាបន្ថែម (Notes / Scratchpad)...
+        </div>
+    </div>
+
+    <div class="global-footer">
+        <div class="footer-left"><img src="Lim.jpg" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'"><span>សាស្ត្រាចារ្យ៖ សឿង លីម (Soeurng LIM)</span></div>
+        <div class="footer-right">ទំព័រទី ៥ នៃ ១០</div>
+    </div>
+</div>
+
+<!-- PAGE 6 : O(n^2) Part 2 -->
+<div class="a4-page">
+    <div class="global-header">
+        <div class="header-item"><img src="Logo.png" onerror="this.src='https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png'"><span>សាកលវិទ្យាល័យអង្គរ</span></div>
+        <div class="header-center">
+            <h1>សៀវភៅលំហាត់អនុវត្តន៍ - ជំពូកទី ១</h1>
+            <p>ADVANCED DATA STRUCTURES AND ALGORITHMS</p>
+        </div>
+        <div class="header-item"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg"><span>Python Pro</span></div>
+    </div>
+
+    <div class="page-content">
+        <div class="case-title"><i class="fa-solid fa-layer-group"></i> ៣. ករណីសិក្សា៖ ពេលវេលាការ៉េ O(n²) Quadratic Time (ត)</div>
+        
+        <div class="exercise-block">
+            <p><span class="level-badge bg-mid">មធ្យម ១</span> ក្បួនតម្រៀបទិន្នន័យ Bubble Sort</p>
+            <div class="code-container">
+                <div class="code-header"><i class="fa-brands fa-python"></i> Copy & Run Code</div>
+<pre><span class="kw">def</span> <span class="fn">bubble_sort</span>(arr):
+    n = <span class="fn">len</span>(arr)
+    <span class="kw">for</span> i <span class="kw">in range</span>(n):
+        <span class="kw">for</span> j <span class="kw">in range</span>(<span class="num">0</span>, n - i - <span class="num">1</span>):
+            <span class="com"># ប្រៀបធៀបអ្នកនៅក្បែរគ្នា បើអ្នកមុខធំជាង ដូរទីតាំង</span>
+            <span class="kw">if</span> arr[j] > arr[j + <span class="num">1</span>]:
+                arr[j], arr[j + <span class="num">1</span>] = arr[j + <span class="num">1</span>], arr[j]
+    <span class="kw">return</span> arr
+
+<span class="fn">print</span>(<span class="str">"តម្រៀប:"</span>, bubble_sort([<span class="num">5</span>, <span class="num">1</span>, <span class="num">4</span>, <span class="num">2</span>]))</pre>
+            </div>
+            <div class="answer-box">
+                <label>លក្ខណៈនៃ Bubble Sort ៖</label> 
+                <div class="filled-answer">ដោយសារវាត្រូវប្រៀបធៀបគូទិន្នន័យជាប់ៗគ្នាជាច្រើនជុំ (Loop ត្រួតគ្នា) ទើបវាជាក្បួនតម្រៀបដែលមានល្បឿនយឺតកម្រិត O(n²) មិនស័ក្តិសមជាមួយទិន្នន័យធំៗឡើយ។</div>
+            </div>
+        </div>
+
+        <div class="exercise-block">
+            <p><span class="level-badge bg-high">ធ្ងន់ ១</span> រកមើលទិន្នន័យស្ទួនដោយប្រៀបធៀបគ្រប់គូ (Find Duplicates)</p>
+            <div class="code-container">
+                <div class="code-header"><i class="fa-brands fa-python"></i> Copy & Run Code</div>
+<pre><span class="kw">def</span> <span class="fn">has_duplicates</span>(arr):
+    n = <span class="fn">len</span>(arr)
+    <span class="kw">for</span> i <span class="kw">in range</span>(n):
+        <span class="com"># ប្រៀបធៀប i ជាមួយធាតុបន្ទាប់ៗទាំងអស់</span>
+        <span class="kw">for</span> j <span class="kw">in range</span>(i + <span class="num">1</span>, n): 
+            <span class="kw">if</span> arr[i] == arr[j]:
+                <span class="kw">return True</span>
+    <span class="kw">return False</span>
+
+<span class="fn">print</span>(<span class="str">"មានស្ទួនទេ?"</span>, has_duplicates([<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>, <span class="num">1</span>]))</pre>
+            </div>
+            <div class="answer-box">
+                <label>វិធីសាស្រ្ត Brute-force ៖</label> 
+                <div class="filled-answer">វិធីនេះប្រៀបធៀបធាតុនីមួយៗជាមួយធាតុដទៃទៀតទាំងអស់។ ទោះបី Loop ក្នុងរត់មិនដល់ N ពេញ (រត់តែ N-i ដង) ក៏សរុបរួមតាមច្បាប់គណិតវិទ្យាវានៅតែស្ថិតក្នុងល្បឿន O(n²) ដដែល។</div>
+            </div>
+        </div>
+
+        <div class="note-area">
+            <i class="fa-solid fa-pen"></i> កន្លែងសម្រាប់កត់ត្រាបន្ថែម (Notes / Scratchpad)...
+        </div>
+    </div>
+
+    <div class="global-footer">
+        <div class="footer-left"><img src="Lim.jpg" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'"><span>សាស្ត្រាចារ្យ៖ សឿង លីម (Soeurng LIM)</span></div>
+        <div class="footer-right">ទំព័រទី ៦ នៃ ១០</div>
+    </div>
+</div>
+
+<!-- PAGE 7 : O(log n) Part 1 -->
+<div class="a4-page">
+    <div class="global-header">
+        <div class="header-item"><img src="Logo.png" onerror="this.src='https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png'"><span>សាកលវិទ្យាល័យអង្គរ</span></div>
+        <div class="header-center">
+            <h1>សៀវភៅលំហាត់អនុវត្តន៍ - ជំពូកទី ១</h1>
+            <p>ADVANCED DATA STRUCTURES AND ALGORITHMS</p>
+        </div>
+        <div class="header-item"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg"><span>Python Pro</span></div>
+    </div>
+
+    <div class="page-content">
+        <div class="case-title"><i class="fa-solid fa-chart-line"></i> ៤. ករណីសិក្សា៖ ពេលវេលាឡូការីត O(log n) Logarithmic Time</div>
+        
+        <div class="exercise-block">
+            <p><span class="level-badge bg-low">ស្រាល ១</span> បោះពុម្ពទិន្នន័យដោយកាត់ពាក់កណ្តាលៗ (Divide by 2)</p>
+            <div class="code-container">
+                <div class="code-header"><i class="fa-brands fa-python"></i> Copy & Run Code</div>
+<pre><span class="kw">def</span> <span class="fn">print_halves</span>(n):
+    <span class="kw">while</span> n > <span class="num">1</span>:
+        <span class="fn">print</span>(<span class="str">"តម្លៃបច្ចុប្បន្ន:"</span>, n)
+        n = n // <span class="num">2</span> <span class="com"># កាត់បន្ថយពាក់កណ្តាល</span>
+
+print_halves(<span class="num">16</span>)</pre>
+            </div>
+            <div class="answer-box">
+                <label>ឆ្លើយតបលំហាត់ក្នុង Slide ៖</label> 
+                <div class="filled-answer">រាល់ពេលដំណើរការ ១ជុំ ទិន្នន័យត្រូវបានកាត់បន្ថយពាក់កណ្តាល (16->8->4->2)។ ការធ្វើការតែ ៤ដងសម្រាប់លេខ ១៦ នេះគឺជាទម្រង់នៃល្បឿន O(log n)។</div>
+            </div>
+        </div>
+
+        <div class="exercise-block">
+            <p><span class="level-badge bg-low">ស្រាល ២</span> ការស្វែងរកបែបពុះពាក់កណ្តាល (Binary Search)</p>
+            <div class="code-container">
+                <div class="code-header"><i class="fa-brands fa-python"></i> Copy & Run Code</div>
+<pre><span class="kw">def</span> <span class="fn">binary_search</span>(arr, target):
+    l, r = <span class="num">0</span>, <span class="fn">len</span>(arr) - <span class="num">1</span>
+    <span class="kw">while</span> l <= r:
+        mid = (l + r) // <span class="num">2</span>
+        <span class="kw">if</span> arr[mid] == target: <span class="kw">return</span> mid
+        <span class="kw">elif</span> arr[mid] < target: l = mid + <span class="num">1</span>
+        <span class="kw">else</span>: r = mid - <span class="num">1</span>
+    <span class="kw">return</span> -<span class="num">1</span>
+
+<span class="fn">print</span>(<span class="str">"រកឃើញលេខ 4 នៅទីតាំង Index:"</span>, binary_search([<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>, <span class="num">4</span>, <span class="num">5</span>], <span class="num">4</span>))</pre>
+            </div>
+            <div class="answer-box">
+                <label>លក្ខខណ្ឌនៃ Binary Search ៖</label> 
+                <div class="filled-answer">វាដំណើរការក្នុងល្បឿន O(log n) តែវាទាមទារឱ្យ Array នោះត្រូវបានតម្រៀប (Sorted) រួចរាល់ជាមុនសិន។ បើមានឯកសារ 1 លាន វាស្វែងរកតែ 20 ដងប៉ុណ្ណោះរកឃើញបាត់ទៅហើយ។</div>
+            </div>
+        </div>
+
+        <div class="note-area">
+            <i class="fa-solid fa-pen"></i> កន្លែងសម្រាប់កត់ត្រាបន្ថែម (Notes / Scratchpad)...
+        </div>
+    </div>
+
+    <div class="global-footer">
+        <div class="footer-left"><img src="Lim.jpg" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'"><span>សាស្ត្រាចារ្យ៖ សឿង លីម (Soeurng LIM)</span></div>
+        <div class="footer-right">ទំព័រទី ៧ នៃ ១០</div>
+    </div>
+</div>
+
+<!-- PAGE 8 : O(log n) Part 2 -->
+<div class="a4-page">
+    <div class="global-header">
+        <div class="header-item"><img src="Logo.png" onerror="this.src='https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png'"><span>សាកលវិទ្យាល័យអង្គរ</span></div>
+        <div class="header-center">
+            <h1>សៀវភៅលំហាត់អនុវត្តន៍ - ជំពូកទី ១</h1>
+            <p>ADVANCED DATA STRUCTURES AND ALGORITHMS</p>
+        </div>
+        <div class="header-item"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg"><span>Python Pro</span></div>
+    </div>
+
+    <div class="page-content">
+        <div class="case-title"><i class="fa-solid fa-chart-line"></i> ៤. ករណីសិក្សា៖ ពេលវេលាឡូការីត O(log n) Logarithmic Time (ត)</div>
+        
+        <div class="exercise-block">
+            <p><span class="level-badge bg-mid">មធ្យម ១</span> ការស្វែងរកឫសការ៉េដោយប្រើយន្តការ Binary Search</p>
+            <div class="code-container">
+                <div class="code-header"><i class="fa-brands fa-python"></i> Copy & Run Code</div>
+<pre><span class="kw">def</span> <span class="fn">sqrt_bs</span>(n):
+    l, r = <span class="num">0</span>, n
+    ans = <span class="num">0</span>
+    <span class="kw">while</span> l <= r:
+        mid = (l + r) // <span class="num">2</span>
+        <span class="kw">if</span> mid * mid <= n:
+            ans = mid  <span class="com"># រក្សាទុកតម្លៃដែលទំនងអាចជាចម្លើយ</span>
+            l = mid + <span class="num">1</span>
+        <span class="kw">else</span>:
+            r = mid - <span class="num">1</span>
+    <span class="kw">return</span> ans
+
+<span class="fn">print</span>(<span class="str">"ឫសការ៉េនៃ 25 គឺ:"</span>, sqrt_bs(<span class="num">25</span>))</pre>
+            </div>
+            <div class="answer-box">
+                <label>ហេតុអ្វីកូដនេះលឿន? ៖</label> 
+                <div class="filled-answer">យើងមិនចាំបាច់រាប់ពី 1, 2, 3... ទៅរកឫសការ៉េទេ តែយើងទាយពាក់កណ្តាលៗ (ឧ. ទាយលេខ 12, បន្ទាប់មក 6, បន្ទាប់មក 3...)។ វិធីនេះលឿនជាង Linear Search រាប់សិបដង។</div>
+            </div>
+        </div>
+
+        <div class="exercise-block">
+            <p><span class="level-badge bg-high">ធ្ងន់ ១</span> ការគណនាស្វ័យគុណកម្រិតលឿន (Fast Exponentiation)</p>
+            <div class="code-container">
+                <div class="code-header"><i class="fa-brands fa-python"></i> Copy & Run Code</div>
+<pre><span class="kw">def</span> <span class="fn">fast_power</span>(base, exp):
+    res = <span class="num">1</span>
+    <span class="kw">while</span> exp > <span class="num">0</span>:
+        <span class="kw">if</span> exp % <span class="num">2</span> == <span class="num">1</span>: <span class="com"># បើស្វ័យគុណសេស</span>
+            res *= base
+        base *= base       <span class="com"># ការ៉េខ្លួនឯង</span>
+        exp //= <span class="num">2</span>          <span class="com"># កាត់បន្ថយពាក់កណ្តាល</span>
+    <span class="kw">return</span> res
+
+<span class="fn">print</span>(<span class="str">"2 ស្វ័យគុណ 10 គឺ:"</span>, fast_power(<span class="num">2</span>, <span class="num">10</span>))</pre>
+            </div>
+            <div class="answer-box">
+                <label>Optimization (O(log n)) ៖</label> 
+                <div class="filled-answer">ជំនួសឱ្យការគុណលេខ 2 ចំនួន 10 ដង (O(n)) យើងគ្រាន់តែគុណវាដោយទម្លាក់ស្វ័យគុណពាក់កណ្តាលរហូត ដែលធ្វើឱ្យកុំព្យូទ័រអាចគណនាស្វ័យគុណទី ១ លានបានក្នុងមួយពព្រិចភ្នែក។</div>
+            </div>
+        </div>
+
+        <div class="note-area">
+            <i class="fa-solid fa-pen"></i> កន្លែងសម្រាប់កត់ត្រាបន្ថែម (Notes / Scratchpad)...
+        </div>
+    </div>
+
+    <div class="global-footer">
+        <div class="footer-left"><img src="Lim.jpg" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'"><span>សាស្ត្រាចារ្យ៖ សឿង លីម (Soeurng LIM)</span></div>
+        <div class="footer-right">ទំព័រទី ៨ នៃ ១០</div>
+    </div>
+</div>
+
+<!-- PAGE 9 : Space Complexity Part 1 -->
+<div class="a4-page">
+    <div class="global-header">
+        <div class="header-item"><img src="Logo.png" onerror="this.src='https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png'"><span>សាកលវិទ្យាល័យអង្គរ</span></div>
+        <div class="header-center">
+            <h1>សៀវភៅលំហាត់អនុវត្តន៍ - ជំពូកទី ១</h1>
+            <p>ADVANCED DATA STRUCTURES AND ALGORITHMS</p>
+        </div>
+        <div class="header-item"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg"><span>Python Pro</span></div>
+    </div>
+
+    <div class="page-content">
+        <div class="case-title"><i class="fa-solid fa-microchip"></i> ៥. ករណីសិក្សា៖ Space Complexity និង Python Built-ins</div>
+        
+        <div class="exercise-block">
+            <p><span class="level-badge bg-low">ស្រាល ១</span> ប្រើប្រាស់ Memory តិចបំផុត (Space O(1))</p>
+            <div class="code-container">
+                <div class="code-header"><i class="fa-brands fa-python"></i> Copy & Run Code</div>
+<pre><span class="kw">def</span> <span class="fn">sum_O1_space</span>(n):
+    total = <span class="num">0</span> <span class="com"># បង្កើតអថេរតែមួយគត់</span>
+    <span class="kw">for</span> i <span class="kw">in range</span>(<span class="num">1</span>, n + <span class="num">1</span>):
+        total += i
+    <span class="kw">return</span> total
+
+<span class="fn">print</span>(<span class="str">"ផលបូក (Space O(1)):"</span>, sum_O1_space(<span class="num">5</span>))</pre>
+            </div>
+            <div class="answer-box">
+                <label>ការពន្យល់ Space O(1) ៖</label> 
+                <div class="filled-answer">ទោះបី N ធំកម្រិតណាក៏ដោយ កូដនេះមិនបានបង្កើត Array ថ្មីដើម្បីផ្ទុកទិន្នន័យឡើយ វាប្រើប្រាស់តែអថេរ <code>total</code> និង <code>i</code> ដែលស៊ី Memory ថេរតិចតួចបំផុត O(1)។</div>
+            </div>
+        </div>
+
+        <div class="exercise-block">
+            <p><span class="level-badge bg-low">ស្រាល ២</span> ប្រើប្រាស់ Memory ច្រើនទៅតាម N (Space O(n))</p>
+            <div class="code-container">
+                <div class="code-header"><i class="fa-brands fa-python"></i> Copy & Run Code</div>
+<pre><span class="kw">def</span> <span class="fn">squares_On_space</span>(n):
+    res = [] <span class="com"># បង្កើត Array ថ្មី</span>
+    <span class="kw">for</span> i <span class="kw">in range</span>(<span class="num">1</span>, n + <span class="num">1</span>):
+        res.append(i * i) <span class="com"># ផ្ទុកចូលតាមចំនួន N</span>
+    <span class="kw">return</span> res
+
+<span class="fn">print</span>(<span class="str">"តម្លៃការ៉េ (Space O(n)):"</span>, squares_On_space(<span class="num">5</span>))</pre>
+            </div>
+            <div class="answer-box">
+                <label>ការពន្យល់ Space O(n) ៖</label> 
+                <div class="filled-answer">កាលណា N កាន់តែធំ Array <code>res</code> ក៏នឹងត្រូវផ្ទុកទិន្នន័យកាន់តែច្រើនតាមនោះដែរ ធ្វើឱ្យកុំព្យូទ័រត្រូវកាត់យក RAM (Memory) ច្រើនតាមសមាមាត្រ O(n)។</div>
+            </div>
+        </div>
+
+        <div class="note-area">
+            <i class="fa-solid fa-pen"></i> កន្លែងសម្រាប់កត់ត្រាបន្ថែម (Notes / Scratchpad)...
+        </div>
+    </div>
+
+    <div class="global-footer">
+        <div class="footer-left"><img src="Lim.jpg" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'"><span>សាស្ត្រាចារ្យ៖ សឿង លីម (Soeurng LIM)</span></div>
+        <div class="footer-right">ទំព័រទី ៩ នៃ ១០</div>
+    </div>
+</div>
+
+<!-- PAGE 10 : Space Complexity Part 2 -->
+<div class="a4-page">
+    <div class="global-header">
+        <div class="header-item"><img src="Logo.png" onerror="this.src='https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png'"><span>សាកលវិទ្យាល័យអង្គរ</span></div>
+        <div class="header-center">
+            <h1>សៀវភៅលំហាត់អនុវត្តន៍ - ជំពូកទី ១</h1>
+            <p>ADVANCED DATA STRUCTURES AND ALGORITHMS</p>
+        </div>
+        <div class="header-item"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg"><span>Python Pro</span></div>
+    </div>
+
+    <div class="page-content">
+        <div class="case-title"><i class="fa-solid fa-microchip"></i> ៥. ករណីសិក្សា៖ Space Complexity និង Python Built-ins (ត)</div>
+        
+        <div class="exercise-block">
+            <p><span class="level-badge bg-mid">មធ្យម ១</span> ភាពខុសគ្នារវាង Append និង Insert 0</p>
+            <div class="code-container">
+                <div class="code-header"><i class="fa-brands fa-python"></i> Copy & Run Code</div>
+<pre><span class="kw">import</span> time
+
+arr = <span class="fn">list</span>(<span class="fn">range</span>(<span class="num">100000</span>)) <span class="com"># List ធំ</span>
+
+start = time.time()
+arr.append(-<span class="num">1</span>) <span class="com"># Time O(1)</span>
+<span class="fn">print</span>(<span class="str">f"Append ចំណាយ: {time.time() - start:.6f} s"</span>)
+
+start = time.time()
+arr.insert(<span class="num">0</span>, -<span class="num">1</span>) <span class="com"># Time O(n) ព្រោះត្រូវរុញកៅអី</span>
+<span class="fn">print</span>(<span class="str">f"Insert 0 ចំណាយ: {time.time() - start:.6f} s"</span>)</pre>
+            </div>
+            <div class="answer-box">
+                <label>ប្រៀបធៀបល្បឿន ៖</label> 
+                <div class="filled-answer">ការ <code>append</code> នៅកន្ទុយលឿនជានិច្ច តែការ <code>insert(0)</code> នៅមុខគេត្រូវប្រើពេលយឺតជាងឆ្ងាយណាស់ ព្រោះកុំព្យូទ័រត្រូវរុញទិន្នន័យទាំង ១ សែនចុះក្រោយទាំងអស់។</div>
+            </div>
+        </div>
+
+        <div class="exercise-block">
+            <p><span class="level-badge bg-high">ធ្ងន់ ១</span> ការបង្កើនល្បឿនស្វែងរកដោយប្រើ Set O(1)</p>
+            <div class="code-container">
+                <div class="code-header"><i class="fa-brands fa-python"></i> Copy & Run Code</div>
+<pre><span class="kw">def</span> <span class="fn">find_intersection</span>(list1, list2):
+    <span class="com"># បំប្លែងទៅជា Set ប្រើ Space O(n)</span>
+    set1 = <span class="fn">set</span>(list1) 
+    
+    <span class="com"># ស្វែងរក 'x in set1' ប្រើពេលតែ O(1) លឿនបំផុត</span>
+    res = [x <span class="kw">for</span> x <span class="kw">in</span> list2 <span class="kw">if</span> x <span class="kw">in</span> set1] 
+    <span class="kw">return</span> res
+
+<span class="fn">print</span>(<span class="str">"តម្លៃដូចគ្នា:"</span>, find_intersection([<span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>], [<span class="num">2</span>,<span class="num">3</span>,<span class="num">4</span>]))</pre>
+            </div>
+            <div class="answer-box">
+                <label>លះបង់ Space ដើម្បីទិញ Time ៖</label> 
+                <div class="filled-answer">ជំនួសឱ្យការប្រើ List ធៀប List ដែលស៊ីពេល O(n²) យើងសុខចិត្តចំណាយ Memory បង្កើត <code>set1</code> ដើម្បីឱ្យការស្វែងរកដើរក្នុងល្បឿន O(1) ធ្វើឱ្យកូដទាំងមូលដើរត្រឹម O(n) ប៉ុណ្ណោះ។</div>
+            </div>
+        </div>
+
+        <div class="note-area">
+            <i class="fa-solid fa-pen"></i> កន្លែងសម្រាប់កត់ត្រាបន្ថែម (Notes / Scratchpad)...
+        </div>
+    </div>
+
+    <div class="global-footer">
+        <div class="footer-left"><img src="Lim.jpg" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'"><span>សាស្ត្រាចារ្យ៖ សឿង លីម (Soeurng LIM)</span></div>
+        <div class="footer-right">ទំព័រទី ១០ នៃ ១០</div>
+    </div>
+</div>
+
+</body>
+</html>

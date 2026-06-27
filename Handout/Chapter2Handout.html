@@ -1,0 +1,920 @@
+<!DOCTYPE html>
+<html lang="km">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guidebook Chapter 2 - OOP & Memory Management</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Battambang:wght@400;700&family=Suwannaphum:wght@400;700;900&family=Lato:wght@400;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <style>
+        :root {
+            --bg-color: #E2E8F0;
+            --paper-white: #FFFFFF;
+            --text-main: #0F172A;
+            --text-muted: #475569;
+            --accent-blue: #0284C7; 
+            --accent-green: #059669;
+            --accent-yellow: #D97706; 
+            --accent-red: #DC2626;
+            --header-footer-bg: #F0F9FF;
+            --code-bg: #111827;
+            --term-bg: #000000;
+            --term-text: #4ade80;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            background-color: var(--bg-color);
+            font-family: 'Battambang', sans-serif;
+            color: var(--text-main);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 40px 20px;
+        }
+
+        /* Utility Classes */
+        .text-blue { color: var(--accent-blue) !important; }
+        .text-green { color: var(--accent-green) !important; }
+        .text-red { color: var(--accent-red) !important; }
+        .text-yellow { color: var(--accent-yellow) !important; }
+
+        /* A4 Page Layout */
+        .a4-page {
+            width: 210mm; 
+            height: 297mm; 
+            background: var(--paper-white);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1); 
+            margin-bottom: 30mm;
+            display: flex; 
+            flex-direction: column; 
+            position: relative; 
+            border-radius: 8px;
+            overflow: hidden; 
+            page-break-after: always;
+        }
+
+        /* COVER PAGE STYLES */
+        .cover-page {
+            justify-content: center; 
+            align-items: center; 
+            text-align: center; 
+            padding: 30mm 20mm;
+            background-image: linear-gradient(to bottom, #F0F9FF, #FFFFFF);
+        }
+        .cover-logo { width: 140px; margin-bottom: 15px; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1)); }
+        .cover-uni-kh { font-family: 'Suwannaphum'; color: var(--accent-blue); font-size: 34px; margin: 0 0 5px 0; font-weight: 900; }
+        .cover-uni-en { font-family: 'Lato'; color: #475569; font-size: 18px; margin: 0 0 40px 0; letter-spacing: 1px; font-weight: bold; }
+        .cover-program { font-family: 'Suwannaphum'; font-size: 18px; color: var(--accent-green); margin-bottom: 25px; font-weight: bold; }
+        .cover-chapter-badge { background: var(--accent-blue); color: white; padding: 10px 30px; border-radius: 50px; font-size: 20px; font-weight: bold; margin-bottom: 40px; font-family: 'Suwannaphum'; box-shadow: 0 5px 15px rgba(2,132,199,0.3); display: inline-block;}
+        .cover-main-title { font-family: 'Suwannaphum'; font-size: 30px; color: var(--text-main); line-height: 1.5; margin-bottom: 10px; font-weight: 900; }
+        .cover-sub-title { font-family: 'Lato'; font-size: 18px; color: var(--accent-blue); margin-bottom: 50px; font-weight: bold; line-height: 1.5;}
+        
+        .cover-author-wrapper { display: flex; flex-direction: column; align-items: center; gap: 15px; margin-bottom: 40px; }
+        .cover-author-img { width: 110px; height: 110px; border-radius: 50%; border: 4px solid var(--accent-blue); object-fit: cover; box-shadow: 0 6px 15px rgba(0,0,0,0.15); background-color: #fff;}
+        .cover-author-text { font-size: 18px; color: #64748B; font-family: 'Suwannaphum'; }
+        .cover-author-text strong { color: var(--text-main); font-size: 22px; }
+
+        .cover-icons-wrapper { display: flex; gap: 50px; justify-content: center; margin-top: auto; border-top: 1px solid #E2E8F0; padding-top: 20px; width: 100%; }
+        .cover-icon-item img { height: 60px; margin-bottom: 8px; object-fit: contain; }
+        .cover-icon-item p { font-size: 14px; font-weight: bold; color: var(--accent-blue); font-family: 'Lato'; }
+
+        /* HEADER & FOOTER */
+        .global-header {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 12px 25px; border-bottom: 3px solid var(--accent-blue); background-color: var(--header-footer-bg);
+            height: 25mm;
+        }
+        .header-item { display: flex; flex-direction: column; align-items: center; gap: 5px; width: 120px; }
+        .header-item img { height: 40px; object-fit: contain; }
+        .header-item span { font-size: 10px; font-weight: bold; color: var(--accent-blue); text-align: center; font-family: 'Suwannaphum'; }
+        .header-center { text-align: center; flex-grow: 1; padding: 0 10px;}
+        .header-center h1 { font-family: 'Suwannaphum'; font-size: 15px; color: var(--accent-blue); margin: 0; }
+        .header-center p { font-family: 'Battambang'; font-size: 10px; color: #64748B; margin: 0; font-weight: bold; text-transform: uppercase;}
+
+        .global-footer {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 10px 25px; border-top: 3px solid var(--accent-blue);
+            background-color: var(--header-footer-bg);
+            position: absolute; bottom: 0; left: 0; width: 100%; height: 15mm;
+        }
+        .footer-left { display: flex; align-items: center; gap: 12px; }
+        .footer-left img { border-radius: 50%; border: 2px solid var(--accent-blue); width: 30px; height: 30px; object-fit: cover; background-color: #fff; }
+        .footer-left span { font-size: 11px; font-weight: bold; color: var(--text-main); font-family: 'Suwannaphum'; }
+        .footer-right { font-size: 11px; color: var(--accent-blue); font-weight: bold; font-family: 'Battambang'; }
+
+        /* CONTENT */
+        .page-content { flex-grow: 1; padding: 8mm 15mm; height: 257mm; overflow: hidden; } 
+        
+        .section-title {
+            background: var(--header-footer-bg); border-left: 5px solid var(--accent-blue);
+            padding: 8px 15px; margin: 10px 0; font-family: 'Suwannaphum';
+            font-size: 16px; display: flex; align-items: center; gap: 10px; font-weight: bold;
+            border-radius: 0 6px 6px 0; color: var(--accent-blue); page-break-after: avoid;
+        }
+
+        .text-block { font-size: 13px; line-height: 1.8; margin-bottom: 12px; color: var(--text-main); text-align: left; }
+        
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
+        
+        .card { background: #F8FAFC; border: 1px solid #CBD5E1; border-top: 3px solid var(--accent-blue); padding: 12px; border-radius: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); page-break-inside: avoid; }
+        .card h4 { font-family: 'Suwannaphum'; font-size: 14px; color: var(--accent-blue); margin-bottom: 6px; display: flex; align-items: center; gap: 8px;}
+        .card.red-card { border-top-color: var(--accent-red); }
+        .card.red-card h4 { color: var(--accent-red); }
+        .card.green-card { border-top-color: var(--accent-green); }
+        .card.green-card h4 { color: var(--accent-green); }
+        .card ul { padding-left: 20px; margin-top: 5px; font-size: 12px; line-height: 1.8;}
+
+        /* Narrative Boxes */
+        .narrative-box { background: #FFFFFF; border-radius: 6px; border: 1px solid #CBD5E1; border-left: 4px solid var(--accent-blue); padding: 10px 12px; margin-bottom: 12px; box-shadow: 0 2px 5px rgba(0,0,0,0.02); page-break-inside: avoid;}
+        .narrative-header { font-weight: bold; color: var(--accent-blue); font-size: 13.5px; border-bottom: 1px solid #E2E8F0; padding-bottom: 5px; margin-bottom: 6px; font-family: 'Suwannaphum'; display: flex; align-items: center; gap: 8px;}
+        .narrative-text { font-size: 12px; color: var(--text-main); line-height: 1.8; margin: 0; text-align: left;}
+        
+        .narrative-box.danger { background: #FEF2F2; border-left-color: var(--accent-red); border-color: #FECACA;}
+        .narrative-box.danger .narrative-header { color: var(--accent-red); border-bottom-color: #FCA5A5; }
+
+        /* Compare Blocks */
+        .compare-block { border: 1px solid #CBD5E1; border-radius: 8px; overflow: hidden; margin-bottom: 15px; background: #fff; box-shadow: 0 3px 8px rgba(0,0,0,0.05); page-break-inside: avoid;}
+        .compare-img { width: 100%; height: 110px; object-fit: cover; border-bottom: 2px solid var(--accent-blue); }
+        .compare-title { font-family: 'Suwannaphum'; font-size: 14.5px; color: var(--text-main); padding: 6px 12px; background: #F8FAFC; border-bottom: 1px solid #CBD5E1; font-weight: bold; text-align: center;}
+        .compare-grid { display: grid; grid-template-columns: 1fr 1fr; }
+        .compare-col { padding: 10px 12px; font-size: 12px; line-height: 1.8; text-align: left; }
+        .compare-col:first-child { border-right: 1px dashed #CBD5E1; background: #F8FAFC; }
+        .compare-col h5 { font-family: 'Suwannaphum'; font-size: 13px; margin-bottom: 6px; display: flex; align-items: center; gap: 6px;}
+        .compare-col.real h5 { color: var(--accent-yellow); }
+        .compare-col.ai h5 { color: var(--accent-blue); }
+
+        /* Q&A Boxes */
+        .qa-box { border: 1px solid #CBD5E1; border-radius: 8px; margin-bottom: 12px; background: #fff; overflow: hidden; page-break-inside: avoid; box-shadow: 0 3px 6px rgba(0,0,0,0.02);}
+        .qa-question { background: #F0F9FF; padding: 10px 15px; border-bottom: 1px dashed #CBD5E1; font-weight: bold; color: var(--accent-blue); font-family: 'Suwannaphum'; font-size: 13.5px; display: flex; gap: 10px; align-items: flex-start; line-height: 1.6;}
+        .qa-answer { padding: 10px 15px; font-size: 12.5px; line-height: 1.8; color: var(--text-main); display: flex; gap: 10px; text-align: left;}
+        .qa-icon-q { color: var(--accent-red); font-size: 16px; margin-top: 2px;}
+        .qa-icon-a { color: var(--accent-green); font-size: 16px; margin-top: 2px;}
+
+        .highlight-note { background-color: #FEF9C3; border: 1px dashed var(--accent-yellow); padding: 10px 15px; border-radius: 6px; margin-bottom: 12px; font-weight: bold; color: #854D0E; font-size: 12.5px; display: flex; align-items: center; gap: 10px; page-break-inside: avoid; line-height: 1.6;}
+
+        /* Fully Runnable Python Code Block Design */
+        .visual-img { width: 100%; height: 140px; object-fit: cover; border-radius: 4px; margin-bottom: 10px; border: 1px solid #E2E8F0; }
+        
+        .code-wrapper { background: var(--code-bg); border-radius: 8px; border: 1px solid #374151; overflow: hidden; width: 100%; box-shadow: 0 4px 10px rgba(0,0,0,0.15); margin-top: 10px; margin-bottom: 15px; page-break-inside: avoid;}
+        .code-header { background: #1F2937; padding: 6px 12px; font-size: 11.5px; font-family: 'Battambang', sans-serif; color: #9CA3AF; border-bottom: 1px solid #374151; display: flex; justify-content: space-between; align-items: center;}
+        .code-header span { font-weight: bold; color: #38BDF8; display: flex; align-items: center; gap: 5px; }
+        .code-content { padding: 10px 12px; }
+        
+        /* 💡 FIX: Keep Fira Code for Python Syntax, but Force 'Battambang' for Comments/Strings to avoid PDF engine breaking */
+        .code-content pre { font-family: 'Fira Code', monospace; font-size: 11.5px; line-height: 1.8; color: #f8f8f2; margin: 0; white-space: pre-wrap; word-break: break-word;}
+        .com { color: #6272a4; font-style: italic; font-family: 'Battambang', sans-serif !important; } 
+        .str { color: #f1fa8c; font-family: 'Battambang', sans-serif !important; }
+        
+        /* Terminal Output Design */
+        .code-output { background: var(--term-bg); padding: 10px 12px; border-top: 1px dashed #4B5563; }
+        
+        /* 💡 FIX: Force 'Battambang' here so Terminal Khmer text doesn't overlap/duplicate */
+        .code-output pre { font-family: 'Battambang', sans-serif !important; font-size: 11.5px; color: var(--term-text); margin: 0; white-space: pre-wrap; line-height: 1.8; word-break: break-word;}
+        .code-output-title { font-size: 10px; color: #9CA3AF; margin-bottom: 5px; font-family: 'Battambang'; text-transform: uppercase;}
+
+        .kw { color: #ff79c6; font-weight: bold; } .fn { color: #50fa7b; } .num { color: #bd93f9; } .bult { color: #8be9fd; } .cls { color: #8be9fd; font-style: italic; }
+
+        /* PRINT MEDIA QUERY */
+        @page { size: A4; margin: 0; }
+        @media print {
+            body { background: white; padding: 0; margin: 0; }
+            .a4-page { box-shadow: none; margin: 0; width: 210mm; height: 297mm; border: none; border-radius: 0; page-break-after: always; }
+            .no-print { display: none !important; }
+            * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+        }
+    </style>
+</head>
+<body>
+
+<button class="no-print" onclick="window.print()" style="margin-bottom: 20px; padding: 12px 25px; cursor: pointer; background: var(--accent-blue); color: white; border: none; border-radius: 8px; font-family: 'Battambang'; font-weight: bold; font-size: 16px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); transition: all 0.3s;">
+    <i class="fa-solid fa-print"></i> បោះពុម្ពសៀវភៅមគ្គទ្ទេសក៍ (Print Guidebook)
+</button>
+
+<!-- ================= PAGE 1: COVER ================= -->
+<div class="a4-page cover-page">
+    <img src="https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png" alt="Angkor University Logo" class="cover-logo" onerror="this.src='Logo.png'">
+    <h1 class="cover-uni-kh">សាកលវិទ្យាល័យអង្គរ</h1>
+    <p class="cover-uni-en">ANGKOR UNIVERSITY</p>
+
+    <div class="cover-program">
+        <i class="fa-solid fa-graduation-cap"></i> អនុបណ្ឌិតវិទ្យាសាស្ត្រទិន្នន័យ និងបញ្ញាសិប្បនិម្មិត
+    </div>
+
+    <div class="cover-chapter-badge">សៀវភៅមគ្គទ្ទេសក៍ (Guidebook) | ជំពូកទី ២</div>
+
+    <h1 class="cover-main-title">ការសរសេរកម្មវិធីតម្រង់ទិសវត្ថុ (OOP) និង ការគ្រប់គ្រងអង្គចងចាំ (Memory Management)</h1>
+    <h2 class="cover-sub-title">(Object-Oriented Programming & Memory Allocation in Python)</h2>
+
+    <div class="cover-author-wrapper">
+        <img src="Lim.jpg" alt="Professor" class="cover-author-img" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'">
+        <div class="cover-author-text">
+            រៀបចំដោយសាស្ត្រាចារ្យ៖ <strong>សឿង លីម (Soeurng LIM)</strong>
+        </div>
+    </div>
+
+    <div class="cover-icons-wrapper">
+        <div class="cover-icon-item">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg" alt="Python Logo">
+            <p>Python OOP</p>
+        </div>
+        <div class="cover-icon-item">
+            <i class="fa-solid fa-cubes" style="font-size: 60px; color: var(--accent-blue); margin-bottom: 8px;"></i>
+            <p>Classes</p>
+        </div>
+        <div class="cover-icon-item">
+            <i class="fa-solid fa-microchip" style="font-size: 60px; color: var(--accent-green); margin-bottom: 8px;"></i>
+            <p>Memory</p>
+        </div>
+    </div>
+</div>
+
+<!-- ================= PAGE 2: Objectives & TOC ================= -->
+<div class="a4-page">
+    <div class="global-header">
+        <div class="header-item"><img src="https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png" onerror="this.src='Logo.png'"><span>សាកលវិទ្យាល័យអង្គរ</span></div>
+        <div class="header-center">
+            <h1>សៀវភៅមគ្គទ្ទេសក៍ (Guidebook) - ជំពូកទី ២</h1>
+            <p>ADVANCED DATA STRUCTURES AND ALGORITHMS FOR AI</p>
+        </div>
+        <div class="header-item"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg"><span>Python Pro</span></div>
+    </div>
+
+    <div class="page-content">
+        
+        <!-- រូបភាព Banner បែប Blueprint -->
+        <img src="https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&w=1200&q=80" class="visual-img" alt="Blueprint Banner" style="height: 120px; object-fit: cover; margin-bottom: 15px; border-bottom: 3px solid var(--accent-blue);">
+
+        <!-- វត្ថុបំណងនៃមេរៀន -->
+        <div class="section-title" style="margin-top: 0;"><i class="fa-solid fa-bullseye"></i> វត្ថុបំណងនៃមេរៀន (Learning Objectives)</div>
+        <div class="card green-card" style="margin-bottom: 20px;">
+            <p class="text-block" style="margin-bottom: 12px; font-weight: bold;">បន្ទាប់ពីបញ្ចប់ការសិក្សានៅក្នុងជំពូកទី ២ នេះ និស្សិតនឹងមានសមត្ថភាព៖</p>
+            <ul style="line-height: 1.8; color: var(--text-main); font-size: 13px; padding-left: 25px;">
+                <li><b class="text-blue">យល់ដឹងស៊ីជម្រៅ៖</b> ពីមូលដ្ឋានគ្រឹះនៃ Object-Oriented Programming (OOP) និងសារៈសំខាន់របស់វាក្នុងការបង្កើត Data Structures កម្រិតខ្ពស់។</li>
+                <li><b class="text-blue">បែងចែកភាពខុសគ្នា៖</b> យល់ច្បាស់ពីរវាង Class (ប្លង់គំរូដើម) និង Object (វត្ថុពិតប្រាកដ)។</li>
+                <li><b class="text-blue">ស្គាល់សសរទ្រូងទាំង ៤៖</b> អាចពន្យល់ និងដឹងពីអត្ថប្រយោជន៍នៃ Encapsulation, Inheritance, Polymorphism, និង Abstraction នៅក្នុងការសរសេរកូដ។</li>
+                <li><b class="text-blue">គ្រប់គ្រងអង្គចងចាំ (Memory)៖</b> យល់ពីដំណើរការដែលកុំព្យូទ័របែងចែក Stack Memory (សម្រាប់អ្នកចង្អុល) និង Heap Memory (សម្រាប់វត្ថុពិត) ព្រមទាំងយន្តការ Garbage Collection។</li>
+                <li><b class="text-blue">ការពារទិន្នន័យដើម៖</b> ចេះបែងចែក និងប្រើប្រាស់វិធីសាស្ត្រថតចម្លង (Assignment, Shallow Copy, Deep Copy) ដើម្បីជៀសវាងការធ្វើឲ្យខូចខាតទិន្នន័យ (Mutations)។</li>
+            </ul>
+        </div>
+
+        <!-- មាតិកា -->
+        <div class="section-title"><i class="fa-solid fa-list"></i> មាតិកា (Table of Contents)</div>
+        <div class="narrative-box" style="padding: 12px 20px; border-left-color: var(--accent-green);">
+            <div class="grid-2" style="margin-bottom: 0;">
+                
+                <!-- ជួរឈរទី ១ -->
+                <div style="font-size: 13px; line-height: 2.1; color: var(--text-main);">
+                    <div style="border-bottom: 1px dashed #E2E8F0;"><b class="text-blue">១.</b> ហេតុអ្វីត្រូវសិក្សា OOP សម្រាប់ DSA?</div>
+                    <div style="border-bottom: 1px dashed #E2E8F0;"><b class="text-blue">២.</b> និយមន័យ Class និង Object</div>
+                    <div style="border-bottom: 1px dashed #E2E8F0;"><b class="text-blue">៣.</b> ការបង្កើត Class សម្រាប់ Node</div>
+                    <div style="border-bottom: 1px dashed #E2E8F0;"><b class="text-blue">៤.</b> សសរទ្រូងទាំង ៤ នៃ OOP</div>
+                    <div style="border-bottom: 1px dashed #E2E8F0;"><b class="text-blue">៥.</b> ការគ្រប់គ្រងអង្គចងចាំ (Stack vs Heap)</div>
+                    <div style="border-bottom: 1px dashed #E2E8F0;"><b class="text-blue">៦.</b> ករណីសិក្សា៖ ការបញ្ជូន Reference</div>
+                    <div style="border-bottom: 1px dashed #E2E8F0;"><b class="text-blue">៧.</b> ប្រព័ន្ធសម្អាតស្វ័យប្រវត្តិ (Garbage Collection)</div>
+                </div>
+
+                <!-- ជួរឈរទី ២ -->
+                <div style="font-size: 13px; line-height: 2.1; color: var(--text-main);">
+                    <div style="border-bottom: 1px dashed #E2E8F0;"><b class="text-blue">៨.</b> បញ្ហានៃការចម្លងទិន្នន័យ (Copying)</div>
+                    <div style="border-bottom: 1px dashed #E2E8F0;"><b class="text-blue">៩.</b> ការការពារទិន្នន័យជាមួយ Deep Copy</div>
+                    <div style="border-bottom: 1px dashed #E2E8F0;"><b class="text-blue">១០.</b> សំណួររំលឹកមេរៀន និងការបកស្រាយ (Q&A)</div>
+                    <div style="border-bottom: 1px dashed #E2E8F0;"><b class="text-blue">១១.</b> សទ្ទានុក្រម និងពាក្យគន្លឹះ (Glossary)</div>
+                    <div style="border-bottom: 1px dashed #E2E8F0;"><b class="text-blue">១២.</b> សេចក្តីសន្និដ្ឋាននៃជំពូកទី ២ (Conclusion)</div>
+                    <div style="border-bottom: 1px dashed #E2E8F0;"><b class="text-blue">១៣.</b> ឯកសារយោង និងគន្ថនិទ្ទេស (References)</div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+    <div class="global-footer">
+        <div class="footer-left"><img src="Lim.jpg" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'"><span>សាស្ត្រាចារ្យ៖ សឿង លីម (Soeurng LIM)</span></div>
+        <div class="footer-right">ទំព័រទី ២ នៃ ១៣</div>
+    </div>
+</div>
+
+<!-- ================= PAGE 3: Intro to OOP ================= -->
+<div class="a4-page">
+    <div class="global-header">
+        <div class="header-item"><img src="https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png" onerror="this.src='Logo.png'"><span>សាកលវិទ្យាល័យអង្គរ</span></div>
+        <div class="header-center">
+            <h1>សៀវភៅមគ្គទ្ទេសក៍ (Guidebook) - ជំពូកទី ២</h1>
+            <p>ADVANCED DATA STRUCTURES AND ALGORITHMS FOR AI</p>
+        </div>
+        <div class="header-item"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg"><span>Python Pro</span></div>
+    </div>
+
+    <div class="page-content">
+        <div class="section-title"><i class="fa-solid fa-bullseye"></i> ១. ហេតុអ្វីត្រូវសិក្សា OOP មុនពេលចូលដល់ Data Structures កម្រិតខ្ពស់?</div>
+        <div class="text-block">
+            នៅក្នុងភាសា Python ទិន្នន័យធម្មតាដូចជា List ឬ Dictionary គឺត្រូវបានផ្តល់មកស្រាប់ (Built-in)។ ប៉ុន្តែនៅក្នុងមុខវិជ្ជា DSA កម្រិតខ្ពស់ យើងត្រូវបង្កើតរចនាសម្ព័ន្ធទិន្នន័យដោយខ្លួនឯង (Custom Data Structures) ដូចជា Linked Lists, Trees និង Graphs ជាដើម។ ដើម្បីសាងសង់រចនាសម្ព័ន្ធទាំងនេះបាន វិស្វករទាមទារចំណេះដឹងពី <b>Object-Oriented Programming (OOP)</b> ដើម្បីបង្កើតគំរូ (Class) ដែលតំណាងឲ្យ "ចំណុចផ្ទុកទិន្នន័យ (Node)" នីមួយៗ។
+        </div>
+
+        <div class="section-title"><i class="fa-solid fa-boxes-stacked"></i> ២. និយមន័យ Class និង Object</div>
+        <div class="grid-2">
+            <div class="card">
+                <h4><i class="fa-solid fa-cube"></i> Class (គំរូ / ប្លង់)</h4>
+                <p class="text-block" style="margin:0; font-size:12px;">គឺជាកូដដែលដើរតួជា "ប្លង់ (Blueprint)" សម្រាប់កំណត់ពីលក្ខណៈសម្បត្តិ (Properties/Attributes) និងមុខងារ (Methods) សម្រាប់បង្កើតវត្ថុអ្វីមួយ ប៉ុន្តែវាមិនមានរូបរាង ឬមិនទាន់ស៊ីទំហំក្នុងអង្គចងចាំ (Memory) នោះទេ។</p>
+            </div>
+            <div class="card green-card">
+                <h4><i class="fa-solid fa-cubes"></i> Object (វត្ថុជាក់ស្តែង)</h4>
+                <p class="text-block" style="margin:0; font-size:12px;">គឺជាវត្ថុ (Instance) ដែលកើតចេញពីការសាងសង់ដោយផ្អែកលើប្លង់ (Class) នោះ។ វាមានរូបរាង មានទិន្នន័យពិតប្រាកដ និងស៊ីទំហំនៅក្នុង Memory (Heap) របស់កុំព្យូទ័រ។</p>
+            </div>
+        </div>
+
+        <div class="narrative-box">
+            <div class="narrative-header"><i class="fa-solid fa-house-chimney"></i> ឧទាហរណ៍៖ ប្លង់ផ្ទះ និងការសាងសង់ផ្ទះ</div>
+            <p class="narrative-text">វិស្វករគូរ "ប្លង់ផ្ទះ" (Class) នៅលើក្រដាស ដោយកំណត់ថាផ្ទះត្រូវមានទ្វារ និងបង្អួច ប៉ុន្តែអ្នកមិនអាចចូលទៅដេកក្នុងក្រដាសប្លង់នោះបានទេ។ នៅពេលអ្នកម៉ៅការយកប្លង់នោះទៅ "សាងសង់ជាផ្ទះទី១ ផ្ទះទី២" នោះទើបក្លាយជា "វត្ថុពិត (Objects)" ដែលអាចរស់នៅបាន។ ប្លង់១ អាចបង្កើតផ្ទះបានរាប់ពាន់ខ្នង។</p>
+        </div>
+
+        <div class="section-title"><i class="fa-solid fa-code"></i> ៣. ការអនុវត្តបង្កើត Class សម្រាប់ Node (ចំណុចផ្ទុក)</div>
+        <div class="text-block" style="margin-bottom: 5px;">
+            ដើម្បីរៀបចំទិន្នន័យជាបណ្តាញភ្ជាប់គ្នា (Linked List) យើងត្រូវការ `Class Node` ដែលមានតួនាទី ២ យ៉ាងគឺ ផ្ទុកទិន្នន័យ (Data) និង ចង្អុលទៅអ្នកបន្ទាប់ (Next pointer)។
+        </div>
+
+        <!-- Runnable Code -->
+        <div class="code-wrapper" style="margin-top: 5px;">
+            <div class="code-header"><span><i class="fa-brands fa-python"></i> 1_class_node.py</span><span>OOP Basic</span></div>
+            <div class="code-content"><pre>
+<span class="kw">class</span> <span class="cls">Node</span>:
+    <span class="com"># Constructor (អនុគមន៍សាងសង់ Object ពេលហៅឈ្មោះ Class)</span>
+    <span class="kw">def</span> __init__(<span class="kw">self</span>, value):
+        <span class="kw">self</span>.data = value   <span class="com"># កន្លែងផ្ទុកទិន្នន័យ</span>
+        <span class="kw">self</span>.next = <span class="kw">None</span>    <span class="com"># ខ្សែចង្អុលទៅប្រអប់បន្ទាប់ (លំនាំដើមគឺ None)</span>
+
+<span class="com"># បង្កើត Objects ពិតប្រាកដចេញពី Class Node</span>
+node1 = Node(<span class="str">"Dara"</span>)
+node2 = Node(<span class="str">"Sok"</span>)
+
+<span class="com"># ភ្ជាប់ Object ទី១ ទៅ Object ទី២</span>
+node1.next = node2
+
+<span class="fn">print</span>(<span class="str">f"ប្រអប់ទី១ មានទិន្នន័យ: {node1.data}"</span>)
+<span class="fn">print</span>(<span class="str">f"ប្រអប់ទី១ ចង្អុលទៅទិន្នន័យ: {node1.next.data}"</span>)</pre></div>
+            <div class="code-output">
+                <div class="code-output-title">>_ Terminal Output</div>
+                <pre>ប្រអប់ទី១ មានទិន្នន័យ: Dara
+ប្រអប់ទី១ ចង្អុលទៅទិន្នន័យ: Sok</pre>
+            </div>
+        </div>
+    </div>
+
+    <div class="global-footer">
+        <div class="footer-left"><img src="Lim.jpg" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'"><span>សាស្ត្រាចារ្យ៖ សឿង លីម (Soeurng LIM)</span></div>
+        <div class="footer-right">ទំព័រទី ៣ នៃ ១៣</div>
+    </div>
+</div>
+
+<!-- ================= PAGE 4: 4 Pillars of OOP (Part 1) ================= -->
+<div class="a4-page">
+    <div class="global-header">
+        <div class="header-item"><img src="https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png" onerror="this.src='Logo.png'"><span>សាកលវិទ្យាល័យអង្គរ</span></div>
+        <div class="header-center">
+            <h1>សៀវភៅមគ្គទ្ទេសក៍ (Guidebook) - ជំពូកទី ២</h1>
+            <p>ADVANCED DATA STRUCTURES AND ALGORITHMS FOR AI</p>
+        </div>
+        <div class="header-item"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg"><span>Python Pro</span></div>
+    </div>
+
+    <div class="page-content">
+        <div class="section-title"><i class="fa-solid fa-monument"></i> ៤. សសរទ្រូងទាំង ៤ នៃ Object-Oriented Programming</div>
+        <div class="text-block" style="margin-bottom: 12px;">
+            ដើម្បីឲ្យការសរសេរកូដមានភាពរឹងមាំ សុវត្ថិភាព ងាយស្រួលកែប្រែ និងអាចប្រើឡើងវិញបាន (Reusable) ក្បួន OOP ត្រូវបានឈរនៅលើសសរទ្រូងដ៏សំខាន់ចំនួន ៤ គឺ៖ <b>Encapsulation, Inheritance, Polymorphism, និង Abstraction</b>។
+        </div>
+
+        <!-- Pillar 1 -->
+        <div class="compare-block">
+            <img src="https://images.unsplash.com/photo-1555949963-ff9fe0c870eb?auto=format&fit=crop&w=1200&q=80" class="compare-img" alt="Safe Box">
+            <div class="compare-title">១. ការវិចខ្ចប់ និងលាក់បាំងទិន្នន័យ (Encapsulation)</div>
+            <div class="compare-grid">
+                <div class="compare-col real">
+                    <h5><i class="fa-solid fa-lock"></i> ទ្រឹស្តី និងជីវិតពិត</h5>
+                    ជាការលាក់បាំងទិន្នន័យសំខាន់ៗ មិនឲ្យកូដពីខាងក្រៅចូលមកកែប្រែដោយផ្ទាល់បាន។ <b>ឧទាហរណ៍៖</b> ទូដែក (Safe Box) លាក់លុយនៅខាងក្នុង។ អ្នកមិនអាចលូកដៃចាប់យកលុយបានទេ លុះត្រាតែអ្នកវាយលេខកូដ (Method) ឲ្យបានត្រឹមត្រូវទើបទូដែកបើកឲ្យ។
+                </div>
+                <div class="compare-col ai">
+                    <h5><i class="fa-brands fa-python"></i> ការប្រើប្រាស់ក្នុង Python</h5>
+                    ក្នុង Python ដើម្បីការពារអញ្ញាត (Variable) កុំឲ្យគេកែបាន យើងដាក់សញ្ញា <code>__</code> (Double underscore) ពីមុខវា។ ឧទាហរណ៍ <code>self.__balance</code>។ គេអាចកែប្រែវាបាន តាមរយៈ Method ដូចជា <code>deposit()</code> ឬ <code>withdraw()</code> ប៉ុណ្ណោះ។
+                </div>
+            </div>
+        </div>
+
+        <!-- Pillar 2 -->
+        <div class="compare-block">
+            <img src="https://images.unsplash.com/photo-1548247416-ec66f4900b2e?auto=format&fit=crop&w=1200&q=80" class="compare-img" alt="Animals">
+            <div class="compare-title">២. ការទទួលមរតក ឬការបន្តពូជ (Inheritance)</div>
+            <div class="compare-grid">
+                <div class="compare-col real">
+                    <h5><i class="fa-solid fa-paw"></i> ទ្រឹស្តី និងជីវិតពិត</h5>
+                    អនុញ្ញាតឲ្យ Class ថ្មី (កូន) ទាញយកលក្ខណៈសម្បត្តិ និងមុខងារពី Class ចាស់ (ឪពុកម្តាយ) យកមកប្រើបន្តដោយមិនបាច់សរសេរឡើងវិញ។ <b>ឧទាហរណ៍៖</b> សត្វឆ្កែ និងសត្វឆ្មា សុទ្ធតែទទួលមរតកពីអម្បូរ "សត្វ" ពួកវាសុទ្ធតែមានមុខងារ <code>eat()</code> ឬ <code>sleep()</code> ដូចគ្នា។
+                </div>
+                <div class="compare-col ai">
+                    <h5><i class="fa-brands fa-python"></i> ការប្រើប្រាស់ក្នុង Python</h5>
+                    ជួយសន្សំសំចៃពេលសរសេរកូដ (Code Reusability)។ បើយើងមាន <code>class Animal:</code> យើងអាចបង្កើត <code>class Dog(Animal):</code> ដើម្បីឲ្យ Dog ទទួលបាន Methods ទាំងអស់របស់ Animal ដោយស្វ័យប្រវត្តិ រួចទើបបន្ថែមភាពពិសេសផ្ទាល់ខ្លួនរបស់ Dog តាមក្រោយ។
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="global-footer">
+        <div class="footer-left"><img src="Lim.jpg" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'"><span>សាស្ត្រាចារ្យ៖ សឿង លីម (Soeurng LIM)</span></div>
+        <div class="footer-right">ទំព័រទី ៤ នៃ ១៣</div>
+    </div>
+</div>
+
+<!-- ================= PAGE 5: 4 Pillars of OOP (Part 2) ================= -->
+<div class="a4-page">
+    <div class="global-header">
+        <div class="header-item"><img src="https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png" onerror="this.src='Logo.png'"><span>សាកលវិទ្យាល័យអង្គរ</span></div>
+        <div class="header-center">
+            <h1>សៀវភៅមគ្គទ្ទេសក៍ (Guidebook) - ជំពូកទី ២</h1>
+            <p>ADVANCED DATA STRUCTURES AND ALGORITHMS FOR AI</p>
+        </div>
+        <div class="header-item"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg"><span>Python Pro</span></div>
+    </div>
+
+    <div class="page-content">
+        
+        <!-- Pillar 3 -->
+        <div class="compare-block">
+            <img src="https://images.unsplash.com/photo-1516280440502-3151978d30e3?auto=format&fit=crop&w=1200&q=80" class="compare-img" alt="Band Playing Music">
+            <div class="compare-title">៣. ពហុរូបរាង (Polymorphism)</div>
+            <div class="compare-grid">
+                <div class="compare-col real">
+                    <h5><i class="fa-solid fa-shapes"></i> ទ្រឹស្តី និងជីវិតពិត</h5>
+                    ពាក្យ Poly (ច្រើន) និង Morph (ទម្រង់)។ វាគឺជាសមត្ថភាពដែលវត្ថុផ្សេងៗគ្នាអាចឆ្លើយតបទៅនឹង "បញ្ជាតែមួយ" ក្នុងទម្រង់ផ្សេងគ្នា។ <b>ឧទាហរណ៍៖</b> ពេលហៅបញ្ជា <code>speak()</code> ទៅកាន់សត្វឆ្កែ វានឹង "ព្រុស" តែបើបញ្ជាទៅកាន់សត្វឆ្មា វានឹង "ស្រែកម៉េវ" ទោះជាពាក្យបញ្ជាដូចគ្នាក៏ដោយ។
+                </div>
+                <div class="compare-col ai">
+                    <h5><i class="fa-brands fa-python"></i> ការប្រើប្រាស់ក្នុង Python</h5>
+                    អនុញ្ញាតឲ្យយើងប្រើ Function ឬ Method ដែលមានឈ្មោះតែមួយ ទៅលើ Objects ច្រើនប្រភេទផ្សេងគ្នាដោយគ្មានកំហុស (Error)។ ឧទាហរណ៍ការប្រើ <code>len()</code> អាចរាប់អក្សរក្នុង String ក៏បាន រាប់ចំនួនធាតុក្នុង List ក៏បានដែរ។
+                </div>
+            </div>
+        </div>
+
+        <!-- Pillar 4 -->
+        <div class="compare-block">
+            <img src="https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?auto=format&fit=crop&w=1200&q=80" class="compare-img" alt="Driving Car">
+            <div class="compare-title">៤. អរូបីកម្ម ឬការលាក់ភាពស្មុគស្មាញ (Abstraction)</div>
+            <div class="compare-grid">
+                <div class="compare-col real">
+                    <h5><i class="fa-solid fa-eye-slash"></i> ទ្រឹស្តី និងជីវិតពិត</h5>
+                    ការបង្ហាញតែមុខងារចាំបាច់ (Interface) ឲ្យអ្នកប្រើប្រាស់ ដោយលាក់បាំងនូវយន្តការស្មុគស្មាញខាងក្នុង (Hiding Complexity)។ <b>ឧទាហរណ៍៖</b> ពេលបើកបរឡាន អ្នកគ្រាន់តែដឹងថាជាន់ហ្គែរគឺឡានរត់ទៅមុខ ដោយមិនបាច់ដឹងពីរបៀបដែលម៉ាស៊ីនចំហេះក្នុងធ្វើការបាញ់សាំងនោះទេ។
+                </div>
+                <div class="compare-col ai">
+                    <h5><i class="fa-brands fa-python"></i> ការប្រើប្រាស់ក្នុង Python</h5>
+                    យើងប្រើប្រាស់ Module <code>abc</code> (Abstract Base Classes) ដើម្បីបង្កើតគំរូ Class ធំមួយតម្រូវឲ្យអ្នកដទៃយកទៅសរសេរកូដបំពេញលម្អិតតាមក្រោយ។ វាជួយឲ្យប្រព័ន្ធកូដធំៗ (System Design) មានរបៀបរៀបរយ និងងាយស្រួលគ្រប់គ្រង។
+                </div>
+            </div>
+        </div>
+
+        <div class="highlight-note"><i class="fa-solid fa-lightbulb"></i> <b>ចំណាំ៖</b> នៅក្នុងវិស័យ Data Science យើងតែងតែសរសេរ <b>Classes</b> ជាកញ្ចប់ (Libraries) ដោយប្រើប្រាស់គោលការណ៍ទាំង ៤ នេះ ដើម្បីឱ្យវិស្វករផ្សេងទៀតអាចទាញយកទៅប្រើប្រាស់បន្តបានដោយងាយស្រួល (ឧទាហរណ៍ដូចជា Scikit-Learn ឬ PyTorch)។</div>
+    </div>
+
+    <div class="global-footer">
+        <div class="footer-left"><img src="Lim.jpg" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'"><span>សាស្ត្រាចារ្យ៖ សឿង លីម (Soeurng LIM)</span></div>
+        <div class="footer-right">ទំព័រទី ៥ នៃ ១៣</div>
+    </div>
+</div>
+
+<!-- ================= PAGE 6: Memory Management (Stack vs Heap) ================= -->
+<div class="a4-page">
+    <div class="global-header">
+        <div class="header-item"><img src="https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png" onerror="this.src='Logo.png'"><span>សាកលវិទ្យាល័យអង្គរ</span></div>
+        <div class="header-center">
+            <h1>សៀវភៅមគ្គទ្ទេសក៍ (Guidebook) - ជំពូកទី ២</h1>
+            <p>ADVANCED DATA STRUCTURES AND ALGORITHMS FOR AI</p>
+        </div>
+        <div class="header-item"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg"><span>Python Pro</span></div>
+    </div>
+
+    <div class="page-content">
+        <div class="section-title"><i class="fa-solid fa-memory"></i> ៥. ការគ្រប់គ្រងអង្គចងចាំ (Memory Management)</div>
+        <div class="text-block">
+            សំណួរដ៏សំខាន់មួយក្នុងវិទ្យាសាស្ត្រកុំព្យូទ័រ៖ <b>"តើកុំព្យូទ័ររក្សាទុកអញ្ញាត (Variables) និងទិន្នន័យរាប់លាននៅឯណា?"</b>។ ភាសា Python មិនរក្សាទុកទិន្នន័យនៅផ្តុំគ្នានោះទេ វាបែងចែក Memory ជាពីរផ្នែកធំៗ គឺ <b>Stack</b> និង <b>Heap</b> ដើម្បីឲ្យប្រព័ន្ធដំណើរការលឿន។
+        </div>
+        
+        <div class="grid-2">
+            <div class="card">
+                <h4><i class="fa-solid fa-layer-group"></i> Stack Memory (អ្នកចង្អុល)</h4>
+                <p class="text-block" style="font-size: 12px; margin:0;">
+                    • ជាតំបន់អង្គចងចាំតូច តែមានល្បឿនលឿនបំផុត។<br>
+                    • ប្រើសម្រាប់ផ្ទុក <b>"ឈ្មោះអញ្ញាត (Variable Names)"</b> តែប៉ុណ្ណោះ។<br>
+                    • វាមិនផ្ទុកទិន្នន័យ (Object) ដោយផ្ទាល់ទេ វាគ្រាន់តែផ្ទុក Memory Address (លេខកូដទីតាំង) ដើម្បីចង្អុលទៅកាន់ Heap ប៉ុណ្ណោះ។
+                </p>
+            </div>
+            <div class="card green-card">
+                <h4><i class="fa-solid fa-database"></i> Heap Memory (ឃ្លាំងផ្ទុកទិន្នន័យ)</h4>
+                <p class="text-block" style="font-size: 12px; margin:0;">
+                    • ជាតំបន់អង្គចងចាំធំទូលាយ អាចពង្រីកបាន (Dynamic)។<br>
+                    • ប្រើសម្រាប់ផ្ទុក <b>"Objects ពិតប្រាកដ"</b> (ដូចជា Lists, Dictionaries, Classes) ដែលមានទំហំធំ។<br>
+                    • ទិន្នន័យរាយប៉ាយកន្លែងណាទំនេរ តែមានលេខ ID សម្គាល់ច្បាស់លាស់។
+                </p>
+            </div>
+        </div>
+
+        <div class="narrative-box danger" style="margin-top: 15px;">
+            <div class="narrative-header"><i class="fa-solid fa-triangle-exclamation"></i> អញ្ញាត (Variables) មិនមែនជាប្រអប់ទេ!</div>
+            <p class="narrative-text">ក្នុងភាសាមួយចំនួន Variable ដូចជាប្រអប់ផ្ទុកឥវ៉ាន់។ តែក្នុង Python, Variable គឺគ្រាន់តែជា <b>"ផ្លាកឈ្មោះ (Labels/References)"</b> ដែលបិទភ្ជាប់ឬចង្អុលទៅលើ Object ណាមួយក្នុង Heap Memory ប៉ុណ្ណោះ។ បើយើងសរសេរ `A = B` វាមានន័យថា A និង B ចង្អុលទៅកាន់ Object តែមួយក្នុង Heap ជាមួយគ្នា។ នេះជាចំណុចដែលនិស្សិតតែងតែមានការភាន់ច្រឡំ។</p>
+        </div>
+
+        <img src="https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=1200&q=80" class="visual-img" alt="Memory Chips" style="height: 140px; margin-top: 5px;">
+
+    </div>
+
+    <div class="global-footer">
+        <div class="footer-left"><img src="Lim.jpg" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'"><span>សាស្ត្រាចារ្យ៖ សឿង លីម (Soeurng LIM)</span></div>
+        <div class="footer-right">ទំព័រទី ៦ នៃ ១៣</div>
+    </div>
+</div>
+
+<!-- ================= PAGE 7: Passing References Code Example ================= -->
+<div class="a4-page">
+    <div class="global-header">
+        <div class="header-item"><img src="https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png" onerror="this.src='Logo.png'"><span>សាកលវិទ្យាល័យអង្គរ</span></div>
+        <div class="header-center">
+            <h1>សៀវភៅមគ្គទ្ទេសក៍ (Guidebook) - ជំពូកទី ២</h1>
+            <p>ADVANCED DATA STRUCTURES AND ALGORITHMS FOR AI</p>
+        </div>
+        <div class="header-item"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg"><span>Python Pro</span></div>
+    </div>
+
+    <div class="page-content">
+        <div class="section-title"><i class="fa-solid fa-code-compare"></i> ៦. ករណីសិក្សា៖ ការបញ្ជូន Reference ចូលទៅក្នុង Function</div>
+        <div class="text-block" style="margin-top: 10px;">
+            ដោយសារតែអញ្ញាតក្នុង Python គឺជា <b>References (អ្នកចង្អុល)</b> ដូច្នេះនៅពេលអ្នកបញ្ជូន List ឬ Object មួយទៅឲ្យ Function នោះ Python មិនបាន Copy ទិន្នន័យនោះទេ វាគ្រាន់តែបញ្ជូន "ខ្សែចង្អុល" ទៅតែប៉ុណ្ណោះ។ ប្រសិនបើ Function ធ្វើការកែប្រែទិន្នន័យ នោះទិន្នន័យដើមនៅខាងក្រៅក៏ប្រែប្រួលដែរ ព្រោះពួកវាចង្អុលទៅកាន់ Object តែមួយក្នុង Heap។
+        </div>
+
+        <!-- Runnable Code Memory Reference -->
+        <div class="code-wrapper" style="margin-top: 15px;">
+            <div class="code-header"><span><i class="fa-brands fa-python"></i> 2_memory_reference.py</span><span>Pass by Object Reference</span></div>
+            <div class="code-content"><pre>
+<span class="kw">def</span> modify_dataset(arr):
+    <span class="com"># Function នេះទទួលយក arr ដែលចង្អុលទៅ List នៅក្រៅ</span>
+    <span class="fn">print</span>(<span class="str">"-> ក្នុង Function: កំពុងបញ្ចូលលេខ 99..."</span>)
+    arr.<span class="fn">append</span>(<span class="num">99</span>)
+    
+<span class="com"># 1. បង្កើត List ដើម</span>
+original_data = [<span class="num">10</span>, <span class="num">20</span>, <span class="num">30</span>]
+<span class="fn">print</span>(<span class="str">f"មុនហៅ Function: original_data = {original_data}"</span>)
+<span class="fn">print</span>(<span class="str">f"Memory ID: {<span class="fn">id</span>(original_data)}"</span>)
+
+<span class="com"># 2. បញ្ជូនវាទៅឲ្យ Function (បញ្ជូនតែ Reference ប៉ុណ្ណោះ)</span>
+modify_dataset(original_data)
+
+<span class="com"># 3. ពិនិត្យមើលបញ្ជី (List) ដើមម្តងទៀត</span>
+<span class="fn">print</span>(<span class="str">f"ក្រោយហៅ Function: original_data = {original_data}"</span>)
+<span class="fn">print</span>(<span class="str">f"Memory ID នៅដដែល: {<span class="fn">id</span>(original_data)}"</span>)
+</pre></div>
+            <div class="code-output">
+                <div class="code-output-title">>_ Terminal Output</div>
+                <pre>មុនហៅ Function: original_data = [10, 20, 30]
+Memory ID: 140453890254016
+-> ក្នុង Function: កំពុងបញ្ចូលលេខ 99...
+ក្រោយហៅ Function: original_data = [10, 20, 30, 99]
+Memory ID នៅដដែល: 140453890254016</pre>
+            </div>
+        </div>
+
+        <div class="narrative-box" style="margin-top: 15px;">
+            <div class="narrative-header"><i class="fa-solid fa-magnifying-glass-chart"></i> ការសង្កេតពីលទ្ធផល (Mutations)</div>
+            <p class="narrative-text">តាមរយៈ Terminal យើងឃើញថា <code>original_data</code> ត្រូវបានប្រែប្រួលដោយស្វ័យប្រវត្តិទោះបីជាយើងមិនបានប្រើប្រាស់ <code>return</code> ចេញពី Function ក៏ដោយ។ Memory ID របស់វាគឺនៅដដែលបង្ហាញថា Object ក្នុង Heap មិនត្រូវបានថតចម្លង (No duplicate created)។ ក្នុង Data Science បើអ្នកមិនប្រយ័ត្ន អ្នកអាចធ្វើឲ្យទិន្នន័យ (Dataset) ដើមខូចខាតនៅពេលបញ្ជូនវាទៅឲ្យ Data Cleaning Function។</p>
+        </div>
+    </div>
+
+    <div class="global-footer">
+        <div class="footer-left"><img src="Lim.jpg" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'"><span>សាស្ត្រាចារ្យ៖ សឿង លីម (Soeurng LIM)</span></div>
+        <div class="footer-right">ទំព័រទី ៧ នៃ ១៣</div>
+    </div>
+</div>
+
+<!-- ================= PAGE 8: Garbage Collection & Copying ================= -->
+<div class="a4-page">
+    <div class="global-header">
+        <div class="header-item"><img src="https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png" onerror="this.src='Logo.png'"><span>សាកលវិទ្យាល័យអង្គរ</span></div>
+        <div class="header-center">
+            <h1>សៀវភៅមគ្គទ្ទេសក៍ (Guidebook) - ជំពូកទី ២</h1>
+            <p>ADVANCED DATA STRUCTURES AND ALGORITHMS FOR AI</p>
+        </div>
+        <div class="header-item"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg"><span>Python Pro</span></div>
+    </div>
+
+    <div class="page-content">
+        <div class="section-title"><i class="fa-solid fa-trash-can"></i> ៧. ប្រព័ន្ធសម្អាតស្វ័យប្រវត្តិ (Garbage Collection)</div>
+        <div class="text-block">
+            ដោយសារតែ Memory (RAM) កុំព្យូទ័រមានកំណត់ នៅពេលដែល Object មួយលែងត្រូវបានប្រើប្រាស់ យើងចាំបាច់ត្រូវលុបវាចោលដើម្បីយក Memory មកវិញ។ ក្នុងភាសា C++ អ្នកត្រូវលុបវាដោយខ្លួនឯង (Manual allocation) ប៉ុន្តែក្នុង Python មានប្រព័ន្ធ <b>Garbage Collection (GC)</b>។
+        </div>
+        <div class="narrative-box">
+            <div class="narrative-header"><i class="fa-solid fa-recycle"></i> យន្តការរាប់អ្នកចង្អុល (Reference Counting)</div>
+            <p class="narrative-text">រាល់ពេលមាន Variable ចង្អុលទៅ Object មួយ នោះ Reference Count របស់វាកើនឡើង។ បើយើងលុប Variable នោះចោល (ប្រើ <code>del name</code>) នោះអ្នកចង្អុលថយចុះ។ នៅពេលដែល <b>Reference Count ស្មើ សូន្យ (0)</b> (គ្មានអ្នកចង្អុលសោះ) ប្រព័ន្ធ Garbage Collector របស់ Python នឹងមកបោសសម្អាត Object នោះចេញពី Heap Memory ដោយស្វ័យប្រវត្តិ។</p>
+        </div>
+
+        <div class="section-title"><i class="fa-solid fa-clone"></i> ៨. បញ្ហានៃការចម្លងទិន្នន័យ (Assignment vs Shallow vs Deep)</div>
+        <div class="text-block" style="margin-bottom: 15px;">
+            នៅក្នុងការវិភាគទិន្នន័យ យើងតែងតែចង់រក្សាទុកច្បាប់ដើម (Backup) មុននឹងធ្វើការកែប្រែអ្វីមួយ។ ប៉ុន្តែការចម្លងទិន្នន័យក្នុង Python មានភាពសាំញ៉ាំបន្តិច។
+        </div>
+
+        <div class="compare-block">
+            <div class="compare-title" style="text-align: left;"><i class="fa-solid fa-link text-blue"></i> ១. ការប្រើសញ្ញាស្មើ (Assignment =)</div>
+            <div class="compare-grid" style="grid-template-columns: 1fr;">
+                <div class="compare-col real">
+                    <code>list_B = list_A</code> <b>មិនមែនជាការបង្កើតទិន្នន័យថ្មីទេ!</b> វាគ្រាន់តែបង្កើតផ្លាកឈ្មោះថ្មី (B) ឲ្យទៅចង្អុលលើ Object តែមួយជាមួយ (A)។ បើ A ប្រែប្រួល B ក៏ប្រែប្រួលដែរ។
+                </div>
+            </div>
+        </div>
+
+        <div class="compare-block">
+            <div class="compare-title" style="text-align: left;"><i class="fa-regular fa-copy text-blue"></i> ២. ការចម្លងរាក់ (Shallow Copy)</div>
+            <div class="compare-grid" style="grid-template-columns: 1fr;">
+                <div class="compare-col real">
+                    ប្រើ <code>import copy</code> និង <code>copy.copy()</code>។ វាបង្កើត Object សំបកក្រៅថ្មី តែបើទិន្នន័យខាងក្នុងជា Nested Lists (List ត្រួតគ្នា) នោះធាតុខាងក្នុងនៅតែចង្អុលទៅ Memory ដើមដដែល។ ការកែធាតុខាងក្នុង នៅតែប៉ះពាល់ដល់ច្បាប់ដើម។
+                </div>
+            </div>
+        </div>
+
+        <div class="compare-block" style="margin-bottom: 0;">
+            <div class="compare-title" style="text-align: left; background: #F0FDF4; color: var(--accent-green);"><i class="fa-solid fa-clone"></i> ៣. ការចម្លងជ្រៅ (Deep Copy - ក្លូន)</div>
+            <div class="compare-grid" style="grid-template-columns: 1fr;">
+                <div class="compare-col real">
+                    ប្រើ <code>copy.deepcopy()</code>។ នេះគឺជា <b>ការក្លូន (Cloning)</b>។ វាបង្កើត Object ថ្មីទាំងស្រុង ហើយទម្លុះចូលទៅចម្លងធាតុខាងក្នុងៗ (Nested) បង្កើតជា Memory ថ្មីផ្តាច់ចេញពីគ្នាស្រឡះ ១០០%។ កែប្រែអ្វីក៏គ្មានបញ្ហាដល់ច្បាប់ដើមដែរ។
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="global-footer">
+        <div class="footer-left"><img src="Lim.jpg" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'"><span>សាស្ត្រាចារ្យ៖ សឿង លីម (Soeurng LIM)</span></div>
+        <div class="footer-right">ទំព័រទី ៨ នៃ ១៣</div>
+    </div>
+</div>
+
+<!-- ================= PAGE 9: Deep Copy Code Demonstration ================= -->
+<div class="a4-page">
+    <div class="global-header">
+        <div class="header-item"><img src="https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png" onerror="this.src='Logo.png'"><span>សាកលវិទ្យាល័យអង្គរ</span></div>
+        <div class="header-center">
+            <h1>សៀវភៅមគ្គទ្ទេសក៍ (Guidebook) - ជំពូកទី ២</h1>
+            <p>ADVANCED DATA STRUCTURES AND ALGORITHMS FOR AI</p>
+        </div>
+        <div class="header-item"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg"><span>Python Pro</span></div>
+    </div>
+
+    <div class="page-content">
+        <div class="section-title"><i class="fa-solid fa-table-cells"></i> ៩. កូដអនុវត្ត៖ ការការពារទិន្នន័យម៉ាទ្រីស (2D Matrix) ជាមួយ Deep Copy</div>
+        <div class="text-block">
+            នៅក្នុងការវិភាគទិន្នន័យ (Data Analysis) ឬរូបភាពកុំព្យូទ័រ (Computer Vision) ទិន្នន័យតែងតែត្រូវបានផ្ទុកជាទម្រង់ 2D ឬ 3D Arrays។ ខាងក្រោមនេះគឺជាកំហុសទូទៅដែលនិស្សិតតែងជួបប្រទះនៅពេលធ្វើការថតចម្លង (Backup) ទិន្នន័យពហុវិមាត្រ។
+        </div>
+
+        <!-- Runnable Code Deep Copy -->
+        <div class="code-wrapper" style="border-top: 3px solid var(--accent-green); margin-top: 15px;">
+            <div class="code-header"><span><i class="fa-brands fa-python"></i> 3_deep_copy_matrix.py</span><span style="color:var(--accent-green);">Data Cloning</span></div>
+            <div class="code-content"><pre>
+<span class="kw">import</span> copy
+
+<span class="com"># ១. បង្កើតតារាងម៉ាទ្រីស (List ក្នុង List)</span>
+matrix_A = [
+    [<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>],
+    [<span class="num">4</span>, <span class="num">5</span>, <span class="num">6</span>]
+]
+
+<span class="com"># ២. ធ្វើការថតចម្លង (Copy)</span>
+shallow_backup = copy.<span class="fn">copy</span>(matrix_A)     <span class="com"># ចម្លងរាក់</span>
+deep_backup = copy.<span class="fn">deepcopy</span>(matrix_A)    <span class="com"># ចម្លងជ្រៅ (ក្លូន)</span>
+
+<span class="com"># ៣. ធ្វើការកែប្រែទិន្នន័យលើច្បាប់ចម្លងទាំងពីរ</span>
+<span class="fn">print</span>(<span class="str">"-> កំពុងកែប្រែលទ្ធផលជួរទី១ ខ្ទង់ទី១ ជាលេខ 99..."</span>)
+shallow_backup[<span class="num">0</span>][<span class="num">0</span>] = <span class="num">99</span> <span class="com"># កែលើ Shallow</span>
+deep_backup[<span class="num">0</span>][<span class="num">0</span>] = <span class="num">99</span>    <span class="com"># កែលើ Deep</span>
+
+<span class="com"># ៤. ពិនិត្យមើលភាពប៉ះពាល់ទៅលើម៉ាទ្រីសដើម (matrix_A)</span>
+<span class="fn">print</span>(<span class="str">"លទ្ធផលនៃ Shallow Copy ប៉ះពាល់ច្បាប់ដើម:"</span>)
+<span class="fn">print</span>(<span class="str">f"ច្បាប់ដើម (A): {matrix_A}"</span>)
+<span class="fn">print</span>(<span class="str">f"ច្បាប់ Shallow: {shallow_backup}"</span>)
+
+<span class="fn">print</span>(<span class="str">"\nលទ្ធផលនៃ Deep Copy គ្មានប៉ះពាល់ច្បាប់ដើម:"</span>)
+<span class="fn">print</span>(<span class="str">f"ច្បាប់ដើម (A) មិនផ្លាស់ប្តូរដោយសារ Deep ទេ"</span>)
+<span class="fn">print</span>(<span class="str">f"ច្បាប់ Deep: {deep_backup}"</span>)
+</pre></div>
+            <div class="code-output">
+                <div class="code-output-title">>_ Terminal Output</div>
+                <pre>-> កំពុងកែប្រែលទ្ធផលជួរទី១ ខ្ទង់ទី១ ជាលេខ 99...
+លទ្ធផលនៃ Shallow Copy ប៉ះពាល់ច្បាប់ដើម:
+ច្បាប់ដើម (A): [[99, 2, 3], [4, 5, 6]]
+ច្បាប់ Shallow: [[99, 2, 3], [4, 5, 6]]
+
+លទ្ធផលនៃ Deep Copy គ្មានប៉ះពាល់ច្បាប់ដើម:
+ច្បាប់ដើម (A) មិនផ្លាស់ប្តូរដោយសារ Deep ទេ
+ច្បាប់ Deep: [[99, 2, 3], [4, 5, 6]]</pre>
+            </div>
+        </div>
+
+        <div class="highlight-note" style="margin-top: 15px;">
+            <i class="fa-solid fa-shield-halved"></i> <b>សេចក្តីសន្និដ្ឋាន៖</b> កូដខាងលើបង្ហាញយ៉ាងច្បាស់ថា នៅពេលទិន្នន័យមានលក្ខណៈត្រួតគ្នា (Nested) ការប្រើត្រឹមតែ Shallow Copy គឺមិនមានសុវត្ថិភាពទេ ព្រោះវានៅតែចែករំលែក Memory គ្នាដដែល ដែលធ្វើឲ្យច្បាប់ដើមត្រូវបានកែប្រែទៅជាលេខ 99 ដោយអចេតនា។ ជម្រើសដ៏ល្អបំផុតសម្រាប់ធ្វើ Backup ទិន្នន័យសំខាន់ៗ គឺត្រូវប្រើប្រាស់ <b>Deep Copy</b> ជានិច្ច។
+        </div>
+    </div>
+
+    <div class="global-footer">
+        <div class="footer-left"><img src="Lim.jpg" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'"><span>សាស្ត្រាចារ្យ៖ សឿង លីម (Soeurng LIM)</span></div>
+        <div class="footer-right">ទំព័រទី ៩ នៃ ១៣</div>
+    </div>
+</div>
+
+<!-- ================= PAGE 10: Q&A 1-3 ================= -->
+<div class="a4-page">
+    <div class="global-header">
+        <div class="header-item"><img src="https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png" onerror="this.src='Logo.png'"><span>សាកលវិទ្យាល័យអង្គរ</span></div>
+        <div class="header-center">
+            <h1>សៀវភៅមគ្គទ្ទេសក៍ (Guidebook) - ជំពូកទី ២</h1>
+            <p>ADVANCED DATA STRUCTURES AND ALGORITHMS FOR AI</p>
+        </div>
+        <div class="header-item"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg"><span>Python Pro</span></div>
+    </div>
+
+    <div class="page-content">
+        <div class="section-title"><i class="fa-solid fa-circle-question"></i> ១០. សំណួររំលឹកមេរៀន និងការបកស្រាយ (Review Q&A)</div>
+        <div class="text-block" style="margin-bottom: 12px;">
+            ខាងក្រោមនេះគឺជាសំណួរ និងការបកស្រាយចំនួន ៥ ដែលត្រូវបានរៀបចំឡើងដើម្បីវាស់ស្ទង់ការយល់ដឹងរបស់និស្សិតទៅលើខ្លឹមសារស្នូលនៃជំពូកទី ២ នេះ៖
+        </div>
+
+        <!-- Question 1 -->
+        <div class="qa-box">
+            <div class="qa-question">
+                <i class="fa-solid fa-q qa-icon-q"></i> 
+                <span>១. តើ Class និង Object នៅក្នុង Object-Oriented Programming (OOP) ខុសគ្នាដូចម្តេច?</span>
+            </div>
+            <div class="qa-answer">
+                <i class="fa-solid fa-a qa-icon-a"></i>
+                <span><b>ការបកស្រាយ៖</b> <b>Class</b> គឺជា "ប្លង់ ឬគំរូដើម (Blueprint)" សម្រាប់ប្រាប់ពីទម្រង់លក្ខណៈដែលវត្ថុមួយត្រូវមាន តែវាមិនស៊ីទំហំក្នុង Memory ទេ។ ចំណែកឯ <b>Object</b> គឺជា "វត្ថុពិតប្រាកដ" ដែលត្រូវបានសាងសង់ឡើងដោយផ្អែកលើប្លង់នោះ ហើយវាចាប់ផ្តើមប្រើប្រាស់ទំហំក្នុង Heap Memory របស់កុំព្យូទ័រ និងមានទិន្នន័យជាក់ស្តែង។ (ឧទាហរណ៍៖ ប្លង់ផ្ទះ vs ផ្ទះពិតៗដែលសាងសង់រួច)។</span>
+            </div>
+        </div>
+
+        <!-- Question 2 -->
+        <div class="qa-box">
+            <div class="qa-question">
+                <i class="fa-solid fa-q qa-icon-q"></i> 
+                <span>២. ក្នុងចំណោមសសរទ្រូងទាំង ៤ នៃ OOP តើ Encapsulation (ការវិចខ្ចប់) មានអត្ថប្រយោជន៍អ្វីខ្លះក្នុងការសរសេរកម្មវិធី?</span>
+            </div>
+            <div class="qa-answer">
+                <i class="fa-solid fa-a qa-icon-a"></i>
+                <span><b>ការបកស្រាយ៖</b> Encapsulation ជួយការពារទិន្នន័យសំខាន់ៗ (ដូចជាលេខកូដសម្ងាត់ ឬចំនួនទឹកប្រាក់ក្នុងគណនី) មិនឲ្យកូដពីខាងក្រៅចូលមកកែប្រែដោយផ្ទាល់ និងគ្មានសណ្តាប់ធ្នាប់បាន។ យើងប្រើវាដើម្បីលាក់អញ្ញាតធ្វើជា Private រួចបើកផ្លូវឲ្យគេកែប្រែវាបានតាមរយៈតែ Method (ដូចជា deposit) ប៉ុណ្ណោះ ដែលធ្វើឲ្យកម្មវិធីមានសុវត្ថិភាព និងងាយស្រួលគ្រប់គ្រងកំហុស (Error Handling)។</span>
+            </div>
+        </div>
+
+        <!-- Question 3 -->
+        <div class="qa-box">
+            <div class="qa-question">
+                <i class="fa-solid fa-q qa-icon-q"></i> 
+                <span>៣. នៅក្នុងភាសា Python តើ Stack Memory និង Heap Memory មានតួនាទីខុសគ្នាដូចម្តេចក្នុងការផ្ទុកទិន្នន័យ?</span>
+            </div>
+            <div class="qa-answer">
+                <i class="fa-solid fa-a qa-icon-a"></i>
+                <span><b>ការបកស្រាយ៖</b> <br>
+                • <b>Stack Memory:</b> ជាតំបន់ដែលកុំព្យូទ័រប្រើសម្រាប់ផ្ទុកត្រឹមតែ "ឈ្មោះអញ្ញាត (Variable Names / References)" តែប៉ុណ្ណោះ។ វាមិនផ្ទុកទិន្នន័យធំៗទេ។<br>
+                • <b>Heap Memory:</b> ជាតំបន់ដ៏ធំ ដែលប្រើសម្រាប់ស្តុកទុកទិន្នន័យ "Object ពិតប្រាកដ" (ដូចជា List មានលេខ ១លានតួ)។ ឈ្មោះអញ្ញាតក្នុង Stack គ្រាន់តែមានតួនាទីចង្អុល (Pointer) ទៅកាន់ទីតាំងរបស់ Object នៅក្នុង Heap នេះប៉ុណ្ណោះ។</span>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="global-footer">
+        <div class="footer-left"><img src="Lim.jpg" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'"><span>សាស្ត្រាចារ្យ៖ សឿង លីម (Soeurng LIM)</span></div>
+        <div class="footer-right">ទំព័រទី ១០ នៃ ១៣</div>
+    </div>
+</div>
+
+<!-- ================= PAGE 11: Q&A 4-5 ================= -->
+<div class="a4-page">
+    <div class="global-header">
+        <div class="header-item"><img src="https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png" onerror="this.src='Logo.png'"><span>សាកលវិទ្យាល័យអង្គរ</span></div>
+        <div class="header-center">
+            <h1>សៀវភៅមគ្គទ្ទេសក៍ (Guidebook) - ជំពូកទី ២</h1>
+            <p>ADVANCED DATA STRUCTURES AND ALGORITHMS FOR AI</p>
+        </div>
+        <div class="header-item"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg"><span>Python Pro</span></div>
+    </div>
+
+    <div class="page-content">
+        
+        <!-- Question 4 -->
+        <div class="qa-box">
+            <div class="qa-question">
+                <i class="fa-solid fa-q qa-icon-q"></i> 
+                <span>៤. តើប្រព័ន្ធ Garbage Collection នៅក្នុង Python ដំណើរការយ៉ាងដូចម្តេច ដើម្បីយកទំហំ Memory មកវិញ?</span>
+            </div>
+            <div class="qa-answer">
+                <i class="fa-solid fa-a qa-icon-a"></i>
+                <span><b>ការបកស្រាយ៖</b> ប្រព័ន្ធនេះដំណើរការដោយពឹងផ្អែកលើការរាប់អ្នកចង្អុល (Reference Counting)។ រាល់ពេលមាន Variable ថ្មីចង្អុលទៅ Object មួយ នោះលេខរាប់វាកើនឡើង។ នៅពេលដែលកម្មវិធីដំណើរការចប់ ឬយើងលុប Variable នោះចោល ធ្វើឲ្យចំនួនអ្នកចង្អុល (Reference Count) ធ្លាក់ចុះមកដល់ ០ នោះប្រព័ន្ធ Garbage Collector នឹងដឹងថា Object នោះលែងមានអ្នកប្រើហើយ វានឹងរុះរើលុប Object នោះចោលពី Heap ស្វ័យប្រវត្តិដើម្បីយកទំហំ RAM មកវិញ។</span>
+            </div>
+        </div>
+
+        <!-- Question 5 -->
+        <div class="qa-box" style="margin-bottom: 15px;">
+            <div class="qa-question">
+                <i class="fa-solid fa-q qa-icon-q"></i> 
+                <span>៥. ហេតុអ្វីបានជាក្នុងការថតចម្លងម៉ាទ្រីស (2D Lists) យើងដាច់ខាតត្រូវប្រើប្រាស់ `copy.deepcopy()` ជាជាងការប្រើសញ្ញាស្មើ (=)?</span>
+            </div>
+            <div class="qa-answer">
+                <i class="fa-solid fa-a qa-icon-a"></i>
+                <span><b>ការបកស្រាយ៖</b> ការប្រើសញ្ញាស្មើ <code>=</code> មិនបានថតចម្លងទិន្នន័យអ្វីទាំងអស់ វាគ្រាន់តែឲ្យឈ្មោះថ្មីនោះទៅចង្អុលលើ Object ចាស់ដដែល។ បើទោះជាប្រើ <code>copy.copy()</code> (Shallow) ក៏វានៅតែមានបញ្ហាជាមួយ 2D Lists ដែរ ព្រោះ List ខាងក្នុងនៅតែ share Memory គ្នា។ មានតែ <code>copy.deepcopy()</code> ទេដែលធ្វើការ "ក្លូន (Cloning)" ទម្លុះចូលទៅបង្កើត Memory ថ្មីផ្តាច់ចេញពីគ្នាទាំងស្រុងសម្រាប់កូនៗគ្រប់ជាន់ថ្នាក់ ដែលការពារមិនឲ្យការកែប្រែថ្មីទៅបំផ្លាញទិន្នន័យដើម (Original Dataset)។</span>
+            </div>
+        </div>
+
+        <div class="highlight-note" style="margin-top: 30px;">
+            <p style="margin: 0; font-size: 13px;">
+                <i class="fa-solid fa-bell text-yellow"></i> <b>ផ្នែកអនុវត្តន៍ជាក់ស្តែងសរុបប្រចាំជំពូកទី ២៖</b><br>
+                បន្ទាប់ពីយល់ទ្រឹស្តី និស្សិតត្រូវអនុវត្តការបង្កើត <b>Classes</b> ការកំណត់ Properties និងសាកល្បងការបញ្ជូន References និងការប្រើប្រាស់ <b>Deep Copy</b> នៅក្នុងកូដ Python ដោយផ្ទាល់។ លំហាត់អនុវត្តន៍កូដ និងការបកស្រាយលម្អិត ត្រូវបានរៀបចំនៅក្នុង <b>"សៀវភៅលំហាត់អនុវត្តន៍ (Workbook) - ជំពូកទី ២"</b>។
+            </p>
+        </div>
+
+    </div>
+
+    <div class="global-footer">
+        <div class="footer-left"><img src="Lim.jpg" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'"><span>សាស្ត្រាចារ្យ៖ សឿង លីម (Soeurng LIM)</span></div>
+        <div class="footer-right">ទំព័រទី ១១ នៃ ១៣</div>
+    </div>
+</div>
+
+<!-- ================= PAGE 12: Glossary, Conclusion & References ================= -->
+<div class="a4-page">
+    <div class="global-header">
+        <div class="header-item"><img src="https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png" onerror="this.src='Logo.png'"><span>សាកលវិទ្យាល័យអង្គរ</span></div>
+        <div class="header-center">
+            <h1>សៀវភៅមគ្គទ្ទេសក៍ (Guidebook) - ជំពូកទី ២</h1>
+            <p>ADVANCED DATA STRUCTURES AND ALGORITHMS FOR AI</p>
+        </div>
+        <div class="header-item"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg"><span>Python Pro</span></div>
+    </div>
+
+    <div class="page-content">
+        
+        <div class="section-title"><i class="fa-solid fa-spell-check"></i> ១១. សទ្ទានុក្រម និងពាក្យគន្លឹះ (Key Terms & Glossary)</div>
+        <div class="grid-2">
+            <div class="card">
+                <p><b><i class="fa-solid fa-cube text-blue"></i> Class / Object:</b> <b>Class</b> គឺប្លង់គំរូនៃកូដ ខណៈ <b>Object (Instance)</b> គឺជាវត្ថុពិតប្រាកដដែលកើតចេញពីប្លង់នោះ និងមានទិន្នន័យជាក់ស្តែង។</p>
+                <p><b><i class="fa-solid fa-sitemap text-blue"></i> Inheritance:</b> យន្តការដែលអនុញ្ញាតឲ្យ Class ថ្មីទទួលបានលក្ខណៈសម្បត្តិពី Class ចាស់ ដោយមិនចាំបាច់សរសេរកូដសារឡើងវិញ។</p>
+                <p><b><i class="fa-solid fa-arrow-pointer text-blue"></i> Pointer / Reference:</b> ឈ្មោះអញ្ញាតដែលធ្វើការចង្អុលទីតាំងទៅរក Object នៅក្នុង Memory (Heap)។</p>
+            </div>
+            <div class="card">
+                <p><b><i class="fa-solid fa-recycle text-blue"></i> Garbage Collection (GC):</b> ដំណើរការដែលប្រព័ន្ធកុំព្យូទ័រតាមដាន និងលុបចោល Object ណាដែលគ្មាន Variable ណាបញ្ជូនទៅកាន់វាទៀត។</p>
+                <p><b><i class="fa-regular fa-copy text-blue"></i> Shallow Copy:</b> ការថតចម្លងតែកម្រិតស្រទាប់ក្រៅ ដែលស្រទាប់ខាងក្នុងៗនៅតែចែករំលែក Memory ដដែល។</p>
+                <p><b><i class="fa-solid fa-clone text-blue"></i> Deep Copy:</b> ការក្លូន Object និងធាតុទាំងអស់ខាងក្នុង បង្កើតជាឯកសារថ្មីទាំងស្រុងដែលមិនពាក់ព័ន្ធគ្នា។</p>
+            </div>
+        </div>
+
+        <div class="section-title"><i class="fa-solid fa-clipboard-list"></i> ១២. សេចក្តីសន្និដ្ឋាននៃជំពូកទី ២ (Conclusion)</div>
+        <div class="card" style="border-top-color: var(--accent-green); background: #F0FDF4; margin-bottom: 12px;">
+            <ul style="line-height: 1.8; color: var(--text-main); font-size: 13px;">
+                <li><b><i class="fa-solid fa-cubes text-green"></i> OOP គឺជាគ្រឹះនៃ Data Structures ផ្ទាល់ខ្លួន:</b> ដើម្បីបង្កើត Linked List, Tree ឬ Graph ដែលជាទម្រង់ទិន្នន័យសំខាន់បំផុតក្នុង AI យើងមិនអាចខ្វះការយល់ដឹងពីការសរសេរ <b>Class</b> នោះទេ។ វាផ្តល់សេរីភាពឲ្យយើងរៀបចំកូដបានតាមតម្រូវការ។</li>
+                <li><b><i class="fa-solid fa-tag text-green"></i> ការយល់ដឹងពី Memory ទប់ស្កាត់កំហុសធ្ងន់ធ្ងរ:</b> ការយល់ថា Variables ក្នុង Python គ្រាន់តែជា "អ្នកចង្អុល (References)" ជួយឲ្យអ្នកវិភាគទិន្នន័យជៀសវាងការធ្វើឲ្យខូចខាត (Mutate) ទៅលើ Dataset ដើមពេលបញ្ជូនទិន្នន័យចូលទៅក្នុង Functions ផ្សេងៗ។</li>
+                <li><b><i class="fa-solid fa-clone text-green"></i> ផ្តាច់ខ្លួនដោយ Deep Copy:</b> នៅក្នុងគម្រោងធំៗ ការចម្លងទិន្នន័យដោយប្រើសញ្ញាស្មើ <code>=</code> គឺជាហានិភ័យខ្ពស់។ ចូរចងចាំថា ការការពារទិន្នន័យ 2D ឬ 3D (ដូចជារូបភាព ឬម៉ាទ្រីស) ទាមទារឲ្យមានការប្រើប្រាស់ <b>Deep Copy</b> ជានិច្ច ដើម្បីធានាថាការពិសោធន៍ថ្មីៗមិនប៉ះពាល់ដល់ទិន្នន័យស្តង់ដារ។</li>
+            </ul>
+        </div>
+
+        <div class="section-title"><i class="fa-solid fa-book-bookmark"></i> ១៣. ឯកសារយោង និងគន្ថនិទ្ទេស (References & Further Reading)</div>
+        <div class="text-block">
+            <ul style="list-style: none; padding-left: 0; line-height: 1.8;">
+                <li><b><i class='fa-solid fa-book text-blue'></i> Goodrich, M. T., Tamassia, R. (2013).</b> <i>Data Structures and Algorithms in Python</i>. Wiley. (Chapter 2: Object-Oriented Programming).</li>
+                <li><b><i class='fa-brands fa-python text-blue'></i> Python Docs (Classes & OOP):</b> <a href='https://docs.python.org/3/tutorial/classes.html' style='color:var(--accent-blue); text-decoration:none;'>docs.python.org/3/tutorial/classes.html</a></li>
+                <li><b><i class='fa-brands fa-python text-blue'></i> Python Docs (Memory Management):</b> <a href='https://docs.python.org/3/c-api/memory.html' style='color:var(--accent-blue); text-decoration:none;'>docs.python.org/3/c-api/memory.html</a></li>
+                <li><b><i class='fa-brands fa-youtube text-blue'></i> Corey Schafer:</b> <i>Python OOP Tutorials</i> (YouTube Video Series on Classes and Objects).</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="global-footer">
+        <div class="footer-left"><img src="Lim.jpg" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'"><span>សាស្ត្រាចារ្យ៖ សឿង លីម (Soeurng LIM)</span></div>
+        <div class="footer-right">ទំព័រទី ១២ នៃ ១៣</div>
+    </div>
+</div>
+
+<!-- ================= PAGE 13: BACK COVER (Optional Empty/Ending Page) ================= -->
+<div class="a4-page cover-page" style="justify-content: center;">
+    <img src="https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png" alt="Angkor University Logo" class="cover-logo" onerror="this.src='Logo.png'" style="width: 100px;">
+    <h1 class="cover-uni-kh" style="font-size: 24px;">សាកលវិទ្យាល័យអង្គរ</h1>
+    <p class="cover-uni-en" style="font-size: 14px; margin-bottom: 20px;">ANGKOR UNIVERSITY</p>
+
+    <div style="width: 50px; height: 3px; background-color: var(--accent-blue); margin: 20px auto;"></div>
+    
+    <h1 class="cover-main-title" style="font-size: 22px; color: var(--accent-green);"><i class="fa-solid fa-flag-checkered"></i> បញ្ចប់ជំពូកទី ២</h1>
+    <p class="cover-sub-title" style="font-size: 14px; margin-bottom: 30px; color: var(--text-muted);">(End of Chapter 2 Guidebook)</p>
+    
+    <div style="background: #FFFFFF; padding: 15px 30px; border-radius: 50px; border: 2px solid var(--accent-blue); display: inline-block; box-shadow: 0 4px 10px rgba(0,0,0,0.05);">
+        <p style="margin: 0; font-weight: bold; font-size: 14px; color: var(--accent-blue); font-family: 'Lato';"><i class="fa-solid fa-envelope" style="margin-right: 8px;"></i> soeurnglim@gmail.com</p>
+    </div>
+
+    <div class="global-footer" style="position: absolute; bottom: 0;">
+        <div class="footer-left"><img src="Lim.jpg" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'"><span>សាស្ត្រាចារ្យ៖ សឿង លីម (Soeurng LIM)</span></div>
+        <div class="footer-right">ទំព័រទី ១៣ នៃ ១៣</div>
+    </div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="km">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>សៀវភៅមគ្គទ្ទេសក៍ - ករណីប្រើប្រាស់ DSA ក្នុងប្រទេសកម្ពុជា</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Battambang:wght@400;700&family=Suwannaphum:wght@400;700;900&family=Lato:wght@400;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <style>
+        :root {
+            --bg-color: #E2E8F0;
+            --paper-white: #FFFFFF;
+            --text-main: #0F172A;
+            --text-muted: #475569;
+            --accent-blue: #0284C7; 
+            --accent-green: #059669;
+            --accent-yellow: #D97706; 
+            --accent-red: #DC2626;
+            --header-footer-bg: #F0F9FF;
+            --code-bg: #111827;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            background-color: var(--bg-color);
+            font-family: 'Battambang', sans-serif;
+            color: var(--text-main);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 40px 20px;
+        }
+
+        /* Utility Classes */
+        .text-blue { color: var(--accent-blue) !important; }
+        .text-green { color: var(--accent-green) !important; }
+        .text-red { color: var(--accent-red) !important; }
+        .text-yellow { color: var(--accent-yellow) !important; }
+
+        /* A4 Page Layout */
+        .a4-page {
+            width: 210mm; 
+            height: 297mm; 
+            background: var(--paper-white);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1); 
+            margin-bottom: 30mm;
+            display: flex; 
+            flex-direction: column; 
+            position: relative; 
+            border-radius: 8px;
+            overflow: hidden; 
+            page-break-after: always;
+        }
+
+        /* HEADER & FOOTER */
+        .global-header {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 12px 25px; border-bottom: 3px solid var(--accent-blue); background-color: var(--header-footer-bg);
+            height: 25mm;
+        }
+        .header-item { display: flex; flex-direction: column; align-items: center; gap: 5px; width: 120px; }
+        .header-item img { height: 40px; object-fit: contain; }
+        .header-item span { font-size: 10px; font-weight: bold; color: var(--accent-blue); text-align: center; font-family: 'Suwannaphum'; }
+        .header-center { text-align: center; flex-grow: 1; padding: 0 10px;}
+        .header-center h1 { font-family: 'Suwannaphum'; font-size: 15px; color: var(--accent-blue); margin: 0; }
+        .header-center p { font-family: 'Battambang'; font-size: 10px; color: #64748B; margin: 0; font-weight: bold; text-transform: uppercase;}
+
+        .global-footer {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 10px 25px; border-top: 3px solid var(--accent-blue);
+            background-color: var(--header-footer-bg);
+            position: absolute; bottom: 0; left: 0; width: 100%; height: 15mm;
+        }
+        .footer-left { display: flex; align-items: center; gap: 12px; }
+        .footer-left img { border-radius: 50%; border: 2px solid var(--accent-blue); width: 30px; height: 30px; object-fit: cover; background-color: #fff; }
+        .footer-left span { font-size: 11px; font-weight: bold; color: var(--text-main); font-family: 'Suwannaphum'; }
+        .footer-right { font-size: 11px; color: var(--accent-blue); font-weight: bold; font-family: 'Battambang'; }
+
+        /* CONTENT */
+        .page-content { flex-grow: 1; padding: 8mm 15mm; height: 257mm; overflow: hidden; } 
+        
+        .section-title {
+            background: var(--header-footer-bg); border-left: 5px solid var(--accent-blue);
+            padding: 8px 15px; margin: 10px 0; font-family: 'Suwannaphum';
+            font-size: 16px; display: flex; align-items: center; gap: 10px; font-weight: bold;
+            border-radius: 0 6px 6px 0; color: var(--accent-blue); page-break-after: avoid;
+        }
+
+        .text-block { font-size: 13px; line-height: 1.8; margin-bottom: 12px; color: var(--text-main); text-align: justify; }
+        
+        .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin-bottom: 12px; }
+        
+        .card { background: #F8FAFC; border: 1px solid #CBD5E1; border-top: 3px solid var(--accent-blue); padding: 12px; border-radius: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); page-break-inside: avoid; }
+        .card h4 { font-family: 'Suwannaphum'; font-size: 13.5px; color: var(--accent-blue); margin-bottom: 6px; display: flex; align-items: center; gap: 8px;}
+        .card.red-card { border-top-color: var(--accent-red); }
+        .card.red-card h4 { color: var(--accent-red); }
+        .card.green-card { border-top-color: var(--accent-green); }
+        .card.green-card h4 { color: var(--accent-green); }
+        .card.yellow-card { border-top-color: var(--accent-yellow); }
+        .card.yellow-card h4 { color: var(--accent-yellow); }
+        .card p { font-size: 11.5px; line-height: 1.6; color: var(--text-main); text-align: justify; }
+
+        /* Visual Images */
+        .visual-img { width: 100%; height: 110px; object-fit: cover; border-radius: 4px; margin-bottom: 8px; border: 1px solid #E2E8F0; }
+        
+        .banner-img { width: 100%; height: 130px; object-fit: cover; border-radius: 6px; margin-bottom: 15px; border-bottom: 3px solid var(--accent-blue); }
+
+        .highlight-note { background-color: #FEF9C3; border: 1px dashed var(--accent-yellow); padding: 10px 15px; border-radius: 6px; margin-bottom: 12px; font-weight: bold; color: #854D0E; font-size: 12.5px; display: flex; align-items: center; gap: 10px; page-break-inside: avoid; line-height: 1.6;}
+
+        /* PRINT MEDIA QUERY */
+        @page { size: A4; margin: 0; }
+        @media print {
+            body { background: white; padding: 0; margin: 0; }
+            .a4-page { box-shadow: none; margin: 0; width: 210mm; height: 297mm; border: none; border-radius: 0; page-break-after: always; }
+            .no-print { display: none !important; }
+            * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+        }
+    </style>
+</head>
+<body>
+
+<button class="no-print" onclick="window.print()" style="margin-bottom: 20px; padding: 12px 25px; cursor: pointer; background: var(--accent-blue); color: white; border: none; border-radius: 8px; font-family: 'Battambang'; font-weight: bold; font-size: 16px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); transition: all 0.3s;">
+    <i class="fa-solid fa-print"></i> បោះពុម្ពឯកសារ (Print Document)
+</button>
+
+<!-- ================= PAGE 1: INTRODUCTION & STACK ================= -->
+<div class="a4-page">
+    <div class="global-header">
+        <div class="header-item"><img src="https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png" onerror="this.src='Logo.png'"><span>សាកលវិទ្យាល័យអង្គរ</span></div>
+        <div class="header-center">
+            <h1>ករណីសិក្សា DSA ក្នុងបរិបទប្រទេសកម្ពុជា</h1>
+            <p>ADVANCED DATA STRUCTURES IN CAMBODIAN INDUSTRY</p>
+        </div>
+        <div class="header-item"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg"><span>Python Pro</span></div>
+    </div>
+
+    <div class="page-content">
+        <img src="https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=1200&q=80" class="banner-img" alt="Technology in Cambodia">
+
+        <div class="section-title" style="margin-top: 0;"><i class="fa-solid fa-circle-info"></i> សេចក្តីផ្តើម (Introduction)</div>
+        <div class="text-block">
+            ការយល់ដឹងពី <b>Data Structures</b> មិនត្រឹមតែជាទ្រឹស្តីនៅក្នុងថ្នាក់រៀននោះទេ ប៉ុន្តែវាជាគ្រឹះដ៏សំខាន់ក្នុងការដោះស្រាយបញ្ហាបច្ចេកវិទ្យាក្នុងសង្គមជាក់ស្តែង។ នៅក្នុងឯកសារសិក្សានេះ យើងនឹងលើកយកករណីសិក្សាជាក់ស្តែងចំនួន <b>៣ ករណី</b> សម្រាប់រចនាសម្ព័ន្ធទិន្នន័យនីមួយៗរួមមាន <b>Stack, Queue, Linked List,</b> និង <b>Binary Search Tree (BST)</b> ដែលត្រូវបានយកមកប្រើប្រាស់ក្នុងស្ថាប័ន ធនាគារ និងសេវាកម្មឌីជីថលនានានៅក្នុងប្រទេសកម្ពុជា។
+        </div>
+
+        <!-- SECTION 1: STACK -->
+        <div class="section-title"><i class="fa-solid fa-layer-group"></i> ១. រចនាសម្ព័ន្ធទិន្នន័យ Stack (លំដាប់ LIFO - Last-In, First-Out)</div>
+        <div class="text-block">
+            <b>Stack</b> គឺជាទម្រង់ផ្ទុកទិន្នន័យដែលអនុញ្ញាតឱ្យធាតុដែលបញ្ចូលចុងក្រោយគេ ត្រូវបានយកចេញមកប្រើប្រាស់មុនគេបង្អស់។ ខាងក្រោមនេះជាករណីប្រើប្រាស់នៅកម្ពុជា៖
+        </div>
+
+        <div class="grid-3">
+            <!-- Stack Case 1 -->
+            <div class="card red-card">
+                <img src="https://images.unsplash.com/photo-1524661135-423995f22d0b?auto=format&fit=crop&w=400&q=80" class="visual-img" alt="PassApp Cambodia">
+                <h4>១. ប្រវត្តិស្វែងរកក្នុងកម្មវិធីកក់ឡាន (PassApp/Grab)</h4>
+                <p>នៅពេលអ្នកប្រើប្រាស់កម្មវិធីកក់ PassApp ឬ Grab ក្នុងក្រុងភ្នំពេញ មុខងារ "ត្រឡប់ក្រោយ (Undo/Back)" នៃទីតាំងដែលបានជ្រើសរើស ប្រើប្រាស់ Stack ដើម្បីរក្សាទុកចំណុចកូអរដោនេផ្លូវ ដើម្បីឱ្យអ្នកដំណើរងាយស្រួលថយក្រោយទៅកាន់ទិសដៅមុនវិញយ៉ាងរហ័ស។</p>
+            </div>
+
+            <!-- Stack Case 2 -->
+            <div class="card red-card">
+                <img src="https://images.unsplash.com/photo-1549923746-c502d488b3ea?auto=format&fit=crop&w=400&q=80" class="visual-img" alt="Telecom Call Center">
+                <h4>២. ការគ្រប់គ្រងការហៅទូរស័ព្ទរបស់ Call Center</h4>
+                <p>ភ្នាក់ងារបម្រើអតិថិជនរបស់ក្រុមហ៊ុន Smart ឬ Cellcard ប្រើប្រាស់ប្រព័ន្ធទូរស័ព្ទដែលផ្ទុកការហៅចូលជាជង់ (Call Stacking)។ ប្រសិនបើមានការហៅបន្ទាន់ចូលក្នុងពេលកំពុងសន្ទនា ការហៅមុន (Active Call) ត្រូវបានផ្អាកបណ្តោះអាសន្ន និងរង់ចាំដោះស្រាយតាមលំដាប់ស្ទែក LIFO។</p>
+            </div>
+
+            <!-- Stack Case 3 -->
+            <div class="card red-card">
+                <img src="https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?auto=format&fit=crop&w=400&q=80" class="visual-img" alt="Buffet Phnom Penh">
+                <h4>៣. ការរៀបចំថាសអាហារនៅហាងប៊ូហ្វេ</h4>
+                <p>នៅក្នុងភោជនីយដ្ឋានប៊ូហ្វេនានាក្នុងក្រុងភ្នំពេញ ថាស ឬចានអាហារដែលត្រូវបានលាងសម្អាតរួច នឹងត្រូវតម្រៀបតៗគ្នាពីក្រោមឡើងលើ។ អតិថិជនដែលមកដល់ នឹងដកយកចានដែលនៅខាងលើគេបង្អស់ទៅប្រើប្រាស់មុនគេ ដែលនេះជាទម្រង់ផ្ទុកទិន្នន័យបែបលក្ខណៈរូបវន្ត LIFO យ៉ាងពិតប្រាកដ។</p>
+            </div>
+        </div>
+
+        <div class="highlight-note">
+            <i class="fa-solid fa-lightbulb"></i> <b>គន្លឹះយល់ដឹង៖</b> Stack ប្រៀបដូចជាការដាក់ចានតម្រួតលើគ្នា។ រាល់ពេលអនុវត្តកូដ Python គេប្រើប្រាស់វិធីសាស្ត្រ <code>.append()</code> សម្រាប់ Push និង <code>.pop()</code> សម្រាប់ទាញយកទិន្នន័យចុងក្រោយ។
+        </div>
+    </div>
+
+    <div class="global-footer">
+        <div class="footer-left"><img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'"><span>សាស្ត្រាចារ្យ៖ សឿង លីម (Soeurng LIM)</span></div>
+        <div class="footer-right">ទំព័រទី ១ នៃ ៣</div>
+    </div>
+</div>
+
+<!-- ================= PAGE 2: QUEUE & LINKED LIST ================= -->
+<div class="a4-page">
+    <div class="global-header">
+        <div class="header-item"><img src="https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png" onerror="this.src='Logo.png'"><span>សាកលវិទ្យាល័យអង្គរ</span></div>
+        <div class="header-center">
+            <h1>ករណីសិក្សា DSA ក្នុងបរិបទប្រទេសកម្ពុជា</h1>
+            <p>ADVANCED DATA STRUCTURES IN CAMBODIAN INDUSTRY</p>
+        </div>
+        <div class="header-item"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg"><span>Python Pro</span></div>
+    </div>
+
+    <div class="page-content">
+        <!-- SECTION 2: QUEUE -->
+        <div class="section-title" style="margin-top: 0;"><i class="fa-solid fa-people-arrows"></i> ២. រចនាសម្ព័ន្ធទិន្នន័យ Queue (លំដាប់ FIFO - First-In, First-Out)</div>
+        <div class="text-block">
+            <b>Queue</b> គឺជាទម្រង់រៀបចំទិន្នន័យដែលធានាថាធាតុមកមុន ត្រូវបានដំណើរការមុន។ ខាងក្រោមនេះជាករណីសិក្សានៅកម្ពុជា៖
+        </div>
+
+        <div class="grid-3">
+            <!-- Queue Case 1 -->
+            <div class="card green-card">
+                <img src="https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?auto=format&fit=crop&w=400&q=80" class="visual-img" alt="Bank Waiting">
+                <h4>១. ប្រព័ន្ធរង់ចាំវេននៅធនាគារ (ABA/Acleda)</h4>
+                <p>នៅពេលអតិថិជនទៅកាន់ធនាគារ ABA ឬ អេស៊ីលីដា ពួកគេត្រូវដកសំបុត្រលេខរង់ចាំ។ ម៉ាស៊ីនដំណើរការតាមក្បួន Queue ដោយចាត់ចែងឱ្យអ្នកដែលមកដល់មុន (ដកលេខមុន) ឡើងទៅកាន់បញ្ជរដើម្បីដោះស្រាយប្រតិបត្តិការមុនគេ។</p>
+            </div>
+
+            <!-- Queue Case 2 -->
+            <div class="card green-card">
+                <img src="https://images.unsplash.com/photo-1556740758-90de374c12ad?auto=format&fit=crop&w=400&q=80" class="visual-img" alt="Bakong System Payment">
+                <h4>២. ការដំណើរការប្រតិបត្តិការផ្ទេរប្រាក់បាគង (Bakong)</h4>
+                <p>ក្នុងមួយថ្ងៃៗ ប្រព័ន្ធបាគងរបស់ធនាគារជាតិនៃកម្ពុជាត្រូវទទួលរ៉ាប់រងការផ្ទេរប្រាក់រាប់លានប្រតិបត្តិការ។ ដើម្បីកុំឱ្យប្រព័ន្ធគាំង គណនីបញ្ជូននីមួយៗត្រូវបានដាក់ចូលក្នុង Queue (Transaction Message Queue) ដើម្បីដោះស្រាយម្តងមួយៗតាមលំដាប់លំដោយរហូតដល់ចប់។</p>
+            </div>
+
+            <!-- Queue Case 3 -->
+            <div class="card green-card">
+                <img src="https://images.unsplash.com/photo-1600121848594-d8644e57abab?auto=format&fit=crop&w=400&q=80" class="visual-img" alt="Angkor Ticket Queue">
+                <h4>៣. ការតម្រង់ជួរទិញសំបុត្រទស្សនាអង្គរវត្ត</h4>
+                <p>នៅការិយាល័យ ឬកន្លែងលក់សំបុត្ររបស់គ្រឹះស្ថានអង្គរ ខេត្តសៀមរាប ភ្ញៀវទេសចរជាតិ និងអន្តរជាតិតម្រង់ជួរគ្នាទិញសំបុត្រ។ ប្រព័ន្ធនេះដំណើរការបែប FIFO ដាច់ខាត ដើម្បីរក្សាសណ្តាប់ធ្នាប់ និងកាត់បន្ថយពេលវេលារង់ចាំយ៉ាងមានប្រសិទ្ធភាព។</p>
+            </div>
+        </div>
+
+        <!-- SECTION 3: LINKED LIST -->
+        <div class="section-title"><i class="fa-solid fa-link"></i> ៣. រចនាសម្ព័ន្ធទិន្នន័យ Linked List (លីងលីស)</div>
+        <div class="text-block">
+            <b>Linked List</b> គឺជាបណ្តុំធាតុទិន្នន័យ (Nodes) ផ្សេងៗគ្នា ដែលតភ្ជាប់គ្នាតាមរយៈអាសយដ្ឋានចង្អុល (Pointers)។ ខាងក្រោមនេះជាករណីសិក្សានៅកម្ពុជា៖
+        </div>
+
+        <div class="grid-3">
+            <!-- Linked List Case 1 -->
+            <div class="card yellow-card">
+                <img src="https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&w=400&q=80" class="visual-img" alt="Pleng Music App">
+                <h4>១. បញ្ជីចម្រៀងក្នុងកម្មវិធី Pleng by Smart</h4>
+                <p>កម្មវិធី Pleng ប្រើប្រាស់ Doubly Linked List ដើម្បីបង្កើតមុខងារ Playlist។ រាល់បទចម្រៀងនីមួយៗជា Node ដែលចង្អុលទៅ "បទបន្ទាប់ (Next)" និង "បទមុន (Previous)" ដែលអនុញ្ញាតឱ្យអ្នកស្តាប់ចុច Skip ទៅមុខ ឬថយក្រោយបានរលូន។</p>
+            </div>
+
+            <!-- Linked List Case 2 -->
+            <div class="card yellow-card">
+                <img src="https://images.unsplash.com/photo-1536657464919-892534f60d6e?auto=format&fit=crop&w=400&q=80" class="visual-img" alt="Cambodian Rice Supply Chain">
+                <h4>២. ខ្សែសង្វាក់ផ្គត់ផ្គង់ស្រូវអង្ករកម្ពុជា</h4>
+                <p>ប្រព័ន្ធគ្រប់គ្រងការនាំចេញអង្ករ ចាប់ផ្តើមពីកសិករ (Node 1) -> រោងម៉ាស៊ីនកិនស្រូវ (Node 2) -> ក្រុមហ៊ុនវេចខ្ចប់ (Node 3) -> ផែស្ងួតនាំចេញ (Node 4)។ ដំណាក់កាលនីមួយៗត្រូវបានភ្ជាប់គ្នា និងផ្ទៀងផ្ទាត់ដោយប្រើប្រាស់ប្រព័ន្ធទិន្នន័យតភ្ជាប់លីងលីសនេះឯង។</p>
+            </div>
+
+            <!-- Linked List Case 3 -->
+            <div class="card yellow-card">
+                <img src="https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?auto=format&fit=crop&w=400&q=80" class="visual-img" alt="Bank Ledger">
+                <h4>៣. ប្រវត្តិប្រតិបត្តិការគណនីធនាគារប្រចាំថ្ងៃ</h4>
+                <p>រាល់ប្រតិបត្តិការវេរលុយ ឬដកលុយប្រចាំថ្ងៃរបស់ប្រជាពលរដ្ឋ ត្រូវបានរក្សាទុកជា Node ថ្មីៗដែលតភ្ជាប់គ្នាតាមលំដាប់ពេលវេលា (Chronological Order)។ វាអនុញ្ញាតឱ្យប្រព័ន្ធធនាគារអាចបញ្ចូលប្រតិបត្តិការថ្មី O(1) ដោយមិនចាំបាច់ផ្លាស់ប្តូរទីតាំងទិន្នន័យចាស់ឡើយ។</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="global-footer">
+        <div class="footer-left"><img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'"><span>សាស្ត្រាចារ្យ៖ សឿង លីម (Soeurng LIM)</span></div>
+        <div class="footer-right">ទំព័រទី ២ នៃ ៣</div>
+    </div>
+</div>
+
+<!-- ================= PAGE 3: BINARY SEARCH TREE & CONCLUSION ================= -->
+<div class="a4-page">
+    <div class="global-header">
+        <div class="header-item"><img src="https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png" onerror="this.src='Logo.png'"><span>សាកលវិទ្យាល័យអង្គរ</span></div>
+        <div class="header-center">
+            <h1>ករណីសិក្សា DSA ក្នុងបរិបទប្រទេសកម្ពុជា</h1>
+            <p>ADVANCED DATA STRUCTURES IN CAMBODIAN INDUSTRY</p>
+        </div>
+        <div class="header-item"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg"><span>Python Pro</span></div>
+    </div>
+
+    <div class="page-content">
+        <!-- SECTION 4: BINARY SEARCH TREE -->
+        <div class="section-title" style="margin-top: 0;"><i class="fa-solid fa-sitemap"></i> ៤. Binary Search Tree (BST - ស្រឡាយដើមឈើស្វែងរកទ្វេភាគ)</div>
+        <div class="text-block">
+            <b>Binary Search Tree (BST)</b> គឺជាមែកធាងផ្ទុកទិន្នន័យដែលធាតុនៅខាងឆ្វេងតូចជាង Node មេ និងធាតុខាងស្តាំធំជាង Node មេ។ វាផ្តល់ល្បឿនស្វែងរកលឿនបំផុត O(log n)។ ខាងក្រោមនេះជាករណីសិក្សានៅកម្ពុជា៖
+        </div>
+
+        <div class="grid-3">
+            <!-- BST Case 1 -->
+            <div class="card">
+                <img src="https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=400&q=80" class="visual-img" alt="Aeon Supermarket">
+                <h4>១. ការគ្រប់គ្រងទំនិញនៅផ្សារទំនើប Aeon Mall</h4>
+                <p>ផ្សារទំនើបអ៊ីអន (Aeon) មានទំនិញរាប់ម៉ឺនមុខ។ ដើម្បីស្វែងរកតម្លៃទំនិញ ឬទីតាំងស្តុកទំនិញពេលស្កេន Barcode / SKU, ប្រព័ន្ធទិន្នន័យប្រើប្រាស់រចនាសម្ព័ន្ធមែកធាង BST ដើម្បីកាត់បន្ថយពេលស្វែងរក O(log n) ជៀសវាងការស្វែងរករាយម្តងមួយៗដែលនាំឱ្យយឺតយ៉ាវ។</p>
+            </div>
+
+            <!-- BST Case 2 -->
+            <div class="card">
+                <img src="https://images.unsplash.com/photo-1551836022-d5d88e9218df?auto=format&fit=crop&w=400&q=80" class="visual-img" alt="Cambodian Government Administration">
+                <h4>២. ឋានានុក្រមរដ្ឋបាល និងភូមិសាស្ត្រកម្ពុជា</h4>
+                <p>ទិន្នន័យភូមិសាស្ត្រនៃរាជរដ្ឋាភិបាលត្រូវបានរៀបចំជា Tree: ថ្នាក់ជាតិ -> ខេត្ត/រាជធានី -> ក្រុង/ស្រុក/ខណ្ឌ -> ឃុំ/សង្កាត់ -> ភូមិ។ រចនាសម្ព័ន្ធឋានានុក្រមនេះធ្វើឱ្យប្រព័ន្ធគ្រប់គ្រងអត្តសញ្ញាណកម្មប្រជាពលរដ្ឋ (G-Identity) ដំណើរការស្វែងរក និងធ្វើបច្ចុប្បន្នភាពទិន្នន័យបានរហ័សបំផុត។</p>
+            </div>
+
+            <!-- BST Case 3 -->
+            <div class="card">
+                <img src="https://images.unsplash.com/photo-1523050854058-8df90110c9f1?auto=format&fit=crop&w=400&q=80" class="visual-img" alt="School Database Angkor University">
+                <h4>៣. ប្រព័ន្ធគ្រប់គ្រងព័ត៌មាននិស្សិតសាកលវិទ្យាល័យ</h4>
+                <p>សាកលវិទ្យាល័យធំៗ ដូចជាសាកលវិទ្យាល័យអង្គរ ប្រើប្រាស់ BST ដើម្បីគ្រប់គ្រងលេខអត្តសញ្ញាណនិស្សិត (Student ID)។ ពេលសាស្ត្រាចារ្យ ឬបុគ្គលិករដ្ឋបាលស្វែងរកលទ្ធផលសិក្សារបស់និស្សិត ប្រព័ន្ធនឹងរាវរកតាមលំដាប់លំដោយទ្វេភាគ ដែលប្រើប្រាស់ជំហានគណនាតិចបំផុត និងសន្សំសំចៃធនធាន RAM។</p>
+            </div>
+        </div>
+
+        <!-- CONCLUSION -->
+        <div class="section-title"><i class="fa-solid fa-clipboard-check"></i> សេចក្តីសន្និដ្ឋាន (Conclusion)</div>
+        <div class="card green-card" style="margin-bottom: 12px; background-color: #F0FDF4;">
+            <p style="font-size: 12.5px; line-height: 1.8;">
+                ការសិក្សាអំពី <b>Data Structures & Algorithms (DSA)</b> គឺមិនមែនគ្រាន់តែជាទ្រឹស្តីសម្រាប់ប្រលងនោះទេ ប៉ុន្តែវាជាដំណោះស្រាយគន្លឹះដើម្បីដោះស្រាយបញ្ហាស្ទះប្រព័ន្ធទិន្នន័យ (System Performance Bottlenecks) នៅក្នុងស្ថាប័នពិតប្រាកដ។ តាមរយៈការវិភាគករណីសិក្សានៅប្រទេសកម្ពុជា ដូចជាប្រព័ន្ធធនាគារបាគង ធនាគារឯកជន ការគ្រប់គ្រងខ្សែសង្វាក់ផលិតកម្ម និងការស្វែងរកទិន្នន័យសិស្ស ឬទំនិញ គេសង្កេតឃើញថាការជ្រើសរើសរចនាសម្ព័ន្ធទិន្នន័យដ៏ត្រឹមត្រូវមួយ អាចជួយសន្សំសំចៃពេលវេលា ថវិកា និងធនធានម៉ាស៊ីន (Server) យ៉ាងច្រើនមហិមា។
+            </p>
+        </div>
+
+        <!-- SUMMARY OF DESIGN -->
+        <div class="highlight-note" style="margin-bottom: 0;">
+            <i class="fa-solid fa-circle-check"></i> <b>អនុសាសន៍៖</b> និស្សិតគួរស្វែងយល់ និងសរសេរកូដសាកល្បងរចនាសម្ព័ន្ធទាំងនេះនៅក្នុងភាសា Python ដើម្បីបង្កើនល្បឿននៃកម្មវិធីរបស់ខ្លួនឱ្យកាន់តែមានប្រសិទ្ធភាពខ្ពស់។
+        </div>
+    </div>
+
+    <div class="global-footer">
+        <div class="footer-left"><img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'"><span>សាស្ត្រាចារ្យ៖ សឿង លីម (Soeurng LIM)</span></div>
+        <div class="footer-right">ទំព័រទី ៣ នៃ ៣</div>
+    </div>
+</div>
+
+</body>
+</html>

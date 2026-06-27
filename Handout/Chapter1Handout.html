@@ -1,0 +1,943 @@
+<!DOCTYPE html>
+<html lang="km">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guidebook Chapter 1 - Full Python & Advanced DSA</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Battambang:wght@400;700&family=Suwannaphum:wght@400;700;900&family=Lato:wght@400;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <style>
+        :root {
+            --bg-color: #E2E8F0;
+            --paper-white: #FFFFFF;
+            --text-main: #0F172A;
+            --text-muted: #475569;
+            --accent-blue: #0284C7; 
+            --accent-green: #059669;
+            --accent-yellow: #D97706; 
+            --accent-red: #DC2626;
+            --header-footer-bg: #F0F9FF;
+            --code-bg: #111827;
+            --term-bg: #000000;
+            --term-text: #4ade80;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            background-color: var(--bg-color);
+            font-family: 'Battambang', sans-serif;
+            color: var(--text-main);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 40px 20px;
+        }
+
+        /* Utility Classes */
+        .text-blue { color: var(--accent-blue) !important; }
+        .text-green { color: var(--accent-green) !important; }
+        .text-red { color: var(--accent-red) !important; }
+        .text-yellow { color: var(--accent-yellow) !important; }
+
+        /* A4 Page Layout */
+        .a4-page {
+            width: 210mm; 
+            height: 297mm; 
+            background: var(--paper-white);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1); 
+            margin-bottom: 30mm;
+            display: flex; 
+            flex-direction: column; 
+            position: relative; 
+            border-radius: 8px;
+            overflow: hidden; 
+            page-break-after: always;
+        }
+
+        /* COVER PAGE STYLES */
+        .cover-page {
+            justify-content: center; 
+            align-items: center; 
+            text-align: center; 
+            padding: 30mm 20mm;
+            background-image: linear-gradient(to bottom, #F0F9FF, #FFFFFF);
+        }
+        .cover-logo { width: 140px; margin-bottom: 15px; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1)); }
+        .cover-uni-kh { font-family: 'Suwannaphum'; color: var(--accent-blue); font-size: 34px; margin: 0 0 5px 0; font-weight: 900; }
+        .cover-uni-en { font-family: 'Lato'; color: #475569; font-size: 18px; margin: 0 0 40px 0; letter-spacing: 1px; font-weight: bold; }
+        .cover-program { font-family: 'Suwannaphum'; font-size: 18px; color: var(--accent-green); margin-bottom: 25px; font-weight: bold; }
+        .cover-chapter-badge { background: var(--accent-blue); color: white; padding: 10px 30px; border-radius: 50px; font-size: 20px; font-weight: bold; margin-bottom: 40px; font-family: 'Suwannaphum'; box-shadow: 0 5px 15px rgba(2,132,199,0.3); display: inline-block;}
+        .cover-main-title { font-family: 'Suwannaphum'; font-size: 30px; color: var(--text-main); line-height: 1.5; margin-bottom: 10px; font-weight: 900; }
+        .cover-sub-title { font-family: 'Lato'; font-size: 18px; color: var(--accent-blue); margin-bottom: 50px; font-weight: bold; line-height: 1.5;}
+        
+        .cover-author-wrapper { display: flex; flex-direction: column; align-items: center; gap: 15px; margin-bottom: 40px; }
+        .cover-author-img { width: 110px; height: 110px; border-radius: 50%; border: 4px solid var(--accent-blue); object-fit: cover; box-shadow: 0 6px 15px rgba(0,0,0,0.15); background-color: #fff;}
+        .cover-author-text { font-size: 18px; color: #64748B; font-family: 'Suwannaphum'; }
+        .cover-author-text strong { color: var(--text-main); font-size: 22px; }
+
+        .cover-icons-wrapper { display: flex; gap: 50px; justify-content: center; margin-top: auto; border-top: 1px solid #E2E8F0; padding-top: 20px; width: 100%; }
+        .cover-icon-item img { height: 60px; margin-bottom: 8px; object-fit: contain; }
+        .cover-icon-item p { font-size: 14px; font-weight: bold; color: var(--accent-blue); font-family: 'Lato'; }
+
+        /* HEADER & FOOTER */
+        .global-header {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 12px 25px; border-bottom: 3px solid var(--accent-blue); background-color: var(--header-footer-bg);
+            height: 25mm;
+        }
+        .header-item { display: flex; flex-direction: column; align-items: center; gap: 5px; width: 120px; }
+        .header-item img { height: 40px; object-fit: contain; }
+        .header-item span { font-size: 10px; font-weight: bold; color: var(--accent-blue); text-align: center; font-family: 'Suwannaphum'; }
+        .header-center { text-align: center; flex-grow: 1; padding: 0 10px;}
+        .header-center h1 { font-family: 'Suwannaphum'; font-size: 15px; color: var(--accent-blue); margin: 0; }
+        .header-center p { font-family: 'Battambang'; font-size: 10px; color: #64748B; margin: 0; font-weight: bold; text-transform: uppercase;}
+
+        .global-footer {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 10px 25px; border-top: 3px solid var(--accent-blue);
+            background-color: var(--header-footer-bg);
+            position: absolute; bottom: 0; left: 0; width: 100%; height: 15mm;
+        }
+        .footer-left { display: flex; align-items: center; gap: 12px; }
+        .footer-left img { border-radius: 50%; border: 2px solid var(--accent-blue); width: 30px; height: 30px; object-fit: cover; background-color: #fff; }
+        .footer-left span { font-size: 11px; font-weight: bold; color: var(--text-main); font-family: 'Suwannaphum'; }
+        .footer-right { font-size: 11px; color: var(--accent-blue); font-weight: bold; font-family: 'Battambang'; }
+
+        /* CONTENT */
+        .page-content { flex-grow: 1; padding: 8mm 15mm; height: 257mm; overflow: hidden; } 
+        
+        .section-title {
+            background: var(--header-footer-bg); border-left: 5px solid var(--accent-blue);
+            padding: 8px 15px; margin: 10px 0; font-family: 'Suwannaphum';
+            font-size: 16px; display: flex; align-items: center; gap: 10px; font-weight: bold;
+            border-radius: 0 6px 6px 0; color: var(--accent-blue); page-break-after: avoid;
+        }
+
+        .text-block { font-size: 13px; line-height: 1.8; margin-bottom: 12px; color: var(--text-main); text-align: justify; }
+        
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
+        
+        .card { background: #F8FAFC; border: 1px solid #CBD5E1; border-top: 3px solid var(--accent-blue); padding: 12px; border-radius: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); page-break-inside: avoid; }
+        .card h4 { font-family: 'Suwannaphum'; font-size: 14px; color: var(--accent-blue); margin-bottom: 6px; display: flex; align-items: center; gap: 8px;}
+        .card.red-card { border-top-color: var(--accent-red); }
+        .card.red-card h4 { color: var(--accent-red); }
+        .card.green-card { border-top-color: var(--accent-green); }
+        .card.green-card h4 { color: var(--accent-green); }
+        .card ul { padding-left: 20px; margin-top: 5px; font-size: 12px; line-height: 1.7;}
+
+        /* Narrative Boxes */
+        .narrative-box { background: #FFFFFF; border-radius: 6px; border: 1px solid #CBD5E1; border-left: 4px solid var(--accent-blue); padding: 10px 12px; margin-bottom: 12px; box-shadow: 0 2px 5px rgba(0,0,0,0.02); page-break-inside: avoid;}
+        .narrative-header { font-weight: bold; color: var(--accent-blue); font-size: 13.5px; border-bottom: 1px solid #E2E8F0; padding-bottom: 5px; margin-bottom: 6px; font-family: 'Suwannaphum'; display: flex; align-items: center; gap: 8px;}
+        .narrative-text { font-size: 12px; color: var(--text-main); line-height: 1.7; margin: 0; text-align: justify;}
+        
+        .narrative-box.danger { background: #FEF2F2; border-left-color: var(--accent-red); border-color: #FECACA;}
+        .narrative-box.danger .narrative-header { color: var(--accent-red); border-bottom-color: #FCA5A5; }
+
+        /* Compare Blocks */
+        .compare-block { border: 1px solid #CBD5E1; border-radius: 8px; overflow: hidden; margin-bottom: 15px; background: #fff; box-shadow: 0 3px 8px rgba(0,0,0,0.05); page-break-inside: avoid;}
+        .compare-img { width: 100%; height: 110px; object-fit: cover; border-bottom: 2px solid var(--accent-blue); }
+        .compare-title { font-family: 'Suwannaphum'; font-size: 14.5px; color: var(--text-main); padding: 6px 12px; background: #F8FAFC; border-bottom: 1px solid #CBD5E1; font-weight: bold; text-align: center;}
+        .compare-grid { display: grid; grid-template-columns: 1fr 1fr; }
+        .compare-col { padding: 10px 12px; font-size: 12px; line-height: 1.7; text-align: justify; }
+        .compare-col:first-child { border-right: 1px dashed #CBD5E1; background: #F8FAFC; }
+        .compare-col h5 { font-family: 'Suwannaphum'; font-size: 13px; margin-bottom: 6px; display: flex; align-items: center; gap: 6px;}
+        .compare-col.real h5 { color: var(--accent-yellow); }
+        .compare-col.ai h5 { color: var(--accent-blue); }
+
+        /* Q&A Boxes */
+        .qa-box { border: 1px solid #CBD5E1; border-radius: 8px; margin-bottom: 12px; background: #fff; overflow: hidden; page-break-inside: avoid; box-shadow: 0 3px 6px rgba(0,0,0,0.02);}
+        .qa-question { background: #F0F9FF; padding: 10px 15px; border-bottom: 1px dashed #CBD5E1; font-weight: bold; color: var(--accent-blue); font-family: 'Suwannaphum'; font-size: 13.5px; display: flex; gap: 10px; align-items: flex-start; line-height: 1.5;}
+        .qa-answer { padding: 10px 15px; font-size: 12.5px; line-height: 1.7; color: var(--text-main); display: flex; gap: 10px; text-align: justify;}
+        .qa-icon-q { color: var(--accent-red); font-size: 16px; margin-top: 2px;}
+        .qa-icon-a { color: var(--accent-green); font-size: 16px; margin-top: 2px;}
+
+        .highlight-note { background-color: #FEF9C3; border: 1px dashed var(--accent-yellow); padding: 10px 15px; border-radius: 6px; margin-bottom: 12px; font-weight: bold; color: #854D0E; font-size: 12.5px; display: flex; align-items: center; gap: 10px; page-break-inside: avoid; line-height: 1.6;}
+
+        /* Fully Runnable Python Code Block Design */
+        .visual-img { width: 100%; height: 140px; object-fit: cover; border-radius: 4px; margin-bottom: 10px; border: 1px solid #E2E8F0; }
+        
+        .code-wrapper { background: var(--code-bg); border-radius: 8px; border: 1px solid #374151; overflow: hidden; width: 100%; box-shadow: 0 4px 10px rgba(0,0,0,0.15); margin-top: 10px; margin-bottom: 15px; page-break-inside: avoid;}
+        .code-header { background: #1F2937; padding: 6px 12px; font-size: 11px; font-family: 'Battambang', sans-serif; color: #9CA3AF; border-bottom: 1px solid #374151; display: flex; justify-content: space-between; align-items: center;}
+        .code-header span { font-weight: bold; color: #38BDF8; display: flex; align-items: center; gap: 5px; }
+        .code-content { padding: 10px 12px; }
+        .code-content pre { font-family: 'Fira Code', monospace; font-size: 11px; line-height: 1.6; color: #f8f8f2; margin: 0; white-space: pre-wrap;}
+        
+        /* Terminal Output Design */
+        .code-output { background: var(--term-bg); padding: 10px 12px; border-top: 1px dashed #4B5563; }
+        .code-output pre { font-family: 'Fira Code', monospace; font-size: 11px; color: var(--term-text); margin: 0; white-space: pre-wrap; line-height: 1.5;}
+        .code-output-title { font-size: 10px; color: #9CA3AF; margin-bottom: 5px; font-family: 'Battambang'; text-transform: uppercase;}
+
+        .kw { color: #ff79c6; font-weight: bold; } .fn { color: #50fa7b; } .str { color: #f1fa8c; } .com { color: #6272a4; font-style: italic; } .num { color: #bd93f9; } .bult { color: #8be9fd; }
+
+        /* PRINT MEDIA QUERY */
+        @page { size: A4; margin: 0; }
+        @media print {
+            body { background: white; padding: 0; margin: 0; }
+            .a4-page { box-shadow: none; margin: 0; width: 210mm; height: 297mm; border: none; border-radius: 0; page-break-after: always; }
+            .no-print { display: none !important; }
+            * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+        }
+    </style>
+</head>
+<body>
+
+<button class="no-print" onclick="window.print()" style="margin-bottom: 20px; padding: 12px 25px; cursor: pointer; background: var(--accent-blue); color: white; border: none; border-radius: 8px; font-family: 'Battambang'; font-weight: bold; font-size: 16px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); transition: all 0.3s;">
+    <i class="fa-solid fa-print"></i> បោះពុម្ពសៀវភៅមគ្គទ្ទេសក៍ (Print Guidebook)
+</button>
+
+<!-- ================= PAGE 1: COVER ================= -->
+<div class="a4-page cover-page">
+    <img src="https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png" alt="Angkor University Logo" class="cover-logo" onerror="this.src='Logo.png'">
+    <h1 class="cover-uni-kh">សាកលវិទ្យាល័យអង្គរ</h1>
+    <p class="cover-uni-en">ANGKOR UNIVERSITY</p>
+
+    <div class="cover-program">
+        <i class="fa-solid fa-graduation-cap"></i> អនុបណ្ឌិតវិទ្យាសាស្ត្រទិន្នន័យ និងបញ្ញាសិប្បនិម្មិត
+    </div>
+
+    <div class="cover-chapter-badge">សៀវភៅមគ្គទ្ទេសក៍ (Guidebook) | ជំពូកទី ១</div>
+
+    <h1 class="cover-main-title">សេចក្តីផ្តើមស៊ីជម្រៅទៅលើ Data Structures & Algorithms និងការវិភាគ Big-O សម្រាប់ Data Science</h1>
+    <h2 class="cover-sub-title">(In-depth Guide with Full Python Implementation)</h2>
+
+    <div class="cover-author-wrapper">
+        <img src="Lim.jpg" alt="Professor" class="cover-author-img" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'">
+        <div class="cover-author-text">
+            រៀបចំដោយសាស្ត្រាចារ្យ៖ <strong>សឿង លីម (Soeurng LIM)</strong>
+        </div>
+    </div>
+
+    <div class="cover-icons-wrapper">
+        <div class="cover-icon-item">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg" alt="Python Logo">
+            <p>Full Python</p>
+        </div>
+        <div class="cover-icon-item">
+            <img src="https://cdn-icons-png.flaticon.com/512/2103/2103633.png" alt="DSA Icon">
+            <p>DSA in AI</p>
+        </div>
+        <div class="cover-icon-item">
+            <i class="fa-solid fa-chart-line" style="font-size: 60px; color: var(--accent-blue); margin-bottom: 8px;"></i>
+            <p>Big-O</p>
+        </div>
+    </div>
+</div>
+
+<!-- ================= PAGE 2: Objectives & Table of Contents ================= -->
+<div class="a4-page">
+    <div class="global-header">
+        <div class="header-item"><img src="https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png" onerror="this.src='Logo.png'"><span>សាកលវិទ្យាល័យអង្គរ</span></div>
+        <div class="header-center">
+            <h1>សៀវភៅមគ្គទ្ទេសក៍ (Guidebook) - ជំពូកទី ១</h1>
+            <p>ADVANCED DATA STRUCTURES AND ALGORITHMS FOR AI</p>
+        </div>
+        <div class="header-item"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg"><span>Python Pro</span></div>
+    </div>
+
+    <div class="page-content">
+        
+        <!-- រូបភាព Banner សម្រាប់ទំព័រមាតិកា -->
+        <img src="https://images.unsplash.com/photo-1516321497487-e288fb19713f?auto=format&fit=crop&w=1200&q=80" class="visual-img" alt="Learning Banner" style="height: 120px; object-fit: cover; margin-bottom: 15px; border-bottom: 3px solid var(--accent-blue);">
+
+        <!-- វត្ថុបំណងនៃមេរៀន -->
+        <div class="section-title" style="margin-top: 0;"><i class="fa-solid fa-bullseye"></i> វត្ថុបំណងនៃមេរៀន (Learning Objectives)</div>
+        <div class="card green-card" style="margin-bottom: 20px;">
+            <p class="text-block" style="margin-bottom: 12px; font-weight: bold;">បន្ទាប់ពីបញ្ចប់ការសិក្សានៅក្នុងជំពូកទី ១ នេះ និស្សិតនឹងមានសមត្ថភាព៖</p>
+            <ul style="line-height: 1.8; color: var(--text-main); font-size: 13px; padding-left: 25px;">
+                <li><b class="text-blue">យល់ដឹងស៊ីជម្រៅ៖</b> ពីសារៈសំខាន់នៃ Data Structures និង Algorithms នៅក្នុងការអភិវឌ្ឍប្រព័ន្ធបញ្ញាសិប្បនិម្មិត (AI) និងវិទ្យាសាស្ត្រទិន្នន័យខ្នាតធំ (Big Data)។</li>
+                <li><b class="text-blue">បែងចែកភាពខុសគ្នា៖</b> យល់ច្បាស់ពីតួនាទីរបស់ទិន្នន័យ (Data Structure) ធៀបនឹងក្បួនដោះស្រាយ (Algorithm) តាមរយៈការប្រៀបធៀបករណីសិក្សាក្នុងសង្គមជាក់ស្តែងចំនួន ៥ ករណី។</li>
+                <li><b class="text-blue">វិភាគប្រសិទ្ធភាពកូដ (Complexity Analysis)៖</b> អាចវាស់ស្ទង់ និងវាយតម្លៃលើល្បឿន (Time Complexity) និងការប្រើប្រាស់អង្គចងចាំ (Space Complexity) របស់ក្បួនដោះស្រាយផ្សេងៗ។</li>
+                <li><b class="text-blue">ស្គាល់ពី Big-O Notation៖</b> ចេះបែងចែក និងជៀសវាងរវាងក្បួនដោះស្រាយដែលលឿន O(1), O(log n), O(n) និងក្បួនដោះស្រាយដែលយឺត O(n²)។</li>
+                <li><b class="text-blue">អនុវត្តន៍កូដជាក់ស្តែង៖</b> អាចសរសេរ និងសាកល្បងកូដ Python ផ្ទាល់ដើម្បីបញ្ជាក់ពីភាពខុសគ្នានៃទំហំ Big-O នីមួយៗ និងយល់ពីរបៀបបោះបង់មេគុណ (Dropping Constants)។</li>
+            </ul>
+        </div>
+
+        <!-- មាតិកា -->
+        <div class="section-title"><i class="fa-solid fa-list"></i> មាតិកា (Table of Contents)</div>
+        <div class="narrative-box" style="padding: 12px 20px; border-left-color: var(--accent-green);">
+            <div class="grid-2" style="margin-bottom: 0;">
+                
+                <!-- ជួរឈរទី ១ -->
+                <div style="font-size: 13px; line-height: 2.1; color: var(--text-main);">
+                    <div style="border-bottom: 1px dashed #E2E8F0;"><b class="text-blue">១.</b> ហេតុអ្វីបញ្ញាសិប្បនិម្មិត (AI) ត្រូវការ DSA?</div>
+                    <div style="border-bottom: 1px dashed #E2E8F0;"><b class="text-blue">២.</b> និយមន័យស៊ីជម្រៅ៖ Data Structures</div>
+                    <div style="border-bottom: 1px dashed #E2E8F0;"><b class="text-blue">៣.</b> និយមន័យស៊ីជម្រៅ៖ Algorithms</div>
+                    <div style="border-bottom: 1px dashed #E2E8F0;"><b class="text-blue">៤.</b> ករណីប្រៀបធៀប៖ សង្គមជាក់ស្តែង vs វិស័យ AI</div>
+                    <div style="border-bottom: 1px dashed #E2E8F0;"><b class="text-blue">៥.</b> ការវិភាគប្រសិទ្ធភាព (Complexity Analysis)</div>
+                    <div style="border-bottom: 1px dashed #E2E8F0;"><b class="text-blue">៦.</b> ទិដ្ឋភាពទូទៅនៃ Big-O Notation និង Worst-Case</div>
+                    <div style="border-bottom: 1px dashed #E2E8F0;"><b class="text-blue">៧.</b> ការវិភាគល្បឿន O(1) - Constant Time</div>
+                    <div style="border-bottom: 1px dashed #E2E8F0;"><b class="text-blue">៨.</b> ការវិភាគល្បឿន O(log n) - Logarithmic Time</div>
+                </div>
+
+                <!-- ជួរឈរទី ២ -->
+                <div style="font-size: 13px; line-height: 2.1; color: var(--text-main);">
+                    <div style="border-bottom: 1px dashed #E2E8F0;"><b class="text-blue">៩.</b> ការវិភាគល្បឿន O(n) - Linear Time</div>
+                    <div style="border-bottom: 1px dashed #E2E8F0;"><b class="text-blue">១០.</b> ការវិភាគល្បឿន O(n²) - Quadratic Time</div>
+                    <div style="border-bottom: 1px dashed #E2E8F0;"><b class="text-blue">១១.</b> ច្បាប់នៃការលុបចោល (Dropping Constants)</div>
+                    <div style="border-bottom: 1px dashed #E2E8F0;"><b class="text-blue">១២.</b> សំណួររំលឹកមេរៀន និងការបកស្រាយ (Q&A)</div>
+                    <div style="border-bottom: 1px dashed #E2E8F0;"><b class="text-blue">១៣.</b> សទ្ទានុក្រម និងពាក្យគន្លឹះ (Glossary)</div>
+                    <div style="border-bottom: 1px dashed #E2E8F0;"><b class="text-blue">១៤.</b> សេចក្តីសន្និដ្ឋាននៃជំពូកទី ១ (Conclusion)</div>
+                    <div style="border-bottom: 1px dashed #E2E8F0;"><b class="text-blue">១៥.</b> ឯកសារយោង និងគន្ថនិទ្ទេស (References)</div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+    <div class="global-footer">
+        <div class="footer-left"><img src="Lim.jpg" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'"><span>សាស្ត្រាចារ្យ៖ សឿង លីម (Soeurng LIM)</span></div>
+        <div class="footer-right">ទំព័រទី ២ នៃ ១២</div>
+    </div>
+</div>
+
+<!-- ================= PAGE 3: Intro ================= -->
+<div class="a4-page">
+    <div class="global-header">
+        <div class="header-item"><img src="https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png" onerror="this.src='Logo.png'"><span>សាកលវិទ្យាល័យអង្គរ</span></div>
+        <div class="header-center">
+            <h1>សៀវភៅមគ្គទ្ទេសក៍ (Guidebook) - ជំពូកទី ១</h1>
+            <p>ADVANCED DATA STRUCTURES AND ALGORITHMS FOR AI</p>
+        </div>
+        <div class="header-item"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg"><span>Python Pro</span></div>
+    </div>
+
+    <div class="page-content">
+        <div class="section-title"><i class="fa-solid fa-bullseye"></i> ១. ហេតុអ្វីវិស័យបញ្ញាសិប្បនិម្មិត (AI) ត្រូវការ DSA?</div>
+        <div class="text-block">
+            ក្នុងយុគសម័យ Big Data កម្មវិធីបញ្ញាសិប្បនិម្មិត <b>(Artificial Intelligence - AI)</b> ត្រូវស្រូបយកទិន្នន័យរាប់លាន (Terabytes/Petabytes) ដើម្បីធ្វើការបង្វឹក (Training)។ បើយើងមិនមានការរៀបចំទិន្នន័យ (Data Structure) ឱ្យបានត្រឹមត្រូវ និងខ្វះក្បួនដោះស្រាយ (Algorithm) ដែលមានល្បឿនលឿនទេនោះ ការបង្វឹកម៉ូដែលយន្តកម្មសិក្សា <b>(Machine Learning - ML)</b> អាចចំណាយពេលរាប់ខែ ឬធ្វើឲ្យគាំងម៉ាស៊ីន (Out of Memory)។ ការសិក្សា DSA កម្រិតខ្ពស់ គឺជាការរៀនពីរបៀបសន្សំសំចៃពេលវេលា និងធនធានម៉ាស៊ីនយ៉ាងមានប្រសិទ្ធភាពបំផុត។
+        </div>
+
+        <div class="section-title"><i class="fa-solid fa-book-open"></i> ២. និយមន័យស៊ីជម្រៅ៖ Data Structures</div>
+        <div class="grid-2">
+            <div class="card">
+                <h4><i class="fa-solid fa-database"></i> តើអ្វីទៅជា Data Structures?</h4>
+                <p class="text-block" style="margin:0; font-size:12px;">គឺជាទម្រង់នៃស្ថាបត្យកម្មកូដ ដែលត្រូវបានប្រើសម្រាប់រៀបចំ និងរក្សាទុកទិន្នន័យក្នុងអង្គចងចាំចម្បង <b>(Random Access Memory - RAM)</b> ដើម្បីឱ្យកុំព្យូទ័រអាចទាញយក (Access) បញ្ចូលថ្មី (Insert) ឬលុបចោល (Delete) បានលឿនបំផុតទៅតាមតម្រូវការជាក់ស្តែង។</p>
+            </div>
+            <div class="narrative-box">
+                <div class="narrative-header"><i class="fa-solid fa-kitchen-set"></i> ឧទាហរណ៍៖ ទូទឹកកក vs ឃ្លាំងទិន្នន័យ</div>
+                <p class="narrative-text">បើយើងទិញវត្ថុធាតុដើមមកគរទុកក្នុងថង់តែមួយ ការស្វែងរកសាច់ជ្រូកទាមទារការរើកកាយទាំងអស់ O(n)។ ការមាន "ថតទូទឹកកក" ដាច់ដោយឡែក (Arrays, Hash Maps, Trees) អនុញ្ញាតឲ្យចាប់យករបស់ដែលចង់បានភ្លាមៗ O(1)។ ទិន្នន័យរាប់លានជួរក្នុងមូលដ្ឋានទិន្នន័យ <b>(Database - DB)</b> ក៏ពឹងផ្អែកលើនេះដែរ។</p>
+            </div>
+        </div>
+
+        <div class="section-title"><i class="fa-solid fa-gears"></i> ៣. និយមន័យស៊ីជម្រៅ៖ Algorithms</div>
+        <div class="grid-2">
+            <div class="card">
+                <h4><i class="fa-solid fa-microchip"></i> តើអ្វីទៅជា Algorithms?</h4>
+                <p class="text-block" style="margin:0; font-size:12px;">គឺជាបណ្តុំនៃជំហាន តក្កវិជ្ជា និងរូបមន្តគណិតវិទ្យា ដែលប្រាប់កុំព្យូទ័រពី "របៀប" ក្នុងការដោះស្រាយបញ្ហា។ ក្នុងបញ្ញាសិប្បនិម្មិត <b>(AI)</b> ក្បួនដូចជា Backpropagation គឺជាក្បួនសម្រាប់កែតម្រូវកំហុសរបស់ Neural Networks រហូតទាល់តែបានចម្លើយត្រឹមត្រូវ។</p>
+            </div>
+            <div class="narrative-box">
+                <div class="narrative-header"><i class="fa-solid fa-map-location-dot"></i> ឧទាហរណ៍៖ ការរកផ្លូវលើផែនទី</div>
+                <p class="narrative-text">ផែនទីមានទិន្នន័យផ្លូវខ្វាត់ខ្វែងជារាង Graph (Data Structure)។ ពេលចង់ទៅគោលដៅ Google មិនអាចបើកឡានសាកល្បងគ្រប់ផ្លូវទេ។ គេប្រើប្រាស់ <b>Dijkstra's Algorithm</b> ដើម្បីគណនារកផ្លូវដែលចំណាយពេលតិចបំផុតត្រឹមតែប៉ុន្មានមិល្លីវិនាទី។</p>
+            </div>
+        </div>
+        
+        <div class="highlight-note"><i class="fa-solid fa-lightbulb"></i> សរុប៖ <b>Data Structure</b> គឺជាឃ្លាំងផ្ទុកអាវុធ ចំណែក <b>Algorithm</b> គឺជាយុទ្ធសាស្ត្រក្នុងការប្រើប្រាស់អាវុធទាំងនោះដើម្បីយកឈ្នះសង្គ្រាម (ដោះស្រាយបញ្ហា)។</div>
+    </div>
+
+    <div class="global-footer">
+        <div class="footer-left"><img src="Lim.jpg" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'"><span>សាស្ត្រាចារ្យ៖ សឿង លីម (Soeurng LIM)</span></div>
+        <div class="footer-right">ទំព័រទី ៣ នៃ ១២</div>
+    </div>
+</div>
+
+<!-- ================= PAGE 4: Comparative Analogies Part 1 ================= -->
+<div class="a4-page">
+    <div class="global-header">
+        <div class="header-item"><img src="https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png" onerror="this.src='Logo.png'"><span>សាកលវិទ្យាល័យអង្គរ</span></div>
+        <div class="header-center">
+            <h1>សៀវភៅមគ្គទ្ទេសក៍ (Guidebook) - ជំពូកទី ១</h1>
+            <p>ADVANCED DATA STRUCTURES AND ALGORITHMS FOR AI</p>
+        </div>
+        <div class="header-item"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg"><span>Python Pro</span></div>
+    </div>
+
+    <div class="page-content">
+        <div class="section-title"><i class="fa-solid fa-scale-unbalanced"></i> ៤. ករណីសិក្សាប្រៀបធៀប៖ សង្គមជាក់ស្តែង vs វិស័យ Data Science / AI</div>
+        <div class="text-block" style="margin-bottom: 12px;">
+            ដើម្បីឲ្យនិស្សិតកាន់តែងាយយល់ពីទម្រង់នៃ Data Structures និង Algorithms ខាងក្រោមនេះគឺជាការលើកយកករណីសិក្សាក្នុងជីវិតប្រចាំថ្ងៃចំនួន ៥ មកប្រៀបធៀបដោយផ្ទាល់ជាមួយនឹងដំណើរការរបស់ប្រព័ន្ធបញ្ញាសិប្បនិម្មិត៖
+        </div>
+
+        <!-- Case 1 -->
+        <div class="compare-block">
+            <img src="https://images.unsplash.com/photo-1507842217343-583bb7270b66?auto=format&fit=crop&w=1200&q=80" class="compare-img" alt="Library">
+            <div class="compare-title">ករណីទី ១៖ ការរៀបចំទិន្នន័យ និងស្វែងរក (Organizing & Searching)</div>
+            <div class="compare-grid">
+                <div class="compare-col real">
+                    <h5><i class="fa-solid fa-earth-asia"></i> ក្នុងសង្គមជាក់ស្តែង៖ បណ្ណាល័យ</h5>
+                    បើសៀវភៅ ១សែនក្បាលត្រូវចាក់គរចោលក្នុងបន្ទប់តែមួយ ការរកសៀវភៅមួយក្បាលត្រូវចំណាយពេលពេញមួយថ្ងៃ ព្រោះត្រូវរើកកាយម្តងមួយៗ។ តែបើបណ្ណាល័យមានរៀបចំតាមអក្ខរក្រម (A-Z) និងតាមផ្នែក អ្នកអាចដើរទៅរកទីតាំងសៀវភៅនោះឃើញក្នុងពេលមិនដល់ ២នាទីផង។
+                </div>
+                <div class="compare-col ai">
+                    <h5><i class="fa-solid fa-robot"></i> ក្នុងវិស័យដំណើរការភាសាធម្មជាតិ (NLP)</h5>
+                    ប្រព័ន្ធបញ្ញាសិប្បនិម្មិត ដូចជា ChatGPT ត្រូវទាញអត្ថបទចេញពីទំហំ Terabytes។ បើគ្មានការរៀបចំទេ វានឹងគាំង។ គេប្រើ <b>Vector Databases (Data Structure)</b> ដើម្បីបំប្លែងពាក្យទៅជាលេខ និងរក្សាទុក។ ពេលអ្នកសួរ សំណួររបស់អ្នកនឹងត្រូវស្វែងរកដោយ <b>Cosine Similarity (Algorithm)</b> ដើម្បីទាញយកចម្លើយភ្លាមៗ។
+                </div>
+            </div>
+        </div>
+
+        <!-- Case 2 -->
+        <div class="compare-block">
+            <img src="https://images.unsplash.com/photo-1556910103-1c02745a828?auto=format&fit=crop&w=1200&q=80" class="compare-img" alt="Chef Cooking" onerror="this.src='https://images.unsplash.com/photo-1577219491135-ce391730fb2c?auto=format&fit=crop&w=1200&q=80'">
+            <div class="compare-title">ករណីទី ២៖ ការដំណើរការជាជំហានៗ (Step-by-Step Processing)</div>
+            <div class="compare-grid">
+                <div class="compare-col real">
+                    <h5><i class="fa-solid fa-earth-asia"></i> ក្នុងសង្គមជាក់ស្តែង៖ សៀវភៅធ្វើម្ហូប</h5>
+                    អ្នកចុងភៅមានវត្ថុធាតុដើម (សាច់ បន្លែ គ្រឿងទេស)។ ប៉ុន្តែបើគ្មាន "សៀវភៅបញ្ជាក់ពីជំហានចម្អិន" ថាត្រូវដាក់អ្វីមុន ដាក់អ្វីក្រោយ និងរម្ងាស់ប៉ុន្មាននាទីទេ ម្ហូបនោះនឹងមិនមានរសជាតិឆ្ងាញ់ឡើយ។ សៀវភៅធ្វើម្ហូបនេះគឺជា "ក្បួនដោះស្រាយ" សម្រាប់ចុងភៅ។
+                </div>
+                <div class="compare-col ai">
+                    <h5><i class="fa-solid fa-robot"></i> ក្នុងវិស័យយន្តកម្មសិក្សា (Machine Learning)</h5>
+                    ក្នុងយន្តកម្មសិក្សា វត្ថុធាតុដើមគឺ "ទិន្នន័យ (Data)"។ ចំណែកឯ "សៀវភៅម្ហូប" គឺជា <b>ML Algorithms (ឧ. Random Forest, Linear Regression)</b>។ ក្បួនទាំងនេះប្រាប់ម៉ាស៊ីនឱ្យធ្វើការសម្អាតទិន្នន័យ ស្វែងរក Pattern និងកែតម្រូវភាគរយកំហុស (Loss function) រហូតទទួលបានម៉ូដែលដែលអាចទស្សន៍ទាយត្រឹមត្រូវ។
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="global-footer">
+        <div class="footer-left"><img src="Lim.jpg" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'"><span>សាស្ត្រាចារ្យ៖ សឿង លីម (Soeurng LIM)</span></div>
+        <div class="footer-right">ទំព័រទី ៤ នៃ ១២</div>
+    </div>
+</div>
+
+<!-- ================= PAGE 5: Comparative Analogies Part 2 ================= -->
+<div class="a4-page">
+    <div class="global-header">
+        <div class="header-item"><img src="https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png" onerror="this.src='Logo.png'"><span>សាកលវិទ្យាល័យអង្គរ</span></div>
+        <div class="header-center">
+            <h1>សៀវភៅមគ្គទ្ទេសក៍ (Guidebook) - ជំពូកទី ១</h1>
+            <p>ADVANCED DATA STRUCTURES AND ALGORITHMS FOR AI</p>
+        </div>
+        <div class="header-item"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg"><span>Python Pro</span></div>
+    </div>
+
+    <div class="page-content">
+        
+        <!-- Case 3 -->
+        <div class="compare-block">
+            <img src="https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=1200&q=80" class="compare-img" alt="Supermarket Checkout">
+            <div class="compare-title">ករណីទី ៣៖ ការតម្រង់ជួរ និងលំហូរការងារ (Queue & Batching)</div>
+            <div class="compare-grid">
+                <div class="compare-col real">
+                    <h5><i class="fa-solid fa-earth-asia"></i> ក្នុងសង្គមជាក់ស្តែង៖ ជួរគិតលុយផ្សារទំនើប</h5>
+                    ពេលមនុស្សច្រើនសម្រុកទៅគិតលុយ បើមានអ្នកគិតលុយតែម្នាក់ អតិថិជននឹងត្រូវរង់ចាំយូរ។ ដំណោះស្រាយគឺ ការបើកកន្លែងគិតលុយបន្ថែម ៥ ទៅ ១០ តុ ដើម្បីស្រូបយកអតិថិជនម្តងមួយក្រុមៗ ជាជាងឲ្យពួកគេឈរក្នុងជួរតែមួយរហូតដល់ចុងផ្សារ។
+                </div>
+                <div class="compare-col ai">
+                    <h5><i class="fa-solid fa-robot"></i> ដំណើរការអង្គគណនាក្រាហ្វិក (GPU)</h5>
+                    នៅពេលបង្វឹក Deep Learning លើរូបភាព ១លានសន្លឹក បើយើងបញ្ជូនរូបភាពទៅឲ្យអង្គគណនាក្រាហ្វិក <b>(Graphics Processing Unit - GPU)</b> ម្តងមួយៗ វាស៊ីពេលយូរ O(n)។ វិស្វករប្រើប្រាស់រចនាសម្ព័ន្ធ <b>Queue និង Batch Processing</b> (បញ្ជូនរូបភាពម្តង ៦៤ ព្រមគ្នា) ដើម្បីបង្កើនល្បឿន GPU។
+                </div>
+            </div>
+        </div>
+
+        <!-- Case 4 -->
+        <div class="compare-block">
+            <img src="https://images.unsplash.com/photo-1524661135-423995f22d0b?auto=format&fit=crop&w=1200&q=80" class="compare-img" alt="Map Routing">
+            <div class="compare-title">ករណីទី ៤៖ ការដឹកជញ្ជូន និងបណ្តាញទំនាក់ទំនង (Routing)</div>
+            <div class="compare-grid">
+                <div class="compare-col real">
+                    <h5><i class="fa-solid fa-earth-asia"></i> ក្នុងសង្គមជាក់ស្តែង៖ អ្នកដឹកជញ្ជូន Grab</h5>
+                    អ្នកដឹកជញ្ជូនត្រូវយកឥវ៉ាន់ទៅឲ្យអតិថិជន ៥ នាក់ផ្សេងគ្នា។ គាត់ត្រូវគិតក្នុងខួរក្បាលថា តើត្រូវទៅផ្លូវណាដែលជិតជាងគេ មិនស្ទះចរាចរណ៍ និងសន្សំសំចៃសាំង។ បើគាត់បើកបរវង្វេងចុះឡើង គាត់នឹងខាតទាំងពេល ទាំងប្រាក់ចំណូល។
+                </div>
+                <div class="compare-col ai">
+                    <h5><i class="fa-solid fa-robot"></i> ឡានបើកបរស្វ័យប្រវត្តិ (Autonomous Vehicles)</h5>
+                    ក្នុងឡានបើកបរស្វ័យប្រវត្តិ និង Logistics ប្រព័ន្ធប្រើប្រាស់ <b>Graph Data Structure</b> ដែលផ្លូវប្រសព្វជា Node និងផ្លូវថ្នល់ជា Edge។ វាដំណើរការ <b>A* Search Algorithm</b> ដើម្បីវិភាគទិន្នន័យរាប់លានជម្រើស និងសម្រេចចិត្តយកផ្លូវល្អបំផុតក្នុងរយៈពេលដ៏ខ្លី។
+                </div>
+            </div>
+        </div>
+
+        <!-- Case 5 -->
+        <div class="compare-block" style="margin-bottom: 0;">
+            <img src="https://images.unsplash.com/photo-1586282391129-76a6df230234?auto=format&fit=crop&w=1200&q=80" class="compare-img" alt="Filing Cabinet">
+            <div class="compare-title">ករណីទី ៥៖ ថតឯកសារ និងការចងចាំ (Caching & Retrieval)</div>
+            <div class="compare-grid">
+                <div class="compare-col real">
+                    <h5><i class="fa-solid fa-earth-asia"></i> ក្នុងសង្គមជាក់ស្តែង៖ ថតឯកសារក្រុមហ៊ុន</h5>
+                    ជំនួយការរដ្ឋបាលម្នាក់មានទូឯកសារធំមួយ។ ជំនួសឲ្យការអានឯកសាររាល់សន្លឹក នាងបានសរសេរឈ្មោះ (Tab) នៅពីមុខថតនីមួយៗ។ ពេលចៅហ្វាយសុំឯកសារក្រុមហ៊ុន "C" នាងទាញថត C រួចយកឯកសារឲ្យភ្លាមដោយមិនបាច់ចំណាយពេលរកនោះទេ។
+                </div>
+                <div class="compare-col ai">
+                    <h5><i class="fa-solid fa-robot"></i> ក្នុងវិស័យបញ្ញាសិប្បនិម្មិត (AI)</h5>
+                    នេះគឺជាគោលការណ៍នៃ <b>Hash Maps / Dictionaries</b>។ ក្នុងប្រព័ន្ធ AI ពេលមានសំណួរដែលគេសួរញឹកញាប់ (ឧ. "អាកាសធាតុថ្ងៃនេះ") AI មិនគណនាចម្លើយថ្មីរាល់ដងទេ។ វាផ្ទុកសំណួរនិងចម្លើយនេះក្នុង Hash Table (Cache)។ ពេលមានអ្នកសួរដដែល វាទាញចម្លើយចេញមកភ្លាមៗ O(1)។
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="global-footer">
+        <div class="footer-left"><img src="Lim.jpg" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'"><span>សាស្ត្រាចារ្យ៖ សឿង លីម (Soeurng LIM)</span></div>
+        <div class="footer-right">ទំព័រទី ៥ នៃ ១២</div>
+    </div>
+</div>
+
+<!-- ================= PAGE 6: Complexity Analysis & Big-O ================= -->
+<div class="a4-page">
+    <div class="global-header">
+        <div class="header-item"><img src="https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png" onerror="this.src='Logo.png'"><span>សាកលវិទ្យាល័យអង្គរ</span></div>
+        <div class="header-center">
+            <h1>សៀវភៅមគ្គទ្ទេសក៍ (Guidebook) - ជំពូកទី ១</h1>
+            <p>ADVANCED DATA STRUCTURES AND ALGORITHMS FOR AI</p>
+        </div>
+        <div class="header-item"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg"><span>Python Pro</span></div>
+    </div>
+
+    <div class="page-content">
+        <div class="section-title"><i class="fa-solid fa-scale-balanced"></i> ៥. ការវិភាគប្រសិទ្ធភាពក្បួនដោះស្រាយ (Complexity Analysis)</div>
+        <div class="text-block">
+            តើយើងដឹងថាកូដមួយណា "ល្អជាង" កូដមួយណាដោយរបៀបណា? យើងមិនអាចវាស់ជា "វិនាទី" (Seconds) បានទេ ព្រោះកុំព្យូទ័រធំៗ (Server) ដើរលឿនជាងកុំព្យូទ័រយួរដៃ (Laptop)។ ដូច្នេះ វិស្វករកុំព្យូទ័រប្រើប្រាស់រង្វាស់ <b>Complexity Analysis</b> ដើម្បីវាស់ពីរបៀបដែលកូដទាមទារធនធាន ពេលដែលទិន្នន័យ (n) កើនឡើងធំទៅៗ។
+        </div>
+        <div class="grid-2">
+            <div class="card red-card">
+                <h4><i class="fa-solid fa-stopwatch"></i> Time Complexity (ល្បឿន)</h4>
+                <p class="text-block" style="font-size: 12px;">វាស់ស្ទង់ថាតើ ក្បួនដោះស្រាយនេះត្រូវប្រើពេលយូរប៉ុណ្ណា (ឬប៉ុន្មានជំហាន) ពេលទិន្នន័យ (n) កើនឡើង។</p>
+                <div class="narrative-box">
+                    <div class="narrative-header"><i class="fa-solid fa-robot"></i> ក្នុងវិស័យ NLP</div>
+                    <p class="narrative-text" style="font-size:11.5px;">ម៉ូដែលយល់ដឹងភាសា (NLP) ដែលមាន Time Complexity ខ្ពស់ អាចទាមទារពេល ៣ខែក្នុងការ Train។ ការកាត់បន្ថយ Time Complexity អាចឲ្យវា Train ចប់ត្រឹម ៣ថ្ងៃ។</p>
+                </div>
+            </div>
+            <div class="card green-card">
+                <h4><i class="fa-solid fa-memory"></i> Space Complexity (អង្គចងចាំ)</h4>
+                <p class="text-block" style="font-size: 12px;">វាស់ស្ទង់ថាតើ ក្បួនដោះស្រាយនេះទាមទារទំហំអង្គចងចាំ (RAM) ប៉ុន្មានសម្រាប់ស្តុកទុកទិន្នន័យបណ្តោះអាសន្ន។</p>
+                <div class="narrative-box">
+                    <div class="narrative-header"><i class="fa-solid fa-image"></i> ក្នុងវិស័យ Computer Vision</div>
+                    <p class="narrative-text" style="font-size:11.5px;">បើយើងផ្ទុករូបភាព ១លានសន្លឹកចូល RAM ព្រមគ្នា Server នឹងគាំងភ្លាម (Out of memory)។ យើងត្រូវបំបែកជាតំណាក់កាលដើម្បីសន្សំ Space។</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="section-title"><i class="fa-solid fa-chart-line"></i> ៦. ទិដ្ឋភាពទូទៅនៃ Big-O Notation និង Worst-Case</div>
+        <div class="text-block">
+            <b>Big-O Notation</b> គឺជាភាសាគណិតវិទ្យាប្រើសម្រាប់តំណាងឲ្យ Complexity ។ អក្សរ "O" មកពីពាក្យ "Order of Magnitude"។ យើងតែងតែគណនា Big-O ដោយផ្តោតលើ <b>Worst-case Scenario</b> (ករណីដែលកូដត្រូវប្រើពេលយូរបំផុត)។
+        </div>
+        
+        <img src="https://miro.medium.com/v2/resize:fit:1400/1*5ZLci3SuR0zM_QlZOADv8Q.jpeg" class="visual-img" alt="Big O Complexity Chart" style="height: 160px;">
+
+        <div class="grid-2">
+            <div class="narrative-box danger">
+                <div class="narrative-header"><i class="fa-solid fa-magnifying-glass"></i> ហេតុអ្វីយើងវាស់ Worst-case?</div>
+                <p class="narrative-text">ឧបមាថាអ្នករកឈ្មោះ "Zebra" ក្នុងបញ្ជីសត្វ ១លាន។ បើវានៅលេខរៀងទី១ វាលឿនបំផុត (Best-case)។ តែយើងត្រូវប្រាកដថាប្រព័ន្ធមិនគាំង ទោះបីជាវានៅលេខរៀងទី ១លាន ឬក៏គ្មានសោះក៏ដោយ (Worst-case)។ យើងតែងត្រៀមលក្ខណៈសម្រាប់ករណីអាក្រក់បំផុតជានិច្ច!</p>
+            </div>
+            <div class="card">
+                <h4><i class="fa-solid fa-layer-group"></i> ចំណាត់ថ្នាក់ល្បឿន (ពីលឿនទៅយឺត)</h4>
+                <ul style="color:var(--text-muted);">
+                    <li><b class="text-green">O(1)</b>: លឿនថេរជានិច្ច (Excellent)</li>
+                    <li><b class="text-blue">O(log n)</b>: លឿនខ្លាំង (Good)</li>
+                    <li><b class="text-yellow">O(n)</b>: ល្បឿនមធ្យម ស្របតាមទិន្នន័យ (Fair)</li>
+                    <li><b class="text-yellow">O(n log n)</b>: ស្តង់ដារនៃការរៀបចំ (Sorting)</li>
+                    <li><b class="text-red">O(n²)</b>: យឺតខ្លាំង (Terrible - គួរជៀសវាង)</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="global-footer">
+        <div class="footer-left"><img src="Lim.jpg" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'"><span>សាស្ត្រាចារ្យ៖ សឿង លីម (Soeurng LIM)</span></div>
+        <div class="footer-right">ទំព័រទី ៦ នៃ ១២</div>
+    </div>
+</div>
+
+<!-- ================= PAGE 7: O(1) Overview ================= -->
+<div class="a4-page">
+    <div class="global-header">
+        <div class="header-item"><img src="https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png" onerror="this.src='Logo.png'"><span>សាកលវិទ្យាល័យអង្គរ</span></div>
+        <div class="header-center">
+            <h1>សៀវភៅមគ្គទ្ទេសក៍ (Guidebook) - ជំពូកទី ១</h1>
+            <p>ADVANCED DATA STRUCTURES AND ALGORITHMS FOR AI</p>
+        </div>
+        <div class="header-item"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg"><span>Python Pro</span></div>
+    </div>
+
+    <div class="page-content">
+        <div class="section-title"><i class="fa-solid fa-bolt"></i> ៧. ការវិភាគល្បឿន O(1) - Constant Time</div>
+        <div class="text-block">
+            <b>និយមន័យ៖</b> ល្បឿនថេរជានិច្ច។ ក្បួនដោះស្រាយប្រើប្រាស់ជំហានតែមួយគត់ មិនថាទិន្នន័យ (n) មានទំហំ ១០ ឬ ១លាន។ ការប្រើ Dictionary ក្នុង Python គឺជាឧទាហរណ៍ជាក់ស្តែង ព្រោះវាប្រើប្រាស់ Hashing ដើម្បីចង្អុលទៅកាន់ Memory ភ្លាមៗ O(1)។ នេះជាមូលហេតុដែលប្រព័ន្ធ Database ធំៗដំណើរការលឿន។
+        </div>
+        
+        <!-- Runnable Code O(1) -->
+        <div class="code-wrapper">
+            <div class="code-header"><span><i class="fa-brands fa-python"></i> 1_constant_time.py</span><span>O(1)</span></div>
+            <div class="code-content"><pre>
+<span class="kw">import</span> time
+
+<span class="com"># ១. ការទាញយកទិន្នន័យពី Dictionary (Hash Map)</span>
+user_db = {<span class="str">"ID_001"</span>: <span class="str">"Sok"</span>, <span class="str">"ID_002"</span>: <span class="str">"Sao"</span>, <span class="str">"ID_003"</span>: <span class="str">"Piseth"</span>}
+
+start_time = time.time()
+<span class="com"># កុំព្យូទ័រមិនបានរាវរកពីដើមដល់ចប់ទេ វាលោតទៅចាប់យក "ID_003" ភ្លាមៗ</span>
+username = user_db[<span class="str">"ID_003"</span>]  
+end_time = time.time()
+
+<span class="fn">print</span>(<span class="str">f"១. ឈ្មោះ User គឺ: {username}"</span>)
+<span class="fn">print</span>(<span class="str">f"  ចំណាយពេល: {end_time - start_time:.8f} វិនាទី"</span>)
+
+<span class="com"># ២. ការធ្វើប្រមាណវិធីគណិតវិទ្យា (Math operation)</span>
+<span class="kw">def</span> is_even(number):
+    <span class="kw">return</span> number % <span class="num">2</span> == <span class="num">0</span>  <span class="com"># ដើរតែ១ជំហានគត់</span>
+
+<span class="fn">print</span>(<span class="str">f"២. តើ 1,000,000 ជាលេខគូទេ? {is_even(1000000)}"</span>)</pre></div>
+            <div class="code-output">
+                <div class="code-output-title">>_ Terminal Output</div>
+                <pre>១. ឈ្មោះ User គឺ: Piseth
+  ចំណាយពេល: 0.00000191 វិនាទី
+២. តើ 1,000,000 ជាលេខគូទេ? True</pre>
+            </div>
+        </div>
+
+        <div class="section-title"><i class="fa-solid fa-scissors"></i> ៨. ការវិភាគល្បឿន O(log n) - Logarithmic Time</div>
+        <div class="text-block">
+            <b>និយមន័យ៖</b> ល្បឿនលឿនខ្លាំង។ រាល់ពេលដំណើរការមួយជំហាន វាកាត់បន្ថយទំហំទិន្នន័យចោលពាក់កណ្តាលជានិច្ច (Divide & Conquer)។ វាគឺជាក្បួនស្នូលនៃរចនាសម្ព័ន្ធមែកធាង (Binary Search Trees) ដែលប្រើប្រាស់យ៉ាងទូលំទូលាយក្នុងវិស័យ AI។
+        </div>
+        <div class="grid-2">
+            <div class="narrative-box">
+                <div class="narrative-header"><i class="fa-solid fa-book"></i> ករណីសិក្សា៖ ស្វែងរកក្នុងវចនានុក្រម</div>
+                <p class="narrative-text">បើអ្នកចង់រកពាក្យ "Python" អ្នកបើកសៀវភៅចំកណ្តាល បើប៉ះអក្សរ 'M' អ្នកដឹងថា 'P' នៅខាងស្តាំ។ អ្នកកាត់សៀវភៅខាងឆ្វេងរាប់រយសន្លឹកចោលភ្លាមៗ។ សម្រាប់ទិន្នន័យ ១ លាន វាធ្វើការកាត់បន្ថយយ៉ាងច្រើនបំផុតត្រឹមតែ <b>២០ ដង</b> ប៉ុណ្ណោះ! (log₂ 1,000,000 ≈ 20)</p>
+            </div>
+            <img src="https://images.unsplash.com/photo-1457369804613-52c61a468e7d?auto=format&fit=crop&w=800&q=80" class="visual-img" alt="Dictionary Search">
+        </div>
+    </div>
+
+    <div class="global-footer">
+        <div class="footer-left"><img src="Lim.jpg" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'"><span>សាស្ត្រាចារ្យ៖ សឿង លីម (Soeurng LIM)</span></div>
+        <div class="footer-right">ទំព័រទី ៧ នៃ ១២</div>
+    </div>
+</div>
+
+<!-- ================= PAGE 8: ISOLATED O(log n) CODE ================= -->
+<div class="a4-page">
+    <div class="global-header">
+        <div class="header-item"><img src="https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png" onerror="this.src='Logo.png'"><span>សាកលវិទ្យាល័យអង្គរ</span></div>
+        <div class="header-center">
+            <h1>សៀវភៅមគ្គទ្ទេសក៍ (Guidebook) - ជំពូកទី ១</h1>
+            <p>ADVANCED DATA STRUCTURES AND ALGORITHMS FOR AI</p>
+        </div>
+        <div class="header-item"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg"><span>Python Pro</span></div>
+    </div>
+
+    <div class="page-content">
+        <div class="text-block" style="margin-top: 10px;">
+            ខាងក្រោមនេះគឺជាកូដ <b>Binary Search</b> ដែលបង្ហាញពីរបៀបដែលកុំព្យូទ័រអាចស្វែងរកទិន្នន័យក្នុងល្បឿន O(log n)។ ជំនួសឲ្យការដើររាវរកទិន្នន័យម្តងមួយៗ (O(n)) ដែលអាចចំណាយពេល ១លានជំហាន កូដនេះនឹងធ្វើការកាត់បន្ថយពាក់កណ្តាលៗរហូតដល់រកឃើញគោលដៅ។
+        </div>
+
+        <!-- Runnable Code O(log n) -->
+        <div class="code-wrapper" style="margin-top: 15px;">
+            <div class="code-header"><span><i class="fa-brands fa-python"></i> 2_logarithmic_time.py (Binary Search)</span><span>O(log n)</span></div>
+            <div class="code-content"><pre>
+<span class="kw">def</span> binary_search(sorted_arr, target):
+    left, right = <span class="num">0</span>, <span class="fn">len</span>(sorted_arr) - <span class="num">1</span>
+    steps = <span class="num">0</span> <span class="com"># រាប់ចំនួនជំហានដែលម៉ាស៊ីនបានដើរ</span>
+    
+    <span class="kw">while</span> left <= right:
+        steps += <span class="num">1</span>
+        mid = (left + right) // <span class="num">2</span> <span class="com"># រកចំណុចកណ្តាល</span>
+        
+        <span class="kw">if</span> sorted_arr[mid] == target:
+            <span class="kw">return</span> mid, steps
+        <span class="kw">elif</span> sorted_arr[mid] < target:
+            left = mid + <span class="num">1</span>  <span class="com"># កាត់ពាក់កណ្តាលខាងឆ្វេងចោល</span>
+        <span class="kw">else</span>:
+            right = mid - <span class="num">1</span> <span class="com"># កាត់ពាក់កណ្តាលខាងស្តាំចោល</span>
+            
+    <span class="kw">return</span> -<span class="num">1</span>, steps
+
+<span class="com"># បង្កើតបញ្ជីលេខរៀងពី 1 ដល់ 1,000,000</span>
+huge_data = <span class="bult">list</span>(<span class="fn">range</span>(<span class="num">1</span>, <span class="num">1000001</span>))
+target_number = <span class="num">850420</span>
+
+index, step_count = binary_search(huge_data, target_number)
+<span class="fn">print</span>(<span class="str">f"ស្វែងរកលេខ: {target_number} ក្នុងចំណោមទិន្នន័យ 1 លាន"</span>)
+<span class="fn">print</span>(<span class="str">f"រកឃើញនៅ Index ទី: {index}"</span>)
+<span class="fn">print</span>(<span class="str">f"ម៉ាស៊ីនប្រើពេលកាត់បន្ថយត្រឹមតែ: {step_count} ជំហានប៉ុណ្ណោះ!"</span>)</pre></div>
+            <div class="code-output">
+                <div class="code-output-title">>_ Terminal Output</div>
+                <pre>ស្វែងរកលេខ: 850420 ក្នុងចំណោមទិន្នន័យ 1 លាន
+រកឃើញនៅ Index ទី: 850419
+ម៉ាស៊ីនប្រើពេលកាត់បន្ថយត្រឹមតែ: 20 ជំហានប៉ុណ្ណោះ!</pre>
+            </div>
+        </div>
+
+        <div class="narrative-box" style="margin-top: 15px;">
+            <div class="narrative-header"><i class="fa-solid fa-magnifying-glass-chart"></i> ការសង្កេតពីលទ្ធផល O(log n)</div>
+            <p class="narrative-text">តាមរយៈលទ្ធផល Terminal ខាងលើ យើងឃើញយ៉ាងច្បាស់ថា សម្រាប់ទិន្នន័យដ៏ធំមហិមាដល់ទៅ ១ លានតួ ម៉ាស៊ីនចំណាយពេលត្រឹមតែ <b>២០ ជំហាន</b> ប៉ុណ្ណោះដើម្បីស្វែងរកឃើញគោលដៅ។ នេះដោយសារតែវាបានបោះបង់ទិន្នន័យចោលចំនួន ៥ សែនតួនៅជំហានទី១, បោះបង់ ២ សែនកន្លះនៅជំហានទី២ ជាបន្តបន្ទាប់។ ល្បឿន O(log n) គឺមានសារៈសំខាន់បំផុតនៅក្នុងការស្វែងរកទិន្នន័យល្បឿនលឿន (Fast Query)។</p>
+        </div>
+    </div>
+
+    <div class="global-footer">
+        <div class="footer-left"><img src="Lim.jpg" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'"><span>សាស្ត្រាចារ្យ៖ សឿង លីម (Soeurng LIM)</span></div>
+        <div class="footer-right">ទំព័រទី ៨ នៃ ១២</div>
+    </div>
+</div>
+
+<!-- ================= PAGE 9: ISOLATED O(n) CODE ================= -->
+<div class="a4-page">
+    <div class="global-header">
+        <div class="header-item"><img src="https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png" onerror="this.src='Logo.png'"><span>សាកលវិទ្យាល័យអង្គរ</span></div>
+        <div class="header-center">
+            <h1>សៀវភៅមគ្គទ្ទេសក៍ (Guidebook) - ជំពូកទី ១</h1>
+            <p>ADVANCED DATA STRUCTURES AND ALGORITHMS FOR AI</p>
+        </div>
+        <div class="header-item"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg"><span>Python Pro</span></div>
+    </div>
+
+    <div class="page-content">
+        <div class="section-title"><i class="fa-solid fa-arrow-trend-up"></i> ៩. ការវិភាគល្បឿន O(n) - Linear Time</div>
+        <div class="text-block">
+            <b>និយមន័យ៖</b> ល្បឿនកើនស្របសមាមាត្រទៅនឹងទិន្នន័យ។ កើតឡើងនៅពេលដែលកូដត្រូវដើរពិនិត្យ (For Loop) ទិន្នន័យម្តងមួយៗតាំងពីដើមដល់ចប់ ដោយមិនអាចរំលងបាន (ឧទាហរណ៍ ការរកតម្លៃធំបំផុតក្នុងបញ្ជីអនាធិបតេយ្យ)។ ក្នុងផ្នែក Data Science ការធ្វើ Data Preprocessing តែងតែស្ថិតក្នុងកម្រិតល្បឿន O(n) នេះជានិច្ច។
+        </div>
+        
+        <!-- Runnable Code O(n) -->
+        <div class="code-wrapper" style="margin-top: 15px;">
+            <div class="code-header"><span><i class="fa-brands fa-python"></i> 3_linear_time.py</span><span>O(n)</span></div>
+            <div class="code-content"><pre>
+<span class="kw">def</span> find_max_value(dataset):
+    max_val = dataset[<span class="num">0</span>]
+    steps = <span class="num">0</span>
+    
+    <span class="kw">for</span> item <span class="kw">in</span> dataset:  <span class="com"># Loop ដើរ n ដង តាមចំនួនទិន្នន័យជាក់ស្តែង</span>
+        steps += <span class="num">1</span>
+        <span class="kw">if</span> item > max_val:
+            max_val = item
+            
+    <span class="kw">return</span> max_val, steps
+
+data = [<span class="num">45</span>, <span class="num">12</span>, <span class="num">99</span>, <span class="num">3</span>, <span class="num">78</span>, <span class="num">82</span>, <span class="num">1</span>] <span class="com"># ទិន្នន័យ ៧ តួ (n=7)</span>
+max_result, step_count = find_max_value(data)
+
+<span class="fn">print</span>(<span class="str">f"តម្លៃធំបំផុតគឺ: {max_result}"</span>)
+<span class="fn">print</span>(<span class="str">f"ម៉ាស៊ីនបានដើរពិនិត្យចំនួន: {step_count} ជំហាន (O(n))"</span>)</pre></div>
+            <div class="code-output">
+                <div class="code-output-title">>_ Terminal Output</div>
+                <pre>តម្លៃធំបំផុតគឺ: 99
+ម៉ាស៊ីនបានដើរពិនិត្យចំនួន: 7 ជំហាន (O(n))</pre>
+            </div>
+        </div>
+
+        <div class="narrative-box" style="margin-top: 15px;">
+            <div class="narrative-header"><i class="fa-solid fa-magnifying-glass-chart"></i> ការសង្កេតពីលទ្ធផល O(n)</div>
+            <p class="narrative-text">ក្នុងកូដខាងលើ យើងមានទិន្នន័យចំនួន ៧ តួ (n = 7) ដូច្នេះម៉ាស៊ីនត្រូវបង្ខំចិត្តដើរពិនិត្យមើលចំនួន ៧ ដង។ ប្រសិនបើយើងមានបញ្ជីទិន្នន័យចំនួន ១ លានតួវិញនោះ ម៉ាស៊ីននឹងត្រូវដើរ For Loop នោះចំនួន ១ លានដងដែរ។ ក្រាហ្វល្បឿនរបស់វាគឺជាបន្ទាត់ត្រង់ (Linear) ដែលកើនឡើងទៅតាមទំហំទិន្នន័យ (n)។</p>
+        </div>
+
+    </div>
+
+    <div class="global-footer">
+        <div class="footer-left"><img src="Lim.jpg" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'"><span>សាស្ត្រាចារ្យ៖ សឿង លីម (Soeurng LIM)</span></div>
+        <div class="footer-right">ទំព័រទី ៩ នៃ ១២</div>
+    </div>
+</div>
+
+<!-- ================= PAGE 10: O(n^2) ================= -->
+<div class="a4-page">
+    <div class="global-header">
+        <div class="header-item"><img src="https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png" onerror="this.src='Logo.png'"><span>សាកលវិទ្យាល័យអង្គរ</span></div>
+        <div class="header-center">
+            <h1>សៀវភៅមគ្គទ្ទេសក៍ (Guidebook) - ជំពូកទី ១</h1>
+            <p>ADVANCED DATA STRUCTURES AND ALGORITHMS FOR AI</p>
+        </div>
+        <div class="header-item"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg"><span>Python Pro</span></div>
+    </div>
+
+    <div class="page-content">
+
+        <div class="section-title"><i class="fa-solid fa-triangle-exclamation"></i> ១០. ការវិភាគល្បឿន O(n²) - Quadratic Time (គួរជៀសវាង)</div>
+        <div class="text-block">
+            <b>និយមន័យ៖</b> ល្បឿនយឺតខ្លាំងបំផុត ដែលយើងគួរតែជៀសវាងឲ្យបានជាដាច់ខាត។ កើតឡើងនៅពេលដែលមានការប្រើប្រាស់ Loop ជាន់គ្នាពីរជាន់ (Nested Loops) ដើម្បីប្រៀបធៀបធាតុនីមួយៗជាមួយធាតុផ្សេងទៀតទាំងអស់ (ឧ. ការរកទិន្នន័យស្ទួនដោយមិនមានការរៀបចំជាមុន)។
+        </div>
+        
+        <!-- Runnable Code O(n^2) -->
+        <div class="code-wrapper" style="border-color: var(--accent-red); margin-top: 15px;">
+            <div class="code-header" style="background: #450a0a;"><span style="color:#fca5a5;"><i class="fa-brands fa-python"></i> 4_quadratic_time_bad.py</span><span style="color:#fca5a5;">O(n²)</span></div>
+            <div class="code-content"><pre>
+<span class="kw">import</span> time
+
+<span class="kw">def</span> find_duplicates_bad(dataset):
+    n = <span class="fn">len</span>(dataset)
+    steps = <span class="num">0</span>
+    duplicates = []
+    
+    <span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(n):          <span class="com"># Loop ទី១ ដើរ n ដង</span>
+        <span class="kw">for</span> j <span class="kw">in</span> <span class="fn">range</span>(n):      <span class="com"># Loop ទី២ ក៏ដើរ n ដង (ជាន់គ្នា)</span>
+            steps += <span class="num">1</span>
+            <span class="com"># បើ Index ខុសគ្នា តែទិន្នន័យដូចគ្នា នោះវាជា Duplicate</span>
+            <span class="kw">if</span> i != j <span class="kw">and</span> dataset[i] == dataset[j] <span class="kw">and</span> dataset[i] <span class="kw">not in</span> duplicates:
+                duplicates.<span class="fn">append</span>(dataset[i])
+                
+    <span class="kw">return</span> duplicates, steps
+
+<span class="com"># សាកល្បងជាមួយទិន្នន័យ ១,០០០ ជួរ (n = 1000)</span>
+<span class="com"># 1000 x 1000 ម៉ាស៊ីននឹងត្រូវដើរ ១ លានជំហាន!</span>
+data = <span class="bult">list</span>(<span class="fn">range</span>(<span class="num">1000</span>))
+data.<span class="fn">append</span>(<span class="num">450</span>) <span class="com"># បញ្ចូលទិន្នន័យស្ទួនចេតនា</span>
+
+start = time.time()
+dupes, step_count = find_duplicates_bad(data)
+end = time.time()
+
+<span class="fn">print</span>(<span class="str">f"រកឃើញទិន្នន័យស្ទួន: {dupes}"</span>)
+<span class="fn">print</span>(<span class="str">f"ម៉ាស៊ីនបានដើរចំនួន: {step_count:,} ជំហាន (O(n²))"</span>)
+<span class="fn">print</span>(<span class="str">f"ចំណាយពេល: {end - start:.4f} វិនាទី"</span>)</pre></div>
+            <div class="code-output">
+                <div class="code-output-title">>_ Terminal Output</div>
+                <pre>រកឃើញទិន្នន័យស្ទួន: [450]
+ម៉ាស៊ីនបានដើរចំនួន: 1,002,001 ជំហាន (O(n²))
+ចំណាយពេល: 0.1450 វិនាទី</pre>
+            </div>
+        </div>
+
+        <div class="highlight-note" style="background-color: #FEF2F2; border-color: var(--accent-red); color: var(--accent-red); margin-top: 15px;">
+            <i class="fa-solid fa-skull-crossbones"></i> កត់ចំណាំ៖ ក្នុងគម្រោងពិតប្រាកដ បើអ្នកប្រើប្រាស់កូដ O(n²) ទៅលើទិន្នន័យ ១ លាន (1 Million) ជួរ កុំព្យូទ័រនឹងត្រូវធ្វើការគណនាដល់ទៅ <b>១ ទ្រីលាន (1 Trillion) ជំហាន</b> ដែលអាចទាមទារពេលរាប់ថ្ងៃទើបបញ្ចប់! ត្រូវប្តូរទៅប្រើ Hash Map O(n) វិញ។
+        </div>
+
+    </div>
+
+    <div class="global-footer">
+        <div class="footer-left"><img src="Lim.jpg" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'"><span>សាស្ត្រាចារ្យ៖ សឿង លីម (Soeurng LIM)</span></div>
+        <div class="footer-right">ទំព័រទី ១០ នៃ ១២</div>
+    </div>
+</div>
+
+<!-- ================= PAGE 11: Constants & Q&A 1-2 ================= -->
+<div class="a4-page">
+    <div class="global-header">
+        <div class="header-item"><img src="https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png" onerror="this.src='Logo.png'"><span>សាកលវិទ្យាល័យអង្គរ</span></div>
+        <div class="header-center">
+            <h1>សៀវភៅមគ្គទ្ទេសក៍ (Guidebook) - ជំពូកទី ១</h1>
+            <p>ADVANCED DATA STRUCTURES AND ALGORITHMS FOR AI</p>
+        </div>
+        <div class="header-item"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg"><span>Python Pro</span></div>
+    </div>
+
+    <div class="page-content">
+        
+        <div class="section-title"><i class="fa-solid fa-list-check"></i> ១១. ច្បាប់នៃការលុបចោល (Dropping Constants in Big-O)</div>
+        <div class="text-block">
+            ពេលយើងសរសេរ Big-O យើងសរសេរតែភាពធំដុំ (Order of Magnitude) ប៉ុណ្ណោះ៖
+        </div>
+        <div class="grid-2">
+            <div class="card">
+                <h4><i class="fa-solid fa-eraser"></i> បោះបង់មេគុណ (Drop Constants)</h4>
+                <p style="font-size: 12px; margin:0;">បើកូដមាន Loop ដើរ 2 ដង គឺ <b>O(2n)</b> យើងត្រូវលុបលេខ 2 ចោល ហើយសរសេរត្រឹម <b>O(n)</b>។ ព្រោះទោះដើរ 1 ឬ 2 ដង វានៅតែជាល្បឿនកម្រិត Linear ដដែល។</p>
+            </div>
+            <div class="card">
+                <h4><i class="fa-solid fa-down-long"></i> បោះបង់តួអន់ (Drop Non-dominant)</h4>
+                <p style="font-size: 12px; margin:0;">បើកូដមានល្បឿន <b>O(n² + n)</b> យើងលុប n ចោល សរសេរត្រឹម <b>O(n²)</b>។ ព្រោះនៅពេលទិន្នន័យរាប់លាន តម្លៃ n គឺតូចតាចពេកមិនមានឥទ្ធិពលអ្វីធំដុំឡើយ។</p>
+            </div>
+        </div>
+
+        <div class="section-title"><i class="fa-solid fa-circle-question"></i> ១២. សំណួររំលឹកមេរៀន និងការបកស្រាយ (Review Q&A)</div>
+        <div class="text-block" style="margin-bottom: 12px;">
+            ខាងក្រោមនេះគឺជាសំណួរ និងការបកស្រាយចំនួន ៥ ដែលត្រូវបានរៀបចំឡើងដើម្បីវាស់ស្ទង់ការយល់ដឹងរបស់និស្សិតទៅលើខ្លឹមសារស្នូលនៃជំពូកទី ១ នេះ៖
+        </div>
+
+        <!-- Question 1 -->
+        <div class="qa-box">
+            <div class="qa-question">
+                <i class="fa-solid fa-q qa-icon-q"></i> 
+                <span>១. តើ Data Structures និង Algorithms ខុសគ្នាដូចម្តេច? ហើយហេតុអ្វីយើងត្រូវរៀនវាគួបផ្សំគ្នា?</span>
+            </div>
+            <div class="qa-answer">
+                <i class="fa-solid fa-a qa-icon-a"></i>
+                <span><b>ការបកស្រាយ៖</b> Data Structures គឺជា "វិធីសាស្ត្រក្នុងការរៀបចំ និងស្តុកទុកទិន្នន័យ" (ប្រៀបដូចជាទូទឹកកកដែលមានថតត្រឹមត្រូវ) ចំណែកឯ Algorithms គឺជា "ជំហាន ឬក្បួនតក្កវិជ្ជាក្នុងការដោះស្រាយបញ្ហា" (ប្រៀបដូចជាសៀវភៅធ្វើម្ហូប)។ យើងត្រូវរៀនវាគួបផ្សំគ្នា ព្រោះ Algorithm ដែលល្អបំផុត ក៏មិនអាចដំណើរការលឿនបានដែរ ប្រសិនបើទិន្នន័យមិនត្រូវបានរៀបចំក្នុង Data Structure ដ៏ត្រឹមត្រូវមួយនោះ។</span>
+            </div>
+        </div>
+
+        <!-- Question 2 -->
+        <div class="qa-box">
+            <div class="qa-question">
+                <i class="fa-solid fa-q qa-icon-q"></i> 
+                <span>២. ហេតុអ្វីបានជាក្នុងការវិភាគ Big-O Notation វិស្វករតែងតែផ្តោតទៅលើ "ករណីអាក្រក់បំផុត (Worst-case Scenario)"?</span>
+            </div>
+            <div class="qa-answer">
+                <i class="fa-solid fa-a qa-icon-a"></i>
+                <span><b>ការបកស្រាយ៖</b> ការផ្តោតលើ Worst-case គឺដើម្បីធានាថាប្រព័ន្ធ ឬកម្មវិធីកុំព្យូទ័រមិនគាំង ក្នុងស្ថានភាពដែលអាក្រក់បំផុត។ ឧទាហរណ៍៖ បើយើងកំពុងស្វែងរកឈ្មោះមនុស្សម្នាក់ក្នុងបញ្ជីឈ្មោះ ១លាននាក់ ហើយឈ្មោះនោះស្ថិតនៅលេខរៀងចុងក្រោយគេបង្អស់ ឬគ្មានសោះក្នុងបញ្ជី កូដរបស់យើងត្រូវតែអាចទប់ទល់ និងដំណើរការវាបានដោយជោគជ័យ។ ការដឹងពីដែនកំណត់អាក្រក់បំផុតនេះ ជួយឱ្យយើងរចនាប្រព័ន្ធបានរឹងមាំ (Robust System)។</span>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="global-footer">
+        <div class="footer-left"><img src="Lim.jpg" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'"><span>សាស្ត្រាចារ្យ៖ សឿង លីម (Soeurng LIM)</span></div>
+        <div class="footer-right">ទំព័រទី ១១ នៃ ១២</div>
+    </div>
+</div>
+
+<!-- ================= PAGE 12: Q&A 3-5, Glossary & References ================= -->
+<div class="a4-page">
+    <div class="global-header">
+        <div class="header-item"><img src="https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png" onerror="this.src='Logo.png'"><span>សាកលវិទ្យាល័យអង្គរ</span></div>
+        <div class="header-center">
+            <h1>សៀវភៅមគ្គទ្ទេសក៍ (Guidebook) - ជំពូកទី ១</h1>
+            <p>ADVANCED DATA STRUCTURES AND ALGORITHMS FOR AI</p>
+        </div>
+        <div class="header-item"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg"><span>Python Pro</span></div>
+    </div>
+
+    <div class="page-content">
+        
+        <!-- Question 3 -->
+        <div class="qa-box">
+            <div class="qa-question">
+                <i class="fa-solid fa-q qa-icon-q"></i> 
+                <span>៣. សូមប្រៀបធៀបល្បឿនកម្រិត O(1) និង O(n) ដោយលើកយកឧទាហរណ៍ជាក់ស្តែងមកបញ្ជាក់។</span>
+            </div>
+            <div class="qa-answer">
+                <i class="fa-solid fa-a qa-icon-a"></i>
+                <span><b>ការបកស្រាយ៖</b> <br>
+                • <b>O(1) - Constant Time:</b> គឺជាល្បឿនថេរ ដែលមិនប្រែប្រួលទោះទិន្នន័យមានចំនួនច្រើនប៉ុណ្ណាក៏ដោយ។ ឧទាហរណ៍៖ ការទាញយកឈ្មោះសិស្សពី Dictionary ក្នុង Python ដោយស្គាល់ ID របស់គាត់។ កុំព្យូទ័រប្រើពេលតែ១ជំហានក្នុងការលោតទៅយកទិន្នន័យនោះ។<br>
+                • <b>O(n) - Linear Time:</b> គឺជាល្បឿនដែលកើនឡើងស្របតាមចំនួនទិន្នន័យ។ ឧទាហរណ៍៖ ការស្វែងរកតម្លៃធំបំផុតក្នុងបញ្ជីពិន្ទុសិស្ស ១ពាន់នាក់ កុំព្យូទ័រត្រូវប្រើ For Loop ដើម្បីដើរឆែកមើលពិន្ទុរបស់សិស្សម្តងម្នាក់ៗទាំង ១ពាន់នាក់នោះទើបអាចដឹងលទ្ធផល។</span>
+            </div>
+        </div>
+
+        <!-- Question 4 -->
+        <div class="qa-box">
+            <div class="qa-question">
+                <i class="fa-solid fa-q qa-icon-q"></i> 
+                <span>៤. ហេតុអ្វីបានជាល្បឿន O(n²) ត្រូវបានចាត់ទុកថាមានគ្រោះថ្នាក់បំផុតសម្រាប់វិស័យបញ្ញាសិប្បនិម្មិត (AI)?</span>
+            </div>
+            <div class="qa-answer">
+                <i class="fa-solid fa-a qa-icon-a"></i>
+                <span><b>ការបកស្រាយ៖</b> វិស័យបញ្ញាសិប្បនិម្មិត (AI) ទាមទារការបង្វឹកលើទិន្នន័យខ្នាតធំ (Big Data)។ ល្បឿន O(n²) កើតឡើងនៅពេលមាន Loop ២ជាន់ (Nested Loops)។ ប្រសិនបើទិន្នន័យ (n) មានចំនួនត្រឹមតែ ១ លាន, នោះ O(n²) នឹងបង្ខំឱ្យម៉ាស៊ីន (Server) ធ្វើការគណនារហូតដល់ទៅ ១ ទ្រីលានដង (1,000,000 x 1,000,000)។ ដំណើរការនេះនឹងធ្វើឱ្យម៉ាស៊ីនគាំង ឬត្រូវចំណាយពេលរាប់សប្តាហ៍ទើបបញ្ចប់ ដែលធ្វើឱ្យខាតបង់ថវិកាយ៉ាងច្រើនលើសេវាកម្ម Cloud។</span>
+            </div>
+        </div>
+
+        <div class="section-title" style="margin-top: 15px;"><i class="fa-solid fa-spell-check"></i> ១៣. សទ្ទានុក្រម និងពាក្យគន្លឹះ (Glossary)</div>
+        <div class="grid-2">
+            <div class="card">
+                <p><b><i class="fa-solid fa-code text-blue"></i> Asymptotic Analysis:</b> ការវិភាគគណិតវិទ្យាដើម្បីវាយតម្លៃល្បឿនកូដ ពេលទិន្នន័យកើនឡើងដល់អនន្ត។</p>
+                <p><b><i class="fa-solid fa-scale-balanced text-blue"></i> Trade-off:</b> ការសម្រេចចិត្តលះបង់ចំណុចល្អមួយ ដើម្បីយកចំណុចល្អមួយទៀត (ឧ. លះបង់ RAM ដើម្បីល្បឿន)។</p>
+            </div>
+            <div class="card">
+                <p><b><i class="fa-solid fa-memory text-blue"></i> In-place Algorithm:</b> ក្បួនដោះស្រាយដែលផ្លាស់ប្តូរទិន្នន័យលើ Memory ចាស់ ដោយមិនបង្កើត Array ថ្មី។</p>
+                <p><b><i class="fa-solid fa-rocket text-blue"></i> Optimization:</b> ដំណើរការកែប្រែកូដ ឬទម្រង់ Machine Learning ឱ្យរត់លឿន និងស៊ីធនធានតិច។</p>
+            </div>
+        </div>
+
+        <div class="section-title"><i class="fa-solid fa-clipboard-list"></i> ១៤. សេចក្តីសន្និដ្ឋាន (Conclusion)</div>
+        <div class="card" style="border-top-color: var(--accent-green); background: #F0FDF4; margin-bottom: 12px;">
+            <ul style="line-height: 1.8; color: var(--text-main); font-size: 13px;">
+                <li><b><i class="fa-solid fa-brain text-green"></i> គ្រឹះនៃ AI:</b> ម៉ូដែល AI ក៏ត្រូវបានកសាងលើគ្រឹះ DSA ដែរ។ បើគ្មាន DSA ការវិភាគ Big Data មិនអាចទៅរួចទេ។</li>
+                <li><b><i class="fa-solid fa-chart-line text-green"></i> ប្រើប្រាស់ Big-O:</b> មុនសរសេរកូដ សូមសួរថា តើកូដនេះស្ថិតក្នុង O(n) ឬ O(n²)? វាជួយសង្គ្រោះថ្លៃ Cloud Computing។</li>
+            </ul>
+        </div>
+
+        <div class="section-title"><i class="fa-solid fa-book-bookmark"></i> ១៥. ឯកសារយោង (References)</div>
+        <div class="text-block" style="font-size: 12px;">
+            <ul style="list-style: none; padding-left: 0; line-height: 1.8;">
+                <li><b><i class='fa-solid fa-book text-blue'></i> Goodrich, M. T., Tamassia, R. (2013).</b> <i>Data Structures and Algorithms in Python</i>. Wiley.</li>
+                <li><b><i class='fa-solid fa-book text-blue'></i> Bhargava, A. (2016).</b> <i>Grokking Algorithms</i>. Manning Publications.</li>
+                <li><b><i class='fa-solid fa-globe text-blue'></i> Big-O Cheat Sheet:</b> <a href='https://www.bigocheatsheet.com/' style='color:var(--accent-blue); text-decoration:none;'>www.bigocheatsheet.com</a></li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="global-footer">
+        <div class="footer-left"><img src="Lim.jpg" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'"><span>សាស្ត្រាចារ្យ៖ សឿង លីម (Soeurng LIM)</span></div>
+        <div class="footer-right">ទំព័រទី ១២ នៃ ១២</div>
+    </div>
+</div>
+
+</body>
+</html>

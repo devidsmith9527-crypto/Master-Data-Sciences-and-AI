@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="km">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Workbook Chapter 8 - Dynamic Programming & AI</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Battambang:wght@400;700&family=Suwannaphum:wght@400;700;900&family=Lato:wght@400;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <style>
+        :root {
+            --bg-color: #E2E8F0;
+            --paper-white: #FFFFFF;
+            --text-main: #0F172A;
+            --text-muted: #475569;
+            --accent-blue: #0284C7; 
+            --accent-green: #059669;
+            --answer-color: #0369A1; 
+            --header-footer-bg: #F0F9FF;
+            --code-bg: #111827; 
+            --low: #059669; --mid: #D97706; --high: #DC2626;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            background-color: var(--bg-color);
+            font-family: 'Battambang', sans-serif;
+            color: var(--text-main);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 40px 20px;
+        }
+
+        /* A4 Page Layout - STRICT FIXED HEIGHT */
+        .a4-page {
+            width: 210mm; 
+            height: 297mm; /* Fixed height instead of min-height */
+            background: var(--paper-white);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1); 
+            margin-bottom: 30px;
+            display: flex; 
+            flex-direction: column; 
+            border-radius: 8px;
+            page-break-after: always; 
+            page-break-inside: avoid;
+            overflow: hidden; /* Critical to stop spillover */
+        }
+
+        /* COVER PAGE STYLES */
+        .cover-page {
+            justify-content: center; align-items: center; text-align: center; 
+            padding: 25mm 15mm; /* Reduced padding to fit bottom logos */
+            background-image: linear-gradient(to bottom, #F0F9FF, #FFFFFF);
+        }
+        .cover-logo { width: 130px; margin-bottom: 10px; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1)); }
+        .cover-uni-kh { font-family: 'Suwannaphum'; color: var(--accent-blue); font-size: 36px; margin: 0 0 5px 0; font-weight: 900; }
+        .cover-uni-en { font-family: 'Lato'; color: #475569; font-size: 16px; margin: 0 0 35px 0; letter-spacing: 1px; font-weight: bold; }
+        .cover-program { font-family: 'Suwannaphum'; font-size: 18px; color: var(--accent-green); margin-bottom: 20px; font-weight: bold; }
+        .cover-chapter-badge { background: var(--accent-blue); color: white; padding: 8px 35px; border-radius: 50px; font-size: 20px; font-weight: bold; margin-bottom: 35px; font-family: 'Suwannaphum'; box-shadow: 0 5px 15px rgba(2,132,199,0.3); display: inline-block;}
+        .cover-main-title { font-family: 'Suwannaphum'; font-size: 32px; color: var(--text-main); line-height: 1.4; margin-bottom: 10px; font-weight: 900; }
+        .cover-sub-title { font-family: 'Lato'; font-size: 20px; color: var(--accent-blue); margin-bottom: 40px; font-weight: bold; }
+        
+        .cover-author-wrapper { display: flex; flex-direction: column; align-items: center; gap: 10px; margin-bottom: 30px; }
+        .cover-author-img { width: 90px; height: 90px; border-radius: 50%; border: 4px solid var(--accent-blue); object-fit: cover; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        .cover-author-text { font-size: 18px; color: var(--text-muted); font-family: 'Suwannaphum'; }
+        .cover-author-text strong { color: var(--accent-blue); font-size: 22px; }
+
+        .cover-icons-wrapper { display: flex; gap: 60px; justify-content: center; margin-top: auto; border-top: 1px solid #E2E8F0; padding-top: 15px; width: 100%; }
+        .cover-icon-item img { height: 60px; margin-bottom: 8px; object-fit: contain; }
+        .cover-icon-item p { font-size: 14px; font-weight: bold; color: var(--accent-blue); font-family: 'Lato'; margin: 0; }
+
+        /* HEADER */
+        .global-header {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 10px 20px; border-bottom: 3px solid var(--accent-blue); background-color: var(--header-footer-bg);
+            height: 70px; box-sizing: border-box; flex-shrink: 0;
+        }
+        .header-item { display: flex; flex-direction: column; align-items: center; gap: 2px; width: 120px; }
+        .header-item img { height: 35px; object-fit: contain; }
+        .header-item span { font-size: 9px; font-weight: bold; color: var(--accent-blue); text-align: center; font-family: 'Suwannaphum'; }
+        .header-center { text-align: center; }
+        .header-center h1 { font-family: 'Suwannaphum'; font-size: 16px; color: var(--accent-blue); margin: 0; }
+        .header-center p { font-family: 'Battambang'; font-size: 10px; color: #64748B; margin: 0; font-weight: bold; text-transform: uppercase;}
+
+        /* CONTENT */
+        /* FIX: Using calc to ensure it strictly respects height between header and footer */
+        .page-content { 
+            height: calc(100% - 70px - 50px); 
+            padding: 6mm 12mm; overflow: hidden; 
+            box-sizing: border-box; display: flex; flex-direction: column;
+        }
+        
+        .student-info {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 8px;
+            border: 1px solid #CBD5E1; padding: 8px 12px; border-radius: 6px; background: #F8FAFC; flex-shrink: 0;
+        }
+        .info-line { font-size: 13px; display: flex; align-items: flex-end; font-weight: bold;}
+        .info-line span { flex-grow: 1; border-bottom: 1px dotted #94A3B8; margin-left: 10px; height: 16px; display: inline-block;}
+
+        .case-title {
+            background: var(--header-footer-bg); border-left: 5px solid var(--accent-blue);
+            padding: 6px 12px; margin: 8px 0; font-family: 'Suwannaphum';
+            font-size: 15px; display: flex; align-items: center; gap: 8px; font-weight: bold;
+            border-radius: 0 6px 6px 0; color: var(--accent-blue); flex-shrink: 0;
+        }
+        
+        .exercise-block { margin-bottom: 8px; border: 1px solid #E2E8F0; padding: 8px 10px; border-radius: 6px; background: white; flex-shrink: 0;}
+        .exercise-block p { margin-bottom: 5px; font-size: 13px; font-weight: bold; color: #1E293B; display: flex; align-items: center; gap: 6px;}
+        
+        .level-badge { font-size: 10px; color: white; padding: 2px 6px; border-radius: 3px; font-weight: bold; display: inline-block; margin-right: 6px; font-family: 'Battambang';}
+        .bg-low { background-color: var(--low); }
+        .bg-mid { background-color: var(--mid); }
+        .bg-high { background-color: var(--high); }
+
+        /* CODE DISPLAY */
+        .code-container {
+            background: var(--code-bg); border-radius: 5px; padding: 8px 10px; margin: 4px 0;
+            overflow-x: auto; border: 1px solid #374151; position: relative;
+        }
+        .code-header { background: #1F2937; padding: 3px 6px; font-size: 10px; font-family: 'Battambang'; color: #38BDF8; border-bottom: 1px solid #374151; margin: -8px -10px 5px -10px; border-radius: 5px 5px 0 0; display: flex; align-items: center; gap: 6px;}
+        /* Shrinking font size slightly to fit long algorithms (Knapsack/Dijkstra) */
+        pre { font-family: 'Fira Code', monospace; font-size: 10.5px; line-height: 1.4; color: #f8f8f2; margin: 0; }
+        .kw { color: #ff79c6; font-weight: bold; } 
+        .fn { color: #50fa7b; } 
+        .str { color: #f1fa8c; } 
+        .com { color: #6272a4; font-style: italic; } 
+        .num { color: #bd93f9; } 
+
+        .answer-box { margin-top: 5px; font-size: 12.5px; display: flex; align-items: flex-start; }
+        .answer-box label { font-family: 'Battambang', sans-serif; font-weight: bold; margin-right: 8px; color: #475569; white-space: nowrap;}
+        
+        .filled-answer { 
+            flex-grow: 1; border-bottom: 1px dotted #94A3B8; color: var(--answer-color); 
+            font-family: 'Battambang', sans-serif; line-height: 1.7; min-height: 20px; padding-bottom: 2px; text-align: justify;
+        }
+
+        /* FOOTER */
+        .global-footer {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 8px 25px; border-top: 3px solid var(--accent-blue);
+            background-color: var(--header-footer-bg); 
+            height: 50px; box-sizing: border-box; flex-shrink: 0; width: 100%;
+        }
+        .footer-left { display: flex; align-items: center; gap: 10px; }
+        .footer-left img { border-radius: 50%; border: 2px solid var(--accent-blue); width: 28px; height: 28px; object-fit: cover; background-color: #fff; }
+        .footer-left span { font-size: 11px; font-weight: bold; color: var(--text-main); font-family: 'Suwannaphum'; }
+        .footer-right { font-size: 11px; color: var(--accent-blue); font-weight: bold; font-family: 'Battambang'; }
+
+        /* PRINT MEDIA FIXES */
+        @page { size: A4; margin: 0; }
+        @media print {
+            body { background: white; padding: 0 !important; margin: 0 !important; }
+            .a4-page { 
+                box-shadow: none; margin: 0; 
+                width: 210mm; 
+                height: 296.5mm !important; /* Extremely strict to avoid spillover */
+                border: none; border-radius: 0; 
+                page-break-after: always; page-break-inside: avoid;
+            }
+            .no-print { display: none !important; }
+            * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+        }
+    </style>
+</head>
+<body>
+
+<button class="no-print" onclick="window.print()" style="margin-bottom: 20px; padding: 12px 25px; cursor: pointer; background: var(--accent-blue); color: white; border: none; border-radius: 8px; font-family: 'Battambang'; font-weight: bold; font-size: 16px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+    <i class="fa-solid fa-print"></i> បោះពុម្ពសៀវភៅលំហាត់ (Print as PDF)
+</button>
+
+<!-- COVER PAGE -->
+<div class="a4-page cover-page">
+    <img src="Logo.png" class="cover-logo" onerror="this.src='https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png'">
+    <h1 class="cover-uni-kh">សាកលវិទ្យាល័យអង្គរ</h1>
+    <p class="cover-uni-en">ANGKOR UNIVERSITY</p>
+
+    <div class="cover-program">
+        <i class="fa-solid fa-graduation-cap"></i> អនុបណ្ឌិតវិទ្យាសាស្ត្រទិន្នន័យ និងបញ្ញាសិប្បនិម្មិត (Master of Data Science and AI)
+    </div>
+
+    <div class="cover-chapter-badge">សៀវភៅលំហាត់អនុវត្តន៍ (Workbook) | ២០២៥-២០២៦</div>
+
+    <h1 class="cover-main-title">ជំពូកទី ៨៖ ការសរសេរកម្មវិធីឌីណាមិក និងកម្មវិធី AI</h1>
+    <h2 class="cover-sub-title">(Dynamic Programming & AI Applications)</h2>
+
+    <div class="cover-author-wrapper">
+        <img src="Lim.jpg" class="cover-author-img" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'">
+        <div class="cover-author-text">
+            សាស្ត្រាចារ្យ៖
+        </div>
+        <div class="cover-author-text">
+            <strong>សឿង លីម (Soeurng LIM)</strong>
+        </div>
+    </div>
+
+    <div class="cover-icons-wrapper">
+        <div class="cover-icon-item">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg">
+            <p>Python</p>
+        </div>
+        <div class="cover-icon-item">
+            <img src="https://cdn-icons-png.flaticon.com/512/2103/2103633.png">
+            <p>DSA in Python</p>
+        </div>
+    </div>
+</div>
+
+<!-- PAGE 1: DP Basics -->
+<div class="a4-page">
+    <div class="global-header">
+        <div class="header-item"><img src="Logo.png" onerror="this.src='https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png'"><span>សាកលវិទ្យាល័យអង្គរ</span></div>
+        <div class="header-center">
+            <h1>សៀវភៅលំហាត់អនុវត្តន៍ - ជំពូកទី ៨</h1>
+            <p>ADVANCED DATA STRUCTURES AND ALGORITHMS</p>
+        </div>
+        <div class="header-item"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg"><span>Python Pro</span></div>
+    </div>
+
+    <div class="page-content">
+        <div class="student-info">
+            <div class="info-line">អត្តលេខ (ID): <span></span></div>
+            <div class="info-line">ឈ្មោះ (Name): <span></span></div>
+        </div>
+
+        <div class="case-title"><i class="fa-solid fa-bolt"></i> ១. ការសរសេរកម្មវិធីឌីណាមិក (Dynamic Programming - DP)</div>
+        
+        <div class="exercise-block">
+            <p><span class="level-badge bg-low">ស្រាល ១</span> លេខ Fibonacci ដោយប្រើការចងចាំ (Memoization)</p>
+            <div class="code-container">
+                <div class="code-header"><i class="fa-brands fa-python"></i> Copy & Run Code</div>
+<pre><span class="com"># Memoization (Top-Down DP) ជួយសន្សំសំចៃពេលគណនាឡើងវិញ</span>
+<span class="kw">def</span> <span class="fn">fib_memo</span>(n, memo={}):
+    <span class="kw">if</span> n <span class="kw">in</span> memo:
+        <span class="kw">return</span> memo[n]  <span class="com"># ទាញយកចម្លើយដែលគណនារួចចេញមក</span>
+    <span class="kw">if</span> n <= <span class="num">1</span>:
+        <span class="kw">return</span> n
+    <span class="com"># បើមិនទាន់មាន គណនា រួចរក្សាទុកក្នុង memo</span>
+    memo[n] = fib_memo(n-<span class="num">1</span>, memo) + fib_memo(n-<span class="num">2</span>, memo)
+    <span class="kw">return</span> memo[n]
+
+<span class="fn">print</span>(<span class="str">"Fibonacci ទី 50 គឺ:"</span>, fib_memo(<span class="num">50</span>))</pre>
+            </div>
+            <div class="answer-box">
+                <label>ការពន្យល់ពីប្រសិទ្ធភាព៖</label> 
+                <div class="filled-answer">បើយើងប្រើ Recursion ធម្មតា ការរកលេខ F(50) ត្រូវចាយពេលរាប់ឆ្នាំ ព្រោះ Time Complexity O(2^n)។ តែពេលប្រើ <b>Memoization (រក្សាទុកចម្លើយចាស់ក្នុង Dictionary)</b> ល្បឿនធ្លាក់មកសល់ត្រឹម O(n) ចំណាយពេលតែមួយប៉ប្រិចភ្នែកប៉ុណ្ណោះ។</div>
+            </div>
+        </div>
+
+        <div class="exercise-block">
+            <p><span class="level-badge bg-mid">មធ្យម ១</span> ការប្តូរកាក់ (Coin Change Problem - Tabulation)</p>
+            <div class="code-container">
+                <div class="code-header"><i class="fa-brands fa-python"></i> Copy & Run Code</div>
+<pre><span class="com"># Tabulation (Bottom-Up DP) - រកចំនួនកាក់តិចបំផុតសម្រាប់អាប់លុយ</span>
+<span class="kw">def</span> <span class="fn">min_coins</span>(coins, amount):
+    <span class="com"># បង្កើត Array ផ្ទុកតម្លៃលុយនីមួយៗ ដំបូងដាក់តម្លៃអតិបរមា (Infinity)</span>
+    dp = [float(<span class="str">'inf'</span>)] * (amount + <span class="num">1</span>)
+    dp[<span class="num">0</span>] = <span class="num">0</span>  <span class="com"># លុយ 0៛ ត្រូវការកាក់ 0</span>
+    
+    <span class="kw">for</span> a <span class="kw">in range</span>(<span class="num">1</span>, amount + <span class="num">1</span>):
+        <span class="kw">for</span> c <span class="kw">in</span> coins:
+            <span class="kw">if</span> a - c >= <span class="num">0</span>:
+                dp[a] = <span class="fn">min</span>(dp[a], <span class="num">1</span> + dp[a - c])
+                
+    <span class="kw">return</span> dp[amount] <span class="kw">if</span> dp[amount] != float(<span class="str">'inf'</span>) <span class="kw">else</span> -<span class="num">1</span>
+
+<span class="fn">print</span>(<span class="str">"ត្រូវការកាក់តិចបំផុត:"</span>, min_coins([<span class="num">1</span>, <span class="num">5</span>, <span class="num">10</span>, <span class="num">25</span>], <span class="num">37</span>))</pre>
+            </div>
+            <div class="answer-box">
+                <label>វិភាគចំណោទ ៖</label> 
+                <div class="filled-answer">នេះគឺជាបញ្ហា Optimization បុរាណ។ DP នឹងបំបែកបញ្ហាអាប់លុយ ៣៧ រៀល ទៅជាការអាប់លុយតូចៗចាប់ពី ១ រៀលឡើងទៅ (Bottom-up)។ ចម្លើយគឺត្រូវការកាក់ ៤ គ្រាប់ (25+10+1+1)។ ល្បឿនគឺ O(amount * len(coins))។</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="global-footer">
+        <div class="footer-left"><img src="Lim.jpg" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'"><span>សាស្ត្រាចារ្យ៖ សឿង លីម (Soeurng LIM)</span></div>
+        <div class="footer-right">ទំព័រទី ១ នៃ ៤</div>
+    </div>
+</div>
+
+<!-- PAGE 2 : Knapsack & KNN -->
+<div class="a4-page">
+    <div class="global-header">
+        <div class="header-item"><img src="Logo.png" onerror="this.src='https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png'"><span>សាកលវិទ្យាល័យអង្គរ</span></div>
+        <div class="header-center">
+            <h1>សៀវភៅលំហាត់អនុវត្តន៍ - ជំពូកទី ៨</h1>
+            <p>ADVANCED DATA STRUCTURES AND ALGORITHMS</p>
+        </div>
+        <div class="header-item"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg"><span>Python Pro</span></div>
+    </div>
+
+    <div class="page-content">
+        <div class="case-title"><i class="fa-solid fa-briefcase"></i> ២. ការដោះស្រាយបញ្ហាធនធាន (The Knapsack Problem)</div>
+        
+        <div class="exercise-block">
+            <p><span class="level-badge bg-high">ធ្ងន់ ១</span> ជ្រើសរើសទំនិញដាក់កាបូបឱ្យចំណេញបំផុត (0/1 Knapsack)</p>
+            <div class="code-container">
+                <div class="code-header"><i class="fa-brands fa-python"></i> Copy & Run Code</div>
+<pre><span class="com"># វត្ថុនីមួយៗមានទម្ងន់ (wt) និងតម្លៃចំណេញ (val)។ កាបូបទ្រាំទ្របានទម្ងន់ W</span>
+<span class="kw">def</span> <span class="fn">knapsack</span>(W, wt, val, n):
+    <span class="com"># បង្កើតតារាង DP ២ វិមាត្រ (2D Array) ផ្ទុកតម្លៃ 0</span>
+    K = [[<span class="num">0</span> <span class="kw">for</span> w <span class="kw">in range</span>(W + <span class="num">1</span>)] <span class="kw">for</span> i <span class="kw">in range</span>(n + <span class="num">1</span>)]
+
+    <span class="com"># ដំណើរការបំពេញតារាង DP</span>
+    <span class="kw">for</span> i <span class="kw">in range</span>(n + <span class="num">1</span>):
+        <span class="kw">for</span> w <span class="kw">in range</span>(W + <span class="num">1</span>):
+            <span class="kw">if</span> i == <span class="num">0</span> <span class="kw">or</span> w == <span class="num">0</span>:
+                K[i][w] = <span class="num">0</span>
+            <span class="kw">elif</span> wt[i-<span class="num">1</span>] <= w: <span class="com"># យកតម្លៃធំបំផុតរវាង "ដាក់" និង "មិនដាក់"</span>
+                K[i][w] = <span class="fn">max</span>(val[i-<span class="num">1</span>] + K[i-<span class="num">1</span>][w-wt[i-<span class="num">1</span>]],  K[i-<span class="num">1</span>][w])
+            <span class="kw">else</span>: <span class="com"># បើធ្ងន់ពេកដាក់មិនចូល យកតម្លៃចាស់</span>
+                K[i][w] = K[i-<span class="num">1</span>][w]
+    <span class="kw">return</span> K[n][W]
+
+val, wt, W = [<span class="num">60</span>, <span class="num">100</span>, <span class="num">120</span>], [<span class="num">10</span>, <span class="num">20</span>, <span class="num">30</span>], <span class="num">50</span>
+<span class="fn">print</span>(<span class="str">"ប្រាក់ចំណេញអតិបរមាដែលអាចប្រមូលបានគឺ:"</span>, knapsack(W, wt, val, len(val)))</pre>
+            </div>
+            <div class="answer-box">
+                <label>ការវិភាគ ៖</label> 
+                <div class="filled-answer">Knapsack Problem ជាគ្រឹះនៃ Resource Allocation។ យើងប្រើវាដើម្បីជ្រើសរើសវិនិយោគគម្រោងណាដែលចាយទុន (Weight) តិច តែបានប្រាក់ចំណេញ (Value) ខ្ពស់បំផុតក្នុងកញ្ចប់ថវិកាកំណត់។</div>
+            </div>
+        </div>
+
+        <div class="case-title"><i class="fa-solid fa-robot"></i> ៣. ក្បួនដោះស្រាយសម្រាប់ AI (Algorithms in AI)</div>
+        
+        <div class="exercise-block">
+            <p><span class="level-badge bg-mid">មធ្យម ១</span> ក្បួនអ្នកជិតខាងជិតបំផុត K-Nearest Neighbors (KNN)</p>
+            <div class="code-container">
+                <div class="code-header"><i class="fa-brands fa-python"></i> Copy & Run Code</div>
+<pre><span class="kw">import</span> math
+
+<span class="kw">def</span> <span class="fn">euclidean_distance</span>(p1, p2):
+    <span class="kw">return</span> math.sqrt((p1[<span class="num">0</span>] - p2[<span class="num">0</span>])**<span class="num">2</span> + (p1[<span class="num">1</span>] - p2[<span class="num">1</span>])**<span class="num">2</span>)
+
+<span class="kw">def</span> <span class="fn">simple_knn</span>(data_points, new_point, k):
+    distances = []
+    <span class="kw">for</span> point, label <span class="kw">in</span> data_points:
+        distances.append((euclidean_distance(point, new_point), label))
+    
+    <span class="com"># តម្រៀបពីជិតជាងគេ ទៅឆ្ងាយជាងគេ O(n log n)</span>
+    distances.sort(key=<span class="kw">lambda</span> x: x[<span class="num">0</span>])
+    
+    k_nearest = distances[:k]
+    <span class="fn">print</span>(<span class="str">f"{k} នាក់ជិតបំផុតគឺ:"</span>, k_nearest)
+    <span class="kw">return</span> <span class="str">"ចាត់ថ្នាក់រួចរាល់"</span>
+
+dataset = [((<span class="num">1</span>, <span class="num">2</span>), <span class="str">'A'</span>), ((<span class="num">2</span>, <span class="num">3</span>), <span class="str">'A'</span>), ((<span class="num">8</span>, <span class="num">8</span>), <span class="str">'B'</span>), ((<span class="num">9</span>, <span class="num">10</span>), <span class="str">'B'</span>)]
+simple_knn(dataset, (<span class="num">3</span>, <span class="num">4</span>), k=<span class="num">2</span>)</pre>
+            </div>
+            <div class="answer-box">
+                <label>ដំណើរការ Machine Learning ៖</label> 
+                <div class="filled-answer">KNN គណនាចម្ងាយ (Distance) ទៅកាន់ទិន្នន័យចាស់ៗ។ បើចំណុចថ្មីនៅជិតក្រុម 'A' ច្រើនជាង វាសន្និដ្ឋានថាជារបស់ក្រុម 'A' ដែរ។ ប្រើញឹកញាប់ក្នុងការធ្វើ Recommendation Systems។</div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="global-footer">
+        <div class="footer-left"><img src="Lim.jpg" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'"><span>សាស្ត្រាចារ្យ៖ សឿង លីម (Soeurng LIM)</span></div>
+        <div class="footer-right">ទំព័រទី ២ នៃ ៤</div>
+    </div>
+</div>
+
+<!-- PAGE 3 : Dijkstra -->
+<div class="a4-page">
+    <div class="global-header">
+        <div class="header-item"><img src="Logo.png" onerror="this.src='https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png'"><span>សាកលវិទ្យាល័យអង្គរ</span></div>
+        <div class="header-center">
+            <h1>សៀវភៅលំហាត់អនុវត្តន៍ - ជំពូកទី ៨</h1>
+            <p>ADVANCED DATA STRUCTURES AND ALGORITHMS</p>
+        </div>
+        <div class="header-item"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg"><span>Python Pro</span></div>
+    </div>
+
+    <div class="page-content">
+        <div class="case-title"><i class="fa-solid fa-map-location-dot"></i> ៤. ការស្វែងរកផ្លូវក្នុង AI (Pathfinding in AI)</div>
+        
+        <div class="exercise-block">
+            <p><span class="level-badge bg-high">ធ្ងន់ ២</span> ក្បួនស្វែងរកផ្លូវខ្លីបំផុត Dijkstra's Algorithm</p>
+            <div class="code-container">
+                <div class="code-header"><i class="fa-brands fa-python"></i> Copy & Run Code</div>
+<pre><span class="kw">import</span> heapq
+
+<span class="kw">def</span> <span class="fn">dijkstra</span>(graph, start):
+    <span class="com"># កំណត់ចម្ងាយទៅគ្រប់ Node ទាំងអស់ថាអនន្ត (Infinity) ជាមុនសិន</span>
+    distances = {node: float(<span class="str">'infinity'</span>) <span class="kw">for</span> node <span class="kw">in</span> graph}
+    distances[start] = <span class="num">0</span> <span class="com"># ចម្ងាយពីដើមទីទៅខ្លួនឯងគឺ ០</span>
+    
+    <span class="com"># ប្រើប្រាស់ Priority Queue (Min-Heap) ដើម្បីរើសផ្លូវដែលជិតជាងគេមុន O(E log V)</span>
+    priority_queue = [(<span class="num">0</span>, start)]
+    
+    <span class="kw">while</span> priority_queue:
+        <span class="com"># ទាញយក Node ដែលនៅជិតបំផុតមកត្រួតពិនិត្យ</span>
+        current_distance, current_node = heapq.heappop(priority_queue)
+        
+        <span class="com"># បើចម្ងាយក្នុងប្រព័ន្ធធំជាងចម្ងាយដែលរក្សាទុក យើងបោះបង់ចោលចម្ងាយចាស់</span>
+        <span class="kw">if</span> current_distance > distances[current_node]:
+            <span class="kw">continue</span>
+            
+        <span class="com"># ពិនិត្យមើលអ្នកជិតខាងរបស់វាទាំងអស់ (Neighbors)</span>
+        <span class="kw">for</span> neighbor, weight <span class="kw">in</span> graph[current_node].items():
+            distance = current_distance + weight
+            
+            <span class="com"># បើរកឃើញផ្លូវដែលជិតជាងផ្លូវចាស់ យើងធ្វើបច្ចុប្បន្នភាព</span>
+            <span class="kw">if</span> distance < distances[neighbor]:
+                distances[neighbor] = distance
+                heapq.heappush(priority_queue, (distance, neighbor))
+                
+    <span class="kw">return</span> distances
+
+<span class="com"># បង្កើតផែនទី Graph (ឧទាហរណ៍៖ ចម្ងាយគិតជាគីឡូម៉ែត្ររវាងខេត្ត)</span>
+khmer_map = {
+    <span class="str">'SRP'</span>: {<span class="str">'BTB'</span>: <span class="num">75</span>, <span class="str">'KPC'</span>: <span class="num">200</span>},
+    <span class="str">'BTB'</span>: {<span class="str">'SRP'</span>: <span class="num">75</span>, <span class="str">'PNH'</span>: <span class="num">290</span>},
+    <span class="str">'KPC'</span>: {<span class="str">'SRP'</span>: <span class="num">200</span>, <span class="str">'PNH'</span>: <span class="num">120</span>},
+    <span class="str">'PNH'</span>: {<span class="str">'BTB'</span>: <span class="num">290</span>, <span class="str">'KPC'</span>: <span class="num">120</span>}
+}
+
+<span class="com"># ស្វែងរកផ្លូវខ្លីបំផុតពីសៀមរាប ទៅគ្រប់ខេត្ត</span>
+shortest_paths = dijkstra(khmer_map, <span class="str">'SRP'</span>)
+
+<span class="fn">print</span>(<span class="str">"ចម្ងាយខ្លីបំផុតពី សៀមរាប (SRP) ទៅ៖"</span>)
+<span class="kw">for</span> destination, dist <span class="kw">in</span> shortest_paths.items():
+    <span class="fn">print</span>(<span class="str">f" -> ខេត្ត {destination} គឺ {dist} គីឡូម៉ែត្រ"</span>)</pre>
+            </div>
+            <div class="answer-box">
+                <label>កម្មវិធី (Applications) ៖</label> 
+                <div class="filled-answer">Dijkstra ជាក្បួនដ៏ល្បីល្បាញ ដែលត្រូវប្រើប្រាស់ក្នុងប្រព័ន្ធ <b>Google Maps</b> ឬការ Routing Network។ វាប្រើប្រាស់ Min-Heap ដើម្បីធានាថាការស្វែងរកផ្លូវស្ថិតក្នុងជម្រើសដែលខាតបង់តិចបំផុតជានិច្ច ធ្វើឱ្យការងារចប់ក្នុងល្បឿន O(E log V)។</div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="global-footer">
+        <div class="footer-left"><img src="Lim.jpg" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'"><span>សាស្ត្រាចារ្យ៖ សឿង លីម (Soeurng LIM)</span></div>
+        <div class="footer-right">ទំព័រទី ៣ នៃ ៤</div>
+    </div>
+</div>
+
+<!-- PAGE 4 : Minimax -->
+<div class="a4-page">
+    <div class="global-header">
+        <div class="header-item"><img src="Logo.png" onerror="this.src='https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png'"><span>សាកលវិទ្យាល័យអង្គរ</span></div>
+        <div class="header-center">
+            <h1>សៀវភៅលំហាត់អនុវត្តន៍ - ជំពូកទី ៨</h1>
+            <p>ADVANCED DATA STRUCTURES AND ALGORITHMS</p>
+        </div>
+        <div class="header-item"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg"><span>Python Pro</span></div>
+    </div>
+
+    <div class="page-content">
+        <div class="case-title"><i class="fa-solid fa-gamepad"></i> ៥. លំហាត់អនុវត្តន៍បញ្ញាសិប្បនិម្មិត (AI Challenge)</div>
+        
+        <div class="exercise-block">
+            <p><span class="level-badge bg-high">កិច្ចការ</span> អភិវឌ្ឍន៍ Tic-Tac-Toe AI (Minimax Algorithm)</p>
+            <div class="answer-box" style="margin-bottom: 8px;">
+                <div class="filled-answer" style="border: none; padding: 0;">ក្បួន Minimax គឺជាក្បួនដែលគេប្រើក្នុងការបង្រៀន AI ឱ្យចេះលេងហ្គេម (Game Theory) ដូចជាអុក ឬអ៊ូឡូ។ វាព្យាករណ៍សន្លឹកបៀរ ឬជំហានដើររបស់គូប្រកួតទុកជាមុនរហូតដល់ចុងបញ្ចប់នៃហ្គេម រួចទើបជ្រើសរើសជំហានណាដែលផ្តល់ភាគរយឈ្នះខ្ពស់បំផុត។</div>
+            </div>
+            
+            <div class="code-container">
+                <div class="code-header"><i class="fa-brands fa-python"></i> Assignment Structure (បំពេញកូដដែលខ្វះ)</div>
+<pre><span class="com"># 1. សរសេរអនុគមន៍វាយតម្លៃហ្គេម (អ្នកណាឈ្នះ?)</span>
+<span class="kw">def</span> <span class="fn">evaluate</span>(board):
+    <span class="com"># TODO: ពិនិត្យមើលជួរដេក ជួរឈរ និងអង្កត់ទ្រូង</span>
+    <span class="com"># Return 10 បើ X ឈ្នះ, -10 បើ O ឈ្នះ, 0 បើស្មើ</span>
+    <span class="kw">pass</span>
+
+<span class="com"># 2. សរសេរក្បួន Minimax</span>
+<span class="kw">def</span> <span class="fn">minimax</span>(board, depth, isMax):
+    score = evaluate(board)
+    
+    <span class="kw">if</span> score == <span class="num">10</span>: <span class="kw">return</span> score <span class="com"># AI ឈ្នះ</span>
+    <span class="kw">if</span> score == -<span class="num">10</span>: <span class="kw">return</span> score <span class="com"># មនុស្សឈ្នះ</span>
+    <span class="kw">if</span> is_moves_left(board) == <span class="kw">False</span>: <span class="kw">return</span> <span class="num">0</span> <span class="com"># ស្មើ</span>
+    
+    <span class="kw">if</span> isMax:
+        best = -<span class="num">1000</span>
+        <span class="com"># TODO: ដើរគ្រប់កន្លែងទំនេរ រួចហៅ minimax() ម្តងទៀត</span>
+        <span class="com"># best = max(best, minimax(board, depth + 1, not isMax))</span>
+        <span class="kw">return</span> best
+    <span class="kw">else</span>:
+        best = <span class="num">1000</span>
+        <span class="com"># TODO: គណនាជំហានរបស់គូប្រកួត (Minimizer)</span>
+        <span class="kw">return</span> best
+
+<span class="com"># 3. រកជំហានដើរល្អបំផុតឱ្យ AI</span>
+<span class="kw">def</span> <span class="fn">find_best_move</span>(board):
+    <span class="com"># TODO: ប្រើ Minimax ប្រៀបធៀបគ្រប់ក្រឡាទំនេរ រួចដើរក្រឡាដែលបានពិន្ទុខ្ពស់ជាងគេ</span>
+    <span class="kw">pass</span>
+</pre>
+            </div>
+            
+            <div class="highlight-note" style="background-color: #FEF2F2; border-color: var(--accent-red); color: var(--accent-red); margin-top: 10px; padding: 10px;">
+                <i class="fa-solid fa-triangle-exclamation" style="font-size: 16px;"></i>
+                <span style="font-size: 12px; line-height: 1.5;"><b>កិច្ចការស្រាវជ្រាវ៖</b> និស្សិតត្រូវយក Structure ខាងលើទៅបំពេញបន្ថែមឱ្យដំណើរការបាន ១០០%។ កិច្ចការនេះតម្រូវឱ្យ Submit ចូលក្នុងប្រព័ន្ធសាលាមុនម៉ោង ១២ យប់ ថ្ងៃអាទិត្យ។</span>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="global-footer">
+        <div class="footer-left"><img src="Lim.jpg" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'"><span>សាស្ត្រាចារ្យ៖ សឿង លីម (Soeurng LIM)</span></div>
+        <div class="footer-right">ទំព័រទី ៤ នៃ ៤</div>
+    </div>
+</div>
+
+</body>
+</html>

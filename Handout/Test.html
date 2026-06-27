@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="km">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced DSA - Full Course Handout</title>
+    <link href="https://fonts.googleapis.com/css2?family=Battambang:wght@400;700&family=Suwannaphum:wght@400;700;900&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        :root { --blue: #0284C7; --green: #059669; --red: #DC2626; --yellow: #D97706; --dark: #0F172A; --bg: #E2E8F0; }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { background: var(--bg); font-family: 'Battambang', sans-serif; color: var(--dark); display: flex; flex-direction: column; align-items: center; padding: 20px; }
+        
+        .a4 { width: 210mm; min-height: 297mm; background: #fff; margin-bottom: 20px; padding: 15mm; border-radius: 8px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); page-break-after: always; position: relative; }
+        
+        /* Header & Footer */
+        .g-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 3px solid var(--blue); padding-bottom: 10px; margin-bottom: 20px; }
+        .g-header img { height: 40px; }
+        .g-header h1 { font-family: 'Suwannaphum'; font-size: 16px; color: var(--blue); margin: 0; text-align: center; }
+        .g-header p { font-size: 10px; color: #64748B; margin: 0; text-align: center; font-weight: bold; }
+        
+        .ch-title { text-align: center; font-family: 'Suwannaphum'; font-size: 22px; color: var(--blue); font-weight: 900; margin-bottom: 20px; border-bottom: 2px dashed #CBD5E1; padding-bottom: 10px; }
+        
+        /* Grid Layout for Slides */
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px; }
+        
+        /* Slide Card */
+        .sc { border: 1px solid #CBD5E1; border-top: 3px solid var(--blue); border-radius: 6px; background: #F8FAFC; padding: 12px; page-break-inside: avoid; }
+        .sc.red { border-top-color: var(--red); } .sc.green { border-top-color: var(--green); }
+        .s-num { float: right; background: var(--blue); color: #fff; font-size: 11px; padding: 2px 8px; border-radius: 12px; font-weight: bold; font-family: 'Suwannaphum'; }
+        .sc.red .s-num { background: var(--red); } .sc.green .s-num { background: var(--green); }
+        .sh { font-family: 'Suwannaphum'; font-size: 14px; color: var(--blue); margin-bottom: 8px; font-weight: bold; display: flex; align-items: center; gap: 6px; }
+        .sc.red .sh { color: var(--red); } .sc.green .sh { color: var(--green); }
+        .sb { font-size: 12px; line-height: 1.6; color: #334155; text-align: justify; }
+        .sb ul { padding-left: 20px; margin-top: 5px; }
+        
+        /* Code Block */
+        .code { background: #1E293B; color: #F8FAFC; font-family: 'Fira Code', monospace; font-size: 10px; padding: 10px; border-radius: 4px; overflow-x: auto; white-space: pre-wrap; margin-top: 8px; border-left: 3px solid #38BDF8;}
+        .kw { color: #FF79C6; } .fn { color: #50FA7B; } .num { color: #BD93F9; } .str { color: #F1FA8C; } .com { color: #6272A4; }
+        
+        /* Analogies */
+        .analogy { background: #FFFBEB; border-left: 3px solid var(--yellow); padding: 8px; margin-top: 8px; border-radius: 4px; font-size: 11.5px; }
+        .analogy b { color: var(--yellow); }
+
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 11.5px; page-break-inside: avoid; }
+        th, td { border: 1px solid #CBD5E1; padding: 6px 8px; text-align: left; }
+        th { background: #F0F9FF; color: var(--blue); font-family: 'Suwannaphum'; }
+
+        .btn-print { margin-bottom: 20px; padding: 10px 20px; background: var(--blue); color: white; border: none; border-radius: 5px; cursor: pointer; font-family: 'Battambang'; font-weight: bold; }
+        
+        @media print {
+            body { background: #fff; padding: 0; }
+            .a4 { box-shadow: none; margin: 0; width: 210mm; height: 297mm; border-radius: 0; }
+            .btn-print { display: none; }
+            * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+        }
+    </style>
+</head>
+<body>
+
+<button class="btn-print" onclick="window.print()"><i class="fa-solid fa-print"></i> បោះពុម្ពឯកសារមេរៀន (Print PDF)</button>
+
+<!-- ================= COVER PAGE ================= -->
+<div class="a4" style="display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; background: linear-gradient(to bottom, #F0F9FF, #FFFFFF);">
+    <img src="https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png" style="width:150px; margin-bottom:20px;" alt="AU">
+    <h1 style="font-family: 'Suwannaphum'; font-size: 32px; color: var(--blue); margin-bottom: 5px;">សាកលវិទ្យាល័យអង្គរ</h1>
+    <h3 style="font-family: 'Lato'; color: #64748B; margin-bottom: 30px;">ANGKOR UNIVERSITY</h3>
+    <p style="font-family: 'Suwannaphum'; font-size: 18px; color: var(--green); font-weight: bold; margin-bottom: 40px;"><i class="fa-solid fa-graduation-cap"></i> អនុបណ្ឌិតវិទ្យាសាស្ត្រទិន្នន័យ និងបញ្ញាសិប្បនិម្មិត</p>
+    
+    <div style="background: var(--blue); color: white; padding: 10px 30px; border-radius: 30px; font-family: 'Suwannaphum'; font-weight: bold; font-size: 20px; margin-bottom: 30px;">ឯកសារមេរៀនសរុប (Full Course Handout)</div>
+    
+    <h1 style="font-family: 'Suwannaphum'; font-size: 28px; line-height: 1.5; color: var(--dark); margin-bottom: 10px;">រចនាសម្ព័ន្ធទិន្នន័យកម្រិតខ្ពស់<br>និងក្បួនដោះស្រាយ</h1>
+    <h3 style="font-family: 'Lato'; color: var(--blue); margin-bottom: 50px;">(Advanced Data Structures and Algorithms - DSA)</h3>
+    
+    <img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" style="width: 100px; height: 100px; border-radius: 50%; border: 3px solid var(--blue); margin-bottom: 15px;">
+    <p style="font-family: 'Suwannaphum'; font-size: 16px; color: #475569;">រៀបចំដោយសាស្ត្រាចារ្យ៖ <br><strong style="font-size:22px; color:var(--dark);">សឿង លីម (Soeurng LIM)</strong></p>
+</div>
+
+<!-- ================= CHAPTER 1 ================= -->
+<div class="a4">
+    <div class="g-header">
+        <img src="https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png" onerror="this.src='Logo.png'">
+        <div><h1>សៀវភៅមេរៀនសរុប (Handout)</h1><p>ADVANCED DATA STRUCTURES AND ALGORITHMS</p></div>
+        <img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg">
+    </div>
+
+    <div class="ch-title">ជំពូកទី ១៖ សេចក្តីផ្តើមពី DSA & ការវិភាគ Big-O Notation</div>
+
+    <div class="grid">
+        <div class="sc">
+            <span class="s-num">ស្លាយទី ៦</span>
+            <div class="sh"><i class="fa-solid fa-server"></i> Data Structures</div>
+            <div class="sb">
+                ជារបៀបរៀបចំ និងស្តុកទុកទិន្នន័យក្នុងកុំព្យូទ័រ ដើម្បីទាញយកមកប្រើប្រាស់បានលឿន និងមានប្រសិទ្ធភាព។
+                <div class="analogy"><b>ករណីសិក្សា៖ ការរៀបចំទូទឹកកក</b><br>ការទិញបន្លែ ត្រីសាច់ មកគរទុកចោលធ្វើឱ្យពិបាករក។ ការរៀបចំដាក់ថតដាច់ដោយឡែកពីគ្នា ជួយឱ្យរកឃើញភ្លាមៗ។</div>
+            </div>
+        </div>
+        <div class="sc">
+            <span class="s-num">ស្លាយទី ៧</span>
+            <div class="sh"><i class="fa-solid fa-gears"></i> Algorithms</div>
+            <div class="sb">
+                ជាសំណុំនៃជំហាន ឬរូបមន្តតក្កវិជ្ជាច្បាស់លាស់ សម្រាប់ដោះស្រាយបញ្ហាណាមួយពីចំណុចចាប់ផ្តើមដល់បញ្ចប់។
+                <div class="analogy"><b>ករណីសិក្សា៖ សៀវភៅធ្វើម្ហូប</b><br>ទោះអ្នកមានគ្រឿងផ្សំ (Data) ល្អយ៉ាងណា បើគ្មានជំហានចង្អុលបង្ហាញពីរបៀបឆា ឬស្ងោរទេនោះ ម្ហូបនឹងមិនឆ្ងាញ់ឡើយ។</div>
+            </div>
+        </div>
+        <div class="sc green">
+            <span class="s-num">ស្លាយទី ៨</span>
+            <div class="sh"><i class="fa-solid fa-stopwatch"></i> ការវិភាគ Time & Space</div>
+            <div class="sb">
+                <ul>
+                    <li><b>Time Complexity (ល្បឿន):</b> រយៈពេលដំណើរការ ពេលទិន្នន័យ (n) កើនឡើង។</li>
+                    <li><b>Space Complexity (ទំហំ):</b> ទំហំ RAM ដែលត្រូវប្រើប្រាស់ពេលកំពុងដំណើរការ។</li>
+                </ul>
+            </div>
+        </div>
+        <div class="sc red">
+            <span class="s-num">ស្លាយទី ៩-១០</span>
+            <div class="sh"><i class="fa-solid fa-chart-line"></i> Big-O & Worst-Case</div>
+            <div class="sb">
+                Big-O ជាភាសាគណិតវិទ្យាពណ៌នាពីល្បឿនកូដ។ យើងតែងតែវាស់ <b>Worst-case Scenario</b> (ករណីប្រើពេលយូរបំផុត) ដើម្បីធានាថាកម្មវិធីមិនគាំង។
+            </div>
+        </div>
+        <div class="sc green">
+            <span class="s-num">ស្លាយទី ១១</span>
+            <div class="sh"><i class="fa-solid fa-bolt"></i> O(1) - Constant Time</div>
+            <div class="sb">
+                លឿនថេរជានិច្ច មិនថាទិន្នន័យមានរាប់លានទេ។ (ឧ. ការយកទិន្នន័យតាម Index)។
+                <div class="code"><span class="kw">def</span> <span class="fn">is_even</span>(num): <span class="kw">return</span> num % <span class="num">2</span> == <span class="num">0</span></div>
+            </div>
+        </div>
+        <div class="sc">
+            <span class="s-num">ស្លាយទី ១២</span>
+            <div class="sh"><i class="fa-solid fa-grip-lines"></i> O(n) - Linear Time</div>
+            <div class="sb">
+                ល្បឿនថយចុះស្របតាមចំនួនទិន្នន័យ។ កើតឡើងពេលមាន Loop ១ជាន់។
+                <div class="code"><span class="kw">for</span> item <span class="kw">in</span> data: <span class="fn">print</span>(item)</div>
+            </div>
+        </div>
+        <div class="sc red">
+            <span class="s-num">ស្លាយទី ១៣</span>
+            <div class="sh"><i class="fa-solid fa-triangle-exclamation"></i> O(n²) - Quadratic Time</div>
+            <div class="sb">
+                យឺតខ្លាំង កើតឡើងពេលមាន Nested Loop (២ជាន់)។ ឧ. ការផ្ទៀងផ្ទាត់ឈ្មោះស្ទួន។
+                <div class="code"><span class="kw">for</span> i <span class="kw">in</span> data:<br>  <span class="kw">for</span> j <span class="kw">in</span> data: <span class="fn">print</span>(i, j)</div>
+            </div>
+        </div>
+        <div class="sc green">
+            <span class="s-num">ស្លាយទី ១៤</span>
+            <div class="sh"><i class="fa-solid fa-scissors"></i> O(log n) - Logarithmic</div>
+            <div class="sb">
+                លឿនខ្លាំង កាត់បន្ថយទិន្នន័យពាក់កណ្តាលរាល់ជុំ។ ឧ. ល្បែងទាយលេខ។
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ================= CHAPTER 2 ================= -->
+<div class="a4">
+    <div class="g-header">
+        <img src="https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png" onerror="this.src='Logo.png'">
+        <div><h1>សៀវភៅមេរៀនសរុប (Handout)</h1><p>ADVANCED DATA STRUCTURES AND ALGORITHMS</p></div>
+        <img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg">
+    </div>
+
+    <div class="ch-title">ជំពូកទី ២៖ ការសរសេរកម្មវិធីតម្រង់ទិសវត្ថុ (OOP) & Memory</div>
+
+    <div class="grid">
+        <div class="sc">
+            <span class="s-num">ស្លាយទី ៦-៧</span>
+            <div class="sh"><i class="fa-solid fa-boxes-stacked"></i> សេចក្តីផ្តើមពី OOP</div>
+            <div class="sb">
+                បែងចែកកូដជា <b>Class</b> (ប្លង់ផ្ទះ) និង <b>Objects</b> (ផ្ទះពិតប្រាកដ)។ ក្នុង DSA យើងបង្កើត Class <code>Node</code> ដើម្បីធ្វើជាប្លង់សម្រាប់ផ្ទុកទិន្នន័យ។
+                <div class="code">
+<span class="kw">class</span> <span class="cls">Node</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="kw">self</span>, value):
+        <span class="kw">self</span>.data = value
+        <span class="kw">self</span>.next = <span class="kw">None</span></div>
+            </div>
+        </div>
+        <div class="sc">
+            <span class="s-num">ស្លាយទី ៨-១១</span>
+            <div class="sh"><i class="fa-solid fa-cubes"></i> សសរទ្រូងទាំង ៤ នៃ OOP</div>
+            <div class="sb">
+                <ul>
+                    <li><b>Encapsulation:</b> លាក់បាំងទិន្នន័យ (Private Variables) មិនឱ្យគេលួចចូលកែ។</li>
+                    <li><b>Inheritance:</b> Class កូនយកលក្ខណៈសម្បត្តិពី Class មេមកប្រើបន្ត។</li>
+                    <li><b>Polymorphism:</b> ឈ្មោះ Method តែមួយ តែការអនុវត្តខុសគ្នា។</li>
+                    <li><b>Abstraction:</b> លាក់បាំងភាពស្មុគស្មាញ បង្ហាញតែចំណុចចាំបាច់។</li>
+                </ul>
+            </div>
+        </div>
+        <div class="sc red">
+            <span class="s-num">ស្លាយទី ១២-១៣</span>
+            <div class="sh"><i class="fa-solid fa-memory"></i> Stack vs Heap Memory</div>
+            <div class="sb">
+                ក្នុង Python, <b>Variable</b> មិនផ្ទុកទិន្នន័យទេ តែវាគ្រាន់តែជាអ្នកចង្អុល (Pointer ក្នុង Stack) ទៅកាន់ <b>Object</b> ពិតប្រាកដដែលផ្ទុកក្នុង Heap។ ប្រព័ន្ធ <b>Garbage Collection</b> នឹងលុបទិន្នន័យចោល ពេលលែងមានអ្នកចង្អុលទៅវា។
+            </div>
+        </div>
+        <div class="sc green">
+            <span class="s-num">ស្លាយទី ១៤-១៥</span>
+            <div class="sh"><i class="fa-solid fa-clone"></i> Shallow vs Deep Copy</div>
+            <div class="sb">
+                <ul>
+                    <li><b>Assignment (=):</b> ចែករំលែក Reference តែមួយ។ កែមួយ ប៉ះពាល់មួយទៀត។</li>
+                    <li><b>Deep Copy:</b> បង្កើត Object ថ្មីទាំងស្រុង និងចម្លងទិន្នន័យកូនៗផ្តាច់ចេញពីដើម។ (ប្រើ <code>copy.deepcopy()</code>)</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ================= CHAPTER 3 ================= -->
+<div class="a4">
+    <div class="g-header">
+        <img src="https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png" onerror="this.src='Logo.png'">
+        <div><h1>សៀវភៅមេរៀនសរុប (Handout)</h1><p>ADVANCED DATA STRUCTURES AND ALGORITHMS</p></div>
+        <img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg">
+    </div>
+
+    <div class="ch-title">ជំពូកទី ៣៖ រចនាសម្ព័ន្ធទិន្នន័យជាជួរ (Linear Data Structures)</div>
+
+    <div class="grid">
+        <div class="sc">
+            <span class="s-num">ស្លាយទី ៦-៧</span>
+            <div class="sh"><i class="fa-solid fa-list-ol"></i> Arrays (បញ្ជី)</div>
+            <div class="sb">
+                ផ្ទុកធាតុជាបន្តបន្ទាប់គ្នានៅក្នុងអង្គចងចាំ (Contiguous Memory)។ <br>
+                - <b>ចំណុចខ្លាំង៖</b> លោតទៅយកទិន្នន័យលឿន O(1)។<br>
+                - <b>ចំណុចខ្សោយ៖</b> បញ្ចូលកណ្តាលយឺត O(n) (ត្រូវរុញកូដ)។
+                <div class="code">
+arr = [<span class="num">10</span>, <span class="num">20</span>, <span class="num">30</span>]
+<span class="fn">print</span>(arr[<span class="num">1</span>]) <span class="com"># O(1) លឿន</span>
+arr.insert(<span class="num">1</span>, <span class="num">15</span>) <span class="com"># O(n) យឺត</span></div>
+            </div>
+        </div>
+        <div class="sc green">
+            <span class="s-num">ស្លាយទី ៨-៩</span>
+            <div class="sh"><i class="fa-solid fa-layer-group"></i> Stacks (LIFO)</div>
+            <div class="sb">
+                គោលការណ៍ <b>អ្នកចូលក្រោយ ចេញមុន (Last In, First Out)</b>។ (ឧទាហរណ៍ ការត្រួតចានបាយ ឬមុខងារ Undo)។
+                <div class="code">
+stack = []
+stack.append(<span class="str">"A"</span>) <span class="com"># Push: O(1)</span>
+stack.append(<span class="str">"B"</span>)
+item = stack.pop()  <span class="com"># Pop (យក B ចេញ)</span></div>
+            </div>
+        </div>
+        <div class="sc red">
+            <span class="s-num">ស្លាយទី ១០-១១</span>
+            <div class="sh"><i class="fa-solid fa-users-line"></i> Queues (FIFO)</div>
+            <div class="sb">
+                គោលការណ៍ <b>អ្នកចូលមុន បានមុន (First In, First Out)</b>។ (ឧទាហរណ៍ ការតម្រង់ជួរទិញសំបុត្រ ឬ Printer)។
+                <div class="code">
+<span class="kw">from</span> collections <span class="kw">import</span> deque
+queue = deque()
+queue.append(<span class="str">"P1"</span>) <span class="com"># Enqueue O(1)</span>
+first = queue.popleft() <span class="com"># Dequeue O(1)</span></div>
+            </div>
+        </div>
+        <div class="sc">
+            <span class="s-num">ស្លាយទី ១២-១៣</span>
+            <div class="sh"><i class="fa-solid fa-brain"></i> ការអនុវត្ត និងកម្រិតល្បឿន</div>
+            <div class="sb">
+                <ul>
+                    <li><b>Stack:</b> ប្រើក្នុងក្បួន DFS (Depth-First Search) រកផ្លូវក្នុងវង្កត់ និង NLP Parsing។</li>
+                    <li><b>Queue:</b> ប្រើក្នុងក្បួន BFS (Breadth-First Search) រកផ្លូវខ្លីបំផុតក្នុង Google Maps។</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ================= CHAPTER 4 ================= -->
+<div class="a4">
+    <div class="g-header">
+        <img src="https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png" onerror="this.src='Logo.png'">
+        <div><h1>សៀវភៅមេរៀនសរុប (Handout)</h1><p>ADVANCED DATA STRUCTURES AND ALGORITHMS</p></div>
+        <img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg">
+    </div>
+
+    <div class="ch-title">ជំពូកទី ៤៖ រចនាសម្ព័ន្ធទិន្នន័យបណ្តាញតភ្ជាប់ (Linked Lists)</div>
+
+    <div class="grid">
+        <div class="sc">
+            <span class="s-num">ស្លាយទី ៦</span>
+            <div class="sh"><i class="fa-solid fa-link"></i> Linked Lists (Scattered Memory)</div>
+            <div class="sb">
+                ធាតុនីមួយៗ (Node) មិនចាំបាច់តម្រៀបជាប់គ្នាក្នុង Memory ទេ។ ធាតុនីមួយៗផ្ទុកទិន្នន័យ និង Pointer ចង្អុលទៅកាន់អ្នកបន្ទាប់។ វាដោះស្រាយបញ្ហាយឺតយ៉ាវពេលបញ្ចូលទិន្នន័យកណ្តាលរបស់ Array (បញ្ចូលលឿន O(1))។
+            </div>
+        </div>
+        <div class="sc green">
+            <span class="s-num">ស្លាយទី ៧-៩</span>
+            <div class="sh"><i class="fa-solid fa-arrow-right-long"></i> Singly Linked List</div>
+            <div class="sb">
+                បញ្ជូនព័ត៌មានទៅមុខតែមួយទិស (ដូចទូរថភ្លើង)។
+                <div class="code">
+<span class="kw">class</span> <span class="cls">Node</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="kw">self</span>, data):
+        <span class="kw">self</span>.data = data
+        <span class="kw">self</span>.next = <span class="kw">None</span> <span class="com"># ខ្សែទៅមុខ</span></div>
+            </div>
+        </div>
+        <div class="sc red">
+            <span class="s-num">ស្លាយទី ១០-១២</span>
+            <div class="sh"><i class="fa-solid fa-arrows-left-right"></i> Doubly Linked List</div>
+            <div class="sb">
+                ដោះស្រាយចំណុចខ្សោយរបស់ Singly ដោយបន្ថែមខ្សែចង្អុលត្រឡប់ក្រោយ (Prev)។ អនុញ្ញាតឲ្យដើរទៅមុខ ឬថយក្រោយបានងាយស្រួល តែស៊ី Memory ច្រើនជាង។
+                <div class="code">
+<span class="kw">class</span> <span class="cls">DNode</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="kw">self</span>, data):
+        <span class="kw">self</span>.data = data
+        <span class="kw">self</span>.prev = <span class="kw">None</span> <span class="com"># ខ្សែត្រឡប់ក្រោយ</span>
+        <span class="kw">self</span>.next = <span class="kw">None</span> <span class="com"># ខ្សែទៅមុខ</span></div>
+            </div>
+        </div>
+        <div class="sc">
+            <span class="s-num">ស្លាយទី ១៣-១៤</span>
+            <div class="sh"><i class="fa-solid fa-scale-balanced"></i> ការអនុវត្ត និងប្រៀបធៀប</div>
+            <div class="sb">
+                <ul>
+                    <li><b>ការប្រើប្រាស់ Doubly:</b> Web Browser (Back/Forward), Music Playlist។</li>
+                    <li><b>Array vs Linked List:</b> Array លោតយកទិន្នន័យលឿន O(1) តែបញ្ចូលយឺត O(n)។ Linked List បញ្ចូលលឿន O(1) តែរកទិន្នន័យយឺត O(n) (ត្រូវដើររាប់ពីក្បាល)។</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ================= CHAPTER 5 ================= -->
+<div class="a4">
+    <div class="g-header">
+        <img src="https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png" onerror="this.src='Logo.png'">
+        <div><h1>សៀវភៅមេរៀនសរុប (Handout)</h1><p>ADVANCED DATA STRUCTURES AND ALGORITHMS</p></div>
+        <img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg">
+    </div>
+
+    <div class="ch-title">ជំពូកទី ៥៖ រចនាសម្ព័ន្ធទិន្នន័យដើមឈើ (Trees & BST)</div>
+
+    <div class="grid">
+        <div class="sc">
+            <span class="s-num">ស្លាយទី ៦-៧</span>
+            <div class="sh"><i class="fa-solid fa-folder-tree"></i> Tree Structure</div>
+            <div class="sb">
+                ជារចនាសម្ព័ន្ធទិន្នន័យបែបឋានានុក្រម (Hierarchical) ដូចជារចនាសម្ព័ន្ធក្រុមហ៊ុន។ វាមាន <b>Root (ឫសគល់)</b> នៅកំពូល និង <b>Leaves (ស្លឹក)</b> នៅខាងចុង។
+            </div>
+        </div>
+        <div class="sc green">
+            <span class="s-num">ស្លាយទី ៨-១១</span>
+            <div class="sh"><i class="fa-solid fa-sitemap"></i> Binary Search Tree (BST)</div>
+            <div class="sb">
+                មានច្បាប់កំណត់ថា <b>កូនខាងឆ្វេងត្រូវតែតូចជាង ឯកូនខាងស្តាំត្រូវតែធំជាង មេរបស់វាជានិច្ច</b>។ វាជួយឱ្យការស្វែងរកលឿនដូចពន្លឺ កម្រិត O(log n)។
+                <div class="code">
+<span class="kw">def</span> <span class="fn">search</span>(root, key):
+    <span class="kw">if</span> root <span class="kw">is None or</span> root.val == key:
+        <span class="kw">return</span> root
+    <span class="kw">if</span> root.val < key: 
+        <span class="kw">return</span> search(root.right, key) <span class="com"># ស្តាំ</span>
+    <span class="kw">return</span> search(root.left, key) <span class="com"># ឆ្វេង</span></div>
+            </div>
+        </div>
+        <div class="sc red">
+            <span class="s-num">ស្លាយទី ១២-១៣</span>
+            <div class="sh"><i class="fa-solid fa-route"></i> Tree Traversals (ការរុករក)</div>
+            <div class="sb">
+                <ul>
+                    <li><b>In-order (ឆ្វេង-ឫស-ស្តាំ):</b> ទាញទិន្នន័យចេញមកតម្រៀបពីតូចទៅធំយ៉ាងស្អាត។</li>
+                    <li><b>Pre-order:</b> ល្អសម្រាប់ការ Copy Tree។</li>
+                    <li><b>Post-order:</b> ល្អសម្រាប់ការលុប Folder ចោលទាំងមូល (លុបកូនខាងក្នុងឲ្យអស់សិន)។</li>
+                </ul>
+            </div>
+        </div>
+        <div class="sc">
+            <span class="s-num">ស្លាយទី ១៤-១៥</span>
+            <div class="sh"><i class="fa-solid fa-brain"></i> ល្បឿន និង ការអនុវត្ត</div>
+            <div class="sb">
+                <b>BST (Average Case)</b> មានល្បឿន O(log n) ទាំងការស្វែងរក និងការបញ្ចូល គឺវាមានលំនឹងល្អជាង Array និង Linked List។ ត្រូវបានប្រើប្រាស់ច្រើនក្នុង Decision Trees (Machine Learning) និង Database Indexing (B-Trees)។
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ================= CHAPTER 6 ================= -->
+<div class="a4">
+    <div class="g-header">
+        <img src="https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png" onerror="this.src='Logo.png'">
+        <div><h1>សៀវភៅមេរៀនសរុប (Handout)</h1><p>ADVANCED DATA STRUCTURES AND ALGORITHMS</p></div>
+        <img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg">
+    </div>
+
+    <div class="ch-title">ជំពូកទី ៦៖ រចនាសម្ព័ន្ធ Graphs និង Hash Tables</div>
+
+    <div class="grid">
+        <div class="sc">
+            <span class="s-num">ស្លាយទី ៦-៩</span>
+            <div class="sh"><i class="fa-solid fa-network-wired"></i> Graphs (បណ្តាញតភ្ជាប់)</div>
+            <div class="sb">
+                មានចំណុច (Vertices) និងខ្សែតភ្ជាប់ (Edges)។ ប្រើសម្រាប់តំណាងប្រព័ន្ធស្មុគស្មាញ (Google Maps, Facebook)។ ការតំណាងក្នុងកូដប្រើប្រាស់ <b>Adjacency List</b>។
+                <div class="code">
+graph = {
+    <span class="str">'A'</span>: [<span class="str">'B'</span>, <span class="str">'C'</span>],
+    <span class="str">'B'</span>: [<span class="str">'A'</span>, <span class="str">'D'</span>]
+}</div>
+            </div>
+        </div>
+        <div class="sc red">
+            <span class="s-num">ស្លាយទី ១០</span>
+            <div class="sh"><i class="fa-solid fa-magnifying-glass-location"></i> BFS vs DFS</div>
+            <div class="sb">
+                <ul>
+                    <li><b>BFS (Breadth-First Search):</b> រុករកតាមវាលរាប (ប្រើ Queue) ល្អសម្រាប់រកផ្លូវខ្លីបំផុត។</li>
+                    <li><b>DFS (Depth-First Search):</b> រុករកតាមស៊ីជម្រៅ (ប្រើ Stack) ល្អសម្រាប់រកផ្លូវចេញពីវង្កត់ និងឆែករង្វិលជុំ (Cycle)។</li>
+                </ul>
+            </div>
+        </div>
+        <div class="sc green">
+            <span class="s-num">ស្លាយទី ១១-១៤</span>
+            <div class="sh"><i class="fa-solid fa-hashtag"></i> Hash Tables (Dictionaries)</div>
+            <div class="sb">
+                ប្រើ <b>Hash Function</b> បំប្លែង Key ទៅជា Index ដើម្បីទាញយក Value លឿនកម្រិតពន្លឺ <b>O(1)</b>។
+                <div class="analogy"><b>ការបុកគ្នា (Collision):</b> ពេល Key ពីររត់ចូល Index (ប្រអប់) តែមួយ គេដោះស្រាយដោយប្រើ Linked List តភ្ជាប់គ្នាក្នុងប្រអប់នោះ។</div>
+            </div>
+        </div>
+        <div class="sc">
+            <span class="s-num">ស្លាយទី ១៥-១៦</span>
+            <div class="sh"><i class="fa-solid fa-scale-balanced"></i> Hash Table vs Array</div>
+            <div class="sb">
+                <ul>
+                    <li><b>Hash Table (Dictionary):</b> ល្បឿន O(1) ទាំងស្វែងរក និងបញ្ចូល តែមិនបានរក្សាលំដាប់ទិន្នន័យ (Unordered)។ (ប្រើក្នុង Caching, NLP Word Frequency)។</li>
+                    <li><b>Array (List):</b> ស្វែងរកយឺត O(n) តែរក្សាលំដាប់បានល្អ។</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ================= CHAPTER 7 ================= -->
+<div class="a4">
+    <div class="g-header">
+        <img src="https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png" onerror="this.src='Logo.png'">
+        <div><h1>សៀវភៅមេរៀនសរុប (Handout)</h1><p>ADVANCED DATA STRUCTURES AND ALGORITHMS</p></div>
+        <img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg">
+    </div>
+
+    <div class="ch-title">ជំពូកទី ៧៖ ក្បួនដោះស្រាយតម្រៀប និងស្វែងរក (Sorting & Searching)</div>
+
+    <div class="grid">
+        <div class="sc">
+            <span class="s-num">ស្លាយទី ៦-៧</span>
+            <div class="sh"><i class="fa-solid fa-magnifying-glass"></i> Searching Algorithms</div>
+            <div class="sb">
+                <ul>
+                    <li><b>Linear Search:</b> ដើររកម្តងមួយៗ (O(n)) ប្រើលើទិន្នន័យរាយប៉ាយ។</li>
+                    <li><b>Binary Search:</b> ទាមទារទិន្នន័យ <b>តម្រៀបរួច (Sorted)</b>។ ពុះកាត់ពាក់កណ្តាលរាល់ជុំ (លឿនបំផុត O(log n))។</li>
+                </ul>
+                <div class="code">
+mid = (left + right) // <span class="num">2</span>
+<span class="kw">if</span> arr[mid] < target: left = mid + <span class="num">1</span></div>
+            </div>
+        </div>
+        <div class="sc red">
+            <span class="s-num">ស្លាយទី ៨-៩</span>
+            <div class="sh"><i class="fa-solid fa-soap"></i> Basic Sorting (យឺត O(n²))</div>
+            <div class="sb">
+                <ul>
+                    <li><b>Bubble Sort:</b> ប្រៀបធៀបអ្នកជិតគ្នាហើយប្តូរទីតាំង (Swap) រហូតធំអណ្តែតទៅចុង (យឺតខ្លាំង)។</li>
+                    <li><b>Insertion Sort:</b> ដកម្តងមួយៗមកស៊កចូលកន្លែងត្រឹមត្រូវ (លឿនបើទិន្នន័យស្ទើរតែ Sorted រួចហើយ)។</li>
+                </ul>
+            </div>
+        </div>
+        <div class="sc green">
+            <span class="s-num">ស្លាយទី ១០-១១</span>
+            <div class="sh"><i class="fa-solid fa-bolt"></i> Divide & Conquer (លឿន)</div>
+            <div class="sb">
+                បច្ចេកទេសពុះបំបែកបញ្ហាធំជាបញ្ហាតូចៗ រួចទើបយកមកផ្គុំគ្នាវិញ (O(n log n))។
+                <ul>
+                    <li><b>Merge Sort:</b> ពុះពាក់កណ្តាលរហូតដល់សល់ ១ រួចផ្គុំ (ស៊ី Memory O(n))។</li>
+                    <li><b>Quick Sort:</b> រើសមេក្រុម (Pivot) រុញតូចទៅឆ្វេង ធំទៅស្តាំ (In-place លឿនបំផុតក្នុងជាក់ស្តែង)។</li>
+                </ul>
+            </div>
+        </div>
+        <div class="sc">
+            <span class="s-num">ស្លាយទី ១២-១៣</span>
+            <div class="sh"><i class="fa-solid fa-chart-pie"></i> ល្បឿន និង ការអនុវត្ត</div>
+            <div class="sb">
+                នៅក្នុង Python មុខងារ <code>list.sort()</code> ប្រើប្រាស់ Timsort ដែលជាកូនកាត់រវាង Merge Sort និង Insertion Sort ដែលលឿនកម្រិត O(n log n)។ ប្រើសម្រាប់ E-commerce Sorting តម្លៃទំនិញ។
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ================= CHAPTER 8 ================= -->
+<div class="a4">
+    <div class="g-header">
+        <img src="https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png" onerror="this.src='Logo.png'">
+        <div><h1>សៀវភៅមេរៀនសរុប (Handout)</h1><p>ADVANCED DATA STRUCTURES AND ALGORITHMS</p></div>
+        <img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg">
+    </div>
+
+    <div class="ch-title">ជំពូកទី ៨៖ Dynamic Programming និងក្បួន AI (បញ្ចប់)</div>
+
+    <div class="grid">
+        <div class="sc">
+            <span class="s-num">ស្លាយទី ៥-៧</span>
+            <div class="sh"><i class="fa-solid fa-memory"></i> Dynamic Programming (DP)</div>
+            <div class="sb">
+                បច្ចេកទេសបង្កើនប្រសិទ្ធភាពដោយ <b>"ចងចាំចម្លើយចាស់" (Memoization/Tabulation)</b> ដើម្បីកុំឲ្យគណនាបញ្ហាដដែលៗ។ ប្តូរល្បឿនពី O(2ⁿ) មក O(n)។
+                <div class="code">
+<span class="kw">def</span> <span class="fn">fib_dp</span>(n, memo={}):
+    <span class="kw">if</span> n <span class="kw">in</span> memo: <span class="kw">return</span> memo[n]
+    <span class="kw">if</span> n <= <span class="num">1</span>: <span class="kw">return</span> n
+    memo[n] = fib_dp(n-<span class="num">1</span>) + fib_dp(n-<span class="num">2</span>)
+    <span class="kw">return</span> memo[n]</div>
+            </div>
+        </div>
+        <div class="sc green">
+            <span class="s-num">ស្លាយទី ៨-១១</span>
+            <div class="sh"><i class="fa-solid fa-hand-holding-dollar"></i> Greedy vs DP (Knapsack)</div>
+            <div class="sb">
+                <ul>
+                    <li><b>Greedy (លោភលន់):</b> យកជម្រើសល្អបំផុតនៅចំពោះមុខ (Local Optimum) លឿន តែអាចចាញ់បោកក្នុងបញ្ហាស្មុគស្មាញ (Knapsack)។</li>
+                    <li><b>DP (ឈ្លាសវៃ):</b> ពិចារណាគ្រប់ជម្រើសដោយប្រើតារាង (Tabulation) ធានាចំណេញ ១០០% ជានិច្ច។</li>
+                </ul>
+            </div>
+        </div>
+        <div class="sc red">
+            <span class="s-num">ស្លាយទី ១២-១៣</span>
+            <div class="sh"><i class="fa-solid fa-route"></i> Dijkstra's Algorithm</div>
+            <div class="sb">
+                ជាបេះដូងនៃប្រព័ន្ធ Google Maps និង Logistics (Grab/FoodPanda)។ វាគណនា Cost (ពេលវេលា/ចម្ងាយ) ដើម្បីរក <b>ផ្លូវខ្លីបំផុត (Shortest Path)</b> ពីទីតាំងមួយទៅទីតាំងមួយទៀត។ ល្បឿន O(E + V log V)។
+            </div>
+        </div>
+        <div class="sc" style="border-top-color: #8B5CF6; background: #F3E8FF;">
+            <span class="s-num" style="background:#8B5CF6;">ស្លាយទី ១៤-១៥</span>
+            <div class="sh" style="color: #8B5CF6;"><i class="fa-solid fa-users"></i> K-Nearest Neighbors (KNN)</div>
+            <div class="sb">
+                ក្បួន Machine Learning ដំបូងគេ ដែលដំណើរការតាមទស្សនៈ "យកតាមមតិភាគច្រើននៃអ្នកជិតខាង K នាក់"។ ប្រើទូទៅក្នុង Recommendation Systems (ដូចជា Netflix)។ ល្បឿនទាយគឺយឺត O(n * d) ពេល Data ធំ។
+            </div>
+        </div>
+    </div>
+
+    <!-- Glossary and Conclusion merged -->
+    <div class="sc" style="margin-top: -5px; padding: 10px;">
+        <div class="sh" style="color:var(--dark)"><i class="fa-solid fa-book"></i> សទ្ទានុក្រម និងសន្និដ្ឋានបញ្ចប់ (Glossary & Conclusion)</div>
+        <table style="margin-top: 5px;">
+            <tr><th width="30%">Algorithm</th><td>ក្បួនដោះស្រាយ ឬរូបមន្តតក្កវិជ្ជាច្បាស់លាស់សម្រាប់ដោះស្រាយបញ្ហាណាមួយ។</td></tr>
+            <tr><th>Big-O Notation</th><td>ភាសាគណិតវិទ្យាប្រើសម្រាប់វាយតម្លៃល្បឿនកូដ ក្នុងករណីអាក្រក់បំផុត (Worst-case)។</td></tr>
+            <tr><th>BST & Hash Table</th><td>BST លឿន O(log n) ឯ Hash Table លឿន O(1)។ ជាមូលដ្ឋាននៃប្រព័ន្ធទិន្នន័យ (Database)។</td></tr>
+        </table>
+        <p style="font-size: 11px; margin-top: 10px; text-align: center; color: var(--green); font-weight: bold;"><i class="fa-solid fa-graduation-cap"></i> ការរៀបចំទិន្នន័យបានត្រឹមត្រូវ និងជ្រើសរើស Algorithm ដ៏មានប្រសិទ្ធភាព គឺជាបេះដូងនៃការអភិវឌ្ឍប្រព័ន្ធ Software និង AI។</p>
+    </div>
+
+</div>
+
+</body>
+</html>

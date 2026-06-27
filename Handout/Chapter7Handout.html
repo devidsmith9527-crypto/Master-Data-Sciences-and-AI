@@ -1,0 +1,998 @@
+<!DOCTYPE html>
+<html lang="km">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guidebook Chapter 7 - Sorting and Searching Algorithms</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Battambang:wght@400;700&family=Suwannaphum:wght@400;700;900&family=Lato:wght@400;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <style>
+        :root {
+            --bg-color: #E2E8F0;
+            --paper-white: #FFFFFF;
+            --text-main: #0F172A;
+            --text-muted: #475569;
+            --accent-blue: #0284C7; 
+            --accent-green: #059669;
+            --accent-yellow: #D97706; 
+            --accent-red: #DC2626;
+            --header-footer-bg: #F0F9FF;
+            --code-bg: #111827;
+            --term-bg: #000000;
+            --term-text: #4ade80;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            background-color: var(--bg-color);
+            font-family: 'Battambang', sans-serif;
+            color: var(--text-main);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 40px 20px;
+        }
+
+        /* Utility Classes */
+        .text-blue { color: var(--accent-blue) !important; }
+        .text-green { color: var(--accent-green) !important; }
+        .text-red { color: var(--accent-red) !important; }
+        .text-yellow { color: var(--accent-yellow) !important; }
+
+        /* A4 Page Layout */
+        .a4-page {
+            width: 210mm; 
+            height: 297mm; 
+            background: var(--paper-white);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1); 
+            margin-bottom: 30mm;
+            display: flex; 
+            flex-direction: column; 
+            position: relative; 
+            border-radius: 8px;
+            overflow: hidden; 
+            page-break-after: always;
+        }
+
+        /* COVER PAGE STYLES */
+        .cover-page {
+            justify-content: center; 
+            align-items: center; 
+            text-align: center; 
+            padding: 30mm 20mm;
+            background-image: linear-gradient(to bottom, #F0F9FF, #FFFFFF);
+        }
+        .cover-logo { width: 140px; margin-bottom: 15px; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1)); }
+        .cover-uni-kh { font-family: 'Suwannaphum'; color: var(--accent-blue); font-size: 34px; margin: 0 0 5px 0; font-weight: 900; }
+        .cover-uni-en { font-family: 'Lato'; color: #475569; font-size: 18px; margin: 0 0 40px 0; letter-spacing: 1px; font-weight: bold; }
+        .cover-program { font-family: 'Suwannaphum'; font-size: 18px; color: var(--accent-green); margin-bottom: 25px; font-weight: bold; }
+        .cover-chapter-badge { background: var(--accent-blue); color: white; padding: 10px 30px; border-radius: 50px; font-size: 20px; font-weight: bold; margin-bottom: 40px; font-family: 'Suwannaphum'; box-shadow: 0 5px 15px rgba(2,132,199,0.3); display: inline-block;}
+        .cover-main-title { font-family: 'Suwannaphum'; font-size: 30px; color: var(--text-main); line-height: 1.5; margin-bottom: 10px; font-weight: 900; }
+        .cover-sub-title { font-family: 'Lato'; font-size: 18px; color: var(--accent-blue); margin-bottom: 50px; font-weight: bold; line-height: 1.5;}
+        
+        .cover-author-wrapper { display: flex; flex-direction: column; align-items: center; gap: 15px; margin-bottom: 40px; }
+        .cover-author-img { width: 110px; height: 110px; border-radius: 50%; border: 4px solid var(--accent-blue); object-fit: cover; box-shadow: 0 6px 15px rgba(0,0,0,0.15); background-color: #fff;}
+        .cover-author-text { font-size: 18px; color: #64748B; font-family: 'Suwannaphum'; }
+        .cover-author-text strong { color: var(--text-main); font-size: 22px; }
+
+        .cover-icons-wrapper { display: flex; gap: 50px; justify-content: center; margin-top: auto; border-top: 1px solid #E2E8F0; padding-top: 20px; width: 100%; }
+        .cover-icon-item img { height: 60px; margin-bottom: 8px; object-fit: contain; }
+        .cover-icon-item p { font-size: 14px; font-weight: bold; color: var(--accent-blue); font-family: 'Lato'; }
+
+        /* HEADER & FOOTER */
+        .global-header {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 12px 25px; border-bottom: 3px solid var(--accent-blue); background-color: var(--header-footer-bg);
+            height: 25mm;
+        }
+        .header-item { display: flex; flex-direction: column; align-items: center; gap: 5px; width: 120px; }
+        .header-item img { height: 40px; object-fit: contain; }
+        .header-item span { font-size: 10px; font-weight: bold; color: var(--accent-blue); text-align: center; font-family: 'Suwannaphum'; }
+        .header-center { text-align: center; flex-grow: 1; padding: 0 10px;}
+        .header-center h1 { font-family: 'Suwannaphum'; font-size: 15px; color: var(--accent-blue); margin: 0; }
+        .header-center p { font-family: 'Battambang'; font-size: 10px; color: #64748B; margin: 0; font-weight: bold; text-transform: uppercase;}
+
+        .global-footer {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 10px 25px; border-top: 3px solid var(--accent-blue);
+            background-color: var(--header-footer-bg);
+            position: absolute; bottom: 0; left: 0; width: 100%; height: 15mm;
+        }
+        .footer-left { display: flex; align-items: center; gap: 12px; }
+        .footer-left img { border-radius: 50%; border: 2px solid var(--accent-blue); width: 30px; height: 30px; object-fit: cover; background-color: #fff; }
+        .footer-left span { font-size: 11px; font-weight: bold; color: var(--text-main); font-family: 'Suwannaphum'; }
+        .footer-right { font-size: 11px; color: var(--accent-blue); font-weight: bold; font-family: 'Battambang'; }
+
+        /* CONTENT */
+        .page-content { flex-grow: 1; padding: 8mm 15mm; height: 257mm; overflow: hidden; } 
+        
+        .section-title {
+            background: var(--header-footer-bg); border-left: 5px solid var(--accent-blue);
+            padding: 8px 15px; margin: 10px 0; font-family: 'Suwannaphum';
+            font-size: 16px; display: flex; align-items: center; gap: 10px; font-weight: bold;
+            border-radius: 0 6px 6px 0; color: var(--accent-blue); page-break-after: avoid;
+        }
+
+        .text-block { font-size: 13px; line-height: 1.8; margin-bottom: 12px; color: var(--text-main); text-align: justify; }
+        
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
+        
+        .card { background: #F8FAFC; border: 1px solid #CBD5E1; border-top: 3px solid var(--accent-blue); padding: 12px; border-radius: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); page-break-inside: avoid; }
+        .card h4 { font-family: 'Suwannaphum'; font-size: 14px; color: var(--accent-blue); margin-bottom: 6px; display: flex; align-items: center; gap: 8px;}
+        .card.red-card { border-top-color: var(--accent-red); }
+        .card.red-card h4 { color: var(--accent-red); }
+        .card.green-card { border-top-color: var(--accent-green); }
+        .card.green-card h4 { color: var(--accent-green); }
+        .card.yellow-card { border-top-color: var(--accent-yellow); }
+        .card.yellow-card h4 { color: var(--accent-yellow); }
+        .card ul { padding-left: 20px; margin-top: 5px; font-size: 12px; line-height: 1.8;}
+
+        /* Narrative Boxes */
+        .narrative-box { background: #FFFFFF; border-radius: 6px; border: 1px solid #CBD5E1; border-left: 4px solid var(--accent-blue); padding: 10px 12px; margin-bottom: 12px; box-shadow: 0 2px 5px rgba(0,0,0,0.02); page-break-inside: avoid;}
+        .narrative-header { font-weight: bold; color: var(--accent-blue); font-size: 13.5px; border-bottom: 1px solid #E2E8F0; padding-bottom: 5px; margin-bottom: 6px; font-family: 'Suwannaphum'; display: flex; align-items: center; gap: 8px;}
+        .narrative-text { font-size: 12px; color: var(--text-main); line-height: 1.8; margin: 0; text-align: justify;}
+        
+        .narrative-box.danger { background: #FEF2F2; border-left-color: var(--accent-red); border-color: #FECACA;}
+        .narrative-box.danger .narrative-header { color: var(--accent-red); border-bottom-color: #FCA5A5; }
+        
+        .narrative-box.warning { background: #FFFBEB; border-left-color: var(--accent-yellow); border-color: #FDE68A;}
+        .narrative-box.warning .narrative-header { color: var(--accent-yellow); border-bottom-color: #FCD34D; }
+
+        /* Compare Blocks */
+        .compare-block { border: 1px solid #CBD5E1; border-radius: 8px; overflow: hidden; margin-bottom: 15px; background: #fff; box-shadow: 0 3px 8px rgba(0,0,0,0.05); page-break-inside: avoid;}
+        .compare-img { width: 100%; height: 110px; object-fit: cover; border-bottom: 2px solid var(--accent-blue); }
+        .compare-title { font-family: 'Suwannaphum'; font-size: 14.5px; color: var(--text-main); padding: 6px 12px; background: #F8FAFC; border-bottom: 1px solid #CBD5E1; font-weight: bold; text-align: center;}
+        .compare-grid { display: grid; grid-template-columns: 1fr 1fr; }
+        .compare-col { padding: 10px 12px; font-size: 12px; line-height: 1.8; text-align: justify; }
+        .compare-col:first-child { border-right: 1px dashed #CBD5E1; background: #F8FAFC; }
+        .compare-col h5 { font-family: 'Suwannaphum'; font-size: 13px; margin-bottom: 6px; display: flex; align-items: center; gap: 6px;}
+
+        /* Table Styles */
+        table { width: 100%; border-collapse: collapse; margin-bottom: 15px; font-size: 12px; background: #fff; box-shadow: 0 2px 5px rgba(0,0,0,0.05); border-radius: 6px; overflow: hidden; page-break-inside: avoid;}
+        th { background: var(--header-footer-bg); color: var(--accent-blue); font-family: 'Suwannaphum'; font-size: 13px; text-align: left; padding: 10px 12px; border-bottom: 2px solid var(--accent-blue); }
+        td { padding: 10px 12px; border-bottom: 1px solid #E2E8F0; color: var(--text-main); }
+        tr:last-child td { border-bottom: none; }
+        tr:nth-child(even) { background-color: #F8FAFC; }
+
+        /* Q&A Boxes */
+        .qa-box { border: 1px solid #CBD5E1; border-radius: 8px; margin-bottom: 12px; background: #fff; overflow: hidden; page-break-inside: avoid; box-shadow: 0 3px 6px rgba(0,0,0,0.02);}
+        .qa-question { background: #F0F9FF; padding: 10px 15px; border-bottom: 1px dashed #CBD5E1; font-weight: bold; color: var(--accent-blue); font-family: 'Suwannaphum'; font-size: 13.5px; display: flex; gap: 10px; align-items: flex-start; line-height: 1.6;}
+        .qa-answer { padding: 10px 15px; font-size: 12.5px; line-height: 1.8; color: var(--text-main); display: flex; gap: 10px; text-align: justify;}
+        .qa-icon-q { color: var(--accent-red); font-size: 16px; margin-top: 2px;}
+        .qa-icon-a { color: var(--accent-green); font-size: 16px; margin-top: 2px;}
+
+        .highlight-note { background-color: #FEF9C3; border: 1px dashed var(--accent-yellow); padding: 10px 15px; border-radius: 6px; margin-bottom: 12px; font-weight: bold; color: #854D0E; font-size: 12.5px; display: flex; align-items: center; gap: 10px; page-break-inside: avoid; line-height: 1.6;}
+
+        /* Fully Runnable Python Code Block Design */
+        .visual-img { width: 100%; height: 140px; object-fit: cover; border-radius: 4px; margin-bottom: 10px; border: 1px solid #E2E8F0; }
+        
+        .code-wrapper { background: var(--code-bg); border-radius: 8px; border: 1px solid #374151; overflow: hidden; width: 100%; box-shadow: 0 4px 10px rgba(0,0,0,0.15); margin-top: 10px; margin-bottom: 15px; page-break-inside: avoid;}
+        .code-header { background: #1F2937; padding: 6px 12px; font-size: 11.5px; font-family: 'Battambang', sans-serif; color: #9CA3AF; border-bottom: 1px solid #374151; display: flex; justify-content: space-between; align-items: center;}
+        .code-header span { font-weight: bold; color: #38BDF8; display: flex; align-items: center; gap: 5px; }
+        .code-content { padding: 10px 12px; }
+        
+        .code-content pre { font-family: 'Fira Code', monospace; font-size: 11.5px; line-height: 1.8; color: #f8f8f2; margin: 0; white-space: pre-wrap; word-break: break-word;}
+        .com { color: #6272a4; font-style: italic; font-family: 'Battambang', sans-serif !important; } 
+        .str { color: #f1fa8c; font-family: 'Battambang', sans-serif !important; }
+        
+        /* Terminal Output Design */
+        .code-output { background: var(--term-bg); padding: 10px 12px; border-top: 1px dashed #4B5563; }
+        .code-output pre { font-family: 'Battambang', sans-serif !important; font-size: 11.5px; color: var(--term-text); margin: 0; white-space: pre-wrap; line-height: 1.8; word-break: break-word;}
+        .code-output-title { font-size: 10px; color: #9CA3AF; margin-bottom: 5px; font-family: 'Battambang'; text-transform: uppercase;}
+
+        .kw { color: #ff79c6; font-weight: bold; } .fn { color: #50fa7b; } .num { color: #bd93f9; } .bult { color: #8be9fd; } .cls { color: #8be9fd; font-style: italic; }
+
+        /* PRINT MEDIA QUERY */
+        @page { size: A4; margin: 0; }
+        @media print {
+            body { background: white; padding: 0; margin: 0; }
+            .a4-page { box-shadow: none; margin: 0; width: 210mm; height: 297mm; border: none; border-radius: 0; page-break-after: always; }
+            .no-print { display: none !important; }
+            * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+        }
+    </style>
+</head>
+<body>
+
+<button class="no-print" onclick="window.print()" style="margin-bottom: 20px; padding: 12px 25px; cursor: pointer; background: var(--accent-blue); color: white; border: none; border-radius: 8px; font-family: 'Battambang'; font-weight: bold; font-size: 16px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); transition: all 0.3s;">
+    <i class="fa-solid fa-print"></i> បោះពុម្ពសៀវភៅមគ្គទ្ទេសក៍ (Print Guidebook)
+</button>
+
+<!-- ================= PAGE 1: COVER ================= -->
+<div class="a4-page cover-page">
+    <img src="https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png" alt="Angkor University Logo" class="cover-logo" onerror="this.src='Logo.png'">
+    <h1 class="cover-uni-kh">សាកលវិទ្យាល័យអង្គរ</h1>
+    <p class="cover-uni-en">ANGKOR UNIVERSITY</p>
+
+    <div class="cover-program">
+        <i class="fa-solid fa-graduation-cap"></i> អនុបណ្ឌិតវិទ្យាសាស្ត្រទិន្នន័យ និងបញ្ញាសិប្បនិម្មិត
+    </div>
+
+    <div class="cover-chapter-badge">សៀវភៅមគ្គទ្ទេសក៍ (Guidebook) | ជំពូកទី ៧</div>
+
+    <h1 class="cover-main-title">ក្បួនដោះស្រាយតម្រៀប និងស្វែងរក<br>Searching និង Sorting Algorithms</h1>
+    <h2 class="cover-sub-title">(Sorting and Searching Algorithms in Python)</h2>
+
+    <div class="cover-author-wrapper">
+        <img src="Lim.jpg" alt="Professor" class="cover-author-img" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'">
+        <div class="cover-author-text">
+            រៀបចំដោយសាស្ត្រាចារ្យ៖ <strong>សឿង លីម (Soeurng LIM)</strong>
+        </div>
+    </div>
+
+    <div class="cover-icons-wrapper">
+        <div class="cover-icon-item">
+            <i class="fa-solid fa-magnifying-glass" style="font-size: 60px; color: var(--accent-blue); margin-bottom: 8px;"></i>
+            <p>Searching</p>
+        </div>
+        <div class="cover-icon-item">
+            <i class="fa-solid fa-sort-amount-down" style="font-size: 60px; color: var(--accent-green); margin-bottom: 8px;"></i>
+            <p>Sorting</p>
+        </div>
+    </div>
+</div>
+
+<!-- ================= PAGE 2: Objectives & TOC ================= -->
+<div class="a4-page">
+    <div class="global-header">
+        <div class="header-item"><img src="https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png" onerror="this.src='Logo.png'"><span>សាកលវិទ្យាល័យអង្គរ</span></div>
+        <div class="header-center">
+            <h1>សៀវភៅមគ្គទ្ទេសក៍ (Guidebook) - ជំពូកទី ៧</h1>
+            <p>ADVANCED DATA STRUCTURES AND ALGORITHMS FOR AI</p>
+        </div>
+        <div class="header-item"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg"><span>Python Pro</span></div>
+    </div>
+
+    <div class="page-content">
+        <!-- Banner Image for Chapter 7 -->
+        <img src="https://images.unsplash.com/photo-1508873535684-277a3cbcc4e8?auto=format&fit=crop&w=1200&q=80" class="visual-img" alt="Data sorting conceptual banner" style="height: 120px; object-fit: cover; margin-bottom: 15px; border-bottom: 3px solid var(--accent-blue);">
+
+        <!-- Learning Objectives -->
+        <div class="section-title" style="margin-top: 0;"><i class="fa-solid fa-bullseye"></i> វត្ថុបំណងនៃមេរៀន (Learning Objectives)</div>
+        <div class="card green-card" style="margin-bottom: 15px;">
+            <p class="text-block" style="margin-bottom: 10px; font-weight: bold;">បន្ទាប់ពីបញ្ចប់ការសិក្សានៅក្នុងជំពូកទី ៧ នេះ និស្សិតនឹងមានសមត្ថភាព៖</p>
+            <ul style="line-height: 1.7; color: var(--text-main); font-size: 12.5px; padding-left: 25px;">
+                <li><b class="text-blue">យល់ច្បាស់ពីការស្វែងរក៖</b> បែងចែកភាពខុសគ្នារវាង Linear Search និង Binary Search ព្រមទាំងលក្ខខណ្ឌចម្បងនៃការប្រើប្រាស់។</li>
+                <li><b class="text-blue">គ្រប់គ្រងក្បួនតម្រៀបគ្រឹះ៖</b> យល់ច្បាស់ពីយន្តការ និងកូដរបស់ Bubble Sort និង Insertion Sort O($n^2$)។</li>
+                <li><b class="text-blue">យល់ដឹងពីក្បួនតម្រៀបកម្រិតខ្ពស់៖</b> យល់ដឹងពីគោលការណ៍ Divide and Conquer តាមរយៈ Merge Sort និង Quick Sort O($n \log n$)។</li>
+                <li><b class="text-blue">សរសេរកូដ Algorithms ផ្ទាល់ខ្លួន៖</b> អាចបង្កើតកូដតម្រៀប និងស្វែងរកក្នុង Python ដោយមិនប្រើ Built-in functions ដូចជា <code>.sort()</code>។</li>
+                <li><b class="text-blue">វិភាគ និងប្រៀបធៀប Big-O៖</b> អាចវិភាគល្បឿន និងទំហំទំហំផ្ទុក (Time & Space Complexity) របស់រាល់គ្រប់ក្បួនដោះស្រាយ។</li>
+                <li><b class="text-blue">ការអនុវត្តក្នុងវិស័យពិត៖</b> ស្វែងយល់ពីតួនាទីរបស់ Sorting/Searching ក្នុងប្រព័ន្ធ E-commerce, Databases, និងប្រព័ន្ធបញ្ញាសិប្បនិម្មិត (AI)។</li>
+            </ul>
+        </div>
+
+        <!-- Table of Contents -->
+        <div class="section-title"><i class="fa-solid fa-list"></i> មាតិកា (Table of Contents)</div>
+        <div class="narrative-box" style="padding: 12px 20px; border-left-color: var(--accent-green); margin-bottom: 0;">
+            <div class="grid-2" style="margin-bottom: 0;">
+                <div style="font-size: 13px; line-height: 2.1; color: var(--text-main);">
+                    <div style="border-bottom: 1px dashed #E2E8F0;"><b class="text-blue">១.</b> សេចក្តីផ្តើមអំពី Searching (Linear vs Binary Search)</div>
+                    <div style="border-bottom: 1px dashed #E2E8F0;"><b class="text-blue">២.</b> លក្ខខណ្ឌតម្រូវការ និងគោលការណ៍របស់ Binary Search</div>
+                    <div style="border-bottom: 1px dashed #E2E8F0;"><b class="text-blue">៣.</b> ការអនុវត្តកូដស្វែងរកបែប Binary Search ក្នុង Python</div>
+                    <div style="border-bottom: 1px dashed #E2E8F0;"><b class="text-blue">៤.</b> សេចក្តីផ្តើមអំពីក្បួនតម្រៀបគ្រឹះ (Bubble & Insertion Sort)</div>
+                    <div style="border-bottom: 1px dashed #E2E8F0;"><b class="text-blue">៥.</b> ករណីសិក្សា និងយន្តការរបស់ Basic Sorting ក្នុងជីវិតពិត</div>
+                    <div style="border-bottom: 1px dashed #E2E8F0;"><b class="text-blue">៦.</b> ការអនុវត្តកូដ Bubble & Insertion Sort ក្នុង Python</div>
+                </div>
+                <div style="font-size: 13px; line-height: 2.1; color: var(--text-main);">
+                    <div style="border-bottom: 1px dashed #E2E8F0;"><b class="text-blue">៧.</b> ក្បួនតម្រៀបកម្រិតខ្ពស់បែប Divide & Conquer</div>
+                    <div style="border-bottom: 1px dashed #E2E8F0;"><b class="text-blue">៨.</b> ករណីសិក្សានៃយន្តការ Merge Sort និង Quick Sort</div>
+                    <div style="border-bottom: 1px dashed #E2E8F0;"><b class="text-blue">៩.</b> ការអនុវត្តកូដ Quick Sort (Pivot Strategy) ក្នុង Python</div>
+                    <div style="border-bottom: 1px dashed #E2E8F0;"><b class="text-blue">១០.</b> តារាងវិភាគ Time & Space Complexity នៃគ្រប់ក្បួនដោះស្រាយ</div>
+                    <div style="border-bottom: 1px dashed #E2E8F0;"><b class="text-blue">១១.</b> ការអនុវត្ត Sorting & Searching ក្នុងវិស័យ AI & Databases</div>
+                    <div style="border-bottom: 1px dashed #E2E8F0;"><b class="text-blue">១២.</b> សំណួររំលឹកមេរៀន សទ្ទានុក្រម និងគន្ថនិទ្ទេសយោង (Q&A)</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="global-footer">
+        <div class="footer-left"><img src="Lim.jpg" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'"><span>សាស្ត្រាចារ្យ៖ សឿង លីម (Soeurng LIM)</span></div>
+        <div class="footer-right">ទំព័រទី ២ នៃ ១៤</div>
+    </div>
+</div>
+
+<!-- ================= PAGE 3: Intro to Searching ================= -->
+<div class="a4-page">
+    <div class="global-header">
+        <div class="header-item"><img src="https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png" onerror="this.src='Logo.png'"><span>សាកលវិទ្យាល័យអង្គរ</span></div>
+        <div class="header-center">
+            <h1>សៀវភៅមគ្គទ្ទេសក៍ (Guidebook) - ជំពូកទី ៧</h1>
+            <p>ADVANCED DATA STRUCTURES AND ALGORITHMS FOR AI</p>
+        </div>
+        <div class="header-item"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg"><span>Python Pro</span></div>
+    </div>
+
+    <div class="page-content">
+        <div class="section-title" style="margin-top: 0;"><i class="fa-solid fa-magnifying-glass"></i> ១. សេចក្តីផ្តើមអំពី Searching (Linear vs Binary Search)</div>
+        <div class="text-block">
+            <b>Searching (ការស្វែងរកទិន្នន័យ)</b> គឺជាកិច្ចការមូលដ្ឋានដ៏សំខាន់បំផុតមួយនៅក្នុងវិទ្យាសាស្ត្រកុំព្យូទ័រ ដែលត្រូវស្វែងរកទីតាំង (Index) នៃតម្លៃទិន្នន័យណាមួយ (Target) នៅក្នុងបញ្ជី (Array/List)។ ក្បួនដោះស្រាយស្វែងរកដែលប្រើប្រាស់ច្រើនជាងគេមានពីរគឺ៖
+        </div>
+
+        <div class="grid-2">
+            <div class="narrative-box danger">
+                <div class="narrative-header"><i class="fa-solid fa-shoe-prints"></i> ១. Linear Search (ការស្វែងរកម្តងមួយៗពីដើមដល់ចប់)</div>
+                <p class="narrative-text"><b>• គោលការណ៍៖</b> ដំណើរការឆែកមើលទិន្នន័យម្តងមួយៗពីដំបូងគេបង្អស់ (Index 0) រហូតដល់ចុងក្រោយគេបង្អស់។ បើទិន្នន័យមាន $n$ ធាតុ ក្នុងករណីអាក្រក់បំផុត (រកមិនឃើញ ឬនៅចុងគេ) ត្រូវឆែក $n$ ដង (ល្បឿន O(n))។
+                <br><b>• ករណីសិក្សា៖</b> ប្រៀបដូចជាការដែលអ្នកដើរស្វែងរកផ្ទះរបស់មិត្តភក្តិនៅលើផ្លូវមួយដែលគ្មានលេខរៀងសម្គាល់ច្បាស់លាស់។ អ្នកគ្មានជម្រើសអ្វីក្រៅពីដើរគោះទ្វារសួរម្តងមួយផ្ទះចាប់ពីក្បាលផ្លូវរហូតដល់ចុងផ្លូវឡើយ។</p>
+            </div>
+            <div class="narrative-box">
+                <div class="narrative-header"><i class="fa-solid fa-book-open"></i> ២. Binary Search (ការស្វែងរកបែបពុះកណ្តាល)</div>
+                <p class="narrative-text"><b>• គោលការណ៍៖</b> ដំណើរការស្វែងរកដោយលោតទៅប្រៀបធៀបចំចំណុចកណ្តាល (Mid) ជានិច្ច។ បើតម្លៃដែលចង់រកធំជាង Mid នោះប្រព័ន្ធនឹងបោះបង់ទិន្នន័យនៅខាងឆ្វេងទាំងស្រុង និងបន្តពុះស្វែងរកខាងស្តាំ។ ដំណើរការច្រោះចោល ៥០% នៃទិន្នន័យរាល់ជុំនៃការប្រៀបធៀបនេះ ធ្វើឱ្យល្បឿនកើនឡើងរហ័សដល់កម្រិត O($\log n$)។
+                <br><b>• ករណីសិក្សា៖</b> ប្រៀបដូចជាការស្វែងរកពាក្យនៅក្នុងវចនានុក្រម (ដែលរៀបតាមលំដាប់អក្សរ A-Z រួចស្រាប់)។ អ្នកនឹងបើកពាក់កណ្តាលសៀវភៅជានិច្ច បើពាក្យដែលចង់រកធំជាងទំព័របើកនោះ អ្នកនឹងបោះចោលទំព័រខាងឆ្វេងចោលភ្លាមៗ O($\log n$)។</p>
+            </div>
+        </div>
+
+        <div class="highlight-note">
+            <i class="fa-solid fa-circle-exclamation"></i> <b>លក្ខខណ្ឌតម្រូវស្នូលរបស់ Binary Search៖</b> Binary Search អាចដំណើរការបាន <b>លុះត្រាតែទិន្នន័យត្រូវបានតម្រៀប (Sorted)</b> រួចរាល់ជាមុនសិន។ ប្រសិនបើទិន្នន័យរាយប៉ាយខ្វាត់ខ្វែង វាប្រៀបដូចជាសៀវភៅវចនានុក្រមដែលច្របូកច្របល់លំដាប់អក្សរ ដែលយើងមិនអាចពុះស្វែងរកបានឡើយ។
+        </div>
+    </div>
+
+    <div class="global-footer">
+        <div class="footer-left"><img src="Lim.jpg" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'"><span>សាស្ត្រាចារ្យ៖ សឿង លីម (Soeurng LIM)</span></div>
+        <div class="footer-right">ទំព័រទី ៣ នៃ ១៤</div>
+    </div>
+</div>
+
+<!-- ================= PAGE 4: Binary Search Theory ================= -->
+<div class="a4-page">
+    <div class="global-header">
+        <div class="header-item"><img src="https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png" onerror="this.src='Logo.png'"><span>សាកលវិទ្យាល័យអង្គរ</span></div>
+        <div class="header-center">
+            <h1>សៀវភៅមគ្គទ្ទេសក៍ (Guidebook) - ជំពូកទី ៧</h1>
+            <p>ADVANCED DATA STRUCTURES AND ALGORITHMS FOR AI</p>
+        </div>
+        <div class="header-item"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg"><span>Python Pro</span></div>
+    </div>
+
+    <div class="page-content">
+        <div class="section-title" style="margin-top: 0;"><i class="fa-solid fa-arrows-left-right-to-line"></i> ២. គោលការណ៍ និងយន្តការចង្អុលរបស់ Binary Search</div>
+        <div class="text-block">
+            ដើម្បីដំណើរការ Binary Search នៅក្នុងកូដកុំព្យូទ័រ យើងត្រូវប្រើប្រាស់ **Pointer (ខ្សែចង្អុល)** ចំនួនបី គឺ L (Left - ឆ្វេងបំផុត), R (Right - ស្តាំបំផុត), និង Mid (Middle - ចំណុចកណ្តាល)។
+        </div>
+
+        <!-- Binary Search Visualization Inline SVG -->
+        <div style="text-align: center; margin: 15px 0;">
+            <svg viewBox="0 0 500 130" style="width: 75%; height: auto; display: inline-block;">
+                <!-- Array Cells -->
+                <rect x="10" y="30" width="45" height="40" fill="#F8FAFC" stroke="#CBD5E1" stroke-width="2"/>
+                <text x="32.5" y="55" font-family="sans-serif" font-size="14" fill="#9CA3AF" text-anchor="middle">2</text>
+                <text x="32.5" y="85" font-family="'Fira Code'" font-size="10" fill="#64748B" text-anchor="middle">[0]</text>
+
+                <rect x="55" y="30" width="45" height="40" fill="#F8FAFC" stroke="#CBD5E1" stroke-width="2"/>
+                <text x="77.5" y="55" font-family="sans-serif" font-size="14" fill="#9CA3AF" text-anchor="middle">5</text>
+                <text x="77.5" y="85" font-family="'Fira Code'" font-size="10" fill="#64748B" text-anchor="middle">[1]</text>
+
+                <rect x="100" y="30" width="45" height="40" fill="#F8FAFC" stroke="#CBD5E1" stroke-width="2"/>
+                <text x="122.5" y="55" font-family="sans-serif" font-size="14" fill="#9CA3AF" text-anchor="middle">8</text>
+
+                <rect x="145" y="30" width="45" height="40" fill="#F8FAFC" stroke="#CBD5E1" stroke-width="2"/>
+                <text x="167.5" y="55" font-family="sans-serif" font-size="14" fill="#9CA3AF" text-anchor="middle">12</text>
+
+                <rect x="190" y="30" width="45" height="40" fill="#FEF2F2" stroke="#DC2626" stroke-width="2.5"/>
+                <text x="212.5" y="55" font-family="sans-serif" font-size="14" font-weight="bold" fill="#DC2626" text-anchor="middle">16</text>
+                <text x="212.5" y="85" font-family="'Fira Code'" font-size="10" fill="#DC2626" text-anchor="middle">[4] Mid</text>
+
+                <rect x="235" y="30" width="45" height="40" fill="#E0F2FE" stroke="#0284C7" stroke-width="2.5"/>
+                <text x="257.5" y="55" font-family="sans-serif" font-size="14" font-weight="bold" fill="#0284C7" text-anchor="middle">23</text>
+                <text x="257.5" y="85" font-family="'Fira Code'" font-size="10" fill="#0284C7" text-anchor="middle">[5] Target</text>
+
+                <rect x="280" y="30" width="45" height="40" fill="#F8FAFC" stroke="#CBD5E1" stroke-width="2"/>
+                <text x="302.5" y="55" font-family="sans-serif" font-size="14" fill="#0F172A" text-anchor="middle">38</text>
+
+                <rect x="325" y="30" width="45" height="40" fill="#F8FAFC" stroke="#CBD5E1" stroke-width="2"/>
+                <text x="347.5" y="55" font-family="sans-serif" font-size="14" fill="#0F172A" text-anchor="middle">56</text>
+
+                <rect x="370" y="30" width="45" height="40" fill="#F8FAFC" stroke="#CBD5E1" stroke-width="2"/>
+                <text x="392.5" y="55" font-family="sans-serif" font-size="14" fill="#0F172A" text-anchor="middle">72</text>
+
+                <rect x="415" y="30" width="45" height="40" fill="#F8FAFC" stroke="#CBD5E1" stroke-width="2"/>
+                <text x="437.5" y="55" font-family="sans-serif" font-size="14" fill="#0F172A" text-anchor="middle">91</text>
+                <text x="437.5" y="85" font-family="'Fira Code'" font-size="10" fill="#64748B" text-anchor="middle">[9] R</text>
+
+                <rect x="10" y="25" width="225" height="50" fill="rgba(203, 213, 225, 0.45)" rx="4"/>
+                <text x="110" y="15" font-family="'Battambang'" font-size="10" font-weight="bold" fill="#64748B" text-anchor="middle">បោះបង់ចោល (Target = 23 > 16)</text>
+            </svg>
+        </div>
+
+        <div class="narrative-box warning" style="margin-bottom: 0;">
+            <div class="narrative-header"><i class="fa-solid fa-code-branch"></i> ដំណើរការវិភាគលំដាប់លំដោយគណិតវិទ្យា</div>
+            <p class="narrative-text"><b>ជំហានទី១៖</b> កំណត់ Left = 0, Right = n - 1 (ក្នុងឧទាហរណ៍ n = 10 ដូចនេះ Right = 9)។
+            <br><b>ជំហានទី២៖</b> គណនា Mid = (Left + Right) // 2 = (0 + 9) // 2 = 4។ តម្លៃនៅ <code>arr[4] = 16</code>។
+            <br><b>ជំហានទី៣៖</b> ដោយសារតែ Target (23) ធំជាង 16 ដូចនេះយើងដឹងច្បាស់ថា Target គ្មានផ្លូវស្ថិតនៅចន្លោះ Left ដល់ Mid ឡើយ។
+            <br><b>ជំហានទី៤៖</b> ដូរ Left = Mid + 1 = 5 (បន្តស្វែងរកចន្លោះ Index 5 ដល់ 9)។ ដំណើរការបន្តរហូតដល់រកឃើញ ឬ Left ដើរហួស Right (រកមិនឃើញ)។</p>
+        </div>
+    </div>
+
+    <div class="global-footer">
+        <div class="footer-left"><img src="Lim.jpg" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'"><span>សាស្ត្រាចារ្យ៖ សឿង លីម (Soeurng LIM)</span></div>
+        <div class="footer-right">ទំព័រទី ៤ នៃ ១៤</div>
+    </div>
+</div>
+
+<!-- ================= PAGE 5: Binary Search Code ================= -->
+<div class="a4-page">
+    <div class="global-header">
+        <div class="header-item"><img src="https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png" onerror="this.src='Logo.png'"><span>សាកលវិទ្យាល័យអង្គរ</span></div>
+        <div class="header-center">
+            <h1>សៀវភៅមគ្គទ្ទេសក៍ (Guidebook) - ជំពូកទី ៧</h1>
+            <p>ADVANCED DATA STRUCTURES AND ALGORITHMS FOR AI</p>
+        </div>
+        <div class="header-item"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg"><span>Python Pro</span></div>
+    </div>
+
+    <div class="page-content">
+        <div class="section-title" style="margin-top: 0;"><i class="fa-solid fa-code"></i> ៣. ការអនុវត្តកូដស្វែងរកបែប Binary Search ក្នុង Python</div>
+        <div class="text-block" style="margin-bottom: 5px;">
+            ខាងក្រោមនេះជាកូដ Python ពេញលេញក្នុងការអនុវត្តក្បួនស្វែងរក Binary Search (Iterative Method) ដោយប្រើប្រាស់ Loop <code>while</code> ដើម្បីដេញចាប់យកតម្លៃដែលចង់បាន O($\log n$)។
+        </div>
+
+        <!-- Runnable Code -->
+        <div class="code-wrapper" style="margin-top: 10px; margin-bottom: 10px;">
+            <div class="code-header"><span><i class="fa-brands fa-python"></i> 1_binary_search.py</span><span>Binary Search Algorithm</span></div>
+            <div class="code-content"><pre>
+<span class="kw">def</span> <span class="fn">binary_search</span>(arr, target):
+    left = <span class="num">0</span>
+    right = <span class="fn">len</span>(arr) - <span class="num">1</span>
+
+    <span class="kw">while</span> left <= right:
+        mid = (left + right) // <span class="num">2</span> <span class="com"># រកចំណុចកណ្តាលពាក់កណ្តាល</span>
+
+        <span class="com"># កៅអីកណ្តាលចំលេខគោលដៅ</span>
+        <span class="kw">if</span> arr[mid] == target:
+            <span class="kw">return</span> mid
+        
+        <span class="com"># បើលេខគោលដៅធំជាង ត្រូវរត់ទៅរកខាងស្តាំ</span>
+        <span class="kw">elif</span> arr[mid] < target:
+            left = mid + <span class="num">1</span>
+        
+        <span class="com"># បើលេខគោលដៅតូចជាង ត្រូវរត់ទៅរកខាងឆ្វេង</span>
+        <span class="kw">else</span>:
+            right = mid - <span class="num">1</span>
+
+    <span class="kw">return</span> -<span class="num">1</span> <span class="com"># រកមិនឃើញ</span>
+
+<span class="com"># ទិន្នន័យបានតម្រៀបរួចជាស្រេច (Sorted Array)</span>
+sorted_data = [<span class="num">2</span>, <span class="num">5</span>, <span class="num">8</span>, <span class="num">12</span>, <span class="num">16</span>, <span class="num">23</span>, <span class="num">38</span>, <span class="num">56</span>, <span class="num">72</span>, <span class="num">91</span>]
+
+<span class="fn">print</span>(<span class="str">"លទ្ធផលការស្វែងរក Binary Search:"</span>)
+idx1 = binary_search(sorted_data, <span class="num">23</span>)
+<span class="fn">print</span>(<span class="str">f"ស្វែងរកលេខ 23: រកឃើញនៅ Index {idx1}"</span>)
+
+idx2 = binary_search(sorted_data, <span class="num">99</span>)
+<span class="fn">print</span>(<span class="str">f"ស្វែងរកលេខ 99: {idx2 if idx2 != -1 else 'រកមិនឃើញឡើយ'}"</span>)
+</pre></div>
+            <div class="code-output">
+                <div class="code-output-title">>_ Terminal Output</div>
+                <pre>លទ្ធផលការស្វែងរក Binary Search:
+ស្វែងរកលេខ 23: រកឃើញនៅ Index 5
+ស្វែងរកលេខ 99: រកមិនឃើញឡើយ</pre>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="global-footer">
+        <div class="footer-left"><img src="Lim.jpg" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'"><span>សាស្ត្រាចារ្យ៖ សឿង លីម (Soeurng LIM)</span></div>
+        <div class="footer-right">ទំព័រទី ៥ នៃ ១៤</div>
+    </div>
+</div>
+
+<!-- ================= PAGE 6: Intro to Basic Sorting ================= -->
+<div class="a4-page">
+    <div class="global-header">
+        <div class="header-item"><img src="https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png" onerror="this.src='Logo.png'"><span>សាកលវិទ្យាល័យអង្គរ</span></div>
+        <div class="header-center">
+            <h1>សៀវភៅមគ្គទ្ទេសក៍ (Guidebook) - ជំពូកទី ៧</h1>
+            <p>ADVANCED DATA STRUCTURES AND ALGORITHMS FOR AI</p>
+        </div>
+        <div class="header-item"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg"><span>Python Pro</span></div>
+    </div>
+
+    <div class="page-content">
+        <div class="section-title" style="margin-top: 0;"><i class="fa-solid fa-sort-amount-down"></i> ៤. សេចក្តីផ្តើមអំពីក្បួនតម្រៀបគ្រឹះ (Bubble & Insertion Sort)</div>
+        <div class="text-block">
+            <b>Sorting (ការតម្រៀបទិន្នន័យ)</b> គឺជាក្បួនដោះស្រាយដ៏ចម្បងដែលកែប្រែរៀបចំទិន្នន័យច្របូកច្របល់ ឱ្យរៀបតាមលំដាប់លំដោយ (ឧ. ពីតូចទៅធំ ឬពីធំទៅតូច)។ ក្បួនតម្រៀបកម្រិតមូលដ្ឋានដែលងាយយល់មានពីរគឺ៖
+        </div>
+
+        <div class="grid-2">
+            <div class="narrative-box warning">
+                <div class="narrative-header"><i class="fa-solid fa-soap"></i> ១. Bubble Sort (ការតម្រៀបបែបពពុះទឹក O($n^2$))</div>
+                <p class="narrative-text"><b>• គោលការណ៍៖</b> ដំណើរការប្រៀបធៀបទិន្នន័យជាគូៗជាប់គ្នា។ ប្រសិនបើអ្នកនៅខាងមុខធំជាងអ្នកនៅខាងក្រោយ វានឹងធ្វើការប្តូរទីតាំងគ្នា (Swap)។ វាបន្តធ្វើបែបនេះម្តងហើយម្តងទៀតរហូតដល់គ្មានការដោះដូរទៀតឡើយ។
+                <br><b>• ករណីសិក្សា៖</b> ប្រដូចទៅនឹងពពុះទឹកស្រាលៗ (លេខតូចៗ) ដែលបណ្តែតខ្លួនឡើងមកលើផ្ទៃទឹកសន្សឹមៗម្តងមួយជំហានៗ រីឯដុំថ្មធ្ងន់ៗ (លេខធំៗ) នឹងលិចចុះទៅបាតបឹងជម្រៅចុងក្រោយគេបង្អស់។</p>
+            </div>
+            <div class="narrative-box">
+                <div class="narrative-header"><i class="fa-solid fa-hand-holding-hand"></i> ២. Insertion Sort (ការតម្រៀបបែបស៊កបញ្ចូល O($n^2$))</div>
+                <p class="narrative-text"><b>• គោលការណ៍៖</b> ដំណើរការតម្រៀបដោយបែងចែក Array ជាពីរផ្នែក (ផ្នែកតម្រៀបរួច និងផ្នែកមិនទាន់តម្រៀប)។ វាដកយកទិន្នន័យម្តងមួយៗពីផ្នែកមិនទាន់តម្រៀប យកមកប្រៀបធៀបរុញរំកិល រួចស៊កបញ្ចូលទៅក្នុងទីតាំងត្រឹមត្រូវ។
+                <br><b>• ករណីសិក្សា៖</b> ប្រដូចទៅនឹងការដែលអ្នកលេងបៀរ ចាប់ទាញសន្លឹកបៀរថ្មីម្តងមួយសន្លឹកចេញពីលើតុ យកមកស៊កបញ្ចូលទៅក្នុងដៃរបស់អ្នកឱ្យត្រូវតាមលំដាប់លំដៅលេខរៀបយ៉ាងស្អាត O(n) ពេលទិន្នន័យស្ទើរតែតម្រៀបរួចស្រាប់។</p>
+            </div>
+        </div>
+
+        <div class="narrative-box danger" style="margin-top: 15px; margin-bottom: 0;">
+            <div class="narrative-header"><i class="fa-solid fa-triangle-exclamation"></i> ដែនកំណត់របស់ក្បួនតម្រៀបគ្រឹះ O($n^2$)</div>
+            <p class="narrative-text">ទោះបីជា Bubble Sort និង Insertion Sort មានភាពងាយស្រួលយល់ និងសរសេរកូដក៏ដោយ ក៏ពួកវាមានល្បឿនយឺតខ្លាំងកម្រិត O($n^2$) (Quadratic Time) ក្នុងករណីទិន្នន័យធំៗ។ ប្រសិនបើមានទិន្នន័យ ១ លានតួ កុំព្យូទ័រត្រូវធ្វើការប្រៀបធៀបដល់ទៅ ១ ទ្រីលានដង ($1,000,000^2$) ធ្វើឱ្យប្រព័ន្ធកកស្ទះដំណើរការ (គាំងម៉ាស៊ីន)។ ដូចនេះគេត្រូវការក្បួនតម្រៀបកម្រិតខ្ពស់ជំនួសវិញ។</p>
+        </div>
+    </div>
+
+    <div class="global-footer">
+        <div class="footer-left"><img src="Lim.jpg" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'"><span>សាស្ត្រាចារ្យ៖ សឿង លីម (Soeurng LIM)</span></div>
+        <div class="footer-right">ទំព័រទី ៦ នៃ ១៤</div>
+    </div>
+</div>
+
+<!-- ================= PAGE 7: Basic Sorting Code ================= -->
+<div class="a4-page">
+    <div class="global-header">
+        <div class="header-item"><img src="https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png" onerror="this.src='Logo.png'"><span>សាកលវិទ្យាល័យអង្គរ</span></div>
+        <div class="header-center">
+            <h1>សៀវភៅមគ្គទ្ទេសក៍ (Guidebook) - ជំពូកទី ៧</h1>
+            <p>ADVANCED DATA STRUCTURES AND ALGORITHMS FOR AI</p>
+        </div>
+        <div class="header-item"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg"><span>Python Pro</span></div>
+    </div>
+
+    <div class="page-content">
+        <div class="section-title" style="margin-top: 0;"><i class="fa-solid fa-code"></i> ៥. ការអនុវត្តកូដ Bubble & Insertion Sort ក្នុង Python</div>
+        <div class="text-block" style="margin-bottom: 5px;">
+            ខាងក្រោមនេះជាកូដ Python ក្នុងការបង្កើតក្បួនតម្រៀប Bubble Sort និង Insertion Sort ដោយដៃផ្ទាល់ (មិនប្រើប្រាស់ Library) ជាមួយទិន្នន័យច្របូកច្របល់ `[64, 34, 25, 12, 22, 11, 90]`៖
+        </div>
+
+        <!-- Runnable Code -->
+        <div class="code-wrapper" style="margin-top: 10px; margin-bottom: 10px;">
+            <div class="code-header"><span><i class="fa-brands fa-python"></i> 2_basic_sorting.py</span><span>Bubble and Insertion Implementation</span></div>
+            <div class="code-content"><pre>
+<span class="com"># ១. ក្បួន Bubble Sort O(n²)</span>
+<span class="kw">def</span> <span class="fn">bubble_sort</span>(arr):
+    n = <span class="fn">len</span>(arr)
+    <span class="kw">for</span> i <span class="kw">in range</span>(n):
+        <span class="kw">for</span> j <span class="kw">in range</span>(<span class="num">0</span>, n-i-<span class="num">1</span>):
+            <span class="kw">if</span> arr[j] > arr[j+<span class="num">1</span>]:
+                <span class="com"># ធ្វើការ Swap ប្តូរទីតាំងគ្នា</span>
+                arr[j], arr[j+<span class="num">1</span>] = arr[j+<span class="num">1</span>], arr[j]
+    <span class="kw">return</span> arr
+
+<span class="com"># ២. ក្បួន Insertion Sort O(n²)</span>
+<span class="kw">def</span> <span class="fn">insertion_sort</span>(arr):
+    <span class="kw">for</span> i <span class="kw">in range</span>(<span class="num">1</span>, <span class="fn">len</span>(arr)):
+        key = arr[i]
+        j = i - <span class="num">1</span>
+        <span class="com"># រុញទិន្នន័យដែលធំជាង key ទៅមុខមួយកន្លែង</span>
+        <span class="kw">while</span> j >= <span class="num">0</span> <span class="kw">and</span> key < arr[j]:
+            arr[j + <span class="num">1</span>] = arr[j]
+            j -= <span class="num">1</span>
+        arr[j + <span class="num">1</span>] = key <span class="com"># ស៊កបញ្ចូល key ក្នុងទីតាំងត្រឹមត្រូវ</span>
+    <span class="kw">return</span> arr
+
+<span class="com"># ដំណើរការសាកល្បង</span>
+data1 = [<span class="num">64</span>, <span class="num">34</span>, <span class="num">25</span>, <span class="num">12</span>, <span class="num">22</span>, <span class="num">11</span>, <span class="num">90</span>]
+<span class="fn">print</span>(<span class="str">f"ទិន្នន័យដើម: {data1}"</span>)
+<span class="fn">print</span>(<span class="str">f"លទ្ធផល Bubble Sort: {bubble_sort(data1.copy())}"</span>)
+
+data2 = [<span class="num">64</span>, <span class="num">34</span>, <span class="num">25</span>, <span class="num">12</span>, <span class="num">22</span>, <span class="num">11</span>, <span class="num">90</span>]
+<span class="fn">print</span>(<span class="str">f"លទ្ធផល Insertion Sort: {insertion_sort(data2)}"</span>)
+</pre></div>
+            <div class="code-output">
+                <div class="code-output-title">>_ Terminal Output</div>
+                <pre>ទិន្នន័យដើម: [64, 34, 25, 12, 22, 11, 90]
+លទ្ធផល Bubble Sort: [11, 12, 22, 25, 34, 64, 90]
+លទ្ធផល Insertion Sort: [11, 12, 22, 25, 34, 64, 90]</pre>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="global-footer">
+        <div class="footer-left"><img src="Lim.jpg" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'"><span>សាស្ត្រាចារ្យ៖ សឿង លីម (Soeurng LIM)</span></div>
+        <div class="footer-right">ទំព័រទី ៧ នៃ ១៤</div>
+    </div>
+</div>
+
+<!-- ================= PAGE 8: Advanced Sorting ================= -->
+<div class="a4-page">
+    <div class="global-header">
+        <div class="header-item"><img src="https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png" onerror="this.src='Logo.png'"><span>សាកលវិទ្យាល័យអង្គរ</span></div>
+        <div class="header-center">
+            <h1>សៀវភៅមគ្គទ្ទេសក៍ (Guidebook) - ជំពូកទី ៧</h1>
+            <p>ADVANCED DATA STRUCTURES AND ALGORITHMS FOR AI</p>
+        </div>
+        <div class="header-item"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg"><span>Python Pro</span></div>
+    </div>
+
+    <div class="page-content">
+        <div class="section-title" style="margin-top: 0;"><i class="fa-solid fa-bolt"></i> ៦. ក្បួនតម្រៀបកម្រិតខ្ពស់បែប Divide & Conquer (ចែកដើម្បីគ្រប់គ្រង)</div>
+        <div class="text-block">
+            ដើម្បីលុបបំបាត់ភាពយឺតយ៉ាវ O($n^2$) នៃក្បួនដោះស្រាយគ្រឹះ វិស្វករ DSA បានប្រើប្រាស់យុទ្ធសាស្ត្រ <b>Divide & Conquer (ការពុះបំបែក និងគ្រប់គ្រង)</b>។ វាធ្វើការបំបែកបញ្ហាធំដ៏ច្របូកច្របល់ ទៅជាបញ្ហាតូចៗងាយស្រួលដោះស្រាយ រួចទើបផ្គុំលទ្ធផលតម្រៀបត្រឡប់មកវិញ ធ្វើឱ្យល្បឿនស្ទុះលឿនដល់កម្រិត <b>O($n \log n$)</b>។ ក្បួនដោះស្រាយល្បីៗមានពីរគឺ៖
+        </div>
+
+        <div class="grid-2">
+            <div class="narrative-box">
+                <div class="narrative-header"><i class="fa-solid fa-sitemap"></i> ១. Merge Sort (ការពុះពាក់កណ្តាល និងផ្គុំចូល O($n \log n$))</div>
+                <p class="narrative-text"><b>• គោលការណ៍៖</b> ពុះបំបែក Array ច្របូកច្របល់ជាពីរកំណាត់ស្មើៗគ្នាជាបន្តបន្ទាប់ រហូតដល់សល់តែធាតុទោលដាច់ដោយឡែក (ដែលតំណាងឱ្យធាតុដែលតម្រៀបរួចស្រាប់) រួចទើបហៅអនុគមន៍គូសផ្គុំ (Merge) តម្រៀបចូលគ្នាវិញតាមលំដាប់ឡើងលើ។
+                <br><b>• ករណីសិក្សា៖</b> ដូចជានាយកប្រតិបត្តិ (CEO) ទទួលបានឯកសារច្របូកច្របល់ ១០០ សន្លឹក។ គាត់ពុះចែកការងារឱ្យជំនួយការ ២ នាក់ម្នាក់ ៥០ សន្លឹក។ កូនចៅទាំងពីររៀបចំឯកសាររួចរាល់យ៉ាងស្អាត រួចយកមកប្រគល់ឱ្យ CEO ផ្គុំបញ្ជូលគ្នាវិញ O(n)។</p>
+            </div>
+            <div class="narrative-box warning">
+                <div class="narrative-header"><i class="fa-solid fa-arrows-split-up-and-left"></i> ២. Quick Sort (ការតម្រៀបរហ័សដោយរើសបង្គោល O($n \log n$))</div>
+                <p class="narrative-text"><b>• គោលការណ៍៖</b> ជ្រើសរើសធាតុមួយធ្វើជាចំណុចបង្គោល <b>Pivot (មេក្រុម)</b>។ រួចរៀបចំទិន្នន័យ៖ ធាតុណាដែលតូចជាង Pivot ត្រូវរត់ទៅនៅខាងឆ្វេង ឯធាតុណាដែលធំជាង Pivot ត្រូវរត់ទៅនៅខាងស្តាំ។ បន្ទាប់មក ឆ្វេង និងស្តាំ បន្តរើស Pivot តូចៗដោះស្រាយបែបដដែលៗ (Recursion)។
+                <br><b>• ករណីសិក្សា៖</b> ប្រៀបដូចជាគ្រូបង្រៀនកាយរឹទ្ធិដែលចង់តម្រៀបសិស្សតាមកម្ពស់។ គាត់រើសសិស្សម្នាក់ជាបង្គោល (Pivot) រួចឱ្យអ្នកដទៃប្រៀបធៀបកម្ពស់៖ នរណាទាបជាងបង្គោលទៅឈរឆ្វេង ខ្ពស់ជាងទៅឈរស្តាំ រួចបន្តធ្វើបែបនេះរហូតដល់សិស្សទាំងអស់រៀបជួរបានយ៉ាងស្អាត O($n \log n$)។</p>
+            </div>
+        </div>
+
+        <!-- Merge vs Quick concept diagram inline SVG -->
+        <div style="text-align: center; margin-top: 15px;">
+            <svg viewBox="0 0 500 100" style="width: 75%; height: auto; display: inline-block;">
+                <!-- Pivot Concept -->
+                <rect x="185" y="30" width="130" height="40" fill="#FEF3C7" stroke="#D97706" rx="4"/>
+                <text x="250" y="55" font-family="sans-serif" font-size="12" font-weight="bold" fill="#B45309" text-anchor="middle">Pivot (មេក្រុម)</text>
+
+                <path d="M 175 50 L 115 50" stroke="#DC2626" stroke-width="2" stroke-dasharray="4,4"/>
+                <rect x="20" y="30" width="85" height="40" fill="#FEF2F2" stroke="#DC2626" rx="4"/>
+                <text x="62.5" y="55" font-family="'Battambang'" font-size="10" font-weight="bold" fill="#DC2626" text-anchor="middle">តូចជាង Pivot</text>
+
+                <path d="M 325 50 L 385 50" stroke="#059669" stroke-width="2" stroke-dasharray="4,4"/>
+                <rect x="395" y="30" width="85" height="40" fill="#D1FAE5" stroke="#059669" rx="4"/>
+                <text x="437.5" y="55" font-family="'Battambang'" font-size="10" font-weight="bold" fill="#047857" text-anchor="middle">ធំជាង Pivot</text>
+            </svg>
+        </div>
+    </div>
+
+    <div class="global-footer">
+        <div class="footer-left"><img src="Lim.jpg" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'"><span>សាស្ត្រាចារ្យ៖ សឿង លីម (Soeurng LIM)</span></div>
+        <div class="footer-right">ទំព័រទី ៨ នៃ ១៤</div>
+    </div>
+</div>
+
+<!-- ================= PAGE 9: Quick Sort Code ================= -->
+<div class="a4-page">
+    <div class="global-header">
+        <div class="header-item"><img src="https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png" onerror="this.src='Logo.png'"><span>សាកលវិទ្យាល័យអង្គរ</span></div>
+        <div class="header-center">
+            <h1>សៀវភៅមគ្គទ្ទេសក៍ (Guidebook) - ជំពូកទី ៧</h1>
+            <p>ADVANCED DATA STRUCTURES AND ALGORITHMS FOR AI</p>
+        </div>
+        <div class="header-item"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg"><span>Python Pro</span></div>
+    </div>
+
+    <div class="page-content">
+        <div class="section-title" style="margin-top: 0;"><i class="fa-solid fa-code"></i> ៧. ការអនុវត្តកូដ Quick Sort (Pivot Strategy) ក្នុង Python</div>
+        <div class="text-block" style="margin-bottom: 5px;">
+            ខាងក្រោមនេះជាកូដ Python ក្នុងការបង្កើតក្បួនតម្រៀប Quick Sort ដោយប្រើប្រាស់វិធីសាស្ត្រសរសេរបែបខ្លី និងងាយយល់ (Pythonic Method) តាមរយៈ List Comprehension ដើម្បីបំបែកទិន្នន័យជាបីក្រុម O($n \log n$)៖
+        </div>
+
+        <!-- Runnable Code -->
+        <div class="code-wrapper" style="margin-top: 10px; margin-bottom: 10px;">
+            <div class="code-header"><span><i class="fa-brands fa-python"></i> 3_quick_sort.py</span><span>Quick Sort Implementation</span></div>
+            <div class="code-content"><pre>
+<span class="kw">def</span> <span class="fn">quick_sort</span>(arr):
+    <span class="com"># លក្ខខណ្ឌបញ្ចប់ (Base Case): បើ Array មានតែមួយតួ ឬទទេ មិនបាច់តម្រៀបឡើយ</span>
+    <span class="kw">if</span> <span class="fn">len</span>(arr) <= <span class="num">1</span>:
+        <span class="kw">return</span> arr
+
+    <span class="com"># រើសយកធាតុចំកណ្តាលធ្វើជា Pivot (មេក្រុម)</span>
+    pivot = arr[<span class="fn">len</span>(arr) // <span class="num">2</span>]
+
+    <span class="com"># ១. បង្កើតក្រុមឆ្វេង: រាល់គ្រប់លេខដែលតូចជាង Pivot</span>
+    left = [x <span class="kw">for</span> x <span class="kw">in</span> arr <span class="kw">if</span> x < pivot]
+
+    <span class="com"># ២. បង្កើតក្រុមបម្រុងកណ្តាល: រាល់គ្រប់លេខដែលស្មើ Pivot</span>
+    middle = [x <span class="kw">for</span> x <span class="kw">in</span> arr <span class="kw">if</span> x == pivot]
+
+    <span class="com"># ៣. បង្កើតក្រុមស្តាំ: រាល់គ្រប់លេខដែលធំជាង Pivot</span>
+    right = [x <span class="kw">for</span> x <span class="kw">in</span> arr <span class="kw">if</span> x > pivot]
+
+    <span class="com"># ហៅអនុគមន៍ Quick Sort ខ្លួនឯងបែប Recursion លើក្រុមឆ្វេង និងស្តាំ រួចផ្គុំត្រឡប់មកវិញ</span>
+    <span class="kw">return</span> quick_sort(left) + middle + quick_sort(right)
+
+<span class="com"># ដំណើរការសាកល្បង</span>
+unsorted_array = [<span class="num">10</span>, <span class="num">7</span>, <span class="num">8</span>, <span class="num">9</span>, <span class="num">1</span>, <span class="num">5</span>]
+<span class="fn">print</span>(<span class="str">f"ទិន្នន័យមុនតម្រៀប: {unsorted_array}"</span>)
+
+sorted_array = quick_sort(unsorted_array)
+<span class="fn">print</span>(<span class="str">f"ទិន្នន័យក្រោយតម្រៀប: {sorted_array}"</span>)
+</pre></div>
+            <div class="code-output">
+                <div class="code-output-title">>_ Terminal Output</div>
+                <pre>ទិន្នន័យមុនតម្រៀប: [10, 7, 8, 9, 1, 5]
+ទិន្នន័យក្រោយតម្រៀប: [1, 5, 7, 8, 9, 10]</pre>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="global-footer">
+        <div class="footer-left"><img src="Lim.jpg" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'"><span>សាស្ត្រាចារ្យ៖ សឿង លីម (Soeurng LIM)</span></div>
+        <div class="footer-right">ទំព័រទី ៩ នៃ ១៤</div>
+    </div>
+</div>
+
+<!-- ================= PAGE 10: Time Complexity Table ================= -->
+<div class="a4-page">
+    <div class="global-header">
+        <div class="header-item"><img src="https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png" onerror="this.src='Logo.png'"><span>សាកលវិទ្យាល័យអង្គរ</span></div>
+        <div class="header-center">
+            <h1>សៀវភៅមគ្គទ្ទេសក៍ (Guidebook) - ជំពូកទី ៧</h1>
+            <p>ADVANCED DATA STRUCTURES AND ALGORITHMS FOR AI</p>
+        </div>
+        <div class="header-item"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg"><span>Python Pro</span></div>
+    </div>
+
+    <div class="page-content">
+        <div class="section-title" style="margin-top: 0;"><i class="fa-solid fa-scale-balanced"></i> ៨. តារាងវិភាគ Time & Space Complexity នៃគ្រប់ក្បួនដោះស្រាយ</div>
+        <div class="text-block">
+            ការយល់ដឹងអំពីកម្រិត Big-O ជួយឱ្យវិស្វករ DSA សម្រេចចិត្តបានត្រឹមត្រូវថា តើក្បួនដោះស្រាយណាមួយសាកសមសម្រាប់ដោះស្រាយបញ្ហាក្នុងគម្រោងជាក់ស្តែង៖
+        </div>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>ក្បួនដោះស្រាយ (Algorithm)</th>
+                    <th style="text-align: center;">ករណីល្អបំផុត<br>(Best Case)</th>
+                    <th style="text-align: center;">ករណីមធ្យម<br>(Average Case)</th>
+                    <th style="text-align: center;">ករណីអាក្រក់បំផុត<br>(Worst Case)</th>
+                    <th style="text-align: center;">ទំហំផ្ទុកបន្ថែម<br>(Space Complexity)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><b>Linear Search</b> (ស្វែងរកម្តងមួយ)</td>
+                    <td align="center"><b class="text-green">O(1)</b></td>
+                    <td align="center"><span class="text-yellow">O(n)</span></td>
+                    <td align="center"><span class="text-red">O(n)</span></td>
+                    <td align="center"><b class="text-green">O(1)</b> (សន្សំសំចៃ Memory RAM)</td>
+                </tr>
+                <tr>
+                    <td><b>Binary Search</b> (ពុះកណ្តាល)</td>
+                    <td align="center"><b class="text-green">O(1)</b></td>
+                    <td align="center"><b class="text-green">O(log n)</b> ⚡ លឿន</td>
+                    <td align="center"><b class="text-green">O(log n)</b> ⚡ លឿន</td>
+                    <td align="center"><b class="text-green">O(1)</b></td>
+                </tr>
+                <tr>
+                    <td><b>Bubble / Insertion Sort</b></td>
+                    <td align="center"><span class="text-yellow">O(n)</span> (Insertion)</td>
+                    <td align="center"><span class="text-red">O(n²)</span> 🐌 យឺត</td>
+                    <td align="center"><span class="text-red">O(n²)</span> 🐌 យឺត</td>
+                    <td align="center"><b class="text-green">O(1)</b> (តម្រៀបក្នុងបញ្ជីដើម - In-place)</td>
+                </tr>
+                <tr>
+                    <td><b>Merge Sort</b> (ពុះពាក់កណ្តាល)</td>
+                    <td align="center"><b class="text-green">O(n log n)</b></td>
+                    <td align="center"><b class="text-green">O(n log n)</b> ⚡ លឿន</td>
+                    <td align="center"><b class="text-green">O(n log n)</b> ⚡ លឿន</td>
+                    <td align="center"><span class="text-red">O(n)</span> (ស៊ី RAM ព្រោះបង្កើត Array ថ្មី)</td>
+                </tr>
+                <tr>
+                    <td><b>Quick Sort</b> (រើស Pivot)</td>
+                    <td align="center"><b class="text-green">O(n log n)</b></td>
+                    <td align="center"><b class="text-green">O(n log n)</b> ⚡ លឿន</td>
+                    <td align="center"><span class="text-red">O(n²)</span> (កម្រកើតមាន)</td>
+                    <td align="center"><b class="text-green">O(log n)</b> (សន្សំសំចៃជាង Merge Sort)</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="narrative-box warning" style="margin-bottom: 0;">
+            <div class="narrative-header"><i class="fa-solid fa-lightbulb"></i> តុល្យភាព (Trade-off) រវាង Merge Sort និង Quick Sort</div>
+            <p class="narrative-text">ទោះបីជា Merge Sort ធានាល្បឿនរត់ថេរ O($n \log n$) ក្នុងគ្រប់ករណីទាំងអស់ក៏ដោយ ក៏វាត្រូវបានជៀសវាងនៅក្នុងប្រព័ន្ធដែលខ្វះខាត Memory (RAM) ព្រោះវាត្រូវចំណាយទំហំ O(n) បន្ថែមដើម្បីបង្កើត Array ថ្មីយកមកផ្គុំ។ ផ្ទុយទៅវិញ <b>Quick Sort</b> គឺជាស្តេចនៃក្បួនតម្រៀបដែលប្រើប្រាស់ច្រើនជាងគេបំផុតក្នុងជីវិតពិត ព្រោះវាជាប្រភេទ **In-place Sorting** (តម្រៀបនៅក្នុងទិន្នន័យដើមផ្ទាល់) មិនបាច់បង្កើត Array ថ្មីធំៗឡើយ (ស៊ីទំហំត្រឹម O($\log n$))។</p>
+        </div>
+    </div>
+
+    <div class="global-footer">
+        <div class="footer-left"><img src="Lim.jpg" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'"><span>សាស្ត្រាចារ្យ៖ សឿង លីម (Soeurng LIM)</span></div>
+        <div class="footer-right">ទំព័រទី ១០ នៃ ១៤</div>
+    </div>
+</div>
+
+<!-- ================= PAGE 11: Real-world Applications ================= -->
+<div class="a4-page">
+    <div class="global-header">
+        <div class="header-item"><img src="https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png" onerror="this.src='Logo.png'"><span>សាកលវិទ្យាល័យអង្គរ</span></div>
+        <div class="header-center">
+            <h1>សៀវភៅមគ្គទ្ទេសក៍ (Guidebook) - ជំពូកទី ៧</h1>
+            <p>ADVANCED DATA STRUCTURES AND ALGORITHMS FOR AI</p>
+        </div>
+        <div class="header-item"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg"><span>Python Pro</span></div>
+    </div>
+
+    <div class="page-content">
+        <div class="section-title" style="margin-top: 0;"><i class="fa-solid fa-brain"></i> ៩. ការអនុវត្ត Sorting & Searching ក្នុងវិស័យ AI & Databases</div>
+        <div class="text-block">
+            ការតម្រៀប និងការស្វែងរក មិនមែនគ្រាន់តែជាទ្រឹស្តីកូដនោះទេ វាគឺជាបេះដូងគ្រឹះដែលសម្រេចប្រសិទ្ធភាពដំណើរការរបស់ប្រព័ន្ធធំៗ៖
+        </div>
+        
+        <div class="grid-2">
+            <div class="card">
+                <h4><i class="fa-solid fa-cart-shopping"></i> 1. E-commerce Platforms (Amazon/Taobao)</h4>
+                <p class="text-block" style="font-size: 11.5px; margin: 0; text-align: justify;">
+                    រាល់ពេលដែលអ្នកចុចបញ្ជាតម្រៀបតម្លៃទំនិញពី **"ទាបទៅខ្ពស់"** ឬតាម **"ចំនួនលក់ដាច់បំផុត"** ម៉ាស៊ីនបម្រើការ (Servers) របស់វេបសាយនឹងដំណើរការក្បួនតម្រៀបកម្រិតខ្ពស់ O($n \log n$) ដូចជា Quick Sort ដើម្បីរៀបចំទិន្នន័យទំនិញរាប់លានមុខបង្ហាញមកលើអេក្រង់ទូរស័ព្ទរបស់អ្នកបានរហ័សបំផុត។
+                </p>
+            </div>
+            <div class="card">
+                <h4><i class="fa-solid fa-database"></i> 2. Database Indexing (B-Trees Index)</h4>
+                <p class="text-block" style="font-size: 11.5px; margin: 0; text-align: justify;">
+                    នៅក្នុងប្រព័ន្ធគ្រប់គ្រងទិន្នន័យ (MySQL, PostgreSQL) នៅពេលយើងកំណត់ Index លើទិន្នន័យ វានឹងធ្វើការតម្រៀបទិន្នន័យទាំងនោះរួចជាស្រេចនៅក្នុងប្រព័ន្ធ Disk។ ដូចនេះ រាល់ពេលដែលយើងស្វែងរកទិន្នន័យ (SQL Queries) ប្រព័ន្ធនឹងហៅក្បួនស្វែងរក Binary Search មកដំណើរការ ធ្វើឱ្យការឆែករកឃើញលឿន O($\log n$)។
+                </p>
+            </div>
+        </div>
+
+        <div class="grid-2" style="margin-top: 10px;">
+            <div class="card yellow-card">
+                <h4><i class="fa-solid fa-language"></i> 3. NLP Token Sorting in AI Language Models</h4>
+                <p class="text-block" style="font-size: 11.5px; margin: 0; text-align: justify;">
+                    នៅក្នុងដំណើរការភាសាធម្មជាតិ (Natural Language Processing) ម៉ូដែល AI ស្មុគស្មាញត្រូវធ្វើការតម្រៀបពាក្យ (Tokens) ទៅតាមលំដាប់ពិន្ទុប្រូបាប៊ីលីតេ (Probability Scores) ដែលទាមទារការប្រើប្រាស់ Quick Sort ឬ Merge Sort ដើម្បីជ្រើសរើសយកពាក្យដែលមានពិន្ទុខ្ពស់ជាងគេបង្អស់មកបង្កើតជាប្រយោគឆ្លើយតប។
+                </p>
+            </div>
+            <div class="card green-card">
+                <h4><i class="fa-solid fa-bullseye"></i> 4. Hyperparameter Search in Deep Learning</h4>
+                <p class="text-block" style="font-size: 11.5px; margin: 0; text-align: justify;">
+                    នៅក្នុងការហ្វឹកហាត់ប្រព័ន្ធបញ្ញាសិប្បនិម្មិត (AI Training) វិស្វករតែងតែប្រើប្រាស់ក្បួនស្វែងរកបែបពុះកណ្តាល Binary Search ដើម្បីស្វែងរកតម្លៃដ៏ល្អបំផុតនៃគ្រាប់ប៉ារ៉ាម៉ែត្រ (ដូចជា Learning Rate threshold) ជួយឱ្យ AI អាចរៀនសូត្របានលឿន និងមានភាគរយត្រឹមត្រូវខ្ពស់បំផុត។
+                </p>
+            </div>
+        </div>
+
+        <img src="https://images.unsplash.com/photo-1544383835-bda2bc66a55d?auto=format&fit=crop&w=1200&q=80" class="visual-img" alt="Digital connections representing binary logic" style="height: 100px; margin-top: 10px; border-bottom: 3px solid var(--accent-blue);">
+    </div>
+
+    <div class="global-footer">
+        <div class="footer-left"><img src="Lim.jpg" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'"><span>សាស្ត្រាចារ្យ៖ សឿង លីម (Soeurng LIM)</span></div>
+        <div class="footer-right">ទំព័រទី ១១ នៃ ១៤</div>
+    </div>
+</div>
+
+<!-- ================= PAGE 12: Review Q&A ================= -->
+<div class="a4-page">
+    <div class="global-header">
+        <div class="header-item"><img src="https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png" onerror="this.src='Logo.png'"><span>សាកលវិទ្យាល័យអង្គរ</span></div>
+        <div class="header-center">
+            <h1>សៀវភៅមគ្គទ្ទេសក៍ (Guidebook) - ជំពូកទី ៧</h1>
+            <p>ADVANCED DATA STRUCTURES AND ALGORITHMS FOR AI</p>
+        </div>
+        <div class="header-item"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg"><span>Python Pro</span></div>
+    </div>
+
+    <div class="page-content">
+        <div class="section-title" style="margin-top: 0;"><i class="fa-solid fa-circle-question"></i> ១០. សំណួររំលឹកមេរៀន និងការបកស្រាយលម្អិត (Q&A)</div>
+        <div class="text-block" style="margin-bottom: 8px; font-size:12.5px;">
+            ខាងក្រោមនេះគឺជាសំណួរ និងការបកស្រាយគំរូដ៏សំខាន់ៗដែលត្រូវបានរៀបចំឡើងដើម្បីវាស់ស្ទង់ការយល់ដឹងរបស់និស្សិតលើក្បួនដោះស្រាយ Sorting & Searching៖
+        </div>
+
+        <!-- Question 1 -->
+        <div class="qa-box" style="margin-bottom: 8px;">
+            <div class="qa-question" style="padding: 6px 12px;">
+                <i class="fa-solid fa-q qa-icon-q"></i> 
+                <span>១. តើលក្ខខណ្ឌចម្បងដែលចាំបាច់ត្រូវមានមុនពេលដំណើរការ Binary Search គឺអ្វី? ហេតុអ្វី?</span>
+            </div>
+            <div class="qa-answer" style="padding: 6px 12px; font-size:11.5px;">
+                <i class="fa-solid fa-a qa-icon-a"></i>
+                <span><b>ការបកស្រាយ៖</b> លក្ខខណ្ឌចម្បងគឺ **ទិន្នន័យទាំងអស់ត្រូវតែបានតម្រៀប (Sorted) រួចរាល់ជាមុនសិន**។ មូលហេតុគឺដោយសារតែ Binary Search ផ្អែកលើការសន្មត់ថា បើតម្លៃដែលយើងចង់រកធំជាងតម្លៃចំណុចកណ្តាល (Mid) នោះតម្លៃគោលដៅប្រាកដជាស្ថិតនៅខាងស្តាំ ហើយតូចជាងត្រូវនៅខាងឆ្វេង។ ប្រសិនបើទិន្នន័យមិនទាន់បានតម្រៀបលំដាប់លំដោយរៀបរយទេ នោះការសន្មត់ពុះកណ្តាល និងបោះបង់ទិន្នន័យ ៥០% ចោលនេះ នឹងធ្វើឱ្យយើងវង្វេងផ្លូវ និងបាត់បង់ទិន្នន័យស្វែងរកទាំងស្រុង។</span>
+            </div>
+        </div>
+
+        <!-- Question 2 -->
+        <div class="qa-box" style="margin-bottom: 8px;">
+            <div class="qa-question" style="padding: 6px 12px;">
+                <i class="fa-solid fa-q qa-icon-q"></i> 
+                <span>២. ហេតុអ្វីបានជា Merge Sort ត្រូវបានចាត់ទុកថាជាក្បួនតម្រៀបដែលមានស្ថេរភាពល្អ តែស៊ី Memory RAM ច្រើន?</span>
+            </div>
+            <div class="qa-answer" style="padding: 6px 12px; font-size:11.5px;">
+                <i class="fa-solid fa-a qa-icon-a"></i>
+                <span><b>ការបកស្រាយ៖</b> • **ស្ថេរភាពល្អ៖** ព្រោះវាធានាល្បឿនរត់កម្រិត O($n \log n$) ជានិច្ច ទោះបីជាទិន្នន័យដើមរាយប៉ាយខ្លាំង ឬតម្រៀបរួចរាល់ក៏ដោយ។
+                <br>• **ស៊ី RAM ច្រើន (O(n))៖** ព្រោះដើម្បីធ្វើការផ្គុំបញ្ចូលគ្នា (Merge) កុំព្យូទ័រមិនអាចតម្រៀបនៅក្នុង Array ដើមបានឡើយ វាបង្ខំចិត្តបង្កើត Array ថ្មីបណ្តោះអាសន្នជាច្រើននៅក្នុង RAM ដើម្បីផ្ទុកទិន្នន័យពុះបំបែកទាំងឡាយ ដែលជារឿយៗត្រូវបានជៀសវាងក្នុងប្រព័ន្ធទូរស័ព្ទ ឬឧបករណ៍ខ្សោយ RAM។</span>
+            </div>
+        </div>
+
+        <!-- Question 3 -->
+        <div class="qa-box" style="margin-bottom: 8px;">
+            <div class="qa-question" style="padding: 6px 12px;">
+                <i class="fa-solid fa-q qa-icon-q"></i> 
+                <span>៣. តើយន្តការ Pivot (មេក្រុម) នៅក្នុង Quick Sort ដើរតួនាទីយ៉ាងដូចម្តេចពិតប្រាកដ?</span>
+            </div>
+            <div class="qa-answer" style="padding: 6px 12px; font-size:11.5px;">
+                <i class="fa-solid fa-a qa-icon-a"></i>
+                <span><b>ការបកស្រាយ៖</b> Pivot ដើរតួនាទីជា **ខ្សែបន្ទាត់វិនិច្ឆ័យកម្ពស់ចរិតលក្ខណៈ**។ រាល់គ្រប់ធាតុទាំងអស់នៅក្នុង Array ត្រូវតែយកមកប្រៀបធៀបជាមួយ Pivot នេះ៖ ធាតុណាដែលតូចជាង Pivot ត្រូវរុញទៅបង្កើតជាបញ្ជីខាងឆ្វេង ឯធាតុណាដែលធំជាងត្រូវរុញទៅបង្កើតជាបញ្ជីខាងស្តាំ។ យន្តការនេះជួយឱ្យ Pivot ស្ថិតនៅចំកន្លែងដែលត្រឹមត្រូវពិតប្រាកដរបស់វានៅចុងបញ្ចប់នៃគ្រប់ជុំប្រតិបត្តិការ។</span>
+            </div>
+        </div>
+
+        <!-- Question 4 -->
+        <div class="qa-box" style="margin-bottom: 0;">
+            <div class="qa-question" style="padding: 6px 12px;">
+                <i class="fa-solid fa-q qa-icon-q"></i> 
+                <span>៤. ក្នុងករណីណាខ្លះដែលធ្វើឱ្យល្បឿនរបស់ Quick Sort ធ្លាក់ចុះមកកម្រិតយឺតបំផុតគឺ O(n²)? តើដោះស្រាយដូចម្តេច?</span>
+            </div>
+            <div class="qa-answer" style="padding: 6px 12px; font-size:11.5px;">
+                <i class="fa-solid fa-a qa-icon-a"></i>
+                <span><b>ការបកស្រាយ៖</b> ករណីអាក្រក់បំផុតកើតឡើងនៅពេលយើង **រើសចំ Pivot មិនល្អជាប្រចាំ** (ដូចជារើសចំលេខតូចបំផុត ឬធំបំផុតរបស់ Array ជានិច្ច) ឧទាហរណ៍៖ ទិន្នន័យតម្រៀបរួចស្រាប់ [1, 2, 3, 4] ហើយយើងរើសលេខចុងក្រោយជា Pivot ជានិច្ច។ វានឹងធ្វើឱ្យការបំបែកបញ្ហាមិនបានពាក់កណ្តាលឡើយ គឺបំបែកបានតែម្ខាង នាំឱ្យល្បឿនធ្លាក់ចុះមក O($n^2$)។
+                <br>• **ដំណោះស្រាយ៖** វិស្វករ DSA ប្រើប្រាស់វិធីសាស្ត្រ **Randomized Quick Sort** (រើស Pivot ដោយចៃដន្យ) ឬវិធីសាស្ត្រ **Median-of-Three** (យកលេខដើម កណ្តាល និងចុង មកមធ្យមរកលេខល្អធ្វើជា Pivot) ដើម្បីធានាល្បឿនរត់កម្រិត O($n \log n$) ជានិច្ច។</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="global-footer">
+        <div class="footer-left"><img src="Lim.jpg" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'"><span>សាស្ត្រាចារ្យ៖ សឿង លីម (Soeurng LIM)</span></div>
+        <div class="footer-right">ទំព័រទី ១២ នៃ ១៤</div>
+    </div>
+</div>
+
+<!-- ================= PAGE 13: Glossary & Key Terms ================= -->
+<div class="a4-page">
+    <div class="global-header">
+        <div class="header-item"><img src="https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png" onerror="this.src='Logo.png'"><span>សាកលវិទ្យាល័យអង្គរ</span></div>
+        <div class="header-center">
+            <h1>សៀវភៅមគ្គទ្ទេសក៍ (Guidebook) - ជំពូកទី ៧</h1>
+            <p>ADVANCED DATA STRUCTURES AND ALGORITHMS FOR AI</p>
+        </div>
+        <div class="header-item"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg"><span>Python Pro</span></div>
+    </div>
+
+    <div class="page-content">
+        <div class="section-title" style="margin-top: 0;"><i class="fa-solid fa-spell-check"></i> ១១. សទ្ទានុក្រម និងពាក្យគន្លឹះប្រចាំជំពូកទី ៧ (Key Terms & Glossary)</div>
+        <div class="grid-2">
+            <div class="card">
+                <p><b>• Linear Search (ស្វែងរកម្តងមួយ)៖</b> ក្បួនស្វែងរកសាមញ្ញដោយដើរឆែកមើលម្តងមួយៗពីដើមដល់ចុងបញ្ជី O(n) សាកសមសម្រាប់បញ្ជីទំហំតូច ឬមិនទាន់បានតម្រៀប។</p>
+                <p><b>• Binary Search (ស្វែងរកពុះកណ្តាល)៖</b> ក្បួនស្វែងរកដ៏មានប្រសិទ្ធភាពកម្រិត O($\log n$) ដោយធ្វើការឆែកចំណុចកណ្តាល និងច្រោះចោលទិន្នន័យ ៥០% រាល់ជុំនៃការប្រៀបធៀប។</p>
+                <p><b>• Divide and Conquer៖</b> យុទ្ធសាស្ត្រពុះបំបែកបញ្ហាធំៗជាបញ្ហាតូចៗងាយស្រួលដោះស្រាយ រួចទើបផ្គុំបញ្ចូលលទ្ធផលតម្រៀបត្រឡប់មកវិញ (ប្រើក្នុង Merge & Quick Sort)។</p>
+            </div>
+            <div class="card">
+                <p><b>• Pivot (ចំណុចបង្គោល)៖</b> ធាតុដែលត្រូវបានជ្រើសរើសធ្វើជាមេក្រុមនៅក្នុង Quick Sort ដើម្បីធ្វើការបែងចែកក្រុមធំជាង និងក្រុមតូចជាងបង្គោលនោះ។</p>
+                <p><b>• Swap (ការប្តូរទីតាំង)៖</b> សកម្មភាពនៃការដោះដូរតម្លៃទីតាំងគ្នារវាងធាតុពីរក្បែរគ្នាក្នុង Array ប្រើប្រាស់ជាចម្បងក្នុង Bubble Sort O($n^2$)។</p>
+                <p><b>• In-place Sorting (ការតម្រៀបក្នុងបញ្ជីដើម)៖</b> ក្បួនតម្រៀបដែលមិនទាមទារបង្កើត Array ថ្មីដើម្បីផ្ទុកទិន្នន័យ (សន្សំសំចៃ RAM ដូចជា Quick Sort)។</p>
+            </div>
+        </div>
+
+        <div class="narrative-box warning" style="margin-top: 15px;">
+            <div class="narrative-header"><i class="fa-solid fa-microchip"></i> ការថ្លឹងថ្លែងប្រសិទ្ធភាពក្នុងការសរសេរកូដជាក់ស្តែង</div>
+            <p class="narrative-text">ក្នុងនាមជាវិស្វករ Software និង Data Scientist កម្រិតខ្ពស់ យើងត្រូវយល់ច្បាស់ពីយន្តការគណនា Big-O។ ទោះបីជា Python ផ្តល់ Built-in <code>list.sort()</code> ដ៏ឆ្លាតវៃ (ដែលដំណើរការដោយក្បួន Timsort - ការបញ្ចូលគ្នារវាង Merge និង Insertion Sort) ក៏ដោយ ក៏ការយល់ច្បាស់ពីយន្តការខាងក្រោយជួយឱ្យយើងអាចរចនាក្បួនដោះស្រាយពិសេសផ្ទាល់ខ្លួន សម្រេចល្បឿនដំណើរការប្រព័ន្ធបានយ៉ាងរហ័សបំផុត និងចៀសវាងការខ្ជះខ្ជាយធនធាន RAM របស់កុំព្យូទ័រជាអតិបរមា។</p>
+        </div>
+    </div>
+
+    <div class="global-footer">
+        <div class="footer-left"><img src="Lim.jpg" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'"><span>សាស្ត្រាចារ្យ៖ សឿង លីម (Soeurng LIM)</span></div>
+        <div class="footer-right">ទំព័រទី ១៣ នៃ ១៤</div>
+    </div>
+</div>
+
+<!-- ================= PAGE 14: Conclusion & References ================= -->
+<div class="a4-page">
+    <div class="global-header">
+        <div class="header-item"><img src="https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png" onerror="this.src='Logo.png'"><span>សាកលវិទ្យាល័យអង្គរ</span></div>
+        <div class="header-center">
+            <h1>សៀវភៅមគ្គទ្ទេសក៍ (Guidebook) - ជំពូកទី ៧</h1>
+            <p>ADVANCED DATA STRUCTURES AND ALGORITHMS FOR AI</p>
+        </div>
+        <div class="header-item"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg"><span>Python Pro</span></div>
+    </div>
+
+    <div class="page-content">
+        <div class="section-title" style="margin-top: 0;"><i class="fa-solid fa-clipboard-list"></i> ១២. សេចក្តីសន្និដ្ឋាននៃជំពូកទី ៧ (Conclusion)</div>
+        <div class="card" style="border-top-color: var(--accent-green); background: #F0FDF4; margin-bottom: 20px;">
+            <ul style="line-height: 1.8; color: var(--text-main); font-size: 13px;">
+                <li><b><i class="fa-solid fa-hand-pointer text-green"></i> គ្មានអាវុធណាដែលល្អឥតខ្ចោះគ្រប់ពេលឡើយ៖</b> ការជ្រើសរើស Sorting/Searching Algorithm គឺជាតុល្យភាព Trade-off។ ប្រសិនបើទិន្នន័យមានទំហំតូច និងជិតតម្រៀបរួចស្រាប់ ការប្រើប្រាស់ <b>Insertion Sort</b> O(n) មានប្រសិទ្ធភាពជាងក្បួនតម្រៀបស្មុគស្មាញដទៃទៀត។</li>
+                <li><b><i class="fa-solid fa-rocket text-green"></i> Quick Sort គឺជារាជានៃការតម្រៀប៖</b> នៅក្នុងជីវភាពរស់នៅជាក់ស្តែង Quick Sort គឺជាក្បួនដោះស្រាយដែលដំណើរការលឿន និងសន្សំសំចៃទំហំផ្ទុក RAM ល្អបំផុត O($n \log n$) ធ្វើឱ្យវាត្រូវបានយកទៅប្រើប្រាស់ក្នុងស្ថាបត្យកម្មភាសាជាច្រើន។</li>
+                <li><b><i class="fa-solid fa-brain text-green"></i> យន្តការសម្រេចចិត្តប្រព័ន្ធ AI៖</b> គំនិត Binary Search និង Divide & Conquer គឺជាគន្លឹះស្នូលដែលជួយដល់ការគណនាបំបែកស្រទាប់គំរូ និងការស្រាវជ្រាវប៉ារ៉ាម៉ែត្រកម្រិតខ្ពស់របស់បញ្ញាសិប្បនិម្មិត។</li>
+            </ul>
+        </div>
+
+        <div class="section-title"><i class="fa-solid fa-book-bookmark"></i> ១៣. ឯកសារយោង និងគន្ថនិទ្ទេស (References & Further Reading)</div>
+        <div class="text-block">
+            <ul style="list-style: none; padding-left: 0; line-height: 1.8; text-align: left !important;">
+                <li style="margin-bottom: 8px;"><b><i class='fa-solid fa-book text-blue'></i> Goodrich, M. T., Tamassia, R. (2013).</b> <i>Data Structures and Algorithms in Python</i>. Wiley. (Chapter 5: Array-Based Sequences, Chapter 12: Sorting and Selection).</li>
+                <li style="margin-bottom: 8px;"><b><i class='fa-solid fa-book text-blue'></i> Cormen, T. H. (2022).</b> <i>Introduction to Algorithms</i> (4th ed.). MIT Press. (Chapter 2: Getting Started - Insertion/Merge Sort, Chapter 7: Quicksort).</li>
+                <li style="margin-bottom: 8px;"><b><i class='fa-solid fa-globe text-blue'></i> Visualgo.net៖</b> គំនូរជីវចលគំនូសបំព្រួញបង្ហាញពីដំណើរការតម្រៀបទិន្នន័យ៖ <a href='https://visualgo.net/en/sorting' style='color:var(--accent-blue); text-decoration:none;'>visualgo.net/en/sorting</a></li>
+                <li style="margin-bottom: 8px;"><b><i class='fa-brands fa-youtube text-blue'></i> CS Dojo (YouTube)៖</b> <i>Sorting Algorithms Explained for Beginners</i> - វីដេអូពន្យល់ដ៏សាមញ្ញ និងងាយយល់បំផុត។</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="global-footer" style="position: absolute; bottom: 0;">
+        <div class="footer-left"><img src="Lim.jpg" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'"><span>សាស្ត្រាចារ្យ៖ សឿង លីម (Soeurng LIM)</span></div>
+        <div class="footer-right">ទំព័រទី ១៤ នៃ ១៤</div>
+    </div>
+</div>
+
+</body>
+</html>

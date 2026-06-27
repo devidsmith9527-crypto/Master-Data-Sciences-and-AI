@@ -1,0 +1,970 @@
+<!DOCTYPE html>
+<html lang="km">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guidebook Chapter 6 - Graphs and Hash Tables</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Battambang:wght@400;700&family=Suwannaphum:wght@400;700;900&family=Lato:wght@400;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <style>
+        :root {
+            --bg-color: #E2E8F0;
+            --paper-white: #FFFFFF;
+            --text-main: #0F172A;
+            --text-muted: #475569;
+            --accent-blue: #0284C7; 
+            --accent-green: #059669;
+            --accent-yellow: #D97706; 
+            --accent-red: #DC2626;
+            --header-footer-bg: #F0F9FF;
+            --code-bg: #111827;
+            --term-bg: #000000;
+            --term-text: #4ade80;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            background-color: var(--bg-color);
+            font-family: 'Battambang', sans-serif;
+            color: var(--text-main);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 40px 20px;
+        }
+
+        /* Utility Classes */
+        .text-blue { color: var(--accent-blue) !important; }
+        .text-green { color: var(--accent-green) !important; }
+        .text-red { color: var(--accent-red) !important; }
+        .text-yellow { color: var(--accent-yellow) !important; }
+
+        /* A4 Page Layout */
+        .a4-page {
+            width: 210mm; 
+            height: 297mm; 
+            background: var(--paper-white);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1); 
+            margin-bottom: 30mm;
+            display: flex; 
+            flex-direction: column; 
+            position: relative; 
+            border-radius: 8px;
+            overflow: hidden; 
+            page-break-after: always;
+        }
+
+        /* COVER PAGE STYLES */
+        .cover-page {
+            justify-content: center; 
+            align-items: center; 
+            text-align: center; 
+            padding: 30mm 20mm;
+            background-image: linear-gradient(to bottom, #F0F9FF, #FFFFFF);
+        }
+        .cover-logo { width: 140px; margin-bottom: 15px; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1)); }
+        .cover-uni-kh { font-family: 'Suwannaphum'; color: var(--accent-blue); font-size: 34px; margin: 0 0 5px 0; font-weight: 900; }
+        .cover-uni-en { font-family: 'Lato'; color: #475569; font-size: 18px; margin: 0 0 40px 0; letter-spacing: 1px; font-weight: bold; }
+        .cover-program { font-family: 'Suwannaphum'; font-size: 18px; color: var(--accent-green); margin-bottom: 25px; font-weight: bold; }
+        .cover-chapter-badge { background: var(--accent-blue); color: white; padding: 10px 30px; border-radius: 50px; font-size: 20px; font-weight: bold; margin-bottom: 40px; font-family: 'Suwannaphum'; box-shadow: 0 5px 15px rgba(2,132,199,0.3); display: inline-block;}
+        .cover-main-title { font-family: 'Suwannaphum'; font-size: 30px; color: var(--text-main); line-height: 1.5; margin-bottom: 10px; font-weight: 900; }
+        .cover-sub-title { font-family: 'Lato'; font-size: 18px; color: var(--accent-blue); margin-bottom: 50px; font-weight: bold; line-height: 1.5;}
+        
+        .cover-author-wrapper { display: flex; flex-direction: column; align-items: center; gap: 15px; margin-bottom: 40px; }
+        .cover-author-img { width: 110px; height: 110px; border-radius: 50%; border: 4px solid var(--accent-blue); object-fit: cover; box-shadow: 0 6px 15px rgba(0,0,0,0.15); background-color: #fff;}
+        .cover-author-text { font-size: 18px; color: #64748B; font-family: 'Suwannaphum'; }
+        .cover-author-text strong { color: var(--text-main); font-size: 22px; }
+
+        .cover-icons-wrapper { display: flex; gap: 50px; justify-content: center; margin-top: auto; border-top: 1px solid #E2E8F0; padding-top: 20px; width: 100%; }
+        .cover-icon-item img { height: 60px; margin-bottom: 8px; object-fit: contain; }
+        .cover-icon-item p { font-size: 14px; font-weight: bold; color: var(--accent-blue); font-family: 'Lato'; }
+
+        /* HEADER & FOOTER */
+        .global-header {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 12px 25px; border-bottom: 3px solid var(--accent-blue); background-color: var(--header-footer-bg);
+            height: 25mm;
+        }
+        .header-item { display: flex; flex-direction: column; align-items: center; gap: 5px; width: 120px; }
+        .header-item img { height: 40px; object-fit: contain; }
+        .header-item span { font-size: 10px; font-weight: bold; color: var(--accent-blue); text-align: center; font-family: 'Suwannaphum'; }
+        .header-center { text-align: center; flex-grow: 1; padding: 0 10px;}
+        .header-center h1 { font-family: 'Suwannaphum'; font-size: 15px; color: var(--accent-blue); margin: 0; }
+        .header-center p { font-family: 'Battambang'; font-size: 10px; color: #64748B; margin: 0; font-weight: bold; text-transform: uppercase;}
+
+        .global-footer {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 10px 25px; border-top: 3px solid var(--accent-blue);
+            background-color: var(--header-footer-bg);
+            position: absolute; bottom: 0; left: 0; width: 100%; height: 15mm;
+        }
+        .footer-left { display: flex; align-items: center; gap: 12px; }
+        .footer-left img { border-radius: 50%; border: 2px solid var(--accent-blue); width: 30px; height: 30px; object-fit: cover; background-color: #fff; }
+        .footer-left span { font-size: 11px; font-weight: bold; color: var(--text-main); font-family: 'Suwannaphum'; }
+        .footer-right { font-size: 11px; color: var(--accent-blue); font-weight: bold; font-family: 'Battambang'; }
+
+        /* CONTENT */
+        .page-content { flex-grow: 1; padding: 8mm 15mm; height: 257mm; overflow: hidden; } 
+        
+        .section-title {
+            background: var(--header-footer-bg); border-left: 5px solid var(--accent-blue);
+            padding: 8px 15px; margin: 10px 0; font-family: 'Suwannaphum';
+            font-size: 16px; display: flex; align-items: center; gap: 10px; font-weight: bold;
+            border-radius: 0 6px 6px 0; color: var(--accent-blue); page-break-after: avoid;
+        }
+
+        .text-block { font-size: 13px; line-height: 1.8; margin-bottom: 12px; color: var(--text-main); text-align: justify; }
+        
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
+        
+        .card { background: #F8FAFC; border: 1px solid #CBD5E1; border-top: 3px solid var(--accent-blue); padding: 12px; border-radius: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); page-break-inside: avoid; }
+        .card h4 { font-family: 'Suwannaphum'; font-size: 14px; color: var(--accent-blue); margin-bottom: 6px; display: flex; align-items: center; gap: 8px;}
+        .card.red-card { border-top-color: var(--accent-red); }
+        .card.red-card h4 { color: var(--accent-red); }
+        .card.green-card { border-top-color: var(--accent-green); }
+        .card.green-card h4 { color: var(--accent-green); }
+        .card.yellow-card { border-top-color: var(--accent-yellow); }
+        .card.yellow-card h4 { color: var(--accent-yellow); }
+        .card ul { padding-left: 20px; margin-top: 5px; font-size: 12px; line-height: 1.8;}
+
+        /* Narrative Boxes */
+        .narrative-box { background: #FFFFFF; border-radius: 6px; border: 1px solid #CBD5E1; border-left: 4px solid var(--accent-blue); padding: 10px 12px; margin-bottom: 12px; box-shadow: 0 2px 5px rgba(0,0,0,0.02); page-break-inside: avoid;}
+        .narrative-header { font-weight: bold; color: var(--accent-blue); font-size: 13.5px; border-bottom: 1px solid #E2E8F0; padding-bottom: 5px; margin-bottom: 6px; font-family: 'Suwannaphum'; display: flex; align-items: center; gap: 8px;}
+        .narrative-text { font-size: 12px; color: var(--text-main); line-height: 1.8; margin: 0; text-align: justify;}
+        
+        .narrative-box.danger { background: #FEF2F2; border-left-color: var(--accent-red); border-color: #FECACA;}
+        .narrative-box.danger .narrative-header { color: var(--accent-red); border-bottom-color: #FCA5A5; }
+        
+        .narrative-box.warning { background: #FFFBEB; border-left-color: var(--accent-yellow); border-color: #FDE68A;}
+        .narrative-box.warning .narrative-header { color: var(--accent-yellow); border-bottom-color: #FCD34D; }
+
+        /* Compare Blocks */
+        .compare-block { border: 1px solid #CBD5E1; border-radius: 8px; overflow: hidden; margin-bottom: 15px; background: #fff; box-shadow: 0 3px 8px rgba(0,0,0,0.05); page-break-inside: avoid;}
+        .compare-img { width: 100%; height: 110px; object-fit: cover; border-bottom: 2px solid var(--accent-blue); }
+        .compare-title { font-family: 'Suwannaphum'; font-size: 14.5px; color: var(--text-main); padding: 6px 12px; background: #F8FAFC; border-bottom: 1px solid #CBD5E1; font-weight: bold; text-align: center;}
+        .compare-grid { display: grid; grid-template-columns: 1fr 1fr; }
+        .compare-col { padding: 10px 12px; font-size: 12px; line-height: 1.8; text-align: justify; }
+        .compare-col:first-child { border-right: 1px dashed #CBD5E1; background: #F8FAFC; }
+        .compare-col h5 { font-family: 'Suwannaphum'; font-size: 13px; margin-bottom: 6px; display: flex; align-items: center; gap: 6px;}
+
+        /* Table Styles */
+        table { width: 100%; border-collapse: collapse; margin-bottom: 15px; font-size: 12px; background: #fff; box-shadow: 0 2px 5px rgba(0,0,0,0.05); border-radius: 6px; overflow: hidden; page-break-inside: avoid;}
+        th { background: var(--header-footer-bg); color: var(--accent-blue); font-family: 'Suwannaphum'; font-size: 13px; text-align: left; padding: 10px 12px; border-bottom: 2px solid var(--accent-blue); }
+        td { padding: 10px 12px; border-bottom: 1px solid #E2E8F0; color: var(--text-main); }
+        tr:last-child td { border-bottom: none; }
+        tr:nth-child(even) { background-color: #F8FAFC; }
+
+        /* Q&A Boxes */
+        .qa-box { border: 1px solid #CBD5E1; border-radius: 8px; margin-bottom: 12px; background: #fff; overflow: hidden; page-break-inside: avoid; box-shadow: 0 3px 6px rgba(0,0,0,0.02);}
+        .qa-question { background: #F0F9FF; padding: 10px 15px; border-bottom: 1px dashed #CBD5E1; font-weight: bold; color: var(--accent-blue); font-family: 'Suwannaphum'; font-size: 13.5px; display: flex; gap: 10px; align-items: flex-start; line-height: 1.6;}
+        .qa-answer { padding: 10px 15px; font-size: 12.5px; line-height: 1.8; color: var(--text-main); display: flex; gap: 10px; text-align: justify;}
+        .qa-icon-q { color: var(--accent-red); font-size: 16px; margin-top: 2px;}
+        .qa-icon-a { color: var(--accent-green); font-size: 16px; margin-top: 2px;}
+
+        .highlight-note { background-color: #FEF9C3; border: 1px dashed var(--accent-yellow); padding: 10px 15px; border-radius: 6px; margin-bottom: 12px; font-weight: bold; color: #854D0E; font-size: 12.5px; display: flex; align-items: center; gap: 10px; page-break-inside: avoid; line-height: 1.6;}
+
+        /* Fully Runnable Python Code Block Design */
+        .visual-img { width: 100%; height: 140px; object-fit: cover; border-radius: 4px; margin-bottom: 10px; border: 1px solid #E2E8F0; }
+        
+        .code-wrapper { background: var(--code-bg); border-radius: 8px; border: 1px solid #374151; overflow: hidden; width: 100%; box-shadow: 0 4px 10px rgba(0,0,0,0.15); margin-top: 10px; margin-bottom: 15px; page-break-inside: avoid;}
+        .code-header { background: #1F2937; padding: 6px 12px; font-size: 11.5px; font-family: 'Battambang', sans-serif; color: #9CA3AF; border-bottom: 1px solid #374151; display: flex; justify-content: space-between; align-items: center;}
+        .code-header span { font-weight: bold; color: #38BDF8; display: flex; align-items: center; gap: 5px; }
+        .code-content { padding: 10px 12px; }
+        
+        .code-content pre { font-family: 'Fira Code', monospace; font-size: 11.5px; line-height: 1.8; color: #f8f8f2; margin: 0; white-space: pre-wrap; word-break: break-word;}
+        .com { color: #6272a4; font-style: italic; font-family: 'Battambang', sans-serif !important; } 
+        .str { color: #f1fa8c; font-family: 'Battambang', sans-serif !important; }
+        
+        /* Terminal Output Design */
+        .code-output { background: var(--term-bg); padding: 10px 12px; border-top: 1px dashed #4B5563; }
+        .code-output pre { font-family: 'Battambang', sans-serif !important; font-size: 11.5px; color: var(--term-text); margin: 0; white-space: pre-wrap; line-height: 1.8; word-break: break-word;}
+        .code-output-title { font-size: 10px; color: #9CA3AF; margin-bottom: 5px; font-family: 'Battambang'; text-transform: uppercase;}
+
+        .kw { color: #ff79c6; font-weight: bold; } .fn { color: #50fa7b; } .num { color: #bd93f9; } .bult { color: #8be9fd; } .cls { color: #8be9fd; font-style: italic; }
+
+        /* PRINT MEDIA QUERY */
+        @page { size: A4; margin: 0; }
+        @media print {
+            body { background: white; padding: 0; margin: 0; }
+            .a4-page { box-shadow: none; margin: 0; width: 210mm; height: 297mm; border: none; border-radius: 0; page-break-after: always; }
+            .no-print { display: none !important; }
+            * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+        }
+    </style>
+</head>
+<body>
+
+<button class="no-print" onclick="window.print()" style="margin-bottom: 20px; padding: 12px 25px; cursor: pointer; background: var(--accent-blue); color: white; border: none; border-radius: 8px; font-family: 'Battambang'; font-weight: bold; font-size: 16px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); transition: all 0.3s;">
+    <i class="fa-solid fa-print"></i> បោះពុម្ពសៀវភៅមគ្គទ្ទេសក៍ (Print Guidebook)
+</button>
+
+<!-- ================= PAGE 1: COVER ================= -->
+<div class="a4-page cover-page">
+    <img src="https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png" alt="Angkor University Logo" class="cover-logo" onerror="this.src='Logo.png'">
+    <h1 class="cover-uni-kh">សាកលវិទ្យាល័យអង្គរ</h1>
+    <p class="cover-uni-en">ANGKOR UNIVERSITY</p>
+
+    <div class="cover-program">
+        <i class="fa-solid fa-graduation-cap"></i> អនុបណ្ឌិតវិទ្យាសាស្ត្រទិន្នន័យ និងបញ្ញាសិប្បនិម្មិត
+    </div>
+
+    <div class="cover-chapter-badge">សៀវភៅមគ្គទ្ទេសក៍ (Guidebook) | ជំពូកទី ៦</div>
+
+    <h1 class="cover-main-title">រចនាសម្ព័ន្ធទិន្នន័យ Graphs និង Hash Tables<br>បណ្តាញតភ្ជាប់ និងតារាងកូនសោបំប្លែង</h1>
+    <h2 class="cover-sub-title">(Graphs and Hash Tables in Python)</h2>
+
+    <div class="cover-author-wrapper">
+        <img src="Lim.jpg" alt="Professor" class="cover-author-img" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'">
+        <div class="cover-author-text">
+            រៀបចំដោយសាស្ត្រាចារ្យ៖ <strong>សឿង លីម (Soeurng LIM)</strong>
+        </div>
+    </div>
+
+    <div class="cover-icons-wrapper">
+        <div class="cover-icon-item">
+            <i class="fa-solid fa-network-wired" style="font-size: 60px; color: var(--accent-blue); margin-bottom: 8px;"></i>
+            <p>Graphs</p>
+        </div>
+        <div class="cover-icon-item">
+            <i class="fa-solid fa-hashtag" style="font-size: 60px; color: var(--accent-green); margin-bottom: 8px;"></i>
+            <p>Hash Tables</p>
+        </div>
+    </div>
+</div>
+
+<!-- ================= PAGE 2: Objectives & TOC ================= -->
+<div class="a4-page">
+    <div class="global-header">
+        <div class="header-item"><img src="https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png" onerror="this.src='Logo.png'"><span>សាកលវិទ្យាល័យអង្គរ</span></div>
+        <div class="header-center">
+            <h1>សៀវភៅមគ្គទ្ទេសក៍ (Guidebook) - ជំពូកទី ៦</h1>
+            <p>ADVANCED DATA STRUCTURES AND ALGORITHMS FOR AI</p>
+        </div>
+        <div class="header-item"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg"><span>Python Pro</span></div>
+    </div>
+
+    <div class="page-content">
+        <!-- Banner Image for Chapter 6 -->
+        <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=1200&q=80" class="visual-img" alt="Network Graphics Banner" style="height: 120px; object-fit: cover; margin-bottom: 15px; border-bottom: 3px solid var(--accent-blue);">
+
+        <!-- Learning Objectives -->
+        <div class="section-title" style="margin-top: 0;"><i class="fa-solid fa-bullseye"></i> វត្ថុបំណងនៃមេរៀន (Learning Objectives)</div>
+        <div class="card green-card" style="margin-bottom: 15px;">
+            <p class="text-block" style="margin-bottom: 10px; font-weight: bold;">បន្ទាប់ពីបញ្ចប់ការសិក្សានៅក្នុងជំពូកទី ៦ នេះ និស្សិតនឹងមានសមត្ថភាព៖</p>
+            <ul style="line-height: 1.7; color: var(--text-main); font-size: 12.5px; padding-left: 25px;">
+                <li><b class="text-blue">យល់ពីរចនាសម្ព័ន្ធ Graphs៖</b> ស្គាល់ច្បាស់ពីប្រព័ន្ធទំនាក់ទំនងពហុទិសដៅ (Many-to-Many Connection) ដែលគ្មាន Root ដូចជា Tree។</li>
+                <li><b class="text-blue">គ្រប់គ្រងសទ្ទានុក្រម Graph៖</b> យល់ដឹងពីនិយមន័យ Vertex (Node), Edge, Weight, Directed/Undirected និង Cycle។</li>
+                <li><b class="text-blue">សរសេរកូដតំណាង Graph៖</b> អាចសរសេរកូដបង្កើតបណ្តាញ Graph ដោយប្រើប្រាស់វិធីសាស្ត្រ Adjacency List ក្នុង Python។</li>
+                <li><b class="text-blue">ស្វែងយល់ពី Hash Table៖</b> យល់ពីរបៀបបម្លែងកូនសោ (Key-Value Mapping) ដើម្បីរុករកទិន្នន័យបានលឿនបំផុតកម្រិត O(1)។</li>
+                <li><b class="text-blue">វិភាគ និងដោះស្រាយ Collision៖</b> ស្វែងយល់ពីមូលហេតុនៃការគណនាអាសយដ្ឋានជាន់គ្នា (Hashing Collision) និងយន្តការដោះស្រាយ។</li>
+                <li><b class="text-blue">ការប្រើប្រាស់ក្នុងវិស័យ AI៖</b> ស្វែងយល់ពីការអនុវត្ត Graphs ក្នុងប្រព័ន្ធស្វែងរកផ្លូវ (Maps/Logistics) និង Hash Tables ក្នុង NLP Caching។</li>
+            </ul>
+        </div>
+
+        <!-- Table of Contents -->
+        <div class="section-title"><i class="fa-solid fa-list"></i> មាតិកា (Table of Contents)</div>
+        <div class="narrative-box" style="padding: 12px 20px; border-left-color: var(--accent-green); margin-bottom: 0;">
+            <div class="grid-2" style="margin-bottom: 0;">
+                <div style="font-size: 13px; line-height: 2.1; color: var(--text-main);">
+                    <div style="border-bottom: 1px dashed #E2E8F0;"><b class="text-blue">១.</b> សេចក្តីផ្តើមអំពី Graphs (រចនាសម្ព័ន្ធបណ្តាញតភ្ជាប់)</div>
+                    <div style="border-bottom: 1px dashed #E2E8F0;"><b class="text-blue">២.</b> សទ្ទានុក្រមស្នូលរបស់ Graphs (Vertices & Edges)</div>
+                    <div style="border-bottom: 1px dashed #E2E8F0;"><b class="text-blue">៣.</b> យន្តការតំណាង Graph តាមរយៈ Adjacency List</div>
+                    <div style="border-bottom: 1px dashed #E2E8F0;"><b class="text-blue">៤.</b> ការអនុវត្តកូដសាងសង់ Graph ក្នុង Python</div>
+                    <div style="border-bottom: 1px dashed #E2E8F0;"><b class="text-blue">៥.</b> ក្បួនដោះស្រាយរុករកក្នុង Graph (BFS vs DFS)</div>
+                    <div style="border-bottom: 1px dashed #E2E8F0;"><b class="text-blue">៦.</b> សេចក្តីផ្តើមអំពី Hash Tables (តារាងកូនសោបំប្លែង)</div>
+                </div>
+                <div style="font-size: 13px; line-height: 2.1; color: var(--text-main);">
+                    <div style="border-bottom: 1px dashed #E2E8F0;"><b class="text-blue">៧.</b> យន្តការ Hash Function និងបញ្ហាការបុកគ្នា (Collision)</div>
+                    <div style="border-bottom: 1px dashed #E2E8F0;"><b class="text-blue">៨.</b> ការអនុវត្តកូដ Python Dictionaries ជា Hash Table</div>
+                    <div style="border-bottom: 1px dashed #E2E8F0;"><b class="text-blue">៩.</b> ការប្រៀបធៀបលក្ខណៈរវាង Hash Table និង Array</div>
+                    <div style="border-bottom: 1px dashed #E2E8F0;"><b class="text-blue">១០.</b> តារាងវិភាគប្រសិទ្ធភាពពេលវេលា Big-O (Time Complexity)</div>
+                    <div style="border-bottom: 1px dashed #E2E8F0;"><b class="text-blue">១១.</b> សំណួររំលឹកមេរៀនប្រចាំជំពូកទី ៦ និងការបកស្រាយ (Q&A)</div>
+                    <div style="border-bottom: 1px dashed #E2E8F0;"><b class="text-blue">១២.</b> សទ្ទានុក្រមគន្លឹះ និងគន្ថនិទ្ទេសយោង (Glossary & References)</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="global-footer">
+        <div class="footer-left"><img src="Lim.jpg" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'"><span>សាស្ត្រាចារ្យ៖ សឿង លីម (Soeurng LIM)</span></div>
+        <div class="footer-right">ទំព័រទី ២ នៃ ១៤</div>
+    </div>
+</div>
+
+<!-- ================= PAGE 3: Intro to Graphs ================= -->
+<div class="a4-page">
+    <div class="global-header">
+        <div class="header-item"><img src="https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png" onerror="this.src='Logo.png'"><span>សាកលវិទ្យាល័យអង្គរ</span></div>
+        <div class="header-center">
+            <h1>សៀវភៅមគ្គទ្ទេសក៍ (Guidebook) - ជំពូកទី ៦</h1>
+            <p>ADVANCED DATA STRUCTURES AND ALGORITHMS FOR AI</p>
+        </div>
+        <div class="header-item"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg"><span>Python Pro</span></div>
+    </div>
+
+    <div class="page-content">
+        <div class="section-title" style="margin-top: 0;"><i class="fa-solid fa-network-wired"></i> ១. សេចក្តីផ្តើមអំពី Graphs (រចនាសម្ព័ន្ធបណ្តាញតភ្ជាប់)</div>
+        <div class="text-block">
+            <b>Graph (ក្រាហ្វ ឬបណ្តាញតភ្ជាប់)</b> គឺជាប្រភេទរចនាសម្ព័ន្ធទិន្នន័យមិនលីនេអ៊ែរ (Non-linear Data Structure) ដ៏មានឥទ្ធិពលបំផុត ដែលត្រូវបានរចនាឡើងដើម្បីតំណាងឱ្យទំនាក់ទំនងពហុទិសដៅ **(Many-to-Many Relationship)**។ ខុសប្លែកពី Tree ដែលទិន្នន័យត្រូវតម្រៀបតាមឋានានុក្រមពីលើចុះក្រោម និងមាន Root តែមួយគត់ Graph មិនមានចំណុច Root ឬច្បាប់បិទបាំងអ្វីឡើយ។ ធាតុនីមួយៗអាចតភ្ជាប់ទៅកាន់ធាតុដទៃទៀតបានដោយសេរី បង្កើតបានជាបណ្តាញខ្វាត់ខ្វែង។
+        </div>
+
+        <div class="grid-2">
+            <div class="narrative-box">
+                <div class="narrative-header"><i class="fa-solid fa-map-location-dot"></i> ករណីសិក្សាទី១៖ ប្រព័ន្ធផែនទី Google Maps</div>
+                <p class="narrative-text">នៅក្នុងប្រព័ន្ធផែនទីរបស់ Google ទីក្រុង ឬចំណុចបំបែកនីមួយៗត្រូវបានតំណាងដោយចំណុច **Vertex (Node)**។ រីឯផ្លូវថ្នល់ ផ្លូវល្បឿនលឿន ឬស្ពានដែលតភ្ជាប់ពីក្រុងមួយទៅក្រុងមួយទៀត ត្រូវបានតំណាងដោយខ្សែ **Edge**។ Google ប្រើរចនាសម្ព័ន្ធនេះដើម្បីគណនារកផ្លូវខ្លីបំផុត O(V + E)។</p>
+            </div>
+            <div class="narrative-box warning">
+                <div class="narrative-header"><i class="fa-solid fa-users"></i> ករណីសិក្សាទី២៖ បណ្តាញសង្គម Facebook (Social Graph)</div>
+                <p class="narrative-text">គណនីគូសវាសរបស់អ្នកប្រើប្រាស់ម្នាក់ៗ (User Profiles) គឺជាចំណុច Vertex។ នៅពេលដែលអ្នកប្រើប្រាស់ពីរនាក់ចុចបង្កើតទំនាក់ទំនងមិត្តភាព (Add Friend) វានឹងបង្កើតខ្សែ Edge មួយតភ្ជាប់រវាងពួកគេ។ បណ្តាញមិត្តភាពសរុបនៅលើលោកបង្កើតបានជា Graph ដ៏ធំធេងបំផុតមួយ។</p>
+            </div>
+        </div>
+
+        <!-- Inline SVG Visualization -->
+        <div style="text-align: center; margin: 15px 0 0 0;">
+            <svg viewBox="0 0 400 120" style="width: 60%; height: auto; display: inline-block;">
+                <line x1="80" y1="60" x2="200" y2="60" stroke="#64748B" stroke-width="3"/>
+                <line x1="200" y1="60" x2="320" y2="60" stroke="#64748B" stroke-width="3"/>
+                <line x1="80" y1="60" x2="200" y2="110" stroke="#64748B" stroke-width="3"/>
+                <line x1="200" y1="60" x2="200" y2="110" stroke="#64748B" stroke-width="3"/>
+                
+                <circle cx="80" cy="60" r="16" fill="#0284C7"/>
+                <text x="80" y="64" font-family="sans-serif" font-size="11" font-weight="bold" fill="#FFF" text-anchor="middle">A</text>
+                
+                <circle cx="200" cy="60" r="16" fill="#0284C7"/>
+                <text x="200" y="64" font-family="sans-serif" font-size="11" font-weight="bold" fill="#FFF" text-anchor="middle">B</text>
+                
+                <circle cx="320" cy="60" r="16" fill="#0284C7"/>
+                <text x="320" y="64" font-family="sans-serif" font-size="11" font-weight="bold" fill="#FFF" text-anchor="middle">C</text>
+                
+                <circle cx="200" cy="110" r="16" fill="#0284C7"/>
+                <text x="200" y="114" font-family="sans-serif" font-size="11" font-weight="bold" fill="#FFF" text-anchor="middle">D</text>
+
+                <text x="80" y="30" font-family="'Battambang'" font-size="10" fill="#0284C7" text-anchor="middle">Vertex (Node)</text>
+                <text x="140" y="50" font-family="'Battambang'" font-size="10" fill="#64748B" text-anchor="middle">Edge (ខ្សែ)</text>
+            </svg>
+        </div>
+    </div>
+
+    <div class="global-footer">
+        <div class="footer-left"><img src="Lim.jpg" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'"><span>សាស្ត្រាចារ្យ៖ សឿង លីម (Soeurng LIM)</span></div>
+        <div class="footer-right">ទំព័រទី ៣ នៃ ១៤</div>
+    </div>
+</div>
+
+<!-- ================= PAGE 4: Graph Terminology ================= -->
+<div class="a4-page">
+    <div class="global-header">
+        <div class="header-item"><img src="https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png" onerror="this.src='Logo.png'"><span>សាកលវិទ្យាល័យអង្គរ</span></div>
+        <div class="header-center">
+            <h1>សៀវភៅមគ្គទ្ទេសក៍ (Guidebook) - ជំពូកទី ៦</h1>
+            <p>ADVANCED DATA STRUCTURES AND ALGORITHMS FOR AI</p>
+        </div>
+        <div class="header-item"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg"><span>Python Pro</span></div>
+    </div>
+
+    <div class="page-content">
+        <div class="section-title" style="margin-top: 0;"><i class="fa-solid fa-circle-info"></i> ២. សទ្ទានុក្រមស្នូលរបស់ Graphs (Vertices & Edges)</div>
+        <div class="text-block">
+            ដើម្បីសរសេរកូដគ្រប់គ្រង និងអភិវឌ្ឍប្រព័ន្ធ AI ដែលពឹងផ្អែកលើ Graph យើងត្រូវយល់ច្បាស់ពីលក្ខណៈបច្ចេកទេសស្នូលទាំងនេះ៖
+        </div>
+
+        <div class="grid-2">
+            <div class="card">
+                <h4><i class="fa-solid fa-circle-dot"></i> ១. Vertex (ឬ Node - ចំណុចគោល)</h4>
+                <p class="text-block" style="font-size: 12px; margin-bottom: 0;">
+                    ជាប្រអប់ ឬវត្ថុដែលរក្សាទុកទិន្នន័យពិតប្រាកដ។ ឧទាហរណ៍៖ នៅក្នុងបណ្តាញអ៊ីនធឺណិត Vertex គឺជារ៉ោតទ័រ (Router) ឬកុំព្យូទ័ររបស់អតិថិជន។
+                </p>
+            </div>
+            <div class="card">
+                <h4><i class="fa-solid fa-circle-nodes"></i> ២. Edge (ខ្សែតភ្ជាប់ទំនាក់ទំនង)</h4>
+                <p class="text-block" style="font-size: 12px; margin-bottom: 0;">
+                    ជាខ្សែចងភ្ជាប់ទំនាក់ទំនងរវាង Vertex ពីរ។ អាចមានលក្ខណៈគ្មានទិសដៅ **(Undirected Edge)** ដូចជាបណ្តាញទំនាក់ទំនងមិត្តភាព ឬមានទិសដៅជាក់លាក់ **(Directed Edge)** ដូចជាបណ្តាញ Follower របស់ Instagram (A តាមដាន B តែ B មិនប្រាកដថាផ្ញើត្រឡប់មក A វិញឡើយ)។
+                </p>
+            </div>
+        </div>
+
+        <div class="grid-2" style="margin-top: 10px;">
+            <div class="card yellow-card">
+                <h4><i class="fa-solid fa-weight-hanging"></i> ៣. Weight (ទម្ងន់ខ្សែ ឬតម្លៃចំណាយ)</h4>
+                <p class="text-block" style="font-size: 12px; margin-bottom: 0;">
+                    ជាតម្លៃលេខដែលបានកំណត់ដាក់នៅលើ Edge នីមួយៗ ដើម្បីតំណាងឱ្យចម្ងាយ (គីឡូម៉ែត្រ) រយៈពេល (នាទី) ឬតម្លៃប្រើប្រាស់ផ្សេងៗ។ ក្រាហ្វដែលមាន Weight ហៅថា **Weighted Graph**។
+                </p>
+            </div>
+            <div class="card red-card">
+                <h4><i class="fa-solid fa-rotate"></i> ៤. Cycle (រង្វិលជុំក្នុងបណ្តាញ)</h4>
+                <p class="text-block" style="font-size: 12px; margin-bottom: 0;">
+                    ជាគន្លងផ្លូវ (Path) ដែលចាប់ផ្តើមចេញពី Vertex មួយ ហើយបន្តឆ្លងកាត់ខ្សែតភ្ជាប់ Edges ផ្សេងៗរួចវិលមកជាន់ចំណុច Vertex ដើមវិញជាលក្ខណៈវង្វង់បិទជិត។
+                </p>
+            </div>
+        </div>
+
+        <div class="narrative-box warning" style="margin-top: 15px; margin-bottom: 0;">
+            <div class="narrative-header"><i class="fa-solid fa-traffic-light"></i> ករណីសិក្សា៖ ស្ទះចរាចរណ៍ និង Cycle Detected</div>
+            <p class="narrative-text">នៅក្នុងប្រព័ន្ធចរាចរណ៍ក្រុងឆ្លាតវៃ (Smart City AI) ម៉ាស៊ីនវិភាគនឹងចាត់ទុកផ្លូវថ្នល់ជា Directed Graph។ ប្រសិនបើ AI ឆែករកឃើញថាមានការកកើតឡើងនៃ **Cycle (រង្វិលជុំជាប់គាំង)** នៅក្នុង Graph នោះមានន័យថាចរាចរណ៍កំពុងជួបបញ្ហាស្ទះរង្វង់មូល ដែលទាមទារឲ្យមានការប្តូរភ្លើងសញ្ញាចរាចរណ៍ជាបន្ទាន់។</p>
+        </div>
+    </div>
+
+    <div class="global-footer">
+        <div class="footer-left"><img src="Lim.jpg" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'"><span>សាស្ត្រាចារ្យ៖ សឿង លីម (Soeurng LIM)</span></div>
+        <div class="footer-right">ទំព័រទី ៤ នៃ ១៤</div>
+    </div>
+</div>
+
+<!-- ================= PAGE 5: Graph Representations ================= -->
+<div class="a4-page">
+    <div class="global-header">
+        <div class="header-item"><img src="https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png" onerror="this.src='Logo.png'"><span>សាកលវិទ្យាល័យអង្គរ</span></div>
+        <div class="header-center">
+            <h1>សៀវភៅមគ្គទ្ទេសក៍ (Guidebook) - ជំពូកទី ៦</h1>
+            <p>ADVANCED DATA STRUCTURES AND ALGORITHMS FOR AI</p>
+        </div>
+        <div class="header-item"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg"><span>Python Pro</span></div>
+    </div>
+
+    <div class="page-content">
+        <div class="section-title" style="margin-top: 0;"><i class="fa-solid fa-diagram-project"></i> ៣. យន្តការតំណាង Graph តាមរយៈ Adjacency List</div>
+        <div class="text-block">
+            នៅក្នុងការសរសេរកូដ តើកុំព្យូទ័ររក្សាទុក Graph យ៉ាងដូចម្តេច? វិធីពេញនិយម និងមានប្រសិទ្ធភាពបំផុតគឺប្រើប្រាស់ <b>Adjacency List (បញ្ជីអ្នកជិតខាង)</b>។ យន្តការនេះប្រើប្រាស់ Python Dictionary ដើម្បីផ្ទុក Vertex នីមួយៗជាកូនសោ (Key) ហើយ Value របស់វាគឺជាបញ្ជី (List) ផ្ទុកនូវរាល់គ្រប់ចំណុចដែលបានភ្ជាប់មកកាន់វាផ្ទាល់។
+        </div>
+
+        <div class="grid-2">
+            <div class="narrative-box">
+                <div class="narrative-header"><i class="fa-solid fa-address-book"></i> ករណីសិក្សាទី១៖ សៀវភៅកត់បញ្ជីឈ្មោះមិត្តភក្តិ</div>
+                <p class="narrative-text">អ្នកមានសៀវភៅកត់ឈ្មោះមិត្តភក្តិ។ នៅលើទំព័រនីមួយៗមានឈ្មោះ Key ដូចជា "Sok"។ នៅក្រោមឈ្មោះនោះមានកត់ឈ្មោះមិត្តទាំងអស់របស់ Sok គឺ ["Sao", "Dara", "Chavy"]។ នេះជួយឱ្យអ្នកអាចបើកមើលអ្នកតភ្ជាប់របស់ Sok បានភ្លាមៗដោយមិនបាច់ដើររកមើលពេញមួយឃ្លាំងទិន្នន័យឡើយ។</p>
+            </div>
+            <div class="narrative-box warning">
+                <div class="narrative-header"><i class="fa-solid fa-plane-departure"></i> ករណីសិក្សាទី២៖ បណ្តាញជើងហោះហើរ (Flight Connections)</div>
+                <p class="narrative-text">ក្រុមហ៊ុនអាកាសចរណ៍រក្សាទុកទិន្នន័យហោះហើរជា Adjacency List៖
+                <br>• <code>'ភ្នំពេញ': ['សៀមរាប', 'បាងកក', 'សិង្ហបុរី']</code>
+                <br>• <code>'សៀមរាប': ['ភ្នំពេញ']</code>
+                <br>យន្តការនេះជួយឱ្យប្រព័ន្ធកក់សំបុត្ររបស់ AI ដឹងភ្លាមៗថា ពីភ្នំពេញមានជើងហោះហើរទៅណាខ្លះ O(1)។</p>
+            </div>
+        </div>
+
+        <div class="compare-block" style="margin-top: 15px; margin-bottom: 0;">
+            <div class="compare-title" style="text-align: left;"><i class="fa-solid fa-memory text-blue"></i> ប្រសិទ្ធភាពសន្សំសំចៃ Memory RAM របស់ Adjacency List</div>
+            <div class="compare-grid" style="grid-template-columns: 1fr;">
+                <div class="compare-col" style="border-right: none;">
+                    នៅក្នុងការសរសេរកូដ មានវិធីមួយទៀតគឺប្រើប្រាស់ **Adjacency Matrix** (តារាងពីរវិមាត្រ $V \times V$)។ ប៉ុន្តែប្រសិនបើ Graph មានចំណុច Vertex ច្រើនរាប់លាន (ដូចជាគណនី Facebook) តែមានខ្សែតភ្ជាប់គ្នាតិចតួច (Sparse Graph) នោះ Adjacency Matrix នឹងបង្កើតប្រអប់ទំនេរចោលក្នុង RAM រាប់លានជីហ្គាបៃ (ស៊ី Memory O($V^2$))។ ផ្ទុយទៅវិញ <b>Adjacency List</b> ផ្ទុកតែទិន្នន័យដែលមានខ្សែភ្ជាប់ពិតប្រាកដប៉ុណ្ណោះ (ស៊ី Memory ត្រឹម O($V + E$)) ដែលជួយសន្សំសំចៃ RAM របស់ម៉ាស៊ីនដំណើរការបានច្រើនលានដង។
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="global-footer">
+        <div class="footer-left"><img src="Lim.jpg" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'"><span>សាស្ត្រាចារ្យ៖ សឿង លីម (Soeurng LIM)</span></div>
+        <div class="footer-right">ទំព័រទី ៥ នៃ ១៤</div>
+    </div>
+</div>
+
+<!-- ================= PAGE 6: Graph Code ================= -->
+<div class="a4-page">
+    <div class="global-header">
+        <div class="header-item"><img src="https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png" onerror="this.src='Logo.png'"><span>សាកលវិទ្យាល័យអង្គរ</span></div>
+        <div class="header-center">
+            <h1>សៀវភៅមគ្គទ្ទេសក៍ (Guidebook) - ជំពូកទី ៦</h1>
+            <p>ADVANCED DATA STRUCTURES AND ALGORITHMS FOR AI</p>
+        </div>
+        <div class="header-item"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg"><span>Python Pro</span></div>
+    </div>
+
+    <div class="page-content">
+        <div class="section-title" style="margin-top: 0;"><i class="fa-solid fa-code"></i> ៤. ការអនុវត្តកូដសាងសង់ Graph ក្នុង Python</div>
+        <div class="text-block" style="margin-bottom: 5px;">
+            ខាងក្រោមនេះជាកូដ Python ជាក់ស្តែងនៃការបង្កើត <code class="text-blue">class Graph</code> ដោយប្រើប្រាស់ Dictionary ដើម្បីគ្រប់គ្រង Adjacency List និងការសរសេរអនុគមន៍ដើម្បីបន្ថែមគែមតភ្ជាប់ (Edges) ទាំងទិសដៅគ្មានដែនកំណត់ (Undirected Graph)។
+        </div>
+
+        <!-- Runnable Code -->
+        <div class="code-wrapper" style="margin-top: 10px; margin-bottom: 10px;">
+            <div class="code-header"><span><i class="fa-brands fa-python"></i> 1_graph_adjacency_list.py</span><span>Adjacency List Implementation</span></div>
+            <div class="code-content"><pre>
+<span class="kw">class</span> <span class="cls">Graph</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="kw">self</span>):
+        <span class="com"># បង្កើត Dictionary ទទេមួយសម្រាប់ផ្ទុក Adjacency List</span>
+        <span class="kw">self</span>.adj_list = {}
+
+    <span class="com"># បន្ថែមគែមតភ្ជាប់រវាង Vertex u និង v O(1)</span>
+    <span class="kw">def</span> <span class="fn">add_edge</span>(<span class="kw">self</span>, u, v):
+        <span class="com"># ប្រសិនបើចំណុច u ឬ v មិនទាន់មានក្នុងបញ្ជី ត្រូវបង្កើត List ទទេមួយជាមុនសិន</span>
+        <span class="kw">if</span> u <span class="kw">not in</span> <span class="kw">self</span>.adj_list:
+            <span class="kw">self</span>.adj_list[u] = []
+        <span class="kw">if</span> v <span class="kw">not in</span> <span class="kw">self</span>.adj_list:
+            <span class="kw">self</span>.adj_list[v] = []
+
+        <span class="com"># ភ្ជាប់ u ទៅ v ហើយនិងភ្ជាប់ v ទៅ u វិញ (Undirected Graph)</span>
+        <span class="kw">self</span>.adj_list[u].append(v)
+        <span class="kw">self</span>.adj_list[v].append(u)
+
+    <span class="com"># បង្ហាញបណ្តាញតភ្ជាប់សរុប O(V)</span>
+    <span class="kw">def</span> <span class="fn">display_graph</span>(<span class="kw">self</span>):
+        <span class="kw">for</span> vertex, neighbors <span class="kw">in</span> <span class="kw">self</span>.adj_list.items():
+            <span class="fn">print</span>(<span class="str">f"{vertex} តភ្ជាប់ទៅកាន់ -> {neighbors}"</span>)
+
+<span class="com"># ដំណើរការសាកល្បង</span>
+network = Graph()
+network.add_edge(<span class="str">"A"</span>, <span class="str">"B"</span>)
+network.add_edge(<span class="str">"B"</span>, <span class="str">"C"</span>)
+network.add_edge(<span class="str">"A"</span>, <span class="str">"D"</span>)
+network.add_edge(<span class="str">"B"</span>, <span class="str">"D"</span>)
+
+<span class="fn">print</span>(<span class="str">"រចនាសម្ព័ន្ធបណ្តាញតភ្ជាប់ Graph គំរូ:"</span>)
+network.display_graph()
+</pre></div>
+            <div class="code-output">
+                <div class="code-output-title">>_ Terminal Output</div>
+                <pre>រចនាសម្ព័ន្ធបណ្តាញតភ្ជាប់ Graph គំរូ:
+A តភ្ជាប់ទៅកាន់ -> ['B', 'D']
+B តភ្ជាប់ទៅកាន់ -> ['A', 'C', 'D']
+C តភ្ជាប់ទៅកាន់ -> ['B']
+D តភ្ជាប់ទៅកាន់ -> ['A', 'B']</pre>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="global-footer">
+        <div class="footer-left"><img src="Lim.jpg" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'"><span>សាស្ត្រាចារ្យ៖ សឿង លីម (Soeurng LIM)</span></div>
+        <div class="footer-right">ទំព័រទី ៦ នៃ ១៤</div>
+    </div>
+</div>
+
+<!-- ================= PAGE 7: Graph Traversals ================= -->
+<div class="a4-page">
+    <div class="global-header">
+        <div class="header-item"><img src="https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png" onerror="this.src='Logo.png'"><span>សាកលវិទ្យាល័យអង្គរ</span></div>
+        <div class="header-center">
+            <h1>សៀវភៅមគ្គទ្ទេសក៍ (Guidebook) - ជំពូកទី ៦</h1>
+            <p>ADVANCED DATA STRUCTURES AND ALGORITHMS FOR AI</p>
+        </div>
+        <div class="header-item"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg"><span>Python Pro</span></div>
+    </div>
+
+    <div class="page-content">
+        <div class="section-title" style="margin-top: 0;"><i class="fa-solid fa-route"></i> ៥. ក្បួនដោះស្រាយរុករកក្នុង Graph (BFS និង DFS)</div>
+        <div class="text-block">
+            ដោយសារ Graph អាចតភ្ជាប់ខ្វាត់ខ្វែងគ្មានទីបញ្ចប់ ដើម្បីរុករកបង្ហាញ ឬស្វែងរកទិន្នន័យ វិស្វករ DSA បានបង្កើតក្បួនដោះស្រាយស្វែងរកធំៗពីរ គឺ <b>BFS</b> និង <b>DFS</b>៖
+        </div>
+
+        <div class="card green-card" style="margin-bottom: 12px;">
+            <h4><i class="fa-solid fa-water"></i> ១. BFS (Breadth-First Search - ស្វែងរកតាមទម្រង់វាលរាប)</h4>
+            <p class="text-block" style="font-size: 12px; margin-bottom: 0; text-align: justify;">
+                BFS ធ្វើការរុករកដោយស្កែនមើលរាល់គ្រប់ចំណុចអ្នកជិតខាងដែលនៅជិតបង្អស់ជាមុនសិន រួចទើបបន្តរំកិលទៅកាន់កម្រិតបន្ទាប់។ ក្បួនដោះស្រាយនេះប្រើប្រាស់រចនាសម្ព័ន្ធ <b>Queue (FIFO)</b> និងមានល្បឿន O(V + E)។
+                <br><b>• ករណីសិក្សា៖</b> ប្រដូចទៅនឹងការទម្លាក់ដុំថ្មចូលទៅក្នុងទឹក រលកនឹងសាយភាយចេញជារង្វង់ពីជិតទៅឆ្ងាយ។ BFS ត្រូវបានប្រើប្រាស់នៅក្នុង Google Maps ដើម្បីគណនាស្វែងរក **ផ្លូវខ្លីបំផុត (Shortest Path)** ទៅកាន់គោលដៅ។
+            </p>
+        </div>
+
+        <div class="card red-card" style="margin-bottom: 12px;">
+            <h4><i class="fa-solid fa-route"></i> ២. DFS (Depth-First Search - ស្វែងរកតាមទម្រង់ស៊ីជម្រៅ)</h4>
+            <p class="text-block" style="font-size: 12px; margin-bottom: 0; text-align: justify;">
+                DFS ធ្វើការរុករកដោយជ្រើសរើសផ្លូវមួយ រួចដើរតម្រង់ទៅមុខស៊ីជម្រៅរហូតដល់ផ្លូវទាល់ ទើបចាប់ផ្តើមដកថយត្រឡប់ក្រោយ **(Backtrack)** មករកផ្លូវបំបែកផ្សេងទៀត។ ក្បួនដោះស្រាយនេះប្រើប្រាស់ <b>Stack (LIFO)</b> ឬការហៅខ្លួនឯង (Recursion)។
+                <br><b>• ករណីសិក្សា៖</b> ប្រដូចទៅនឹងការរាវរកផ្លូវចេញពីវង្កត់ (Maze)។ DFS ត្រូវបាន AI ប្រើប្រាស់ជាចាំបាច់ដើម្បីត្រួតពិនិត្យ និងស្វែងរកថាតើបណ្តាញតភ្ជាប់មានកកើតឡើងនូវ **រង្វិលជុំ (Cycle)** ឬអត់។
+            </p>
+        </div>
+
+        <div class="highlight-note" style="margin-bottom: 0; padding: 10px 15px;">
+            <i class="fa-solid fa-bell text-yellow"></i> <b>បញ្ជាក់៖</b> នៅក្នុងការសរសេរកូដស្វែងរកផ្លូវ (BFS/DFS) យើងត្រូវប្រើប្រាស់ List ឬ Set មួយឈ្មោះថា <code>visited</code> ជានិច្ច ដើម្បីកត់ត្រាចំណុចដែលបានដើរឆ្លងកាត់រួចហើយ ការពារកុំព្យូទ័ររត់វិលវល់ក្នុងរង្វិលជុំ (Infinite Loop) គាំងម៉ាស៊ីន។
+        </div>
+    </div>
+
+    <div class="global-footer">
+        <div class="footer-left"><img src="Lim.jpg" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'"><span>សាស្ត្រាចារ្យ៖ សឿង លីម (Soeurng LIM)</span></div>
+        <div class="footer-right">ទំព័រទី ៧ នៃ ១៤</div>
+    </div>
+</div>
+
+<!-- ================= PAGE 8: Intro to Hash Tables ================= -->
+<div class="a4-page">
+    <div class="global-header">
+        <div class="header-item"><img src="https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png" onerror="this.src='Logo.png'"><span>សាកលវិទ្យាល័យអង្គរ</span></div>
+        <div class="header-center">
+            <h1>សៀវភៅមគ្គទ្ទេសក៍ (Guidebook) - ជំពូកទី ៦</h1>
+            <p>ADVANCED DATA STRUCTURES AND ALGORITHMS FOR AI</p>
+        </div>
+        <div class="header-item"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg"><span>Python Pro</span></div>
+    </div>
+
+    <div class="page-content">
+        <div class="section-title" style="margin-top: 0;"><i class="fa-solid fa-hashtag"></i> ៦. សេចក្តីផ្តើមអំពី Hash Tables (តារាងកូនសោបំប្លែង)</div>
+        <div class="text-block">
+            នៅក្នុងរចនាសម្ព័ន្ធទិន្នន័យពីមុនៗ (Arrays, Linked Lists, Trees) ដើម្បីស្វែងរកទិន្នន័យ យើងតែងតែប្រើប្រាស់ពេលវេលាយ៉ាងតិច O(log n) ឬយឺតបំផុត O(n)។ ចុះប្រសិនបើប្រព័ន្ធត្រូវការស្វែងរកភ្លាមៗមិនចង់ចំណាយពេលសូម្បីមួយមីលីវិនាទី? ដំណោះស្រាយគឺ <b>Hash Table (តារាងកូនសោបំប្លែង)</b> ដែលអាចស្វែងរក បញ្ចូល និងលុបទិន្នន័យបានលឿនដូចផ្លេកបន្ទោរគឺកម្រិតថេរ <b>O(1)</b> ពិតប្រាកដ។
+        </div>
+
+        <div class="grid-2">
+            <div class="narrative-box">
+                <div class="narrative-header"><i class="fa-solid fa-id-card"></i> ករណីសិក្សាទី១៖ ការផ្ញើកាបូបនៅផ្សារទំនើប</div>
+                <p class="narrative-text">ពេលអ្នកយកកាបូបទៅផ្ញើនៅផ្សារទំនើប បុគ្គលិកនឹងចាក់សោកាបូបក្នុងថត រួចហុចស្លាកលេខ (Key) មកឱ្យអ្នក។ នៅពេលអ្នកត្រឡប់មកវិញ អ្នកហុចស្លាកលេខទៅឱ្យគេ គេដើរទៅបើកយកកាបូប (Value) ពីក្នុងថតមកឱ្យអ្នកភ្លាមៗ O(1) ដោយមិនបាច់ដើររាវរកកាបូបគ្រប់ថតនោះឡើយ។</p>
+            </div>
+            <div class="narrative-box warning">
+                <div class="narrative-header"><i class="fa-solid fa-phone"></i> ករណីសិក្សាទី២៖ បញ្ជីស្វែងរកលេខទូរស័ព្ទ</div>
+                <p class="narrative-text">នៅក្នុងទូរស័ព្ទដៃ ពេលអ្នកវាយឈ្មោះកូនសោ (Key) ថា "Sok" ប្រព័ន្ធនឹងទាញបង្ហាញលេខទូរស័ព្ទ (Value) មកភ្លាមៗ O(1)។ ដំណើរការខាងក្រោយរបស់វាគឺការរក្សាទុកទិន្នន័យជាប្រភេទកូនសោផ្គូផ្គងតម្លៃ (Key-Value Pair) នេះឯង។</p>
+            </div>
+        </div>
+
+        <!-- Hash Table Concept Diagram Inline SVG -->
+        <div style="text-align: center; margin-top: 15px;">
+            <svg viewBox="0 0 500 120" style="width: 75%; height: auto; display: inline-block;">
+                <rect x="20" y="40" width="80" height="30" rx="4" fill="#FEF3C7" stroke="#D97706"/>
+                <text x="60" y="59" font-family="sans-serif" font-size="11" font-weight="bold" fill="#B45309" text-anchor="middle">"Key" (ឈ្មោះ)</text>
+                
+                <path d="M 110 55 L 180 55" stroke="#0284C7" stroke-width="2" stroke-dasharray="4,4"/>
+                <rect x="190" y="30" width="110" height="50" rx="6" fill="#E0F2FE" stroke="#0284C7"/>
+                <text x="245" y="53" font-family="'Suwannaphum'" font-size="11" font-weight="bold" fill="#0284C7" text-anchor="middle">Hash Function</text>
+                <text x="245" y="68" font-family="'Battambang'" font-size="8" fill="#64748B" text-anchor="middle">(ម៉ាស៊ីនបំប្លែង)</text>
+
+                <path d="M 310 55 L 370 55" stroke="#059669" stroke-width="2" stroke-dasharray="4,4"/>
+                <rect x="380" y="40" width="100" height="30" rx="4" fill="#D1FAE5" stroke="#059669"/>
+                <text x="430" y="59" font-family="sans-serif" font-size="11" font-weight="bold" fill="#047857" text-anchor="middle">"Value" (ទិន្នន័យ)</text>
+            </svg>
+        </div>
+    </div>
+
+    <div class="global-footer">
+        <div class="footer-left"><img src="Lim.jpg" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'"><span>សាស្ត្រាចារ្យ៖ សឿង លីម (Soeurng LIM)</span></div>
+        <div class="footer-right">ទំព័រទី ៨ នៃ ១៤</div>
+    </div>
+</div>
+
+<!-- ================= PAGE 9: Hash Functions & Collisions ================= -->
+<div class="a4-page">
+    <div class="global-header">
+        <div class="header-item"><img src="https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png" onerror="this.src='Logo.png'"><span>សាកលវិទ្យាល័យអង្គរ</span></div>
+        <div class="header-center">
+            <h1>សៀវភៅមគ្គទ្ទេសក៍ (Guidebook) - ជំពូកទី ៦</h1>
+            <p>ADVANCED DATA STRUCTURES AND ALGORITHMS FOR AI</p>
+        </div>
+        <div class="header-item"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg"><span>Python Pro</span></div>
+    </div>
+
+    <div class="page-content">
+        <div class="section-title" style="margin-top: 0;"><i class="fa-solid fa-gear"></i> ៧. យន្តការ Hash Function និងបញ្ហាការបុកគ្នា (Collision)</div>
+        <div class="text-block">
+            តើកុំព្យូទ័រអាចដឹងភ្លាមៗ O(1) យ៉ាងដូចម្តេចថាត្រូវទៅបើកថតណា? នៅពីក្រោយខ្នងរបស់វាគឺការដំណើរការរបស់ <b>Hash Function (អនុគមន៍គណនាអាសយដ្ឋាន)</b>។
+        </div>
+
+        <div class="card" style="margin-bottom: 12px; border-left-color: var(--accent-blue);">
+            <h4 style="font-size: 13.5px;"><i class="fa-solid fa-calculator"></i> ១. តួនាទីរបស់ Hash Function</h4>
+            <p class="text-block" style="font-size: 12px; margin-bottom: 0; text-align: justify;">
+                Hash Function គឺប្រៀបដូចជាម៉ាស៊ីនវេទមន្តបម្លែងលេខកូដ។ វាយកកូនសោ Key (ឧ. ឈ្មោះអក្សរ "Sok") មកគណនាជាលេខដើម្បីទាញយកអាសយដ្ឋាន Index ជាក់លាក់មួយនៅក្នុង Memory (ឧ. Index 3) រួចយកទិន្នន័យ (Value) ទៅរក្សាទុកក្នុងប្រអប់ Index 3 នោះផ្ទាល់។
+            </p>
+        </div>
+
+        <div class="card red-card" style="margin-bottom: 12px;">
+            <h4 style="font-size: 13.5px;"><i class="fa-solid fa-car-burst"></i> ២. គ្រោះថ្នាក់នៃការបុកគ្នា (Hashing Collision)</h4>
+            <p class="text-block" style="font-size: 12px; margin-bottom: 0; text-align: justify;">
+                ដោយសារតែទំហំនៃប្រអប់ផ្ទុកទិន្នន័យ (RAM) មានដែនកំណត់ ជួនកាលកូនសោពីរផ្សេងគ្នា (ឧ. "Sok" និង "Lim") គណនាជាលេខទៅស្រឡាញ់ប្រអប់ **Index តែមួយដដែល**។ ស្ថានភាពនេះហៅថា **Collision (ការបុកអាសយដ្ឋានគ្នា)**។
+            </p>
+        </div>
+
+        <div class="narrative-box warning" style="margin-bottom: 0;">
+            <div class="narrative-header"><i class="fa-solid fa-shield-halved"></i> យន្តការដោះស្រាយបញ្ហាបុកគ្នា (Chaining Method)</div>
+            <p class="narrative-text">ដើម្បីកុំឱ្យទិន្នន័យចាស់ត្រូវលុបបាត់បង់ពេលមានទិន្នន័យថ្មីមកជាន់ វិស្វករ DSA បានបង្កើតយន្តការដោះស្រាយដ៏ល្បីល្បាញគឺ **Separate Chaining**។ នៅក្នុងប្រអប់នីមួយៗនៃ Hash Table មិនមែនផ្ទុកទិន្នន័យផ្ទាល់នោះទេ គឺផ្ទុកនូវក្បាលខ្សែបណ្តាញភ្ជាប់ <b>Linked List</b>។ ប្រសិនបើមានទិន្នន័យថ្មីគណនាធ្លាក់មកចំប្រអប់ដដែល វានឹងតភ្ជាប់កន្ទុយ Linked List នោះបន្ថែម O(1) ដែលជួយដោះស្រាយបញ្ហាបានយ៉ាងស្អាតឥតខ្ចោះ។</p>
+        </div>
+    </div>
+
+    <div class="global-footer">
+        <div class="footer-left"><img src="Lim.jpg" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'"><span>សាស្ត្រាចារ្យ៖ សឿង លីម (Soeurng LIM)</span></div>
+        <div class="footer-right">ទំព័រទី ៩ នៃ ១៤</div>
+    </div>
+</div>
+
+<!-- ================= PAGE 10: Hash Table Code ================= -->
+<div class="a4-page">
+    <div class="global-header">
+        <div class="header-item"><img src="https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png" onerror="this.src='Logo.png'"><span>សាកលវិទ្យាល័យអង្គរ</span></div>
+        <div class="header-center">
+            <h1>សៀវភៅមគ្គទ្ទេសក៍ (Guidebook) - ជំពូកទី ៦</h1>
+            <p>ADVANCED DATA STRUCTURES AND ALGORITHMS FOR AI</p>
+        </div>
+        <div class="header-item"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg"><span>Python Pro</span></div>
+    </div>
+
+    <div class="page-content">
+        <div class="section-title" style="margin-top: 0;"><i class="fa-solid fa-code"></i> ៨. ការអនុវត្តកូដ Python Dictionaries ជា Hash Table</div>
+        <div class="text-block" style="margin-bottom: 5px;">
+            នៅក្នុងភាសា Python យើងមិនបាច់សរសេរកូដគណនា Hash Function ឬដោះស្រាយ Collision ដ៏ស្មុគស្មាញដោយខ្លួនឯងនោះទេ។ Python មានរចនាសម្ព័ន្ធស្រាប់ដ៏ឆ្លាតវៃ និងលឿនបំផុតគឺ <b>Dictionary (dict)</b> ដែលនៅពីក្រោយខ្នងរបស់វាគឺជាការដំណើរការរបស់ Hash Table ដ៏ល្អឥតខ្ចោះ។
+        </div>
+
+        <!-- Runnable Code -->
+        <div class="code-wrapper" style="margin-top: 10px; margin-bottom: 10px;">
+            <div class="code-header"><span><i class="fa-brands fa-python"></i> 2_hash_table_dict.py</span><span>Dictionary (Hash Table) Operations</span></div>
+            <div class="code-content"><pre>
+<span class="com"># ១. បង្កើត Dictionary ផ្ទុកបញ្ជីលេខទូរស័ព្ទ</span>
+phone_book = {}
+
+<span class="com"># ២. Insert: បញ្ចូលកូនសោ និងតម្លៃ (Time: O(1))</span>
+phone_book[<span class="str">"Sok"</span>] = <span class="str">"012-345678"</span>
+phone_book[<span class="str">"Lim"</span>] = <span class="str">"061-227933"</span>
+phone_book[<span class="str">"Dara"</span>] = <span class="str">"099-888777"</span>
+
+<span class="com"># ៣. Lookup (Search): ស្វែងរកតម្លៃ O(1) តាមរយៈ Key</span>
+<span class="com"># Python នឹងហៅ Hash Function គណនាលោតទៅកាន់ទីតាំងជាក់លាក់ភ្លាមៗ</span>
+target_name = <span class="str">"Lim"</span>
+<span class="fn">print</span>(<span class="str">f"១. ស្វែងរកលេខទូរស័ព្ទរបស់ {target_name}: {phone_book[target_name]}"</span>)
+
+<span class="com"># ៤. Update: កែប្រែតម្លៃ O(1)</span>
+phone_book[<span class="str">"Dara"</span>] = <span class="str">"015-111222"</span>
+<span class="fn">print</span>(<span class="str">f"២. លេខទូរស័ព្ទថ្មីរបស់ Dara: {phone_book['Dara']}"</span>)
+
+<span class="com"># ៥. Search Key (Safety Check): ការពារកំហុសពេលគ្មាន Key O(1)</span>
+search_key = <span class="str">"Piseth"</span>
+<span class="kw">if</span> search_key <span class="kw">in</span> phone_book:
+    <span class="fn">print</span>(<span class="str">f"រកឃើញលេខរបស់ {search_key}"</span>)
+<span class="kw">else</span>:
+    <span class="fn">print</span>(<span class="str">f"៣. រកមិនឃើញឈ្មោះ {search_key} នៅក្នុងបញ្ជីឡើយ!"</span>)
+</pre></div>
+            <div class="code-output">
+                <div class="code-output-title">>_ Terminal Output</div>
+                <pre>១. ស្វែងរកលេខទូរស័ព្ទរបស់ Lim: 061-227933
+២. លេខទូរស័ព្ទថ្មីរបស់ Dara: 015-111222
+៣. រកមិនឃើញឈ្មោះ Piseth នៅក្នុងបញ្ជីឡើយ!</pre>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="global-footer">
+        <div class="footer-left"><img src="Lim.jpg" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'"><span>សាស្ត្រាចារ្យ៖ សឿង លីម (Soeurng LIM)</span></div>
+        <div class="footer-right">ទំព័រទី ១០ នៃ ១៤</div>
+    </div>
+</div>
+
+<!-- ================= PAGE 11: Hash Tables vs Arrays ================= -->
+<div class="a4-page">
+    <div class="global-header">
+        <div class="header-item"><img src="https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png" onerror="this.src='Logo.png'"><span>សាកលវិទ្យាល័យអង្គរ</span></div>
+        <div class="header-center">
+            <h1>សៀវភៅមគ្គទ្ទេសក៍ (Guidebook) - ជំពូកទី ៦</h1>
+            <p>ADVANCED DATA STRUCTURES AND ALGORITHMS FOR AI</p>
+        </div>
+        <div class="header-item"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg"><span>Python Pro</span></div>
+    </div>
+
+    <div class="page-content">
+        <div class="section-title" style="margin-top: 0;"><i class="fa-solid fa-scale-balanced"></i> ៩. ការប្រៀបធៀបលក្ខណៈរវាង Hash Table និង Array</div>
+        <div class="text-block">
+            ក្នុងការអភិវឌ្ឍន៍កម្មវិធីកម្រិតអាជីព ការសម្រេចចិត្តជ្រើសរើសរវាង Hash Table (Dictionary) និង Array (List) គឺអាស្រ័យទៅលើទម្រង់ប្រតិបត្តិការដែលប្រព័ន្ធតម្រូវការ៖
+        </div>
+
+        <div class="compare-block" style="margin-bottom: 15px;">
+            <div class="compare-title" style="text-align: left;"><i class="fa-solid fa-right-left text-blue"></i> លក្ខណៈបច្ចេកទេស និងទិន្នន័យនៃការដោះដូរ (Trade-offs)</div>
+            <div class="compare-grid">
+                <div class="compare-col">
+                    <h5><i class="fa-solid fa-hashtag text-green"></i> ដំណោះស្រាយរបស់ Hash Tables</h5>
+                    - <b>ស្វែងរកលឿនបំផុត O(1)៖</b> សម្រាប់ការស្វែងរកទិន្នន័យដោយប្រើប្រាស់ឈ្មោះ Key (លោតទៅចំកន្លែងភ្លាមៗ)។
+                    <br>- <b>មិនបានរក្សាលំដាប់ (Unordered)៖</b> ទិន្នន័យមិនត្រូវបានរៀបតាមលំដាប់លំដោយ ឬតាម Index ឡើយ។
+                    <br>- <b>ស៊ី Memory ច្រើន៖</b> ដោយសារត្រូវចំណាយទំហំសម្រាប់ត្រៀមទុកជៀសវាងការបុកគ្នា (Collision)។
+                </div>
+                <div class="compare-col">
+                    <h5><i class="fa-solid fa-list-ol text-red"></i> ដែនកំណត់របស់ Arrays</h5>
+                    - <b>ស្វែងរកយឺត O(n)៖</b> ប្រសិនបើត្រូវស្វែងរកដោយផ្អែកលើតម្លៃទិន្នន័យ ព្រោះត្រូវប្រើ Loop ឆែកមើលម្តងមួយ។
+                    <br>- <b>រក្សាលំដាប់ (Ordered)៖</b> ទិន្នន័យត្រូវបានតម្រៀបតាមលំដាប់លំដោយ Index (0, 1, 2...) ងាយស្រួលរុករក។
+                    <br>- <b>សន្សំសំចៃ Memory៖</b> ប្រើប្រាស់ទំហំ RAM ជាក់លាក់ទៅតាមទិន្នន័យពិតប្រាកដ។
+                </div>
+            </div>
+        </div>
+
+        <div class="narrative-box warning" style="margin-bottom: 0;">
+            <div class="narrative-header"><i class="fa-solid fa-lightbulb"></i> វិធានមាសសម្រាប់ការជ្រើសរើស (Golden Rule)</div>
+            <p class="narrative-text"><b>• ជ្រើសរើស Hash Table (Dictionary)៖</b> នៅពេលដែលអ្នកត្រូវដំណើរការស្វែងរក (Search) ឬបន្ថែម (Insert) ទិន្នន័យរាប់លានដងជាប្រចាំដោយផ្អែកលើឈ្មោះកូនសោសម្គាល់ (Key-Value)។
+            <br><b>• ជ្រើសរើស Array (List)៖</b> នៅពេលដែលទិន្នន័យរបស់អ្នកត្រូវការការតម្រៀបលំដាប់លំដោយ (Sorted/Ordered) ឬត្រូវកែប្រែដំណើរការទិន្នន័យវិលជុំ (Iteration) ពីដើមដល់ចប់បញ្ជីជាចម្បង។</p>
+        </div>
+    </div>
+
+    <div class="global-footer">
+        <div class="footer-left"><img src="Lim.jpg" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'"><span>សាស្ត្រាចារ្យ៖ សឿង លីម (Soeurng LIM)</span></div>
+        <div class="footer-right">ទំព័រទី ១១ នៃ ១៤</div>
+    </div>
+</div>
+
+<!-- ================= PAGE 12: Time Complexity Table ================= -->
+<div class="a4-page">
+    <div class="global-header">
+        <div class="header-item"><img src="https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png" onerror="this.src='Logo.png'"><span>សាកលវិទ្យាល័យអង្គរ</span></div>
+        <div class="header-center">
+            <h1>សៀវភៅមគ្គទ្ទេសក៍ (Guidebook) - ជំពូកទី ៦</h1>
+            <p>ADVANCED DATA STRUCTURES AND ALGORITHMS FOR AI</p>
+        </div>
+        <div class="header-item"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg"><span>Python Pro</span></div>
+    </div>
+
+    <div class="page-content">
+        <div class="section-title" style="margin-top: 0;"><i class="fa-solid fa-scale-balanced"></i> ១០. តារាងវិភាគប្រសិទ្ធភាពពេលវេលា Big-O (Time Complexity)</div>
+        <div class="text-block">
+            ខាងក្រោមនេះជាតារាងវិភាគ និងប្រៀបធៀបប្រសិទ្ធភាពពេលវេលារវាងរចនាសម្ព័ន្ធ Graphs និង Hash Tables ធៀបនឹងរចនាសម្ព័ន្ធពីមុនៗ ក្នុងករណី Worst-case និង Average-case៖
+        </div>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>រចនាសម្ព័ន្ធទិន្នន័យ (DS)</th>
+                    <th style="text-align: center;">ស្វែងរក (Search)</th>
+                    <th style="text-align: center;">បញ្ចូល (Insert)</th>
+                    <th style="text-align: center;">លុប (Delete)</th>
+                    <th>លក្ខណៈសរុប (Conclusion)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><b><i class="fa-solid fa-hashtag text-blue"></i> Hash Table (Average)</b></td>
+                    <td align="center"><b class="text-green">O(1)</b> ⚡ លឿនបំផុត</td>
+                    <td align="center"><b class="text-green">O(1)</b> ⚡ លឿនបំផុត</td>
+                    <td align="center"><b class="text-green">O(1)</b> ⚡ លឿនបំផុត</td>
+                    <td><b class="text-green">លឿនបំផុតគ្មានគូប្រៀប (Best for Search)</b> ដំណើរការលឿនថេរស្ទើរគ្រប់ពេល។</td>
+                </tr>
+                <tr>
+                    <td><b><i class="fa-solid fa-hashtag text-blue"></i> Hash Table (Worst)</b></td>
+                    <td align="center"><b class="text-red">O(n)</b> 🐌 យឺត</td>
+                    <td align="center"><b class="text-red">O(n)</b> 🐌 យឺត</td>
+                    <td align="center"><b class="text-red">O(n)</b> 🐌 យឺត</td>
+                    <td>កើតឡើងនៅពេល Hash Function មិនល្អ បណ្តាលឱ្យមាន Collisions ជាន់គ្នាច្រើនពេក។</td>
+                </tr>
+                <tr>
+                    <td><b><i class="fa-solid fa-network-wired text-blue"></i> Graph (BFS/DFS)</b></td>
+                    <td align="center">O(V + E)</td>
+                    <td align="center"><b class="text-green">O(1)</b> (Add Edge)</td>
+                    <td align="center">O(E) 🐌 យឺត</td>
+                    <td>V ជាចំនួន Vertex, E ជាចំនួន Edge (ល្បឿនអាស្រ័យលើទំហំបណ្តាញតភ្ជាប់)។</td>
+                </tr>
+                <tr>
+                    <td><b><i class="fa-solid fa-sitemap text-blue"></i> BST (Average Case)</b></td>
+                    <td align="center"><span class="text-yellow">O(log n)</span></td>
+                    <td align="center"><span class="text-yellow">O(log n)</span></td>
+                    <td align="center"><span class="text-yellow">O(log n)</span></td>
+                    <td>យឺតជាង Hash Table បន្តិច ប៉ុន្តែរក្សាទិន្នន័យបានតម្រៀបគ្នាស្អាតជានិច្ច។</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="narrative-box danger" style="margin-bottom: 0;">
+            <div class="narrative-header"><i class="fa-solid fa-triangle-exclamation"></i> ដែនកំណត់របស់ Keys នៅក្នុង Dictionary (Immutable Requirement)</div>
+            <p class="narrative-text">នៅក្នុង Python មិនមែនគ្រប់ទិន្នន័យទាំងអស់សុទ្ធតែអាចយកមកធ្វើជា **កូនសោ (Key)** របស់ Dictionary បានឡើយ។ កូនសោត្រូវតែជាប្រភេទ **Immutable (មិនអាចកែប្រែតម្លៃបាន)** ដាច់ខាត ដូចជា៖ Strings, Numbers, หรือ Tuples។ មូលហេតុគឺដោយសារតែប្រព័ន្ធត្រូវគណនា Key នោះជាលេខអាសយដ្ឋានថេរមួយ។ ប្រសិនបើយើងប្រើប្រាស់ List ធម្មតា (Mutable - កែបាន) ធ្វើជា Key ពេលទិន្នន័យកែប្រែ តម្លៃ Hash នឹងត្រូវផ្លាស់ប្តូរ ធ្វើឱ្យកុំព្យូទ័ររកទិន្នន័យលែងឃើញ (System Error / Unhashable Type)។</p>
+        </div>
+    </div>
+
+    <div class="global-footer">
+        <div class="footer-left"><img src="Lim.jpg" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'"><span>សាស្ត្រាចារ្យ៖ សឿង លីម (Soeurng LIM)</span></div>
+        <div class="footer-right">ទំព័រទី ១២ នៃ ១៤</div>
+    </div>
+</div>
+
+<!-- ================= PAGE 13: Review Q&A ================= -->
+<div class="a4-page">
+    <div class="global-header">
+        <div class="header-item"><img src="https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png" onerror="this.src='Logo.png'"><span>សាកលវិទ្យាល័យអង្គរ</span></div>
+        <div class="header-center">
+            <h1>សៀវភៅមគ្គទ្ទេសក៍ (Guidebook) - ជំពូកទី ៦</h1>
+            <p>ADVANCED DATA STRUCTURES AND ALGORITHMS FOR AI</p>
+        </div>
+        <div class="header-item"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg"><span>Python Pro</span></div>
+    </div>
+
+    <div class="page-content">
+        <div class="section-title" style="margin-top: 0;"><i class="fa-solid fa-circle-question"></i> ១១. សំណួររំលឹកមេរៀនប្រចាំជំពូកទី ៦ និងការបកស្រាយ (Q&A)</div>
+        <div class="text-block" style="margin-bottom: 8px; font-size:12.5px;">
+            ខាងក្រោមនេះគឺជាសំណួរ និងការបកស្រាយគំរូដ៏សំខាន់ៗដែលត្រូវបានរៀបចំឡើងដើម្បីវាស់ស្ទង់ការយល់ដឹងរបស់និស្សិតលើរចនាសម្ព័ន្ធ Graphs និង Hash Tables៖
+        </div>
+
+        <!-- Question 1 -->
+        <div class="qa-box" style="margin-bottom: 8px;">
+            <div class="qa-question" style="padding: 6px 12px;">
+                <i class="fa-solid fa-q qa-icon-q"></i> 
+                <span>១. តើភាពខុសគ្នាស្នូលរវាង Tree និង Graph មានអ្វីខ្លះពិតប្រាកដ?</span>
+            </div>
+            <div class="qa-answer" style="padding: 6px 12px; font-size:11.5px;">
+                <i class="fa-solid fa-a qa-icon-a"></i>
+                <span>• <b>Tree:</b> ជាប្រភេទរចនាសម្ព័ន្ធឋានានុក្រម (Hierarchical) មាន Root តែមួយគត់ និងមិនអនុញ្ញាតឲ្យមានរង្វិលជុំ (Cycle) ឡើយ។
+                <br>• <b>Graph:</b> ជារចនាសម្ព័ន្ធបណ្តាញសេរី គ្មាន Root ឡើយ ធាតុនីមួយៗអាចតភ្ជាប់ខ្វាត់ខ្វែងពហុទិសដៅ និងអាចបង្កើតជារង្វិលជុំ (Cycle) បានយ៉ាងងាយស្រួល។</span>
+            </div>
+        </div>
+
+        <!-- Question 2 -->
+        <div class="qa-box" style="margin-bottom: 8px;">
+            <div class="qa-question" style="padding: 6px 12px;">
+                <i class="fa-solid fa-q qa-icon-q"></i> 
+                <span>២. ហេតុអ្វីបានជា BFS សាកសមបំផុតសម្រាប់ការស្វែងរកផ្លូវខ្លីបំផុត (Shortest Path)?</span>
+            </div>
+            <div class="qa-answer" style="padding: 6px 12px; font-size:11.5px;">
+                <i class="fa-solid fa-a qa-icon-a"></i>
+                <span><b>ការបកស្រាយ៖</b> BFS ដំណើរការរុករកដោយ **ស្កែនមើលរាល់គ្រប់ចំណុចអ្នកជិតខាងជុំវិញខ្លួនមុន** (កម្រិតទី១) រួចទើបបន្តរំកិលទៅកម្រិតទី២ និងទី៣។ ដំណើរការបែបសាយភាយរង្វង់មូលនេះធានាថា រាល់ពេលដែល BFS រកឃើញចំណុចគោលដៅជាលើកដំបូង បន្ទាត់គន្លងផ្លូវនោះគឺជាខ្សែផ្លូវដែលមានចម្ងាយខ្លីបំផុតជាក់ស្តែង O(V + E)។</span>
+            </div>
+        </div>
+
+        <!-- Question 3 -->
+        <div class="qa-box" style="margin-bottom: 8px;">
+            <div class="qa-question" style="padding: 6px 12px;">
+                <i class="fa-solid fa-q qa-icon-q"></i> 
+                <span>៣. តើ Collision នៅក្នុង Hash Table កើតឡើងដោយសារអ្វី? តើ Chaining ដោះស្រាយវាដូចម្តេច?</span>
+            </div>
+            <div class="qa-answer" style="padding: 6px 12px; font-size:11.5px;">
+                <i class="fa-solid fa-a qa-icon-a"></i>
+                <span><b>ការបកស្រាយ៖</b> Collision កើតឡើងនៅពេលដែល Key ពីរផ្សេងគ្នា ត្រូវបានគណនាដោយ Hash Function ទៅឃើញតម្លៃ Index ជាន់គ្នា (ចង់រត់ចូលថតតែមួយដដែល)។ យន្តការ **Chaining ( separate chaining )** ដោះស្រាយវាដោយបង្កើត Linked List មួយនៅក្នុងប្រអប់នីមួយៗ។ ប្រសិនបើមានទិន្នន័យជាន់គ្នា វានឹងតភ្ជាប់កន្ទុយ Linked List នោះបន្ថែម O(1) ដែលជួយរក្សាទុកទិន្នន័យទាំងពីរបានដោយជោគជ័យ។</span>
+            </div>
+        </div>
+
+        <!-- Question 4 -->
+        <div class="qa-box" style="margin-bottom: 0;">
+            <div class="qa-question" style="padding: 6px 12px;">
+                <i class="fa-solid fa-q qa-icon-q"></i> 
+                <span>៤. នៅក្នុង Python ហេតុអ្វីបានជាយើងមិនអាចប្រើប្រាស់ List ធម្មតា ធ្វើជាកូនសោ (Key) របស់ Dictionary បាន?</span>
+            </div>
+            <div class="qa-answer" style="padding: 6px 12px; font-size:11.5px;">
+                <i class="fa-solid fa-a qa-icon-a"></i>
+                <span><b>ការបកស្រាយ៖</b> ពីព្រោះកូនសោ Key របស់ Dictionary ត្រូវតែជាប្រភេទ **Immutable (មិនអាចកែប្រែតម្លៃបាន)** ដើម្បីធានាថាតម្លៃគណនា Hash របស់វាមានតម្លៃថេរជានិច្ច ងាយស្រួលរកឃើញទិន្នន័យចំទីតាំង RAM។ ចំណែកឯ List គឺជាប្រភេទ Mutable (អាចកែប្រែទិន្នន័យខាងក្នុងបាន) បើយើងកែតម្លៃ List នោះ វានឹងធ្វើឱ្យកុំព្យូទ័រគណនា Hash លែងត្រូវ នាំឱ្យមានបញ្ហាកូដកំហុស (Unhashable Type)។</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="global-footer">
+        <div class="footer-left"><img src="Lim.jpg" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'"><span>សាស្ត្រាចារ្យ៖ សឿង លីម (Soeurng LIM)</span></div>
+        <div class="footer-right">ទំព័រទី ១៣ នៃ ១៤</div>
+    </div>
+</div>
+
+<!-- ================= PAGE 14: Conclusion & References ================= -->
+<div class="a4-page">
+    <div class="global-header">
+        <div class="header-item"><img src="https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png" onerror="this.src='Logo.png'"><span>សាកលវិទ្យាល័យអង្គរ</span></div>
+        <div class="header-center">
+            <h1>សៀវភៅមគ្គទ្ទេសក៍ (Guidebook) - ជំពូកទី ៦</h1>
+            <p>ADVANCED DATA STRUCTURES AND ALGORITHMS FOR AI</p>
+        </div>
+        <div class="header-item"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg"><span>Python Pro</span></div>
+    </div>
+
+    <div class="page-content">
+        <div class="section-title" style="margin-top: 0;"><i class="fa-solid fa-clipboard-list"></i> ១២. សេចក្តីសន្និដ្ឋាននៃជំពូកទី ៦ (Conclusion)</div>
+        <div class="card" style="border-top-color: var(--accent-green); background: #F0FDF4; margin-bottom: 20px;">
+            <ul style="line-height: 1.8; color: var(--text-main); font-size: 13px;">
+                <li><b><i class="fa-solid fa-hand-pointer text-green"></i> រួមបញ្ចូលអាវុធដ៏មានអំណាច៖</b> Graphs និង Hash Tables គឺជារចនាសម្ព័ន្ធទិន្នន័យដែលប្រើប្រាស់ច្រើនបំផុតក្នុងកម្មវិធី Software ជាក់ស្តែង។ Graph តំណាងឱ្យបណ្តាញតភ្ជាប់ដ៏ស្មុគស្មាញ ខណៈពេល Hash Table ជួយឱ្យការទាញយកទិន្នន័យលឿនស្មើពន្លឺ O(1)។</li>
+                <li><b><i class="fa-solid fa-bolt text-green"></i> ត្រូវប្រើប្រាស់ Python Dictionaries ឲ្យអស់ពីលទ្ធភាព៖</b> ក្នុងនាមជា Data Scientist អ្នកត្រូវយល់ច្បាស់ពីយន្តការនៅពីក្រោយខ្នងរបស់ Python `dict` ដើម្បីអាចសរសេរកូដដែលមានល្បឿនលឿន O(1) ជៀសវាងការប្រើ Loop `for` ឆែកមើល List ឥតប្រយោជន៍។</li>
+                <li><b><i class="fa-solid fa-brain text-green"></i> ស្ពានចម្លងឆ្ពោះទៅ AI កម្រិតខ្ពស់៖</b> Graphs គឺជាគ្រឹះស្នូលនៃ Neural Networks និង Graph AI ចំណែកឯ Hash Tables គឺជាបេះដូងនៃដំណើរការ Caching និងការគ្រប់គ្រង NLP Token Frequency។</li>
+            </ul>
+        </div>
+
+        <div class="section-title"><i class="fa-solid fa-book-bookmark"></i> ១៣. ឯកសារយោង និងគន្ថនិទ្ទេស (References & Further Reading)</div>
+        <div class="text-block">
+            <ul style="list-style: none; padding-left: 0; line-height: 1.8; text-align: left !important;">
+                <li style="margin-bottom: 8px;"><b><i class='fa-solid fa-book text-blue'></i> Goodrich, M. T., Tamassia, R. (2013).</b> <i>Data Structures and Algorithms in Python</i>. Wiley. (Chapter 10: Maps and Hash Tables, Chapter 14: Graphs).</li>
+                <li style="margin-bottom: 8px;"><b><i class='fa-solid fa-book text-blue'></i> Cormen, T. H. (2022).</b> <i>Introduction to Algorithms</i> (4th ed.). MIT Press. (Chapter 11: Hash Tables, Chapter 22: Elementary Graph Algorithms).</li>
+                <li style="margin-bottom: 8px;"><b><i class='fa-solid fa-globe text-blue'></i> GeeksforGeeks៖</b> មេរៀន និងលំហាត់កូដបន្ថែមលើ Graph Algorithms ៖ <a href='https://www.geeksforgeeks.org/graph-data-structure-and-algorithms/' style='color:var(--accent-blue); text-decoration:none;'>geeksforgeeks.org/graph-data-structure-and-algorithms/</a></li>
+                <li style="margin-bottom: 8px;"><b><i class='fa-brands fa-youtube text-blue'></i> CS Dojo (YouTube)៖</b> <i>Hash Tables and Graph Theory for Beginners</i> - វីដេអូពន្យល់ដ៏សាមញ្ញ និងងាយយល់បំផុត។</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="global-footer" style="position: absolute; bottom: 0;">
+        <div class="footer-left"><img src="Lim.jpg" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'"><span>សាស្ត្រាចារ្យ៖ សឿង លីម (Soeurng LIM)</span></div>
+        <div class="footer-right">ទំព័រទី ១៤ នៃ ១៤</div>
+    </div>
+</div>
+
+</body>
+</html>

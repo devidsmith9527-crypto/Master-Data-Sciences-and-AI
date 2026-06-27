@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+<html lang="km">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chapter 4 - Linked Lists</title>
+    <link href="https://fonts.googleapis.com/css2?family=Battambang:wght@400;700&family=Suwannaphum:wght@400;700;900&family=Lato:wght@400;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        :root {
+            --bg-dark: #0F172A; --bg-card: #F8FAFC; --text-main: #0F172A; --text-muted: #475569;
+            --accent-blue: #0284C7; --accent-green: #059669; --accent-yellow: #D97706; --accent-red: #DC2626;
+            --header-footer-bg: #F0F9FF; --code-bg: #111827;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        /* អនុញ្ញាតឲ្យ Copy អក្សរបានធម្មតា */
+        body { background-color: var(--bg-dark); font-family: 'Battambang', sans-serif; overflow: hidden; height: 100vh; width: 100vw; display: flex; align-items: center; justify-content: center; -webkit-user-select: auto; user-select: auto; }
+        
+        .slide-deck { width: 98vw; height: 95vh; position: relative; background: #FFFFFF; border-radius: 1.5vw; overflow: hidden; box-shadow: 0 40px 100px rgba(0,0,0,0.5); display: flex; flex-direction: column; }
+        .slide-wrapper { flex-grow: 1; position: relative; overflow: hidden; }
+        .slide { display: none; width: 100%; height: 100%; padding: 2vh 4vw; flex-direction: column; justify-content: flex-start; animation: slideIn 0.4s ease-out; position: absolute; top: 0; left: 0; }
+        .slide.active { display: flex; }
+        @keyframes slideIn { from { opacity: 0; transform: translateX(50px); } to { opacity: 1; transform: translateX(0); } }
+
+        /* Navigation Zones (កែសម្រួលឲ្យងាយស្រួលមើល និងចុច) */
+        .nav-zone { position: absolute; top: 0; bottom: 0; width: 10%; z-index: 50; cursor: pointer; display: flex; align-items: center; opacity: 0.2; transition: all 0.3s ease; }
+        .nav-zone:hover { opacity: 1; background: rgba(0,0,0,0.03); }
+        .nav-left { left: 0; justify-content: flex-start; padding-left: 2vw; background: linear-gradient(to right, rgba(0,0,0,0.05), transparent); }
+        .nav-right { right: 0; justify-content: flex-end; padding-right: 2vw; background: linear-gradient(to left, rgba(0,0,0,0.05), transparent); }
+        .nav-zone i { font-size: 3.5vw; color: var(--accent-blue); filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2)); background: white; border-radius: 50%; padding: 1vw; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+
+        /* Header Branding */
+        .global-header { display: flex; justify-content: space-between; align-items: center; margin: -2vh -4vw 1.5vh -4vw; padding: 1.2vh 4vw; border-bottom: 3px solid var(--accent-blue); background-color: var(--header-footer-bg); }
+        .header-item { display: flex; flex-direction: column; align-items: center; gap: 4px; width: 15vw; }
+        .header-item img { height: 4vw; object-fit: contain; }
+        .header-item span { font-size: 0.76vw; font-weight: bold; color: var(--accent-blue); text-align: center; }
+        .header-center h1 { font-family: 'Suwannaphum'; font-size: 1.4vw; color: var(--accent-blue); margin: 0; }
+        .header-center p { font-family: 'Lato'; font-size: 0.85vw; color: #64748B; margin: 0; font-weight: bold; text-align: center; }
+
+        /* Typography */
+        h1 { font-family: 'Suwannaphum'; font-size: 3.15vw; text-align: center; color: var(--text-main); font-weight: 900; line-height: 1.3; }
+        h2.slide-title { font-family: 'Suwannaphum'; font-size: 2.2vw; font-weight: 900; border-bottom: 0.3vw solid var(--accent-blue); padding-bottom: 0.5vh; margin-bottom: 1.5vh; color: var(--text-main); display: inline-block; }
+        .content-body { flex-grow: 1; display: flex; flex-direction: column; justify-content: flex-start; gap: 1vh; width: 100%; overflow-y: auto; padding-bottom: 2vh; }
+        p, li, td { font-size: 1.4vw; line-height: 1.7; color: var(--text-main); }
+        
+        .keyword-icon { color: var(--accent-blue); margin-right: 0.5vw; width: 1.5vw; text-align: center; display: inline-block; }
+        .tech-icon { color: var(--accent-blue); margin-right: 6px; font-size: 1.1em; vertical-align: baseline; }
+        b .tech-icon, strong .tech-icon, .card h4 .tech-icon, h2 .tech-icon { color: inherit; } 
+
+        /* Layouts & Cards */
+        .two-column { display: grid; grid-template-columns: 1fr 1fr; gap: 2.5vw; height: 100%; align-items: center; }
+        .two-column-equal { display: grid; grid-template-columns: 1fr 1fr; gap: 2vw; height: 100%; align-items: start; }
+        .card-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5vw; }
+        .card { background: var(--bg-card); padding: 1.5vh 2.5vw; border-radius: 1vw; border-left: 0.8vw solid var(--accent-blue); box-shadow: 0 4px 10px rgba(0,0,0,0.05); display: flex; flex-direction: column; justify-content: center; }
+        .card h4 { font-size: 1.5vw; color: var(--accent-blue); margin-bottom: 0.5vh; font-family: 'Suwannaphum'; display: flex; align-items: center; gap: 10px;}
+
+        /* Visual Frame */
+        .visual-frame { background: #FFFFFF; border-radius: 1vw; border: 1px solid #CBD5E1; display: flex; align-items: center; justify-content: center; height: 100%; min-height: 250px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.05); position: relative;}
+        .visual-frame img { width: 100%; height: 100%; object-fit: cover; }
+        .visual-frame svg { width: 100%; height: 100%; max-height: 35vh; object-fit: contain; padding: 2vw;}
+
+        /* Case Study Narrative Box */
+        .narrative-box { background: #F8FAFC; border-radius: 0.6vw; border: 1px solid #CBD5E1; padding: 1vh 1.5vw; margin-bottom: 1vh; box-shadow: 0 2px 6px rgba(0,0,0,0.05); }
+        .narrative-header { font-weight: bold; color: var(--accent-blue); font-size: 1.2vw; border-bottom: 1px solid #E2E8F0; padding-bottom: 0.5vh; margin-bottom: 0.8vh; font-family: 'Suwannaphum'; }
+        .narrative-text { font-size: 1.25vw; color: var(--text-main); line-height: 1.6; margin: 0; }
+        
+        .narrative-box.danger { background: #FEF2F2; border-color: #FECACA; }
+        .narrative-box.danger .narrative-header { color: var(--accent-red); border-color: #FCA5A5; }
+
+        /* Code Block Wrapper */
+        .code-wrapper { background: var(--code-bg); border-radius: 0.6vw; border: 1px solid #374151; overflow: hidden; width: 100%; box-shadow: 0 5px 15px rgba(0,0,0,0.1); margin-top: 1vh;}
+        .code-header { background: #1F2937; padding: 0.6vh 1.2vw; font-size: 0.9vw; font-family: 'Battambang', sans-serif; color: #9CA3AF; border-bottom: 1px solid #374151; display: flex; justify-content: space-between; }
+        .code-header span { font-weight: bold; color: #38BDF8; font-size: 1vw; }
+        .code-content { padding: 1vh 1.5vw; overflow-x: auto; }
+        .code-content pre { font-family: 'Fira Code', monospace; font-size: 1.1vw; line-height: 1.5; color: #f8f8f2; margin: 0; }
+        .kw { color: #ff79c6; font-weight: bold; } .fn { color: #50fa7b; } .str { color: #f1fa8c; } .com { color: #6272a4; font-style: italic; } .num { color: #bd93f9; } .cls { color: #8be9fd; font-style: italic; }
+
+        /* Highlight Note */
+        .highlight-note { background-color: #FEF9C3; border-left: 4px solid var(--accent-yellow); padding: 1.5vh 1.5vw; border-radius: 0.5vw; margin-top: 1vh; font-weight: bold; color: #854D0E; font-size: 1.25vw; display: block; border: 1px dashed var(--accent-yellow); box-shadow: 0 2px 5px rgba(217,119,6,0.1); line-height: 1.7;}
+
+        /* Main Footer */
+        .global-footer { display: flex; justify-content: space-between; align-items: center; width: 100%; padding: 1vh 4vw; border-top: 3px solid var(--accent-blue); background-color: var(--header-footer-bg); z-index: 10; }
+        .footer-left { display: flex; align-items: center; gap: 1.5vw; }
+        .footer-left img { border-radius: 50%; border: 2px solid var(--accent-blue); width: 3vw; height: 3vw; object-fit: cover; }
+        .footer-left span { font-size: 1.2vw; font-weight: bold; color: var(--text-main); font-family: 'Suwannaphum'; }
+        .slide-counter { font-size: 1.1vw; color: var(--accent-blue); font-family: 'Suwannaphum'; font-weight: 900; background: #FFFFFF; padding: 0.5vh 1.5vw; border-radius: 5vw; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        
+        .print-only-footer { display: none; }
+
+        /* PRINT STYLES */
+        @media print {
+            @page { size: A4 landscape; margin: 0; }
+            html, body { display: block !important; width: 100% !important; height: auto !important; background: white !important; overflow: visible !important; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; margin: 0 !important; padding: 0 !important; }
+            .slide-deck { display: block !important; width: 100% !important; height: auto !important; box-shadow: none !important; border: none !important; border-radius: 0 !important; }
+            .slide-wrapper { display: block !important; overflow: visible !important; }
+            .slide { display: flex !important; flex-direction: column !important; width: 297mm !important; height: 209mm !important; page-break-after: always !important; page-break-inside: avoid !important; position: relative !important; opacity: 1 !important; transform: none !important; animation: none !important; padding: 10mm 15mm !important; box-sizing: border-box !important; }
+            .nav-zone { display: none !important; }
+            .global-header { margin: -10mm -15mm 5mm -15mm !important; padding: 5mm 15mm !important; border-bottom: 2px solid var(--accent-blue) !important;}
+            .global-footer#mainFooter { display: none !important; }
+            .print-only-footer { display: flex !important; margin: auto -15mm -10mm -15mm !important; padding: 5mm 15mm !important; border-top: 2px solid var(--accent-blue) !important; background: var(--header-footer-bg) !important; width: 297mm !important; box-sizing: border-box !important; }
+            .card { box-shadow: 0 2px 5px rgba(0,0,0,0.05) !important; border: 1px solid #E2E8F0 !important; border-left-width: 0.8vw !important; page-break-inside: avoid !important;}
+            .visual-frame img { object-fit: contain !important; background: #fff !important; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="slide-deck" id="deck">
+
+    <!-- Navigation Overlays -->
+    <div class="nav-zone nav-left" title="ថយក្រោយ (Previous)">
+        <i class="fa-solid fa-chevron-left"></i>
+    </div>
+    <div class="nav-zone nav-right" title="ទៅមុខ (Next)">
+        <i class="fa-solid fa-chevron-right"></i>
+    </div>
+
+    <!-- Header Template -->
+    <template id="headerTemplate">
+        <div class="global-header">
+            <div class="header-item">
+                <img src="Logo.png" onerror="this.src='https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png'">
+                <span>សាកលវិទ្យាល័យអង្គរ</span>
+            </div>
+            <div class="header-center" style="text-align: center;">
+                <h1 style="font-size: 1.4vw;">រចនាសម្ព័ន្ធទិន្នន័យកម្រិតខ្ពស់ និងក្បួនដោះស្រាយ (Advanced Data Structures and Algorithms - DSA)</h1>
+                <p>អនុបណ្ឌិតវិទ្យាសាស្ត្រទិន្នន័យ និងបញ្ញាសិប្បនិម្មិត (Master of Data Science & Artificial Intelligence)</p>
+            </div>
+            <div class="header-item">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg">
+                <span>Python Pro</span>
+            </div>
+        </div>
+    </template>
+
+    <div class="slide-wrapper" id="slideWrapper">
+        
+        <!-- Cover Slide -->
+        <div class="slide active">
+            <div style="text-align: center; margin: auto; width: 100%;">
+                <div style="display: flex; align-items: center; justify-content: center; gap: 3vw; margin-bottom: 2vh;">
+                    <img src="Logo.png" style="height: 12vw;" alt="AU Logo" onerror="this.src='https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png'">
+                    <div style="text-align: center;">
+                        <h2 style="font-family: 'Suwannaphum'; color: var(--accent-blue); font-size: 3.6vw; margin: 0;">សាកលវិទ្យាល័យអង្គរ</h2>
+                        <p style="font-family: 'Lato'; color: var(--text-muted); font-size: 1.8vw; margin: 0; font-weight: bold;">ANGKOR UNIVERSITY</p>
+                    </div>
+                </div>
+                
+                <div style="margin-bottom: 2vh;">
+                    <h3 style="font-family: 'Suwannaphum'; font-size: 1.7vw; color: var(--accent-green);"><i class="fa-solid fa-graduation-cap"></i> អនុបណ្ឌិតវិទ្យាសាស្ត្រទិន្នន័យ និងបញ្ញាសិប្បនិម្មិត (Master of Data Science and AI)</h3>
+                </div>
+
+                <div style="background: var(--accent-blue); color: white; padding: 1vh 5vw; border-radius: 5vw; display: inline-block; font-size: 2.2vw; font-weight: bold; margin-bottom: 3vh;">ជំពូកទី៤ | Chapter 4</div>
+                
+                <h1 style="line-height: 1.5;">រចនាសម្ព័ន្ធទិន្នន័យបណ្តាញតភ្ជាប់<br>
+                <span style="color:var(--accent-blue); font-size: 2.2vw; font-family:'Lato'">(<i class='fa-solid fa-link tech-icon'></i>Linked Lists - Singly & Doubly)</span></h1>
+                
+                <div style="margin-top: 3vh; display: flex; gap: 5vw; justify-content: center; align-items: center;">
+                    <div style="text-align: center;">
+                        <i class="fa-solid fa-arrow-right-long" style="font-size: 6vw; color: var(--accent-blue);"></i>
+                        <p style="font-size: 1.1vw; font-weight: bold; color: var(--accent-blue);">Singly Linked</p>
+                    </div>
+                    <div style="text-align: center;">
+                        <i class="fa-solid fa-arrows-left-right" style="font-size: 6vw; color: #059669;"></i>
+                        <p style="font-size: 1.1vw; font-weight: bold; color: var(--accent-green);">Doubly Linked</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Instructor Slide -->
+        <div class="slide">
+            <div id="h-placeholder-1"></div>
+            <h2 class="slide-title"><i class="fa-solid fa-user-tie"></i> ព័ត៌មានសាស្ត្រាចារ្យ និងមុខវិជ្ជា</h2>
+            <div class="content-body two-column">
+                <div style="position: relative; width: 20vw; height: 28vw; margin: auto;">
+                    <div style="position: absolute; top: 1.5vw; left: -1.5vw; width: 100%; height: 100%; background: rgba(2, 132, 199, 0.1); border-radius: 2vw; z-index: 0;"></div>
+                    <img src="Lim.jpg" style="position: relative; width: 100%; height: 100%; border-radius: 2vw; object-fit: cover; box-shadow: 0 15px 35px rgba(0,0,0,0.15); z-index: 1; border: 4px solid white;" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'">
+                </div>
+                <div style="padding-left: 2vw;">
+                    <h3 style="font-size: 2.8vw; color: var(--accent-blue); font-family: 'Suwannaphum'; margin-bottom: 2vh;">សាស្ត្រាចារ្យ៖ សឿង លីម <span style="font-size: 1.8vw; color: var(--text-muted);">(Soeurng LIM)</span></h3>
+                    <div class="card" style="border-left: none; border-top: 4px solid var(--accent-blue); padding: 3vh; background: #FFFFFF;">
+                        <p><b><i class="fa-solid fa-graduation-cap text-blue"></i> គុណវុឌ្ឍិ៖</b> បរិញ្ញាបត្រជាន់ខ្ពស់ (Master's Degree) - ព័ត៌មានវិទ្យា</p>
+                        <p><b><i class="fa-solid fa-phone text-blue"></i> ទូរស័ព្ទ៖</b> ០៦១ ២២៧ ៩៣៣</p>
+                        <p><b><i class="fa-solid fa-envelope text-blue"></i> អ៊ីម៉ែល៖</b> soeurnglim@gmail.com</p>
+                        <hr style="margin: 2vh 0; border: 1px solid #E2E8F0;">
+                        <p><b><i class="fa-solid fa-star text-blue"></i> ក្រេឌីត៖</b> ៣ ក្រេឌីត (3 Credits)</p>
+                        <p><b><i class="fa-solid fa-clipboard-check text-blue"></i> មុខវិជ្ជាមុន (Prerequisite)៖</b> ការសរសេរកម្មវិធី Python មូលដ្ឋាន</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Main Footer for Screen View -->
+    <div class="global-footer" id="mainFooter">
+        <div class="footer-left">
+            <img src="Lim.jpg" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'" alt="Professor">
+            <span>សាស្ត្រាចារ្យ៖ សឿង លីម (Soeurng LIM)</span>
+        </div>
+        <div class="slide-counter" id="screenSlideCounter">កំពុងរៀបចំ...</div>
+    </div>
+
+</div>
+
+<script>
+    const slideWrapper = document.getElementById('slideWrapper');
+    const headerHTML = document.getElementById('headerTemplate').innerHTML;
+    const khNums = ["០", "១", "២", "៣", "៤", "៥", "៦", "៧", "៨", "៩"];
+    function toKh(n) { return n.toString().split('').map(d => khNums[parseInt(d)]).join(''); }
+
+    // SVGs
+    const singlySVG = `
+        <svg viewBox="0 0 600 250" xmlns="http://www.w3.org/2000/svg" style="width:100%; height:100%;">
+            <defs>
+                <marker id="arrowHead" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                    <path d="M 0 0 L 10 5 L 0 10 z" fill="#0284C7" />
+                </marker>
+            </defs>
+            <text x="300" y="30" font-family="'Suwannaphum', sans-serif" font-size="24" font-weight="bold" fill="#0284C7" text-anchor="middle">Singly Linked List (ផ្លូវមួយទិស)</text>
+            
+            <rect x="20" y="100" width="60" height="40" rx="4" fill="#E2E8F0" stroke="#475569" stroke-width="2"/>
+            <text x="50" y="125" font-family="sans-serif" font-size="16" font-weight="bold" fill="#0F172A" text-anchor="middle">Head</text>
+            <path d="M 80 120 L 115 120" fill="none" stroke="#0284C7" stroke-width="3" marker-end="url(#arrowHead)"/>
+
+            <g transform="translate(125, 80)">
+                <rect x="0" y="0" width="100" height="80" rx="6" fill="#E0F2FE" stroke="#0284C7" stroke-width="3"/>
+                <line x1="60" y1="0" x2="60" y2="80" stroke="#0284C7" stroke-width="3"/>
+                <text x="30" y="48" font-family="sans-serif" font-size="24" font-weight="bold" fill="#0F172A" text-anchor="middle">10</text>
+                <circle cx="80" cy="40" r="6" fill="#0284C7"/>
+                <text x="50" y="105" font-family="sans-serif" font-size="14" fill="#64748B" font-weight="bold" text-anchor="middle">Node 1</text>
+            </g>
+            <path d="M 205 120 L 265 120" fill="none" stroke="#0284C7" stroke-width="3" marker-end="url(#arrowHead)"/>
+
+            <g transform="translate(275, 80)">
+                <rect x="0" y="0" width="100" height="80" rx="6" fill="#BAE6FD" stroke="#0284C7" stroke-width="3"/>
+                <line x1="60" y1="0" x2="60" y2="80" stroke="#0284C7" stroke-width="3"/>
+                <text x="30" y="48" font-family="sans-serif" font-size="24" font-weight="bold" fill="#0F172A" text-anchor="middle">20</text>
+                <circle cx="80" cy="40" r="6" fill="#0284C7"/>
+                <text x="50" y="105" font-family="sans-serif" font-size="14" fill="#64748B" font-weight="bold" text-anchor="middle">Node 2</text>
+            </g>
+            <path d="M 355 120 L 415 120" fill="none" stroke="#0284C7" stroke-width="3" marker-end="url(#arrowHead)"/>
+
+            <g transform="translate(425, 80)">
+                <rect x="0" y="0" width="100" height="80" rx="6" fill="#7DD3FC" stroke="#0284C7" stroke-width="3"/>
+                <line x1="60" y1="0" x2="60" y2="80" stroke="#0284C7" stroke-width="3"/>
+                <text x="30" y="48" font-family="sans-serif" font-size="24" font-weight="bold" fill="#0F172A" text-anchor="middle">30</text>
+                <line x1="60" y1="80" x2="100" y2="0" stroke="#0284C7" stroke-width="2"/>
+                <text x="50" y="105" font-family="sans-serif" font-size="14" fill="#64748B" font-weight="bold" text-anchor="middle">Tail Node</text>
+            </g>
+            <text x="555" y="125" font-family="'Fira Code', monospace" font-size="18" font-weight="bold" fill="#DC2626" text-anchor="middle">Null</text>
+        </svg>
+    `;
+
+    const doublySVG = `
+        <svg viewBox="0 0 600 250" xmlns="http://www.w3.org/2000/svg" style="width:100%; height:100%;">
+            <defs>
+                <marker id="arrowGreen" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                    <path d="M 0 0 L 10 5 L 0 10 z" fill="#059669" />
+                </marker>
+            </defs>
+            <text x="300" y="30" font-family="'Suwannaphum', sans-serif" font-size="24" font-weight="bold" fill="#059669" text-anchor="middle">Doubly Linked List (ផ្លូវពីរទិស)</text>
+            
+            <text x="40" y="125" font-family="'Fira Code', monospace" font-size="16" font-weight="bold" fill="#DC2626" text-anchor="middle">Null</text>
+            <path d="M 90 120 L 60 120" fill="none" stroke="#059669" stroke-width="3" marker-end="url(#arrowGreen)"/>
+
+            <g transform="translate(100, 80)">
+                <rect x="0" y="0" width="120" height="80" rx="6" fill="#D1FAE5" stroke="#059669" stroke-width="3"/>
+                <line x1="40" y1="0" x2="40" y2="80" stroke="#059669" stroke-width="3"/>
+                <line x1="80" y1="0" x2="80" y2="80" stroke="#059669" stroke-width="3"/>
+                <text x="60" y="48" font-family="sans-serif" font-size="24" font-weight="bold" fill="#0F172A" text-anchor="middle">10</text>
+                <circle cx="20" cy="40" r="5" fill="#059669"/>
+                <circle cx="100" cy="40" r="5" fill="#059669"/>
+                <text x="60" y="105" font-family="sans-serif" font-size="14" fill="#64748B" font-weight="bold" text-anchor="middle">Node 1</text>
+            </g>
+
+            <path d="M 200 105 L 260 105" fill="none" stroke="#059669" stroke-width="3" marker-end="url(#arrowGreen)"/>
+            <path d="M 270 135 L 210 135" fill="none" stroke="#059669" stroke-width="3" marker-end="url(#arrowGreen)"/>
+
+            <g transform="translate(280, 80)">
+                <rect x="0" y="0" width="120" height="80" rx="6" fill="#A7F3D0" stroke="#059669" stroke-width="3"/>
+                <line x1="40" y1="0" x2="40" y2="80" stroke="#059669" stroke-width="3"/>
+                <line x1="80" y1="0" x2="80" y2="80" stroke="#059669" stroke-width="3"/>
+                <text x="60" y="48" font-family="sans-serif" font-size="24" font-weight="bold" fill="#0F172A" text-anchor="middle">20</text>
+                <circle cx="20" cy="40" r="5" fill="#059669"/>
+                <circle cx="100" cy="40" r="5" fill="#059669"/>
+                <text x="60" y="105" font-family="sans-serif" font-size="14" fill="#64748B" font-weight="bold" text-anchor="middle">Node 2</text>
+            </g>
+
+            <path d="M 380 120 L 430 120" fill="none" stroke="#059669" stroke-width="3" marker-end="url(#arrowGreen)"/>
+            <text x="460" y="125" font-family="'Fira Code', monospace" font-size="16" font-weight="bold" fill="#DC2626" text-anchor="middle">Null</text>
+            
+            <text x="120" y="65" font-family="sans-serif" font-size="12" fill="#64748B" text-anchor="middle">prev</text>
+            <text x="200" y="65" font-family="sans-serif" font-size="12" fill="#64748B" text-anchor="middle">next</text>
+        </svg>
+    `;
+
+    const chapter4Data = [
+        // 1. Syllabus Recap
+        { t: "១. គម្រោងបង្រៀនប្រចាំឆមាស (Course Syllabus)", type: "grid", c: [
+            { h: "<i class='fa-solid fa-list-ol keyword-icon'></i> ពាក់កណ្តាលឆមាសទី ១", p: `
+                <ul style='list-style:none; line-height: 2.2; margin-left: 0; padding-left: 0;'>
+                    <li style='font-size: 1.35vw;'><i class='fa-solid fa-check text-main' style='margin-right: 8px;'></i> ជំពូក២: ការសរសេរកម្មវិធីតម្រង់ទិសវត្ថុ (OOP) & Memory</li>
+                    <li style='font-size: 1.35vw;'><i class='fa-solid fa-check text-main' style='margin-right: 8px;'></i> ជំពូក៣: Linear Data Structures (Arrays, Stacks...)</li>
+                    <li style='color: var(--accent-red); font-size: 1.35vw; font-weight: bold;'><i class='fa-solid fa-arrow-right text-red' style='margin-right: 8px;'></i> ជំពូក៤: <b>Linked Lists</b> (ថ្ងៃនេះ)</li>
+                </ul>` 
+            },
+            { h: "<i class='fa-solid fa-network-wired keyword-icon'></i> ពាក់កណ្តាលឆមាសទី ២", p: `
+                <ul style='list-style:none; line-height: 2.2; margin-left: 0; padding-left: 0;'>
+                    <li style='font-size: 1.35vw;'><i class='fa-regular fa-circle text-main' style='margin-right: 8px;'></i> ជំពូក៥: <b>Trees</b> & Binary Search Trees</li>
+                    <li style='font-size: 1.35vw;'><i class='fa-regular fa-circle text-main' style='margin-right: 8px;'></i> ជំពូក៦: <b>Graphs</b> & Hashing Tables</li>
+                    <li style='font-size: 1.35vw;'><i class='fa-regular fa-circle text-main' style='margin-right: 8px;'></i> ជំពូក៧: Sorting & Searching Algorithms</li>
+                    <li style='font-size: 1.35vw;'><i class='fa-regular fa-circle text-main' style='margin-right: 8px;'></i> ជំពូក៨: Dynamic Programming & <b>Artificial Intelligence (AI)</b></li>
+                </ul>` 
+            }
+        ]},
+
+        // 2. Objectives
+        { t: "២. វត្ថុបំណងនៃជំពូកទី ៤ (Chapter Objectives)", type: "grid", c: [
+            { h: "<i class='fa-solid fa-link keyword-icon'></i> យល់ពី Linked Lists", p: "យល់ច្បាស់ពីលក្ខណៈនៃការរក្សាទុកទិន្នន័យបែបរាយប៉ាយ (Scattered Memory) ធៀបនឹងការប្រើប្រាស់ Arrays (Contiguous)។" },
+            { h: "<i class='fa-solid fa-code keyword-icon'></i> ការសាងសង់ Node", p: "អនុវត្តការសរសេរ <b><i class='fa-solid fa-cube tech-icon'></i>Class</b> នៅក្នុង Python ដើម្បីបង្កើតចំណុចថ្នាំង (Node) និងភ្ជាប់ពួកវាចូលគ្នាជាបណ្តាញ។" },
+            { h: "<i class='fa-solid fa-arrows-left-right keyword-icon'></i> បែងចែក Singly vs Doubly", p: "យល់ពីភាពខុសគ្នារវាងការចង្អុលទៅមុខតែម្ខាង (Singly) និងការចង្អុលទៅមកសងខាង (Doubly Linked List)។" },
+            { h: "<i class='fa-solid fa-brain keyword-icon'></i> ប្រើប្រាស់ក្នុង AI & DS", p: "ស្វែងយល់ពីរបៀបដែល Linked List ត្រូវបានប្រើប្រាស់នៅក្នុងការអភិវឌ្ឍន៍ប្រព័ន្ធ Artificial Intelligence (AI)។" }
+        ]},
+
+        // 3. ToC
+        { t: "៣. មាតិកានៃជំពូក (Table of Contents)", type: "card", c: `
+            <ul style="list-style: none; padding-left: 2vw; line-height: 2.1;">
+                <li><i class="fa-solid fa-network-wired text-blue" style="width:2vw;"></i> ៤. គំនិតទូទៅនៃ <b>Linked Lists (Scattered Memory)</b></li>
+                <li><i class="fa-solid fa-arrow-right-long text-blue" style="width:2vw;"></i> ៥ ដល់ ៧. រចនាសម្ព័ន្ធ <b>Singly Linked List</b> ករណីសិក្សា និងកូដ</li>
+                <li><i class="fa-solid fa-arrows-left-right text-blue" style="width:2vw;"></i> ៨ ដល់ ១០. រចនាសម្ព័ន្ធ <b>Doubly Linked List</b> ករណីសិក្សា និងកូដ</li>
+                <li><i class="fa-solid fa-brain text-blue" style="width:2vw;"></i> ១១. ការអនុវត្ត <b>Linked Lists</b> ក្នុងប្រព័ន្ធ <b>AI</b></li>
+                <li><i class="fa-solid fa-scale-balanced text-blue" style="width:2vw;"></i> ១២. ការប្រៀបធៀបប្រសិទ្ធភាព <b>(Array vs Linked List)</b></li>
+                <li><i class="fa-solid fa-book-open-reader text-blue" style="width:2vw;"></i> ១៣ ដល់ ១៥. លំហាត់អនុវត្តន៍ សទ្ទានុក្រម និងសង្ខេបមេរៀន</li>
+                <li><i class="fa-solid fa-book-bookmark text-blue" style="width:2vw;"></i> ១៦. ឯកសារយោង និងគន្ថនិទ្ទេស (References)</li>
+            </ul>
+        `},
+
+        // 4. Intro to Linked Lists
+        { t: "៤. តើអ្វីទៅជា <b><i class='fa-solid fa-link tech-icon'></i>Linked Lists?</b>", type: "split", img: "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=800&q=80", c: `
+            <div style="display:flex; flex-direction:column; height:100%; justify-content:center;">
+                <p><b><i class='fa-solid fa-link keyword-icon'></i> Linked List:</b> ជារចនាសម្ព័ន្ធទិន្នន័យលីនេអ៊ែរ ដែលធាតុនីមួយៗ (Node) មិនចាំបាច់តម្រៀបជាប់គ្នាក្នុង Memory នោះទេ។ ធាតុនីមួយៗផ្ទុកទិន្នន័យ និងមានអ្នកចង្អុល (Pointer/Reference) ទៅកាន់ធាតុបន្ទាប់។</p>
+                <div class="narrative-box" style="margin-top:2vh;">
+                    <div class="narrative-header"><i class="fa-solid fa-puzzle-piece"></i> ដោះស្រាយបញ្ហារបស់ Array</div>
+                    <p class="narrative-text">Array ត្រូវការទីតាំង Memory ធំៗជាប់គ្នាជានិច្ច ដែលជួនកាលកុំព្យូទ័ររកមិនបាន (Memory Fragmentation)។ Linked List អាចដាក់ទិន្នន័យនៅរាយប៉ាយគ្រប់ទីកន្លែងបាន ឱ្យតែយើងចងខ្សែចង្អុលប្រាប់គ្នាពីប្រអប់មួយទៅមួយ។</p>
+                </div>
+            </div>
+        `},
+
+        // 5. Singly Linked List Intro
+        { t: "៥. រចនាសម្ព័ន្ធ <b>Singly Linked List</b>", type: "split", svg: singlySVG, c: `
+            <div style="display:flex; flex-direction:column; height:100%; justify-content:center;">
+                <p><b><i class='fa-solid fa-arrow-right-long keyword-icon'></i> Singly Linked List:</b> ជាប្រភេទបណ្តាញដែលបញ្ជូនព័ត៌មានទៅមុខតែមួយទិសគត់។ Node មួយមានត្រឹមតែ <code>data</code> និង <code>next</code> pointer ប៉ុណ្ណោះ។</p>
+                <div class="narrative-box" style="margin-top:2vh;">
+                    <div class="narrative-header"><i class="fa-solid fa-train"></i> ករណីសិក្សា៖ ទូរថភ្លើង</div>
+                    <p class="narrative-text">ទូរថភ្លើង (Node) នីមួយៗមានអ្នកដំណើរ (Data) និងទំពក់ភ្ជាប់ទៅទូខាងក្រោយ (Next)។ ក្បាលរថភ្លើង (Head) ទាញខ្សែទាំងមូល។ បើទំពក់ណាមួយដាច់ ខ្សែខាងក្រោយនឹងបាត់បង់ទាំងអស់ (Garbage Collected)។</p>
+                </div>
+            </div>
+        `},
+
+        // 6. Singly Case Studies
+        { t: "៦. ករណីសិក្សា៖ <b>Singly Linked List</b>", type: "card", c: `
+            <div class="two-column-equal">
+                <div>
+                    <div class="narrative-box">
+                        <div class="narrative-header"><i class="fa-solid fa-map-location-dot"></i> ករណីទី១៖ ល្បែងរកកំណប់ (Treasure Hunt)</div>
+                        <p class="narrative-text">អ្នកមានក្រដាសតម្រុយទី១ (Head)។ ក្រដាសទី១ ប្រាប់ពីទីតាំង (Data) ព្រមទាំងផ្តល់តម្រុយឱ្យទៅរកក្រដាសទី២ (Next)។ អ្នកត្រូវដើរតាមតម្រុយម្តងមួយៗ (O(n)) រហូតដល់រកឃើញកំណប់ (Tail/Null) ដោយមិនអាចលោតផ្លោះបានទេ។</p>
+                    </div>
+                </div>
+                <div>
+                    <div class="narrative-box">
+                        <div class="narrative-header"><i class="fa-solid fa-images"></i> ករណីទី២៖ ម៉ាស៊ីនបញ្ចាំងរូបភាព (Slideshow)</div>
+                        <p class="narrative-text">កម្មវិធីបញ្ចាំងរូបភាពខ្លះ រៀបចំរូបភាពទី១ ឱ្យភ្ជាប់ទៅទី២ ទី២ទៅទី៣។ ពេលអ្នកចុច "Next" វានឹងរុញទៅរូបបន្ទាប់ ប៉ុន្តែបើវាជា Singly អ្នកមិនអាចចុច "Previous" ត្រឡប់ក្រោយបានទេ លុះត្រាតែចាប់ផ្តើមពីទី១មកវិញ។</p>
+                    </div>
+                </div>
+            </div>
+        `},
+
+        // 7. Singly Code
+        { t: "៧. ការអនុវត្តកូដ <b>Singly Linked List</b>", type: "card", c: `
+            <p style="margin-bottom: 1.5vh;"><i class="fa-brands fa-python text-blue"></i> ក្នុង Python យើងត្រូវសរសេរ Class <code>Node</code> ដើម្បីធ្វើជាប្រអប់ និង Class <code>LinkedList</code> ដើម្បីគ្រប់គ្រងក្បាល (Head)។</p>
+            <div class="two-column-equal">
+                <div>
+                    <div class="code-wrapper" style="margin-top:0;">
+                        <div class="code-header"><span><i class="fa-brands fa-python"></i> ១. បង្កើត Node</span></div>
+                        <div class="code-content"><pre>
+<span class="kw">class</span> <span class="cls">Node</span>:
+    <span class="kw">def</span> __init__(<span class="kw">self</span>, data):
+        <span class="kw">self</span>.data = data
+        <span class="kw">self</span>.next = <span class="kw">None</span></pre></div>
+                    </div>
+                    <div class="highlight-note" style="margin-top:2vh;"><i class="fa-solid fa-laptop-code"></i> <b>លំហាត់៖</b> សរសេរ Method <code>insert_at_end()</code> ដើម្បីបន្ថែម Node ថ្មីទៅចុងបញ្ជី។</div>
+                </div>
+                <div>
+                    <div class="code-wrapper" style="margin-top:0;">
+                        <div class="code-header"><span><i class="fa-brands fa-python"></i> ២. បង្កើត LinkedList និងភ្ជាប់</span></div>
+                        <div class="code-content"><pre>
+<span class="kw">class</span> <span class="cls">LinkedList</span>:
+    <span class="kw">def</span> __init__(<span class="kw">self</span>):
+        <span class="kw">self</span>.head = <span class="kw">None</span>
+
+llist = LinkedList()
+node1 = Node(<span class="num">10</span>)
+node2 = Node(<span class="num">20</span>)
+
+llist.head = node1      <span class="com"># កំណត់ក្បាល</span>
+node1.next = node2      <span class="com"># ភ្ជាប់បន្ត O(1)</span></pre></div>
+                    </div>
+                </div>
+            </div>
+        `},
+
+        // 8. Doubly Linked List Intro
+        { t: "៨. រចនាសម្ព័ន្ធ <b>Doubly Linked List</b>", type: "split", svg: doublySVG, c: `
+            <div style="display:flex; flex-direction:column; height:100%; justify-content:center;">
+                <p><b><i class='fa-solid fa-arrows-left-right keyword-icon'></i> Doubly Linked List:</b> ដោះស្រាយចំណុចខ្សោយរបស់ Singly ដោយបន្ថែមអ្នកចង្អុលត្រឡប់ក្រោយមួយទៀត។ Node មួយមាន <code>prev</code>, <code>data</code>, និង <code>next</code>។</p>
+                <div class="narrative-box" style="margin-top:2vh;">
+                    <div class="narrative-header"><i class="fa-solid fa-scale-unbalanced"></i> គុណសម្បត្តិ និងគុណវិបត្តិ</div>
+                    <p class="narrative-text"><b>គុណសម្បត្តិ៖</b> អាចដើរទៅមុខ ឬថយក្រោយបានយ៉ាងងាយស្រួល ល្អសម្រាប់ការអភិវឌ្ឍន៍ App ស្មុគស្មាញ។<br><b>គុណវិបត្តិ៖</b> ស៊ី Memory ច្រើនជាងមុន (ព្រោះត្រូវផ្ទុក Pointer ដល់ទៅពីរក្នុងមួយ Node)។</p>
+                </div>
+            </div>
+        `},
+
+        // 9. Doubly Case Studies
+        { t: "៩. ករណីសិក្សា៖ <b>Doubly Linked List</b>", type: "card", c: `
+            <div class="two-column-equal">
+                <div>
+                    <div class="narrative-box">
+                        <div class="narrative-header"><i class="fa-brands fa-chrome"></i> ករណីទី១៖ Web Browser History</div>
+                        <p class="narrative-text">រាល់ពេលអ្នកចូលមើលវេបសាយ វានឹងបង្កើត Node មួយ។ ដោយសារវាជា Doubly Linked List ទើបអ្នកអាចចុចប៊ូតុង <b>"Back" (ថយក្រោយ <code>prev</code>)</b> ឬ <b>"Forward" (ទៅមុខ <code>next</code>)</b> បានយ៉ាងរលូន។</p>
+                    </div>
+                </div>
+                <div>
+                    <div class="narrative-box">
+                        <div class="narrative-header"><i class="fa-brands fa-spotify"></i> ករណីទី២៖ Music Player Playlist</div>
+                        <p class="narrative-text">ក្នុង Spotify ពេលកំពុងស្តាប់បទចម្រៀង (Current Node) អ្នកអាចចុចប៊ូតុង <b>"Next Track"</b> ទៅបទបន្ទាប់ ឬចុច <b>"Previous Track"</b> ត្រឡប់ទៅបទដែលទើបស្តាប់ហើយបានភ្លាមៗ ដោយសារបទនីមួយៗភ្ជាប់គ្នាពីរទិស។</p>
+                    </div>
+                </div>
+            </div>
+        `},
+
+        // 10. Doubly Code
+        { t: "១០. ការអនុវត្តកូដ <b>Doubly Linked List</b>", type: "card", c: `
+            <p style="margin-bottom: 1.5vh;"><i class="fa-brands fa-python text-blue"></i> សម្រាប់ Doubly Linked List ពេលបន្ថែម ឬលុប Node យើងត្រូវប្រយ័ត្នក្នុងការផ្តាច់ និងភ្ជាប់ខ្សែ <code>prev</code> និង <code>next</code> ឲ្យបានត្រឹមត្រូវ។</p>
+            <div class="two-column-equal">
+                <div>
+                    <div class="code-wrapper" style="margin-top:0;">
+                        <div class="code-header"><span><i class="fa-brands fa-python"></i> ការបង្កើត Doubly Node</span></div>
+                        <div class="code-content"><pre>
+<span class="kw">class</span> <span class="cls">DNode</span>:
+    <span class="kw">def</span> __init__(<span class="kw">self</span>, data):
+        <span class="kw">self</span>.data = data
+        <span class="kw">self</span>.prev = <span class="kw">None</span> <span class="com"># ខ្សែចង្អុលត្រឡប់</span>
+        <span class="kw">self</span>.next = <span class="kw">None</span> <span class="com"># ខ្សែចង្អុលទៅមុខ</span></pre></div>
+                    </div>
+                </div>
+                <div>
+                    <div class="highlight-note" style="margin-top:0;">
+                        <p style="margin-bottom: 1vh;"><i class="fa-solid fa-laptop-code"></i> <b>លំហាត់អនុវត្តន៍៖</b></p>
+                        <ul style="margin-left: 2vw; font-size: 1.15vw; color: var(--text-main); font-weight: normal;">
+                            <li>បង្កើត <code>DNode</code> ចំនួន៣។</li>
+                            <li>ភ្ជាប់ពួកវាទាំងទៅមុខ និងត្រឡប់ក្រោយ (A $\leftrightarrow$ B $\leftrightarrow$ C)។</li>
+                            <li>សរសេរកូដ <code>For Loop</code> ដើម្បី Print ឈ្មោះថយក្រោយពី C មក A វិញ។</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        `},
+
+        // 11. AI Applications
+        { t: "១១. ការអនុវត្ត <b>Linked Lists</b> ក្នុងប្រព័ន្ធ <b><i class='fa-solid fa-brain tech-icon'></i>AI</b>", type: "grid", c: [
+            { h: "<i class='fa-solid fa-language keyword-icon'></i> 1. NLP Token Sequences (Doubly)", p: "ក្នុងដំណើរការភាសាធម្មជាតិ (NLP) ពាក្យនីមួយៗក្នុងប្រយោគត្រូវបានរក្សាទុកជា Doubly Linked List ដើម្បីងាយស្រួលឆែកមើលពាក្យខាងមុខ (Next) និងពាក្យពីក្រោយ (Prev) ដើម្បីស្វែងយល់អត្ថន័យនៃបរិបទ (Context) បានត្រឹមត្រូវ។" },
+            { h: "<i class='fa-solid fa-project-diagram keyword-icon'></i> 2. Neural Network Layers", p: "ការហ្វឹកហាត់ AI ទាមទារការបញ្ជូនទិន្នន័យទៅមុខ (Forward Propagation) និងការគណនាកំហុសត្រឡប់ក្រោយ (Backpropagation) ដែលរចនាសម្ព័ន្ធ Doubly Linked List ជួយឲ្យការលោតចុះឡើងរវាង Layers លឿន។" },
+            { h: "<i class='fa-solid fa-route keyword-icon'></i> 3. Pathfinding / Graph Processing", p: "នៅក្នុង AI ស្វែងរកផ្លូវ រាល់ចំនុចផ្លូវបែក (Nodes) ត្រូវបានភ្ជាប់គ្នាដោយប្រើប្រាស់ Adjacency Lists ដែលនៅពីក្រោយខ្នងគឺជាការតម្រៀបនៃ Singly Linked Lists ជួយសន្សំសំចៃ Memory ជាងការប្រើ Matrix។" },
+            { h: "<i class='fa-solid fa-clock-rotate-left keyword-icon'></i> 4. State Management (Undo in Search)", p: "ក្បួនដោះស្រាយ AI ដែលប្រើការស្វែងរកបែប Depth-First Search (DFS) តែងតែប្រើ Linked List ដើម្បីកត់ត្រាប្រវត្តិដំណើរការ (State) ងាយស្រួលផ្តាច់ចោលលឿន O(1) ពេលដែលវង្វេងផ្លូវ (Backtracking)។" }
+        ]},
+
+        // 12. Time Complexity
+        { t: "១២. ការប្រៀបធៀបប្រសិទ្ធភាព <b>(Array vs Linked List)</b>", type: "table", rows: [
+            ["ប្រតិបត្តិការ (Operation)", "<b><i class='fa-solid fa-list-ol tech-icon'></i> Array (Dynamic)</b>", "<b><i class='fa-solid fa-link tech-icon'></i> Singly Linked List</b>", "<b><i class='fa-solid fa-arrows-left-right tech-icon'></i> Doubly Linked List</b>"],
+            ["ចូលយកទិន្នន័យ (Access តាម Index)", "<b style='color:var(--accent-green)'>O(1)</b> ⚡ លឿន", "<b style='color:var(--accent-red)'>O(n)</b> 🐌 ត្រូវរាប់ពីក្បាល", "<b style='color:var(--accent-red)'>O(n)</b> 🐌 ត្រូវរាប់"],
+            ["បញ្ចូល/លុប នៅ<b>ខាងមុខ (Head)</b>", "<b style='color:var(--accent-red)'>O(n)</b> 🐌 ត្រូវរុញកូដ", "<b style='color:var(--accent-green)'>O(1)</b> ⚡ ដូរតែ Pointer", "<b style='color:var(--accent-green)'>O(1)</b> ⚡"],
+            ["បញ្ចូល/លុប នៅ<b>កណ្តាល</b><br><span style='font-size:1vw; font-weight:normal;'>(បើស្គាល់ Node រួចហើយ)</span>", "<b style='color:var(--accent-red)'>O(n)</b> 🐌 ត្រូវរុញកូដ", "<b style='color:var(--accent-green)'>O(1)</b> ⚡ ផ្តាច់ខ្សែចងថ្មី", "<b style='color:var(--accent-green)'>O(1)</b> ⚡"]
+        ]},
+
+        // 13. Practice Note
+        { t: "១៣. សរុបផ្នែកអនុវត្តន៍ (Practice Overview)", type: "card", c: `
+            <div style="text-align:center; padding: 4vh 2vw;">
+                <i class="fa-solid fa-book-open-reader" style="font-size: 6vw; color: var(--accent-blue); margin-bottom: 2vh;"></i>
+                <h3 style="font-size: 2.5vw; color: var(--accent-blue); font-family: 'Suwannaphum'; margin-bottom: 1.5vh;">ផ្នែកអនុវត្តន៍ជាក់ស្តែងសរុបប្រចាំជំពូកទី ៤</h3>
+                <p style="font-size: 1.8vw; color: var(--text-main); margin-bottom: 3vh;">បន្ទាប់ពីយល់ទ្រឹស្តី និស្សិតត្រូវសាងសង់ <b>Singly និង Doubly Linked Lists</b> ផ្ទាល់ខ្លួនដោយប្រើ <code>Object-Oriented Programming (OOP)</code> ព្រមទាំងបង្កើត Methods សម្រាប់ Insert, Delete, និង Traverse នៅក្នុង Python។</p>
+                <div class="highlight-note" style="display:inline-block; text-align: left; padding: 2vh;">
+                    <p style="margin: 0; font-size: 1.6vw;">
+                        <i class="fa-solid fa-bell"></i> ចំណាំ៖ លំហាត់អនុវត្តន៍កូដ Python ទាំងអស់ត្រូវបានរៀបចំយ៉ាងលម្អិតនៅក្នុង <br><b>"សៀវភៅលំហាត់អនុវត្តន៍ (Workbook) - ជំពូកទី ៤"</b>។
+                    </p>
+                </div>
+            </div>
+        `},
+
+        // 14. Key Terms (កែប្រែ Syntax Error នៅទីនេះ)
+        { t: "១៤. សទ្ទានុក្រម និងពាក្យគន្លឹះ (Key Terms)", type: "grid", c: [
+            { h: "<i class='fa-solid fa-cube keyword-icon'></i> <b>Node (ចំណុចថ្នាំង)</b>", p: "ជាប្រអប់ផ្ទុកទិន្នន័យ (Object) នីមួយៗនៅក្នុង Linked List ដែលមានផ្ទុក Data និង Pointers សម្រាប់ភ្ជាប់ទៅប្រអប់ដទៃ។" },
+            { h: "<i class='fa-solid fa-play keyword-icon'></i> <b>Head & Tail</b>", p: "<b>Head:</b> ជា Node ទីមួយគេបង្អស់ (ក្បាលខ្សែ)។ ការបាត់ Head ស្មើនឹងបាត់បណ្តាញទាំងមូល។<br><b>Tail:</b> ជា Node ចុងក្រោយគេ ដែលចង្អុលទៅរក <code>Null / None</code>។" },
+            { h: "<i class='fa-solid fa-arrow-pointer keyword-icon'></i> <b>Pointer (Reference)</b>", p: "ជាខ្សែភ្ជាប់ ឬអាសយដ្ឋាននៅក្នុង Memory ដែលចង្អុលប្រាប់កុំព្យូទ័រថា តើទិន្នន័យបន្ទាប់ស្ថិតនៅត្រង់ណា។" },
+            { h: "<i class='fa-solid fa-ban keyword-icon'></i> <b>Null / None</b>", p: 'ជាតម្លៃប្រាប់ពីទីបញ្ចប់នៃខ្សែភ្ជាប់ មានន័យថា "គ្មានទិន្នន័យនៅខាងមុខទៀតទេ"។' }
+        ]},
+
+        // 15. Summary
+        { t: "១៥. សង្ខេបជំពូកទី ៤ (Chapter Summary)", type: "card", c: `
+            <div style="line-height:1.8;">
+                <p><i class="fa-solid fa-check text-blue"></i> <b>ជ្រើសរើស Linked List នៅពេលណា?</b> បើប្រព័ន្ធរបស់អ្នកត្រូវការបញ្ចូល (Insert) ឬលុប (Delete) ទិន្នន័យញឹកញាប់នៅចំកណ្តាល ឬខាងមុខ Linked List ផ្តល់ល្បឿន <b>O(1)</b> ដែលប្រសើរជាង Array ឆ្ងាយណាស់។</p>
+                <p><i class="fa-solid fa-check text-blue"></i> <b>Memory រាយប៉ាយជាគុណសម្បត្តិ:</b> វាមិនទាមទារទីតាំង Memory ជាប់គ្នាធំៗនោះទេ ដែលជួយឱ្យការប្រើប្រាស់ RAM មានភាពបត់បែន (Dynamic Memory Allocation)។</p>
+                <p><i class="fa-solid fa-check text-blue"></i> <b>Doubly មានអំណាច តែស៊ី Space:</b> ការចង្អុលសងខាង (Prev/Next) ធ្វើឱ្យការអភិវឌ្ឍន៍កម្មវិធីងាយស្រួល តែយើងត្រូវលះបង់ Memory បន្ថែមសម្រាប់ផ្ទុក Pointer ទីពីរ។</p>
+            </div>
+        `},
+
+        // 16. References
+        { t: "១៦. ឯកសារយោង និងគន្ថនិទ្ទេស (References)", type: "list", c: [
+            "<b><i class='fa-solid fa-book text-blue' style='margin-right:0.5vw;'></i> Goodrich, M. T. (2013).</b> <i>Data Structures and Algorithms in Python</i>. Wiley. (ជំពូកទី ៧: Linked Lists).",
+            "<b><i class='fa-solid fa-book text-blue' style='margin-right:0.5vw;'></i> Cormen, T. H. (2022).</b> <i>Introduction to Algorithms</i> (4th ed.). MIT Press.",
+            "<b><i class='fa-solid fa-project-diagram text-blue' style='margin-right:0.5vw;'></i> Visualgo.net:</b> <i>Linked List Animations:</i> <a href='https://visualgo.net/en/list' style='color:var(--accent-blue); text-decoration:none;'>visualgo.net/en/list</a>",
+            "<b><i class='fa-solid fa-laptop-code text-blue' style='margin-right:0.5vw;'></i> LeetCode:</b> អនុវត្តដោះស្រាយបញ្ហាប្រភេទ Linked List Reversal និង Cycle Detection។"
+        ]}
+    ];
+
+    const container = document.getElementById('slideWrapper');
+
+    // Create main slides dynamically
+    chapter4Data.forEach((item, index) => {
+        const slide = document.createElement('div');
+        slide.className = 'slide';
+        
+        let bodyContent = '';
+        if(item.type === "split") {
+            let visual = item.img ? `<img src="${item.img}">` : (item.svg ? item.svg : '');
+            bodyContent = `<div class="two-column"><div class="card" style="height:100%; border:none; padding:0; background:transparent; justify-content:start;">${item.c}</div><div class="visual-frame">${visual}</div></div>`;
+        } else if(item.type === "two-equal") {
+            bodyContent = `<div class="two-column-equal">${item.c}</div>`;
+        } else if(item.type === "grid") {
+            bodyContent = `<div class="card-grid">${item.c.map(c => `<div class="card"><h4>${c.h}</h4><p style="margin:0;">${c.p}</p></div>`).join('')}</div>`;
+        } else if(item.type === "card") {
+            bodyContent = `<div class="card" style="height: 100%; justify-content: center; background:#FFFFFF;">${item.c}</div>`;
+        } else if(item.type === "table") {
+            let th = `<tr>${item.rows[0].map(h => `<th style="text-align:center;">${h}</th>`).join('')}</tr>`;
+            let trs = item.rows.slice(1).map(r => `<tr>${r.map((td, i) => `<td ${i>0 ? 'align="center"' : ''}>${td}</td>`).join('')}</tr>`).join('');
+            bodyContent = `<table><thead>${th}</thead><tbody>${trs}</tbody></table>`;
+        } else if(item.type === "list") {
+            bodyContent = `<div class="card" style="padding: 3vh 4vw; background:#FFFFFF;"><ul style="list-style:none; padding-left:1vw; line-height:2.2;">${item.c.map(l => `<li>${l}</li>`).join('')}</ul></div>`;
+        }
+
+        slide.innerHTML = `<div id="h-placeholder-${index+2}"></div> <h2 class="slide-title">${item.t}</h2> <div class="content-body">${bodyContent}</div>`;
+        container.appendChild(slide);
+    });
+
+    // Create Q&A Slide
+    const qaSlide = document.createElement('div');
+    qaSlide.className = 'slide';
+    qaSlide.innerHTML = `
+        <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; text-align: center;">
+            <h1 style="font-size: 5.4vw; color: var(--accent-blue); margin-bottom: 2vh;"><i class="fa-solid fa-comments"></i> សំណួរ និងការពិភាក្សា</h1>
+            <p style="font-size: 2.25vw; color: var(--text-muted); margin-bottom: 5vh;">សូមអរគុណនិស្សិតទាំងអស់សម្រាប់ការយកចិត្តទុកដាក់!</p>
+            <div style="display: flex; gap: 2vw; justify-content: center;">
+                <div style="background: #FFFFFF; padding: 2vh 3vw; border-radius: 5vw; border: 2px solid var(--accent-blue); box-shadow: 0 10px 20px rgba(0,0,0,0.05);">
+                    <p style="margin: 0; font-weight: bold; font-size: 1.8vw; color: var(--accent-blue);"><i class="fa-solid fa-envelope"></i> soeurnglim@gmail.com</p>
+                </div>
+                <div style="background: #FFFFFF; padding: 2vh 3vw; border-radius: 5vw; border: 2px solid #0088cc; box-shadow: 0 10px 20px rgba(0,0,0,0.05);">
+                    <p style="margin: 0; font-weight: bold; font-size: 1.8vw; color: #0088cc;"><i class="fa-brands fa-telegram"></i> ០៦១ ២២៧ ៩៣៣</p>
+                </div>
+            </div>
+        </div>
+    `;
+    container.appendChild(qaSlide);
+
+    // Create End Slide
+    const endSlide = document.createElement('div');
+    endSlide.className = 'slide';
+    endSlide.innerHTML = `
+        <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; text-align: center;">
+            <i class="fa-solid fa-flag-checkered" style="font-size: 5vw; color: var(--accent-green); margin-bottom: 2vh;"></i>
+            <h1 style="font-size: 4.5vw; color: var(--accent-blue); margin-bottom: 1vh;">បញ្ចប់ជំពូកទី ៤</h1>
+            <p style="font-size: 2vw; color: var(--text-muted); margin-bottom: 5vh;">សូមអរគុណនិស្សិតទាំងអស់សម្រាប់ការយកចិត្តទុកដាក់!</p>
+            <div style="display: flex; gap: 2vw; justify-content: center;">
+                <div style="background: #FFFFFF; padding: 2vh 3vw; border-radius: 5vw; border: 2px solid var(--accent-blue); box-shadow: 0 10px 20px rgba(0,0,0,0.05);">
+                    <p style="margin: 0; font-weight: bold; font-size: 1.8vw; color: var(--accent-blue);"><i class="fa-solid fa-envelope"></i> soeurnglim@gmail.com</p>
+                </div>
+                <div style="background: #FFFFFF; padding: 2vh 3vw; border-radius: 5vw; border: 2px solid #0088cc; box-shadow: 0 10px 20px rgba(0,0,0,0.05);">
+                    <p style="margin: 0; font-weight: bold; font-size: 1.8vw; color: #0088cc;"><i class="fa-brands fa-telegram"></i> ០៦១ ២២៧ ៩៣៣</p>
+                </div>
+            </div>
+        </div>
+    `;
+    container.appendChild(endSlide);
+
+    // Create Next Chapter Slide
+    const nextChapSlide = document.createElement('div');
+    nextChapSlide.className = 'slide';
+    nextChapSlide.innerHTML = `
+        <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; text-align: center;">
+            <h2 style="font-size: 2.5vw; color: var(--text-muted); margin-bottom: 2vh;"><i class="fa-solid fa-forward-step"></i> ត្រៀមសម្រាប់សប្តាហ៍បន្ទាប់</h2>
+            <div class="card" style="background: #FFFFFF; border-left: 1vw solid var(--accent-yellow); padding: 4vh 6vw; box-shadow: 0 15px 30px rgba(0,0,0,0.1); border-radius: 1.5vw; margin-top: 2vh;">
+                <h1 style="font-size: 3.5vw; color: var(--accent-blue); margin-bottom: 1.5vh; font-family: 'Suwannaphum';">ជំពូកទី ៥</h1>
+                <h2 style="font-size: 2.5vw; color: var(--text-main); margin: 0; font-family: 'Suwannaphum';">រចនាសម្ព័ន្ធទិន្នន័យដើមឈើ<br><span style="font-size: 1.8vw; color: var(--text-muted); font-family: 'Lato';">(Trees & Binary Search Trees)</span></h2>
+            </div>
+            <p style="font-size: 1.6vw; color: var(--text-muted); margin-top: 4vh;"><i class="fa-solid fa-book-open"></i> សូមអានសៀវភៅគោលជំពូកទី៥ ជាមុន ដើម្បីត្រៀមខ្លួនសម្រាប់ពាក់កណ្តាលឆមាសទី២!</p>
+        </div>
+    `;
+    container.appendChild(nextChapSlide);
+
+    // -----------------------------------------------------
+    // Initialize Navigation and Print Layouts
+    // -----------------------------------------------------
+
+    // 1. Apply Global Header to all slides
+    document.querySelectorAll('[id^="h-placeholder"]').forEach(p => p.outerHTML = headerHTML);
+
+    // 2. Count Total Slides AFTER all dynamic injections are done
+    const slides = document.querySelectorAll('.slide');
+    const totalSlides = slides.length;
+    
+    // 3. Setup Print Footers for each slide with correct numbers
+    const mainFooter = document.getElementById('mainFooter');
+    const screenCounter = document.getElementById('screenSlideCounter'); 
+
+    slides.forEach((slide, index) => {
+        let printFooter = mainFooter.cloneNode(true);
+        printFooter.id = ''; 
+        
+        let printCounter = printFooter.querySelector('.slide-counter');
+        if (printCounter) {
+            printCounter.id = ''; 
+            printCounter.innerHTML = `ស្លាយទី ${toKh(index + 1)} នៃ ${toKh(totalSlides)}`; 
+        }
+        
+        printFooter.className = 'global-footer print-only-footer';
+        slide.appendChild(printFooter);
+    });
+
+    // 4. Update function for Screen display
+    let currentIdx = 0;
+    function update(idx) { 
+        slides.forEach(s => s.classList.remove('active')); 
+        slides[idx].classList.add('active'); 
+        currentIdx = idx; 
+        
+        if (screenCounter) {
+            screenCounter.innerHTML = `ស្លាយទី ${toKh(idx + 1)} នៃ ${toKh(totalSlides)}`;
+        }
+    }
+
+    // 5. Allow Navigation by Clicking ONLY the arrows
+    document.querySelector('.nav-right').addEventListener('click', (e) => { 
+        e.stopPropagation(); 
+        if (currentIdx < totalSlides - 1) update(currentIdx + 1); 
+    });
+    
+    document.querySelector('.nav-left').addEventListener('click', (e) => { 
+        e.stopPropagation(); 
+        if (currentIdx > 0) update(currentIdx - 1); 
+    });
+
+    // 6. Keyboard Navigation Support
+    document.addEventListener('keydown', (e) => {
+        if (e.key === "ArrowRight" || e.key === " " || e.key === "PageDown") { 
+            if (currentIdx < totalSlides - 1) update(currentIdx + 1); 
+        } else if (e.key === "ArrowLeft" || e.key === "PageUp") { 
+            if (currentIdx > 0) update(currentIdx - 1); 
+        }
+    });
+
+    // Start presentation at Slide 0
+    update(0); 
+
+</script>
+</body>
+</html>

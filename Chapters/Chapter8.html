@@ -1,0 +1,629 @@
+<!DOCTYPE html>
+<html lang="km">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chapter 8 - Dynamic Programming & AI</title>
+    <link href="https://fonts.googleapis.com/css2?family=Battambang:wght@400;700&family=Suwannaphum:wght@400;700;900&family=Lato:wght@400;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        :root {
+            --bg-dark: #0F172A; --bg-card: #F8FAFC; --text-main: #0F172A; --text-muted: #475569;
+            --accent-blue: #0284C7; --accent-green: #059669; --accent-yellow: #D97706; --accent-red: #DC2626;
+            --accent-purple: #8B5CF6;
+            --header-footer-bg: #F0F9FF; --code-bg: #111827;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        /* អនុញ្ញាតឲ្យ Copy អក្សរបានធម្មតា */
+        body { background-color: var(--bg-dark); font-family: 'Battambang', sans-serif; overflow: hidden; height: 100vh; width: 100vw; display: flex; align-items: center; justify-content: center; -webkit-user-select: auto; user-select: auto; }
+        
+        .slide-deck { width: 98vw; height: 95vh; position: relative; background: #FFFFFF; border-radius: 1.5vw; overflow: hidden; box-shadow: 0 40px 100px rgba(0,0,0,0.5); display: flex; flex-direction: column; }
+        .slide-wrapper { flex-grow: 1; position: relative; overflow: hidden; }
+        .slide { display: none; width: 100%; height: 100%; padding: 2vh 4vw; flex-direction: column; justify-content: flex-start; animation: slideIn 0.4s ease-out; position: absolute; top: 0; left: 0; }
+        .slide.active { display: flex; }
+        @keyframes slideIn { from { opacity: 0; transform: translateX(50px); } to { opacity: 1; transform: translateX(0); } }
+
+        /* Navigation Zones (ប៊ូតុងចុចសងខាង) */
+        .nav-zone { position: absolute; top: 0; bottom: 0; width: 10%; z-index: 50; cursor: pointer; display: flex; align-items: center; opacity: 0.2; transition: all 0.3s ease; }
+        .nav-zone:hover { opacity: 1; background: rgba(0,0,0,0.03); }
+        .nav-left { left: 0; justify-content: flex-start; padding-left: 2vw; background: linear-gradient(to right, rgba(0,0,0,0.05), transparent); }
+        .nav-right { right: 0; justify-content: flex-end; padding-right: 2vw; background: linear-gradient(to left, rgba(0,0,0,0.05), transparent); }
+        .nav-zone i { font-size: 3.5vw; color: var(--accent-blue); filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2)); background: white; border-radius: 50%; padding: 1vw; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+
+        /* Header Branding */
+        .global-header { display: flex; justify-content: space-between; align-items: center; margin: -2vh -4vw 1.5vh -4vw; padding: 1.2vh 4vw; border-bottom: 3px solid var(--accent-blue); background-color: var(--header-footer-bg); }
+        .header-item { display: flex; flex-direction: column; align-items: center; gap: 4px; width: 15vw; }
+        .header-item img { height: 4vw; object-fit: contain; }
+        .header-item span { font-size: 0.76vw; font-weight: bold; color: var(--accent-blue); text-align: center; }
+        .header-center h1 { font-family: 'Suwannaphum'; font-size: 1.5vw; color: var(--accent-blue); margin: 0; }
+        .header-center p { font-family: 'Lato'; font-size: 0.85vw; color: #64748B; margin: 0; font-weight: bold; text-align: center; }
+
+        /* Typography */
+        h1 { font-family: 'Suwannaphum'; font-size: 3.15vw; text-align: center; color: var(--text-main); font-weight: 900; line-height: 1.3; }
+        h2.slide-title { font-family: 'Suwannaphum'; font-size: 2.25vw; font-weight: 900; border-bottom: 0.3vw solid var(--accent-blue); padding-bottom: 0.5vh; margin-bottom: 1.5vh; color: var(--text-main); display: inline-block; }
+        .content-body { flex-grow: 1; display: flex; flex-direction: column; justify-content: flex-start; gap: 1vh; width: 100%; overflow-y: auto; padding-bottom: 2vh; }
+        p, li, td { font-size: 1.45vw; line-height: 1.7; color: var(--text-main); }
+        
+        .keyword-icon { color: var(--accent-blue); margin-right: 0.5vw; width: 1.5vw; text-align: center; display: inline-block; }
+        .tech-icon { color: var(--accent-blue); margin-right: 6px; font-size: 1.1em; vertical-align: baseline; }
+        b .tech-icon, strong .tech-icon, .card h4 .tech-icon, h2 .tech-icon { color: inherit; } 
+
+        /* Layouts & Cards */
+        .two-column { display: grid; grid-template-columns: 1fr 1fr; gap: 2.5vw; height: 100%; align-items: center; }
+        .two-column-equal { display: grid; grid-template-columns: 1fr 1fr; gap: 2vw; height: 100%; align-items: start; }
+        .card-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5vw; }
+        .card { background: var(--bg-card); padding: 1.5vh 2.5vw; border-radius: 1vw; border-left: 0.8vw solid var(--accent-blue); box-shadow: 0 4px 10px rgba(0,0,0,0.05); display: flex; flex-direction: column; justify-content: center; }
+        .card h4 { font-size: 1.6vw; color: var(--accent-blue); margin-bottom: 0.5vh; font-family: 'Suwannaphum'; display: flex; align-items: center; gap: 10px;}
+
+        /* Tables */
+        table { width: 100%; border-collapse: collapse; background: white; border-radius: 1vw; overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
+        th, td { border: 1px solid #E2E8F0; padding: 1.2vh 1.5vw; text-align: left; }
+        th { background: var(--accent-blue); color: white; font-family: 'Suwannaphum'; font-size: 1.35vw; }
+
+        /* Visual Frame for Technical Diagrams / Images */
+        .visual-frame { background: #FFFFFF; border-radius: 1vw; border: 1px solid #CBD5E1; padding: 0; display: flex; align-items: center; justify-content: center; height: 100%; min-height: 250px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        .visual-frame svg { width: 100%; height: auto; max-height: 35vh; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.05)); padding: 2vw;}
+        .visual-frame img { width: 100%; height: 100%; object-fit: cover; }
+
+        /* Narrative & Analogy Boxes */
+        .narrative-box { background: #F8FAFC; border-radius: 0.6vw; border: 1px solid #CBD5E1; padding: 1vh 1.5vw; margin-bottom: 1vh; box-shadow: 0 2px 6px rgba(0,0,0,0.05); }
+        .analogy-box { background: #FFFBEB; border-left: 0.4vw solid var(--accent-yellow); border-radius: 0.6vw; padding: 1vh 1.5vw; margin-bottom: 1vh; box-shadow: 0 2px 6px rgba(0,0,0,0.05); }
+        .analogy-header { font-weight: bold; color: var(--accent-yellow); font-size: 1.2vw; margin-bottom: 0.5vh; font-family: 'Suwannaphum'; display: flex; align-items: center; gap: 8px;}
+        .analogy-text { font-size: 1.15vw; color: var(--text-main); line-height: 1.6; margin: 0; }
+
+        /* Code Pointer Alert (NEW DESIGN) */
+        .code-pointer { background: linear-gradient(135deg, #0F172A, #1E293B); color: #E0F2FE; padding: 1.5vh 2vw; border-radius: 0.8vw; border-left: 0.4vw solid #38BDF8; font-family: 'Battambang', sans-serif; font-size: 1.2vw; margin-top: 1.5vh; display: flex; align-items: center; gap: 15px; box-shadow: 0 8px 20px rgba(0,0,0,0.15); }
+        .code-pointer i.fa-python { font-size: 2.2vw; color: #FCD34D; }
+        .code-pointer b { color: #38BDF8; font-size: 1.3vw;}
+
+        /* Code Block Wrapper */
+        .code-wrapper { background: var(--code-bg); border-radius: 0.6vw; border: 1px solid #374151; overflow: hidden; width: 100%; box-shadow: 0 5px 15px rgba(0,0,0,0.1); margin-top: 0.5vh;}
+        .code-header { background: #1F2937; padding: 0.6vh 1.2vw; font-size: 0.9vw; font-family: 'Battambang', sans-serif; color: #9CA3AF; border-bottom: 1px solid #374151; display: flex; justify-content: space-between; }
+        .code-header span { font-weight: bold; color: #38BDF8; font-size: 1vw; }
+        .code-content { padding: 1vh 1.5vw; overflow-x: auto; }
+        .code-content pre { font-family: 'Fira Code', monospace; font-size: 1vw; line-height: 1.4; color: #f8f8f2; margin: 0; }
+        .kw { color: #ff79c6; font-weight: bold; } .fn { color: #50fa7b; } .str { color: #f1fa8c; } .com { color: #6272a4; font-style: italic; } .num { color: #bd93f9; }
+
+        /* Highlight Note */
+        .highlight-note { background-color: #F0FDF4; border-left: 4px solid var(--accent-green); padding: 1.5vh 2vw; border-radius: 0.5vw; margin-top: 1.5vh; font-weight: bold; color: var(--accent-green); font-size: 1.3vw; display: flex; align-items: center; gap: 10px; border: 2px dashed var(--accent-green); justify-content: center;}
+
+        /* Main Footer */
+        .global-footer { display: flex; justify-content: space-between; align-items: center; width: 100%; padding: 1vh 4vw; border-top: 3px solid var(--accent-blue); background-color: var(--header-footer-bg); z-index: 10; }
+        .footer-left { display: flex; align-items: center; gap: 1.5vw; }
+        .footer-left img { border-radius: 50%; border: 2px solid var(--accent-blue); width: 3.5vw; height: 3.5vw; object-fit: cover; }
+        .footer-left span { font-size: 1.35vw; font-weight: bold; color: var(--text-main); font-family: 'Suwannaphum'; }
+        .slide-counter { font-size: 1.15vw; color: var(--accent-blue); font-family: 'Suwannaphum'; font-weight: 900; background: #FFFFFF; padding: 0.5vh 1.5vw; border-radius: 5vw; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+
+        .print-only-footer { display: none; }
+
+        /* PRINT STYLES */
+        @media print {
+            @page { size: A4 landscape; margin: 0; }
+            html, body { display: block !important; width: 100% !important; height: auto !important; background: white !important; overflow: visible !important; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; margin: 0 !important; padding: 0 !important; }
+            .slide-deck { display: block !important; width: 100% !important; height: auto !important; box-shadow: none !important; border: none !important; border-radius: 0 !important; }
+            .slide-wrapper { display: block !important; overflow: visible !important; }
+            .slide { display: flex !important; flex-direction: column !important; width: 297mm !important; height: 209mm !important; page-break-after: always !important; page-break-inside: avoid !important; position: relative !important; opacity: 1 !important; transform: none !important; animation: none !important; padding: 10mm 15mm !important; box-sizing: border-box !important; }
+            .nav-zone { display: none !important; }
+            .global-header { margin: -10mm -15mm 5mm -15mm !important; padding: 5mm 15mm !important; border-bottom: 2px solid var(--accent-blue) !important;}
+            .global-footer#mainFooter { display: none !important; }
+            .print-only-footer { display: flex !important; margin: auto -15mm -10mm -15mm !important; padding: 5mm 15mm !important; border-top: 2px solid var(--accent-blue) !important; background: var(--header-footer-bg) !important; width: 297mm !important; box-sizing: border-box !important; }
+            .card { box-shadow: 0 2px 5px rgba(0,0,0,0.05) !important; border: 1px solid #E2E8F0 !important; border-left-width: 0.8vw !important; page-break-inside: avoid !important;}
+            .visual-frame svg, .visual-frame img { object-fit: contain !important; background: #fff !important; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="slide-deck" id="deck">
+
+    <!-- Navigation Overlays -->
+    <div class="nav-zone nav-left" title="ថយក្រោយ (Previous)">
+        <i class="fa-solid fa-chevron-left"></i>
+    </div>
+    <div class="nav-zone nav-right" title="ទៅមុខ (Next)">
+        <i class="fa-solid fa-chevron-right"></i>
+    </div>
+
+    <!-- Header Template -->
+    <template id="headerTemplate">
+        <div class="global-header">
+            <div class="header-item">
+                <img src="Logo.png" onerror="this.src='https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png'">
+                <span>សាកលវិទ្យាល័យអង្គរ</span>
+            </div>
+            <div class="header-center" style="text-align: center;">
+                <h1 style="font-size: 1.5vw;">រចនាសម្ព័ន្ធទិន្នន័យកម្រិតខ្ពស់ និងក្បួនដោះស្រាយ (<i class='fa-solid fa-server tech-icon'></i>DSA)</h1>
+                <p>អនុបណ្ឌិតវិទ្យាសាស្ត្រទិន្នន័យ និងបញ្ញាសិប្បនិម្មិត (Master of Data Science & AI)</p>
+            </div>
+            <div class="header-item">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg">
+                <span>Python Pro</span>
+            </div>
+        </div>
+    </template>
+
+    <div class="slide-wrapper" id="slideWrapper">
+        
+        <!-- Cover Slide -->
+        <div class="slide active">
+            <div style="text-align: center; margin: auto; width: 100%;">
+                <div style="display: flex; align-items: center; justify-content: center; gap: 3vw; margin-bottom: 2vh;">
+                    <img src="Logo.png" style="height: 12vw;" alt="AU Logo" onerror="this.src='https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png'">
+                    <div style="text-align: center;">
+                        <h2 style="font-family: 'Suwannaphum'; color: var(--accent-blue); font-size: 3.6vw; margin: 0;">សាកលវិទ្យាល័យអង្គរ</h2>
+                        <p style="font-family: 'Lato'; color: var(--text-muted); font-size: 1.8vw; margin: 0;">ANGKOR UNIVERSITY</p>
+                    </div>
+                </div>
+                
+                <div style="margin-bottom: 2vh;">
+                    <h3 style="font-family: 'Suwannaphum'; font-size: 1.7vw; color: var(--accent-green);"><i class="fa-solid fa-graduation-cap"></i> អនុបណ្ឌិតវិទ្យាសាស្ត្រទិន្នន័យ និងបញ្ញាសិប្បនិម្មិត (Master of Data Science and AI)</h3>
+                </div>
+
+                <div style="background: var(--accent-red); color: white; padding: 1vh 5vw; border-radius: 5vw; display: inline-block; font-size: 2.2vw; font-weight: bold; margin-bottom: 3vh;">ជំពូកទី៨ (បញ្ចប់) | Final Chapter</div>
+                
+                <h1 style="line-height: 1.5;">Dynamic Programming និងក្បួន AI<br>
+                <span style="color:var(--accent-blue); font-size: 2.4vw; font-family:'Lato'">(<i class='fa-solid fa-memory tech-icon'></i>Dynamic Programming & <i class='fa-solid fa-brain tech-icon'></i>AI Algorithms)</span></h1>
+                
+                <div style="margin-top: 3vh; display: flex; gap: 5vw; justify-content: center; align-items: center;">
+                    <div style="text-align: center;">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg" style="height: 6vw;">
+                        <p style="font-size: 1.1vw; font-weight: bold; color: var(--accent-blue);">Pythons</p>
+                    </div>
+                    <div style="text-align: center;">
+                        <i class="fa-solid fa-robot" style="font-size: 6vw; color: var(--accent-purple);"></i>
+                        <p style="font-size: 1.1vw; font-weight: bold; color: var(--accent-purple);">AI Apps</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Instructor Slide -->
+        <div class="slide">
+            <div id="h-placeholder-1"></div>
+            <h2 class="slide-title"><i class="fa-solid fa-user-tie"></i> ព័ត៌មានសាស្ត្រាចារ្យ និងមុខវិជ្ជា</h2>
+            <div class="content-body two-column">
+                <div style="position: relative; width: 20vw; height: 28vw; margin: auto;">
+                    <div style="position: absolute; top: 1.5vw; left: -1.5vw; width: 100%; height: 100%; background: rgba(2, 132, 199, 0.1); border-radius: 2vw; z-index: 0;"></div>
+                    <img src="Lim.jpg" style="position: relative; width: 100%; height: 100%; border-radius: 2vw; object-fit: cover; box-shadow: 0 15px 35px rgba(0,0,0,0.15); z-index: 1; border: 4px solid white;" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'">
+                </div>
+                <div style="padding-left: 2vw;">
+                    <h3 style="font-size: 3vw; color: var(--accent-blue); font-family: 'Suwannaphum'; margin-bottom: 2vh;">សាស្ត្រាចារ្យ៖ សឿង លីម <span style="font-size: 2vw; color: var(--text-muted);">(Soeurng LIM)</span></h3>
+                    <div class="card" style="border-left: none; border-top: 4px solid var(--accent-blue); padding: 3vh; background: #FFFFFF;">
+                        <p><b><i class="fa-solid fa-graduation-cap text-blue"></i> គុណវុឌ្ឍិ៖</b> បរិញ្ញាបត្រជាន់ខ្ពស់ (Master's Degree) - ព័ត៌មានវិទ្យា</p>
+                        <p><b><i class="fa-solid fa-phone text-blue"></i> ទូរស័ព្ទ៖</b> ០៦១ ២២៧ ៩៣៣</p>
+                        <p><b><i class="fa-solid fa-envelope text-blue"></i> អ៊ីម៉ែល៖</b> soeurnglim@gmail.com</p>
+                        <hr style="margin: 2vh 0; border: 1px solid #E2E8F0;">
+                        <p><b><i class="fa-solid fa-star text-blue"></i> ក្រេឌីត៖</b> ៣ ក្រេឌីត (3 Credits)</p>
+                        <p><b><i class="fa-solid fa-clipboard-check text-blue"></i> មុខវិជ្ជាមុន (Prerequisite)៖</b> ការសរសេរកម្មវិធី Python មូលដ្ឋាន</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Main Footer for Screen View -->
+    <div class="global-footer" id="mainFooter">
+        <div class="footer-left">
+            <img src="Lim.jpg" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'" alt="Professor">
+            <span>សាស្ត្រាចារ្យ៖ សឿង លីម (Soeurng LIM)</span>
+        </div>
+        <div class="slide-counter" id="screenSlideCounter">កំពុងរៀបចំ...</div>
+    </div>
+
+</div>
+
+<script>
+    const slideWrapper = document.getElementById('slideWrapper');
+    const headerHTML = document.getElementById('headerTemplate').innerHTML;
+    const khNums = ["០", "១", "២", "៣", "៤", "៥", "៦", "៧", "៨", "៩"];
+    function toKh(n) { return n.toString().split('').map(d => khNums[parseInt(d)]).join(''); }
+
+    // SVGs for Diagrams - Localized
+    const dpSVG = `
+        <svg viewBox="0 0 600 240" xmlns="http://www.w3.org/2000/svg" style="width:100%; height:100%;">
+            <defs>
+                <marker id="arrowHead" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
+                    <path d="M0,0 L0,6 L9,3 z" fill="#0284C7" />
+                </marker>
+            </defs>
+            <text x="300" y="30" font-family="'Suwannaphum', sans-serif" font-size="22" font-weight="bold" fill="#0284C7" text-anchor="middle">ការចងចាំចម្លើយចាស់ (Memoization)</text>
+            
+            <g transform="translate(100, 60)">
+                <circle cx="50" cy="30" r="25" fill="#FEE2E2" stroke="#DC2626" stroke-width="2"/>
+                <text x="50" y="36" font-family="sans-serif" font-size="16" font-weight="bold" fill="#DC2626" text-anchor="middle">F(5)</text>
+                
+                <path d="M 35 50 L 10 90" stroke="#0284C7" stroke-width="2" marker-end="url(#arrowHead)"/>
+                <circle cx="0" cy="110" r="25" fill="#E0F2FE" stroke="#0284C7" stroke-width="2"/>
+                <text x="0" y="116" font-family="sans-serif" font-size="16" font-weight="bold" fill="#0284C7" text-anchor="middle">F(4)</text>
+
+                <path d="M 65 50 L 90 90" stroke="#0284C7" stroke-width="2" marker-end="url(#arrowHead)"/>
+                <circle cx="100" cy="110" r="25" fill="#E0F2FE" stroke="#0284C7" stroke-width="2"/>
+                <text x="100" y="116" font-family="sans-serif" font-size="16" font-weight="bold" fill="#0284C7" text-anchor="middle">F(3)</text>
+            </g>
+
+            <rect x="350" y="70" width="220" height="120" fill="#F8FAFC" stroke="#CBD5E1" stroke-width="2" rx="8"/>
+            <text x="460" y="100" font-family="'Battambang', sans-serif" font-size="16" font-weight="bold" fill="#059669" text-anchor="middle"><i class="fa-solid fa-database"></i> ឃ្លាំងចងចាំ (Cache)</text>
+            <line x1="370" y1="115" x2="550" y2="115" stroke="#E2E8F0" stroke-width="2"/>
+            <text x="380" y="140" font-family="monospace" font-size="14" fill="#475569">F(3) = 2</text>
+            <text x="380" y="165" font-family="monospace" font-size="14" fill="#475569">F(4) = 3</text>
+            
+            <path d="M 230 160 Q 290 140 335 140" stroke="#10B981" stroke-width="2" stroke-dasharray="5,5" marker-end="url(#arrowHead)"/>
+            <text x="280" y="130" font-family="'Battambang', sans-serif" font-size="14" fill="#10B981" text-anchor="middle">ទាញយកភ្លាមៗ O(1)</text>
+        </svg>
+    `;
+
+    const dijkstraSVG = `
+        <svg viewBox="0 0 600 240" xmlns="http://www.w3.org/2000/svg" style="width:100%; height:100%;">
+            <text x="300" y="30" font-family="'Suwannaphum', sans-serif" font-size="22" font-weight="bold" fill="#D97706" text-anchor="middle">Dijkstra's Shortest Path (ស្វែងរកផ្លូវលឿនបំផុត)</text>
+            <g transform="translate(100, 70)">
+                <!-- Lines -->
+                <line x1="30" y1="50" x2="150" y2="20" stroke="#DC2626" stroke-width="4"/>
+                <text x="90" y="25" font-family="'Battambang', sans-serif" font-size="14" font-weight="bold" fill="#DC2626">4 នាទី</text>
+                
+                <line x1="30" y1="50" x2="150" y2="120" stroke="#CBD5E1" stroke-width="3"/>
+                <text x="70" y="105" font-family="'Battambang', sans-serif" font-size="12" fill="#64748B">8 នាទី</text>
+                
+                <line x1="150" y1="20" x2="270" y2="50" stroke="#DC2626" stroke-width="4"/>
+                <text x="210" y="25" font-family="'Battambang', sans-serif" font-size="14" font-weight="bold" fill="#DC2626">2 នាទី</text>
+                
+                <line x1="150" y1="120" x2="270" y2="50" stroke="#CBD5E1" stroke-width="3"/>
+                <text x="220" y="105" font-family="'Battambang', sans-serif" font-size="12" fill="#64748B">3 នាទី</text>
+                
+                <line x1="150" y1="20" x2="150" y2="120" stroke="#CBD5E1" stroke-width="3"/>
+                <text x="160" y="75" font-family="'Battambang', sans-serif" font-size="12" fill="#64748B">1 នាទី</text>
+
+                <!-- Nodes -->
+                <circle cx="30" cy="50" r="28" fill="#1E293B"/><text x="30" y="55" font-family="'Battambang', sans-serif" font-size="13" fill="#FFFFFF" text-anchor="middle">ភ្នំពេញ</text>
+                <circle cx="150" cy="20" r="28" fill="#F8FAFC" stroke="#1E293B" stroke-width="2"/><text x="150" y="25" font-family="'Battambang', sans-serif" font-size="13" fill="#1E293B" text-anchor="middle">ក.ចាម</text>
+                <circle cx="150" cy="120" r="28" fill="#F8FAFC" stroke="#1E293B" stroke-width="2"/><text x="150" y="125" font-family="'Battambang', sans-serif" font-size="13" fill="#1E293B" text-anchor="middle">ព្រៃវែង</text>
+                <circle cx="270" cy="50" r="28" fill="#10B981"/><text x="270" y="55" font-family="'Battambang', sans-serif" font-size="13" fill="#FFFFFF" text-anchor="middle">ក្រចេះ</text>
+            </g>
+            <!-- Info Box -->
+            <rect x="400" y="80" width="190" height="80" fill="#FEF2F2" stroke="#DC2626" stroke-width="2" rx="8"/>
+            <text x="495" y="110" font-family="'Suwannaphum', sans-serif" font-size="16" font-weight="bold" fill="#DC2626" text-anchor="middle">ផ្លូវលឿនបំផុត (Shortest)</text>
+            <text x="495" y="135" font-family="'Battambang', sans-serif" font-size="13" fill="#0F172A" text-anchor="middle">ភ្នំពេញ &rarr; ក.ចាម &rarr; ក្រចេះ</text>
+            <text x="495" y="155" font-family="'Battambang', sans-serif" font-size="12" fill="#DC2626" text-anchor="middle">(ចំណាយពេល ៦ នាទី)</text>
+        </svg>
+    `;
+
+    const chapter8Data = [
+        // 1. Objectives
+        { t: "១. វត្ថុបំណងនៃជំពូកទី ៨ (Chapter Objectives)", type: "grid", c: [
+            { h: "<i class='fa-solid fa-memory keyword-icon'></i> ពន្យល់ពី Dynamic Programming", p: "យល់ពីមូលដ្ឋានគ្រឹះនៃ DP (Memoization និង Tabulation) ដើម្បីបង្កើនល្បឿនកូដពី O(2ⁿ) ដែលយឺតខ្លាំង មកត្រឹម O(n)។" },
+            { h: "<i class='fa-solid fa-scale-balanced keyword-icon'></i> ការប្រៀបធៀប Greedy vs DP", p: "អាចបែងចែកការប្រើប្រាស់ក្បួន <b>Greedy (លោភលន់យកមុន)</b> និង <b>DP (គិតវែងឆ្ងាយ)</b> តាមរយៈបញ្ហា Knapsack Problem និងបញ្ហាអាប់លុយ។" },
+            { h: "<i class='fa-solid fa-route keyword-icon'></i> ក្បួនស្វែងរកផ្លូវលឿនបំផុត", p: "យល់យ៉ាងលម្អិតពីដំណើរការរបស់ <b>Dijkstra's Algorithm</b> ដែលជាបេះដូងនៃប្រព័ន្ធដឹកជញ្ជូន Logistics និង GPS (Google Maps)។" },
+            { h: "<i class='fa-solid fa-brain keyword-icon'></i> មូលដ្ឋានគ្រឹះ AI / ML", p: "ស្គាល់ពីក្បួន Machine Learning ដំបូងគេគឺ <b>K-Nearest Neighbors (KNN)</b> ដែលប្រើសម្រាប់ប្រព័ន្ធណែនាំ (Recommendation Systems)។" }
+        ]},
+
+        // 2. ToC
+        { t: "២. មាតិកានៃជំពូក (Table of Contents)", type: "card", c: `
+            <ul style="list-style: none; padding-left: 2vw; line-height: 2.2;">
+                <li><i class="fa-solid fa-memory text-blue" style="width:2vw;"></i> ៣-៥. ការពន្យល់លម្អិតពី <b>Dynamic Programming (DP)</b> និងកូដ Fibonacci</li>
+                <li><i class="fa-solid fa-briefcase text-yellow" style="width:2vw;"></i> ៦-៧. បញ្ហាបែងចែកធនធាន <b>(The Knapsack Problem)</b> និងករណីសិក្សា</li>
+                <li><i class="fa-solid fa-hand-holding-dollar text-red" style="width:2vw;"></i> ៨-៩. ការប្រៀបធៀប ក្បួន <b>Greedy vs Dynamic Programming</b></li>
+                <li><i class="fa-solid fa-route text-green" style="width:2vw;"></i> ១០-១១. ក្បួន <b>Dijkstra's Algorithm</b> (ស្វែងរកផ្លូវខ្លីបំផុត សម្រាប់ Logistics)</li>
+                <li><i class="fa-solid fa-users text-purple" style="width:2vw;"></i> ១២-១៣. ក្បួនបញ្ញាសិប្បនិម្មិត <b>K-Nearest Neighbors (KNN)</b> សម្រាប់ AI</li>
+                <li><i class="fa-solid fa-chart-line text-blue" style="width:2vw;"></i> ១៤. ការវិភាគប្រសិទ្ធភាពពេលវេលា (Time Complexity Analysis)</li>
+                <li><i class="fa-solid fa-graduation-cap text-green" style="width:2vw;"></i> ១៥. សង្ខេបបញ្ចប់វគ្គសិក្សា និងត្រៀមប្រឡង (Final Prep)</li>
+            </ul>
+        `},
+        
+        // 3. DP Concept - Analogy
+        { t: "៣. តើ Dynamic Programming (DP) គឺជាអ្វី?", type: "split", img: "https://images.unsplash.com/photo-1596495578065-6e0763fa1178?auto=format&fit=crop&w=800&q=80", c: `
+            <div style="display:flex; flex-direction:column; height:100%; justify-content:center;">
+                <p style="font-size: 1.6vw; margin-bottom: 2vh;"><b>Dynamic Programming</b> គឺជាបច្ចេកទេសបង្កើនប្រសិទ្ធភាព (Optimization) ដោយ <b>"ចងចាំចម្លើយចាស់"</b> ដើម្បីកុំឱ្យកុំព្យូទ័រគណនាបញ្ហាដដែលៗឡើងវិញ។</p>
+                
+                <div class="analogy-box">
+                    <div class="analogy-header"><i class="fa-solid fa-school"></i> ឧទាហរណ៍៖ ការបូកលេខរបស់សិស្សបឋម</div>
+                    <p class="analogy-text">បើគ្រូសួរថា <b>1+1+1+1+1</b> ស្មើប៉ុន្មាន? សិស្សរាប់ម្រាមដៃហើយឆ្លើយថា <b>៥</b>។<br>ចុះបើគ្រូថែម <b>+1</b> នៅខាងចុងមួយទៀត? តើសិស្សត្រូវរាប់ពីដើម "មួយ ពីរ បី..." ឡើងវិញទេ? <br><b>ចម្លើយគឺ ទេ!</b> សិស្សគ្រាន់តែយកចម្លើយចាស់ (៥) មកបូកនឹង ១ ស្មើ ៦ តែម្តង។ <b>នេះហើយជាគំនិតរបស់ DP!</b></p>
+                </div>
+            </div>
+        `},
+
+        // 4. DP Memo vs Tab
+        { t: "៤. យន្តការរបស់ DP (Memoization vs Tabulation)", type: "split", svg: dpSVG, c: `
+            <div style="display:flex; flex-direction:column; height:100%; justify-content:center;">
+                <p style="font-size: 1.4vw; margin-bottom: 2vh;">DP មានវិធីសាស្រ្តពីរក្នុងការរក្សាទុកចម្លើយ (Cache)៖</p>
+                
+                <div class="analogy-box" style="border-left-color: var(--accent-blue); background: #F0F9FF;">
+                    <div class="analogy-header" style="color: var(--accent-blue);"><i class="fa-solid fa-arrow-down"></i> ១. Top-Down (Memoization)</div>
+                    <p class="analogy-text">ប្រើប្រាស់ Recursion (ហៅខ្លួនឯង) ដោយបំបែកបញ្ហាធំទៅតូច។ ពេលគណនារកឃើញចម្លើយតូចណាមួយ វា <b>រក្សាទុកក្នុង Dictionary</b> មុនពេល Return។ ពេលក្រោយជួបបញ្ហានេះម្តងទៀត វាគ្រាន់តែទាញចេញមកប្រើភ្លាមៗ ល្បឿន O(1)។</p>
+                </div>
+                <div class="analogy-box" style="border-left-color: var(--accent-green); background: #F0FDF4;">
+                    <div class="analogy-header" style="color: var(--accent-green);"><i class="fa-solid fa-arrow-up"></i> ២. Bottom-Up (Tabulation)</div>
+                    <p class="analogy-text">មិនប្រើ Recursion ទេ (ជៀសវាងបញ្ហាពេញ Memory)។ វាសាងសង់ចម្លើយពីតូចទៅធំ ដោយប្រើ <b>Array ឬ List (តារាង)</b>។ ជាវិធីដែលពេញនិយមជាងគេក្នុងប្រព័ន្ធ Application ធំៗ។</p>
+                </div>
+            </div>
+        `},
+
+        // 5. DP Code Fibonacci
+        { t: "៥. ការអនុវត្តកូដ DP <b><i class='fa-solid fa-calculator tech-icon'></i>Fibonacci Series</b>", type: "card", c: `
+            <div class="two-column-equal">
+                <div>
+                    <div class="analogy-box" style="border-left-color: var(--accent-red); background: #FEF2F2;">
+                        <div class="analogy-header" style="color: var(--accent-red);"><i class="fa-solid fa-turtle"></i> គ្មាន DP (យឺតខ្លាំង O(2ⁿ))</div>
+                        <p class="analogy-text">ការហៅ Recursion ធម្មតា ធ្វើឱ្យកុំព្យូទ័រគណនាចម្លើយដដែលៗរាប់លានដង។ រកត្រឹម Fibonacci លេខរៀងទី ៤០ កុំព្យូទ័រគាំង។</p>
+                    </div>
+                    <div class="code-wrapper">
+                        <div class="code-header"><span><i class="fa-brands fa-python"></i> កូដទី ១៖ Recursive ធម្មតា</span></div>
+                        <div class="code-content"><pre>
+<span class="kw">def</span> <span class="fn">fib</span>(n):
+    <span class="kw">if</span> n <= <span class="num">1</span>: <span class="kw">return</span> n
+    <span class="kw">return</span> fib(n-<span class="num">1</span>) + fib(n-<span class="num">2</span>)</pre></div>
+                    </div>
+                </div>
+                <div>
+                    <div class="analogy-box" style="border-left-color: var(--accent-green); background: #F0FDF4;">
+                        <div class="analogy-header" style="color: var(--accent-green);"><i class="fa-solid fa-bolt"></i> ប្រើ DP Memoization (លឿន O(n))</div>
+                        <p class="analogy-text">ប្រើ Dictionary ` + "`memo`" + ` កត់ត្រាចម្លើយទុក។ គណនារក Fibonacci ទី ១០០០ ចំណាយពេលមិនដល់ ១ វិនាទីឡើយ!</p>
+                    </div>
+                    <div class="code-wrapper">
+                        <div class="code-header"><span><i class="fa-brands fa-python"></i> កូដទី ២៖ DP (Top-Down)</span></div>
+                        <div class="code-content"><pre>
+<span class="kw">def</span> <span class="fn">fib_dp</span>(n, memo={}):
+    <span class="kw">if</span> n <span class="kw">in</span> memo: 
+        <span class="kw">return</span> memo[n] <span class="com"># ទាញចម្លើយចាស់មកប្រើ</span>
+    <span class="kw">if</span> n <= <span class="num">1</span>: <span class="kw">return</span> n
+    
+    <span class="com"># កត់ត្រាចម្លើយទុកសិន មុនពេល Return</span>
+    memo[n] = fib_dp(n-<span class="num">1</span>, memo) + fib_dp(n-<span class="num">2</span>, memo)
+    <span class="kw">return</span> memo[n]</pre></div>
+                    </div>
+                </div>
+            </div>
+            <div class="code-pointer">
+                <i class="fa-brands fa-python"></i>
+                <span><b>ចំណាំកូដ៖</b> មានលំហាត់សរសេរកូដ Fibonacci ទាំងបែប Memoization និង Tabulation នៅក្នុង <b>សៀវភៅលំហាត់ (Workbook) ទំព័រទី ១២។</b></span>
+            </div>
+        `},
+
+        // 6. Knapsack Concept - Localized
+        { t: "៦. បញ្ហាបែងចែកធនធាន <b>(The Knapsack Problem)</b>", type: "split", img: "https://images.unsplash.com/photo-1553531384-397c80973a0b?auto=format&fit=crop&w=800&q=80", c: `
+            <div style="display:flex; flex-direction:column; height:100%; justify-content:center;">
+                <p style="font-size: 1.5vw; margin-bottom: 2vh;">Knapsack (កាតាបស្ពាយ) គឺជាបញ្ហាបុរាណក្នុងការបង្កើនប្រសិទ្ធភាពធនធាន ដែលមានកំណត់ (Optimization)។</p>
+                
+                <div class="analogy-box" style="border-left-color: var(--accent-yellow);">
+                    <div class="analogy-header"><i class="fa-solid fa-box-open"></i> ករណី៖ ការផ្ញើឥវ៉ាន់តាមរថយន្តក្រុង</div>
+                    <p class="analogy-text">អ្នកចង់ផ្ញើឥវ៉ាន់ទៅស្រុក តែរថយន្តក្រុង (វីរៈប៊ុនថាំ) កំណត់ទម្ងន់ត្រឹម <b>១៥ គីឡូក្រាម</b> ប៉ុណ្ណោះ។ ក្នុងបន្ទប់អ្នកមានរបស់ជាច្រើន៖<br>
+                    - កុំព្យូទ័រយួរដៃ (ទម្ងន់ ៣គីឡូ, តម្លៃ 1500$)<br>
+                    - គ្រឿងសម្អាង/ឡេ (ទម្ងន់ ១០គីឡូ, តម្លៃ 800$)<br>
+                    - ទូរស័ព្ទដៃ iPhone 15 (ទម្ងន់ ១គីឡូ, តម្លៃ 1000$)</p>
+                    <p class="analogy-text" style="margin-top:1vh; font-weight:bold; color:var(--accent-red);">សំណួរ៖ តើអ្នកគួររើសយកវត្ថុណាខ្លះដាក់ក្នុងកេស ដើម្បីផ្ញើទៅបាន <ins>តម្លៃជាលុយខ្ពស់បំផុត</ins> ដោយមិនឱ្យលើសទម្ងន់ដែលគេកំណត់?</p>
+                </div>
+            </div>
+        `},
+
+        // 7. Knapsack Case Studies & Code Pointer
+        { t: "៧. ករណីសិក្សានៃបញ្ហា Knapsack ក្នុងជីវិតពិត (CLO 5)", type: "grid", c: [
+            { h: "<i class='fa-solid fa-seedling keyword-icon'></i> ១. វិស័យកសិកម្ម (Agriculture)", p: "<p style='font-size:1.35vw;'>កសិករមានដីត្រឹមតែ <b>៥ ហិកតា (តំណាងឱ្យកាតាប)</b>។ គាត់មានជម្រើសដាំពោត សណ្តែក ឬម្រេច ដែលដំណាំនីមួយៗត្រូវការធនធានទឹក និងផ្តល់ប្រាក់ចំណេញខុសៗគ្នា។ តើគួរដាំអ្វីខ្លះ ទើបចំណេញលុយខ្ពស់បំផុតប្រចាំឆ្នាំ?</p>" },
+            { h: "<i class='fa-solid fa-chart-pie keyword-icon'></i> ២. វិស័យហិរញ្ញវត្ថុ (Finance Portfolio)", p: "<p style='font-size:1.35vw;'>អ្នកវិនិយោគមានទុន <b>$100,000 (តំណាងឱ្យកាតាប)</b>។ គាត់ចង់ទិញភាគហ៊ុនក្រុមហ៊ុន A, B, C ដែលមានហានិភ័យ និងភាគលាភរំពឹងទុក (ROI) ខុសៗគ្នា។ តើគួរទិញភាគហ៊ុនណាខ្លះ?</p><div class='code-pointer' style='margin-top:2vh; padding:1vh 1vw;'><i class='fa-brands fa-python' style='font-size:1.8vw;'></i> <span style='font-size:1.1vw;'>មានកូដដោះស្រាយ Knapsack Problem នេះក្នុង <b>Workbook ទំព័រ ១៥</b>។</span></div>" }
+        ]},
+
+        // 8. Greedy Concept - Localized Coin Change
+        { t: "៨. តើក្បួន Greedy Algorithm គឺជាអ្វី?", type: "split", img: "https://images.unsplash.com/photo-1621504450181-5d15668b2c99?auto=format&fit=crop&w=800&q=80", c: `
+            <div style="display:flex; flex-direction:column; height:100%; justify-content:center;">
+                <p style="font-size: 1.5vw; margin-bottom: 2vh;"><b>Greedy (លោភលន់)</b> គឺជាក្បួនដែលធ្វើការសម្រេចចិត្តដោយជ្រើសរើសយកអ្វីដែល <b>"ល្អបំផុតនៅចំពោះមុខភ្លាមៗ" (Local Optimum)</b> ដោយមិនខ្វល់ពីលទ្ធផលរយៈពេលវែង។</p>
+                
+                <div class="analogy-box" style="border-left-color: var(--accent-yellow);">
+                    <div class="analogy-header"><i class="fa-solid fa-coins"></i> ឧទាហរណ៍៖ ការអាប់លុយនៅម៉ាត (Coin Change)</div>
+                    <p class="analogy-text">បុគ្គលិកត្រូវអាប់លុយ <b>៦៥០០៛</b> ឱ្យភ្ញៀវ។ ក្នុងថតមានក្រដាស ៥០០០៛, ១០០០៛, ៥០០៛។<br>
+                    តាមក្បួន Greedy គាត់នឹងយកក្រដាសដែល <b>ធំបំផុត</b> មុនគេជានិច្ច៖<br>
+                    ១. យក ៥០០០៛ មួយសន្លឹក (សល់ ១៥០០៛)<br>
+                    ២. យក ១០០០៛ មួយសន្លឹក (សល់ ៥០០៛)<br>
+                    ៣. យក ៥០០៛ មួយសន្លឹក (សល់ ០៛)<br>
+                    <b>សរុប៖</b> ផ្តល់ក្រដាស ៣ សន្លឹកឱ្យភ្ញៀវ។ លឿន និងងាយស្រួល (O(n))!</p>
+                </div>
+            </div>
+        `},
+
+        // 9. Greedy vs DP Comparison with failure case
+        { t: "៩. ការប្រៀបធៀប <b>Greedy</b> vs <b>Dynamic Programming</b>", type: "grid", c: [
+            { h: "<i class='fa-solid fa-hand-holding-dollar keyword-icon'></i> Greedy Algorithm (លោភលន់)", p: "<ul><li><b>ល្បឿន៖</b> លឿនខ្លាំងណាស់ O(n)។</li><li><b>ចំណុចខ្សោយ៖</b> ជារឿយៗវា <b>បរាជ័យ</b> ក្នុងបញ្ហាស្មុគស្មាញ។ <br><i>ឧទាហរណ៍:</i> បើមានក្រដាស <b>៤០០០៛</b> ហើយត្រូវអាប់ <b>៨០០០៛</b>។ Greedy នឹងចាប់យក ៥០០០៛មុនគេ ទើបបូកថែម ១០០០៛ ចំនួន៣សន្លឹក <b>(ប្រើអស់ ៤ សន្លឹក)</b> ដែលមិនមែនជាជម្រើសល្អបំផុតឡើយ!</li></ul>" },
+            { h: "<i class='fa-solid fa-brain keyword-icon'></i> Dynamic Programming (ឈ្លាសវៃ)", p: "<ul><li><b>ល្បឿន៖</b> យឺតជាង និងស៊ី Memory ច្រើនជាងបន្តិច។</li><li><b>ចំណុចខ្លាំង៖</b> ក្នុងបញ្ហាខាងឆ្វេង DP គិតពិចារណាគ្រប់ជម្រើស ហើយដឹងភ្លាមថា ត្រូវអាប់យក <b>៤០០០៛ + ៤០០០៛ (ប្រើត្រឹមតែ ២ សន្លឹកប៉ុណ្ណោះ)</b> ដែលធានាថាចម្លើយចុងក្រោយគឺ <b>ល្អផ្តាច់គេដាច់ខាត ១០០% (Global Optimum)</b>។</li></ul><div class='code-pointer' style='margin-top:2vh; padding:1vh 1vw;'><i class='fa-brands fa-python' style='font-size:1.8vw;'></i> <span style='font-size:1vw;'>មានលំហាត់ប្រៀបធៀប Greedy vs DP នៅក្នុង <b>Workbook ទំព័រ ១៦</b>។</span></div>" }
+        ]},
+
+        // 10. Dijkstra Concept
+        { t: "១០. ក្បួន <b>Dijkstra's Algorithm</b> (ស្វែងរកផ្លូវខ្លីបំផុត)", type: "split", svg: dijkstraSVG, c: `
+            <div style="display:flex; flex-direction:column; height:100%; justify-content:center;">
+                <p style="font-size: 1.5vw; margin-bottom: 2vh;">Dijkstra's Algorithm គឺជាក្បួនសម្រាប់ស្វែងរក <b>ផ្លូវខ្លីបំផុត (Shortest Path)</b> ពីចំណុចមួយ ទៅកាន់ចំណុចមួយទៀត ក្នុងបណ្តាញ (Graphs) ដែលមានទម្ងន់ (Cost) ខុសៗគ្នា។</p>
+                
+                <div class="analogy-box" style="border-left-color: var(--accent-red); background: #FEF2F2;">
+                    <div class="analogy-header" style="color: var(--accent-red);"><i class="fa-solid fa-gas-pump"></i> អ្វីទៅជា "Cost" (ទម្ងន់)?</div>
+                    <p class="analogy-text">ផ្លូវល្អបំផុតមិនមែនគិតតែលើចម្ងាយ (គីឡូម៉ែត្រ) នោះទេ។ Cost អាចជា <b>ពេលវេលា (ស្ទះចរាចរណ៍)</b> ឬ <b>កម្រិតស៊ីសាំង</b>។ ផ្លូវវាងអាចឆ្ងាយជាង តែបើជិះទៅលឿនជាង ក្បួន Dijkstra នឹងជ្រើសរើសផ្លូវវាងនោះ។</p>
+                </div>
+            </div>
+        `},
+
+        // 11. Dijkstra Case Study
+        { t: "១១. ករណីសិក្សា Dijkstra's ក្នុងជីវិតពិត", type: "split", img: "https://images.unsplash.com/photo-1524661135-423995f22d0b?auto=format&fit=crop&w=800&q=80", c: `
+            <div style="display:flex; flex-direction:column; height:100%; justify-content:center;">
+                
+                <div class="analogy-box">
+                    <div class="analogy-header"><i class="fa-solid fa-map-location-dot"></i> ១. កម្មវិធី Google Maps / ផែនទី GPS</div>
+                    <p class="analogy-text">នៅពេលអ្នកស្វែងរកផ្លូវពី "ភ្នំពេញ ទៅ សៀមរាប" Google Maps ប្រើប្រាស់មុខងារកូនកាត់របស់ Dijkstra (ហៅថា A* Search) ដើម្បីទាញយកផ្លូវដែលចំណាយពេលតិចបំផុត និងអត់ស្ទះ។</p>
+                </div>
+                <div class="analogy-box">
+                    <div class="analogy-header"><i class="fa-solid fa-motorcycle"></i> ២. កម្មវិធីដឹកជញ្ជូន FoodPanda / PassApp</div>
+                    <p class="analogy-text">ប្រព័ន្ធខួរក្បាលក្រោយខ្នងរបស់កម្មវិធី ប្រើប្រាស់ក្បួននេះដើម្បីស្វែងរកអ្នកដឹកជញ្ជូនដែលនៅជិតតូបអាហារបំផុត និងគណនាផ្លូវដឹកទៅកាន់ផ្ទះអតិថិជន។</p>
+                </div>
+
+                <div class="code-pointer">
+                    <i class="fa-brands fa-python"></i>
+                    <span><b>ចំណាំកូដ៖</b> ការអនុវត្តកូដ Dijkstra ដោយប្រើ Min-Heap មាននៅ <b>Workbook ទំព័រ ១៨</b>។</span>
+                </div>
+            </div>
+        `},
+
+        // 12. KNN Concept - Localized
+        { t: "១២. ក្បួន AI កម្រិតដើម៖ <b>K-Nearest Neighbors (KNN)</b>", type: "split", img: "https://images.unsplash.com/photo-1511632765486-a01980e01a18?auto=format&fit=crop&w=800&q=80", c: `
+            <div style="display:flex; flex-direction:column; height:100%; justify-content:center;">
+                <p style="font-size: 1.5vw; margin-bottom: 2vh;">KNN គឺជាក្បួន Machine Learning ដំបូងបង្អស់និងងាយស្រួលបំផុត។ វាគ្មានដុំសាច់ (Model) សម្រាប់រៀនទេ វាគ្រាន់តែ <b>រក្សាទុកទិន្នន័យចាស់ៗទាំងអស់</b>។</p>
+                
+                <div class="analogy-box" style="border-left-color: var(--accent-purple); background: #F3E8FF;">
+                    <div class="analogy-header" style="color: var(--accent-purple);"><i class="fa-solid fa-users"></i> ទស្សនៈ "សេពគប់ពាល ពាល សេពគប់ប្រាជ្ញ ប្រាជ្ញ"</div>
+                    <p class="analogy-text">ចាស់ៗតែងពោលថា <i>"បើចង់ដឹងថាបុគ្គលម្នាក់ជានរណា គ្រាន់តែមើលមិត្តភក្តិដែលគេដើរជាមួយទៅដឹងហើយ"</i>។<br>
+                    KNN ធ្វើការដូចគ្នា៖ ដើម្បីទាយថាទិន្នន័យថ្មីមួយជាអ្វី វាគ្រាន់តែគណនាចម្ងាយ ទៅរកទិន្នន័យចាស់ៗដែលនៅក្បែរវាបំផុតចំនួន <b>K នាក់</b> រួចយកតាមមតិភាគច្រើន (Majority Vote)។</p>
+                </div>
+            </div>
+        `},
+
+        // 13. KNN Case Study - Localized
+        { t: "១៣. ករណីសិក្សា KNN ក្នុងវិស័យ Data Science", type: "grid", c: [
+            { h: "<i class='fa-solid fa-film keyword-icon'></i> ១. ការណែនាំវីដេអូ YouTube (Recommendation)", p: "<p style='font-size:1.35vw;'>ឧបមាថាអ្នកចូលមើលវីដេអូកំប្លែង។ ប្រព័ន្ធអត់ទាន់ស្គាល់ចំណូលចិត្តអ្នកច្បាស់ទេ។ ប្រព័ន្ធ KNN នឹងទាញយក <b>អ្នកប្រើប្រាស់ ៥ នាក់ផ្សេងទៀត (K=5) ដែលឧស្សាហ៍មើលវីដេអូកំប្លែងដូចអ្នក</b>។ បន្ទាប់មក វានឹងទាញយកវីដេអូដែលអ្នកទាំង ៥ នោះធ្លាប់មើល មកលោតណែនាំ (Recommend) ឱ្យអ្នកមើលដែរ។</p>" },
+            { h: "<i class='fa-solid fa-house keyword-icon'></i> ២. ការវាយតម្លៃតម្លៃអចលនទ្រព្យ (Real Estate)", p: "<p style='font-size:1.35vw;'>ចង់ដឹងថាផ្ទះរបស់អ្នកនៅបុរីប៉េងហួត តម្លៃប៉ុន្មាន? KNN នឹងរកមើលផ្ទះចំនួន ៣ ទីតាំងនៅក្បែរផ្ទះអ្នកបំផុត ដែលមានទំហំដីប្រហាក់ប្រហែលគ្នា រួចយកតម្លៃលក់ចេញរបស់វាទាំង ៣ មកគណនាជាមធ្យម នោះអ្នកនឹងបានតម្លៃទីផ្សារផ្ទះរបស់អ្នក។</p><div class='code-pointer' style='margin-top:1.5vh; padding:1vh 1vw;'><i class='fa-brands fa-python' style='font-size:1.8vw;'></i> <span style='font-size:1vw;'>មានកូដ AI - KNN (Scikit-Learn) ក្នុង <b>Workbook ទំព័រ ២១</b>។</span></div>" }
+        ]},
+
+        // 14. Time Complexity Analysis
+        { t: "១៤. ការវិភាគប្រសិទ្ធភាពពេលវេលា (Time Complexity)", type: "table", rows: [
+            ["ក្បួនដោះស្រាយ (Algorithms)", "ការប្រើប្រាស់ជាក់ស្តែង (Use Case)", "Time Complexity", "Space Complexity"],
+            ["<b>DP: Fibonacci (Memoized)</b>", "គណិតវិទ្យា / ការរកចម្លើយកាត់លឿន", "<b style='color:var(--accent-green)'>O(n)</b> លឿន", "O(n) (ផ្ទុក Dictionary ក្នុង Memory)"],
+            ["<b>0/1 Knapsack (DP Tabulation)</b>", "ការបែងចែកធនធាន (កសិកម្ម/ហិរញ្ញវត្ថុ)", "O(n × W) ធៀបទម្ងន់", "O(n × W) (ប្រើតារាង 2D Array)"],
+            ["<b>Dijkstra's Algorithm (Min-Heap)</b>", "ដឹកជញ្ជូន Logistics / Google Maps", "<b style='color:var(--accent-green)'>O(E + V log V)</b>", "O(V) (V=ចំនួនចំណុចទីតាំងក្នុងផែនទី)"],
+            ["<b>Greedy: Coin Change</b>", "ប្រព័ន្ធ POS (Point of Sale) អាប់លុយ", "O(n log n)", "O(1) (មិនសូវស៊ី Memory)"],
+            ["<b>AI: K-Nearest Neighbors (KNN)</b>", "Machine Learning / ប្រព័ន្ធ Recommend", "<b style='color:var(--accent-red)'>O(n × d)</b> យឺតពេល Data ធំ", "O(n) (ត្រូវកាន់ Data ចាស់ទាំងអស់ទុក)"]
+        ]},
+
+        // 15. End Recap
+        { t: "១៥. សង្ខេបបញ្ចប់ និងត្រៀមប្រឡង (Final Prep)", type: "card", c: `
+            <div style="text-align:center; padding: 2vh 2vw;">
+                <i class="fa-solid fa-graduation-cap" style="font-size: 5vw; color: var(--accent-green); margin-bottom: 2vh;"></i>
+                <h3 style="font-size: 2.2vw; color: var(--accent-green); font-family: 'Suwannaphum'; margin-bottom: 1.5vh;">អបអរសាទរ! អ្នកបានបញ្ចប់ទ្រឹស្តីនៃមុខវិជ្ជា DSA កម្រិតខ្ពស់ទាំងស្រុងហើយ។</h3>
+                <p style="font-size: 1.6vw; color: var(--text-main); margin-bottom: 2vh;">សូមរំលឹកពាក្យគន្លឹះមុនប្រឡង៖ <b>Memoization vs Tabulation, 0/1 Knapsack, Greedy vs DP, Dijkstra, និង KNN</b>។</p>
+                
+                <div class="highlight-note green" style="display:flex; justify-content: center; text-align: left; padding: 2vh 3vw; border-width: 2px;">
+                    <p style="margin: 0; font-size: 1.6vw;">
+                        <i class="fa-solid fa-clipboard-check"></i> <b>កិច្ចការផ្ទះចុងក្រោយ៖</b> សូមបើក <b>"សៀវភៅលំហាត់អនុវត្តន៍ (Workbook) - ជំពូកទី ៨"</b> ដើម្បីអនុវត្តសរសេរកូដ Python ដោះស្រាយបញ្ហា Knapsack និងសរសេរកូដគំរូនៃប្រព័ន្ធ KNN Machine Learning ដំបូងរបស់អ្នក មុនការប្រឡង (Final Exam) មកដល់!
+                    </p>
+                </div>
+            </div>
+        `}
+    ];
+
+    const container = document.getElementById('slideWrapper');
+
+    chapter8Data.forEach((item, index) => {
+        const slide = document.createElement('div');
+        slide.className = 'slide';
+        
+        let bodyContent = '';
+        if(item.type === "split") {
+            let visual = item.img ? `<img src="${item.img}">` : (item.svg ? item.svg : '');
+            bodyContent = `<div class="two-column"><div class="card" style="height:100%; border:none; padding:0; background:transparent; justify-content:start;">${item.c}</div><div class="visual-frame">${visual}</div></div>`;
+        } else if(item.type === "two-equal") {
+            bodyContent = `<div class="two-column-equal">${item.c}</div>`;
+        } else if(item.type === "grid") {
+            bodyContent = `<div class="card-grid">${item.c.map(c => `<div class="card"><h4>${c.h}</h4><div style="margin:0; font-size: 1.3vw;">${c.p}</div></div>`).join('')}</div>`;
+        } else if(item.type === "card") {
+            bodyContent = `<div class="card" style="height: 100%; justify-content: center; background:#FFFFFF;">${item.c}</div>`;
+        } else if(item.type === "table") {
+            let th = `<tr>${item.rows[0].map(h => `<th style="text-align:center;">${h}</th>`).join('')}</tr>`;
+            let trs = item.rows.slice(1).map(r => `<tr>${r.map((td, i) => `<td ${i>0 ? 'align="center"' : ''}>${td}</td>`).join('')}</tr>`).join('');
+            bodyContent = `<table><thead>${th}</thead><tbody>${trs}</tbody></table>`;
+        }
+
+        slide.innerHTML = `<div id="h-placeholder-${index}"></div> <h2 class="slide-title">${item.t}</h2> <div class="content-body">${bodyContent}</div>`;
+        container.appendChild(slide);
+    });
+
+    // Q&A Slide
+    const qaSlide = document.createElement('div');
+    qaSlide.className = 'slide';
+    qaSlide.innerHTML = `
+        <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; text-align: center;">
+            <h1 style="font-size: 5.4vw; color: var(--accent-blue); margin-bottom: 2vh;"><i class="fa-solid fa-comments"></i> សំណួរ និងការពិភាក្សា</h1>
+            <p style="font-size: 2.25vw; color: var(--text-muted); margin-bottom: 5vh;">សូមអរគុណនិស្សិតថ្នាក់អនុបណ្ឌិតទាំងអស់សម្រាប់ការយកចិត្តទុកដាក់ពេញមួយឆមាស!</p>
+            <div style="display: flex; gap: 2vw; justify-content: center;">
+                <div style="background: #FFFFFF; padding: 2vh 3vw; border-radius: 5vw; border: 2px solid var(--accent-blue); box-shadow: 0 10px 20px rgba(0,0,0,0.05);">
+                    <p style="margin: 0; font-weight: bold; font-size: 1.8vw; color: var(--accent-blue);"><i class="fa-solid fa-envelope"></i> soeurnglim@gmail.com</p>
+                </div>
+                <div style="background: #FFFFFF; padding: 2vh 3vw; border-radius: 5vw; border: 2px solid #0088cc; box-shadow: 0 10px 20px rgba(0,0,0,0.05);">
+                    <p style="margin: 0; font-weight: bold; font-size: 1.8vw; color: #0088cc;"><i class="fa-brands fa-telegram"></i> ០៦១ ២២៧ ៩៣៣</p>
+                </div>
+            </div>
+        </div>
+    `;
+    container.appendChild(qaSlide);
+
+    // End of Course Slide
+    const endSlide = document.createElement('div');
+    endSlide.className = 'slide';
+    endSlide.innerHTML = `
+        <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; text-align: center;">
+            <i class="fa-solid fa-medal" style="font-size: 6vw; color: var(--accent-yellow); margin-bottom: 2vh;"></i>
+            <h1 style="font-size: 4.5vw; color: var(--text-main); margin-bottom: 1vh;">បញ្ចប់កម្មវិធីសិក្សាដោយជោគជ័យ</h1>
+            <p style="font-size: 2vw; color: var(--accent-blue); font-weight: bold; margin-bottom: 3vh;">(End of Course - Advanced DSA in Python)</p>
+            <div class="card" style="background: #FFFFFF; border-left: 1vw solid var(--accent-green); padding: 3vh 5vw; box-shadow: 0 15px 30px rgba(0,0,0,0.1); border-radius: 1.5vw;">
+                <h3 style="font-size: 2vw; color: var(--text-main); margin: 0; font-family: 'Suwannaphum';"><i class="fa-solid fa-bullhorn text-green"></i> ត្រៀមខ្លួនសម្រាប់៖ ការធ្វើបទបង្ហាញគម្រោង (Final Projects) និង ប្រឡងបញ្ចប់ (Final Exam)</h3>
+            </div>
+        </div>
+    `;
+    container.appendChild(endSlide);
+
+    // -----------------------------------------------------
+    // Initialize Navigation and Print Layouts
+    // -----------------------------------------------------
+
+    // 1. Apply Global Header to all slides
+    document.querySelectorAll('[id^="h-placeholder"]').forEach(p => p.outerHTML = headerHTML);
+
+    // 2. Count Total Slides
+    const slides = document.querySelectorAll('.slide');
+    const totalSlides = slides.length;
+    
+    // 3. Setup Print Footers
+    const mainFooter = document.getElementById('mainFooter');
+    const screenCounter = document.getElementById('screenSlideCounter'); 
+
+    slides.forEach((slide, index) => {
+        let printFooter = mainFooter.cloneNode(true);
+        printFooter.id = ''; 
+        
+        let printCounter = printFooter.querySelector('.slide-counter');
+        if (printCounter) {
+            printCounter.id = ''; 
+            printCounter.innerHTML = `ស្លាយទី ${toKh(index + 1)} នៃ ${toKh(totalSlides)}`; 
+        }
+        
+        printFooter.className = 'global-footer print-only-footer';
+        slide.appendChild(printFooter);
+    });
+
+    // 4. Update function for Screen display
+    let currentIdx = 0;
+    function update(idx) { 
+        slides.forEach(s => s.classList.remove('active')); 
+        slides[idx].classList.add('active'); 
+        currentIdx = idx; 
+        
+        if (screenCounter) {
+            screenCounter.innerHTML = `ស្លាយទី ${toKh(idx + 1)} នៃ ${toKh(totalSlides)}`;
+        }
+    }
+
+    // 5. Allow Navigation by Clicking ONLY the arrows (So users can copy text)
+    document.querySelector('.nav-right').addEventListener('click', (e) => { 
+        e.stopPropagation(); 
+        if (currentIdx < totalSlides - 1) update(currentIdx + 1); 
+    });
+    
+    document.querySelector('.nav-left').addEventListener('click', (e) => { 
+        e.stopPropagation(); 
+        if (currentIdx > 0) update(currentIdx - 1); 
+    });
+
+    // 6. Keyboard Navigation Support
+    document.addEventListener('keydown', (e) => {
+        if (e.key === "ArrowRight" || e.key === " " || e.key === "PageDown") { 
+            if (currentIdx < totalSlides - 1) update(currentIdx + 1); 
+        } else if (e.key === "ArrowLeft" || e.key === "PageUp") { 
+            if (currentIdx > 0) update(currentIdx - 1); 
+        }
+    });
+
+    // Start presentation
+    update(0); 
+</script>
+</body>
+</html>

@@ -1,0 +1,1037 @@
+<!DOCTYPE html>
+<html lang="km">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guidebook Chapter 5 - Trees and BST</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Battambang:wght@400;700&family=Suwannaphum:wght@400;700;900&family=Lato:wght@400;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <style>
+        :root {
+            --bg-color: #E2E8F0;
+            --paper-white: #FFFFFF;
+            --text-main: #0F172A;
+            --text-muted: #475569;
+            --accent-blue: #0284C7; 
+            --accent-green: #059669;
+            --accent-yellow: #D97706; 
+            --accent-red: #DC2626;
+            --header-footer-bg: #F0F9FF;
+            --code-bg: #111827;
+            --term-bg: #000000;
+            --term-text: #4ade80;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            background-color: var(--bg-color);
+            font-family: 'Battambang', sans-serif;
+            color: var(--text-main);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 40px 20px;
+        }
+
+        /* Utility Classes */
+        .text-blue { color: var(--accent-blue) !important; }
+        .text-green { color: var(--accent-green) !important; }
+        .text-red { color: var(--accent-red) !important; }
+        .text-yellow { color: var(--accent-yellow) !important; }
+
+        /* A4 Page Layout */
+        .a4-page {
+            width: 210mm; 
+            height: 297mm; 
+            background: var(--paper-white);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1); 
+            margin-bottom: 30mm;
+            display: flex; 
+            flex-direction: column; 
+            position: relative; 
+            border-radius: 8px;
+            overflow: hidden; 
+            page-break-after: always;
+        }
+
+        /* COVER PAGE STYLES */
+        .cover-page {
+            justify-content: center; 
+            align-items: center; 
+            text-align: center; 
+            padding: 30mm 20mm;
+            background-image: linear-gradient(to bottom, #F0F9FF, #FFFFFF);
+        }
+        .cover-logo { width: 140px; margin-bottom: 15px; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1)); }
+        .cover-uni-kh { font-family: 'Suwannaphum'; color: var(--accent-blue); font-size: 34px; margin: 0 0 5px 0; font-weight: 900; }
+        .cover-uni-en { font-family: 'Lato'; color: #475569; font-size: 18px; margin: 0 0 40px 0; letter-spacing: 1px; font-weight: bold; }
+        .cover-program { font-family: 'Suwannaphum'; font-size: 18px; color: var(--accent-green); margin-bottom: 25px; font-weight: bold; }
+        .cover-chapter-badge { background: var(--accent-blue); color: white; padding: 10px 30px; border-radius: 50px; font-size: 20px; font-weight: bold; margin-bottom: 40px; font-family: 'Suwannaphum'; box-shadow: 0 5px 15px rgba(2,132,199,0.3); display: inline-block;}
+        .cover-main-title { font-family: 'Suwannaphum'; font-size: 30px; color: var(--text-main); line-height: 1.5; margin-bottom: 10px; font-weight: 900; }
+        .cover-sub-title { font-family: 'Lato'; font-size: 18px; color: var(--accent-blue); margin-bottom: 50px; font-weight: bold; line-height: 1.5;}
+        
+        .cover-author-wrapper { display: flex; flex-direction: column; align-items: center; gap: 15px; margin-bottom: 40px; }
+        .cover-author-img { width: 110px; height: 110px; border-radius: 50%; border: 4px solid var(--accent-blue); object-fit: cover; box-shadow: 0 6px 15px rgba(0,0,0,0.15); background-color: #fff;}
+        .cover-author-text { font-size: 18px; color: #64748B; font-family: 'Suwannaphum'; }
+        .cover-author-text strong { color: var(--text-main); font-size: 22px; }
+
+        .cover-icons-wrapper { display: flex; gap: 50px; justify-content: center; margin-top: auto; border-top: 1px solid #E2E8F0; padding-top: 20px; width: 100%; }
+        .cover-icon-item img { height: 60px; margin-bottom: 8px; object-fit: contain; }
+        .cover-icon-item p { font-size: 14px; font-weight: bold; color: var(--accent-blue); font-family: 'Lato'; }
+
+        /* HEADER & FOOTER */
+        .global-header {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 12px 25px; border-bottom: 3px solid var(--accent-blue); background-color: var(--header-footer-bg);
+            height: 25mm;
+        }
+        .header-item { display: flex; flex-direction: column; align-items: center; gap: 5px; width: 120px; }
+        .header-item img { height: 40px; object-fit: contain; }
+        .header-item span { font-size: 10px; font-weight: bold; color: var(--accent-blue); text-align: center; font-family: 'Suwannaphum'; }
+        .header-center { text-align: center; flex-grow: 1; padding: 0 10px;}
+        .header-center h1 { font-family: 'Suwannaphum'; font-size: 15px; color: var(--accent-blue); margin: 0; }
+        .header-center p { font-family: 'Battambang'; font-size: 10px; color: #64748B; margin: 0; font-weight: bold; text-transform: uppercase;}
+
+        .global-footer {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 10px 25px; border-top: 3px solid var(--accent-blue);
+            background-color: var(--header-footer-bg);
+            position: absolute; bottom: 0; left: 0; width: 100%; height: 15mm;
+        }
+        .footer-left { display: flex; align-items: center; gap: 12px; }
+        .footer-left img { border-radius: 50%; border: 2px solid var(--accent-blue); width: 30px; height: 30px; object-fit: cover; background-color: #fff; }
+        .footer-left span { font-size: 11px; font-weight: bold; color: var(--text-main); font-family: 'Suwannaphum'; }
+        .footer-right { font-size: 11px; color: var(--accent-blue); font-weight: bold; font-family: 'Battambang'; }
+
+        /* CONTENT */
+        .page-content { flex-grow: 1; padding: 8mm 15mm; height: 257mm; overflow: hidden; } 
+        
+        .section-title {
+            background: var(--header-footer-bg); border-left: 5px solid var(--accent-blue);
+            padding: 8px 15px; margin: 10px 0; font-family: 'Suwannaphum';
+            font-size: 16px; display: flex; align-items: center; gap: 10px; font-weight: bold;
+            border-radius: 0 6px 6px 0; color: var(--accent-blue); page-break-after: avoid;
+        }
+
+        .text-block { font-size: 13px; line-height: 1.8; margin-bottom: 12px; color: var(--text-main); text-align: justify; }
+        
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
+        
+        .card { background: #F8FAFC; border: 1px solid #CBD5E1; border-top: 3px solid var(--accent-blue); padding: 12px; border-radius: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); page-break-inside: avoid; }
+        .card h4 { font-family: 'Suwannaphum'; font-size: 14px; color: var(--accent-blue); margin-bottom: 6px; display: flex; align-items: center; gap: 8px;}
+        .card.red-card { border-top-color: var(--accent-red); }
+        .card.red-card h4 { color: var(--accent-red); }
+        .card.green-card { border-top-color: var(--accent-green); }
+        .card.green-card h4 { color: var(--accent-green); }
+        .card.yellow-card { border-top-color: var(--accent-yellow); }
+        .card.yellow-card h4 { color: var(--accent-yellow); }
+        .card ul { padding-left: 20px; margin-top: 5px; font-size: 12px; line-height: 1.8;}
+
+        /* Narrative Boxes */
+        .narrative-box { background: #FFFFFF; border-radius: 6px; border: 1px solid #CBD5E1; border-left: 4px solid var(--accent-blue); padding: 10px 12px; margin-bottom: 12px; box-shadow: 0 2px 5px rgba(0,0,0,0.02); page-break-inside: avoid;}
+        .narrative-header { font-weight: bold; color: var(--accent-blue); font-size: 13.5px; border-bottom: 1px solid #E2E8F0; padding-bottom: 5px; margin-bottom: 6px; font-family: 'Suwannaphum'; display: flex; align-items: center; gap: 8px;}
+        .narrative-text { font-size: 12px; color: var(--text-main); line-height: 1.8; margin: 0; text-align: justify;}
+        
+        .narrative-box.danger { background: #FEF2F2; border-left-color: var(--accent-red); border-color: #FECACA;}
+        .narrative-box.danger .narrative-header { color: var(--accent-red); border-bottom-color: #FCA5A5; }
+        
+        .narrative-box.warning { background: #FFFBEB; border-left-color: var(--accent-yellow); border-color: #FDE68A;}
+        .narrative-box.warning .narrative-header { color: var(--accent-yellow); border-bottom-color: #FCD34D; }
+
+        /* Compare Blocks */
+        .compare-block { border: 1px solid #CBD5E1; border-radius: 8px; overflow: hidden; margin-bottom: 15px; background: #fff; box-shadow: 0 3px 8px rgba(0,0,0,0.05); page-break-inside: avoid;}
+        .compare-img { width: 100%; height: 110px; object-fit: cover; border-bottom: 2px solid var(--accent-blue); }
+        .compare-title { font-family: 'Suwannaphum'; font-size: 14.5px; color: var(--text-main); padding: 6px 12px; background: #F8FAFC; border-bottom: 1px solid #CBD5E1; font-weight: bold; text-align: center;}
+        .compare-grid { display: grid; grid-template-columns: 1fr 1fr; }
+        .compare-col { padding: 10px 12px; font-size: 12px; line-height: 1.8; text-align: justify; }
+        .compare-col:first-child { border-right: 1px dashed #CBD5E1; background: #F8FAFC; }
+        .compare-col h5 { font-family: 'Suwannaphum'; font-size: 13px; margin-bottom: 6px; display: flex; align-items: center; gap: 6px;}
+
+        /* Table Styles */
+        table { width: 100%; border-collapse: collapse; margin-bottom: 15px; font-size: 12px; background: #fff; box-shadow: 0 2px 5px rgba(0,0,0,0.05); border-radius: 6px; overflow: hidden; page-break-inside: avoid;}
+        th { background: var(--header-footer-bg); color: var(--accent-blue); font-family: 'Suwannaphum'; font-size: 13px; text-align: left; padding: 10px 12px; border-bottom: 2px solid var(--accent-blue); }
+        td { padding: 10px 12px; border-bottom: 1px solid #E2E8F0; color: var(--text-main); }
+        tr:last-child td { border-bottom: none; }
+        tr:nth-child(even) { background-color: #F8FAFC; }
+
+        /* Q&A Boxes */
+        .qa-box { border: 1px solid #CBD5E1; border-radius: 8px; margin-bottom: 12px; background: #fff; overflow: hidden; page-break-inside: avoid; box-shadow: 0 3px 6px rgba(0,0,0,0.02);}
+        .qa-question { background: #F0F9FF; padding: 10px 15px; border-bottom: 1px dashed #CBD5E1; font-weight: bold; color: var(--accent-blue); font-family: 'Suwannaphum'; font-size: 13.5px; display: flex; gap: 10px; align-items: flex-start; line-height: 1.6;}
+        .qa-answer { padding: 10px 15px; font-size: 12.5px; line-height: 1.8; color: var(--text-main); display: flex; gap: 10px; text-align: justify;}
+        .qa-icon-q { color: var(--accent-red); font-size: 16px; margin-top: 2px;}
+        .qa-icon-a { color: var(--accent-green); font-size: 16px; margin-top: 2px;}
+
+        .highlight-note { background-color: #FEF9C3; border: 1px dashed var(--accent-yellow); padding: 10px 15px; border-radius: 6px; margin-bottom: 12px; font-weight: bold; color: #854D0E; font-size: 12.5px; display: flex; align-items: center; gap: 10px; page-break-inside: avoid; line-height: 1.6;}
+
+        /* Fully Runnable Python Code Block Design */
+        .visual-img { width: 100%; height: 140px; object-fit: cover; border-radius: 4px; margin-bottom: 10px; border: 1px solid #E2E8F0; }
+        
+        .code-wrapper { background: var(--code-bg); border-radius: 8px; border: 1px solid #374151; overflow: hidden; width: 100%; box-shadow: 0 4px 10px rgba(0,0,0,0.15); margin-top: 10px; margin-bottom: 15px; page-break-inside: avoid;}
+        .code-header { background: #1F2937; padding: 6px 12px; font-size: 11.5px; font-family: 'Battambang', sans-serif; color: #9CA3AF; border-bottom: 1px solid #374151; display: flex; justify-content: space-between; align-items: center;}
+        .code-header span { font-weight: bold; color: #38BDF8; display: flex; align-items: center; gap: 5px; }
+        .code-content { padding: 10px 12px; }
+        
+        .code-content pre { font-family: 'Fira Code', monospace; font-size: 11.5px; line-height: 1.8; color: #f8f8f2; margin: 0; white-space: pre-wrap; word-break: break-word;}
+        .com { color: #6272a4; font-style: italic; font-family: 'Battambang', sans-serif !important; } 
+        .str { color: #f1fa8c; font-family: 'Battambang', sans-serif !important; }
+        
+        /* Terminal Output Design */
+        .code-output { background: var(--term-bg); padding: 10px 12px; border-top: 1px dashed #4B5563; }
+        .code-output pre { font-family: 'Battambang', sans-serif !important; font-size: 11.5px; color: var(--term-text); margin: 0; white-space: pre-wrap; line-height: 1.8; word-break: break-word;}
+        .code-output-title { font-size: 10px; color: #9CA3AF; margin-bottom: 5px; font-family: 'Battambang'; text-transform: uppercase;}
+
+        .kw { color: #ff79c6; font-weight: bold; } .fn { color: #50fa7b; } .num { color: #bd93f9; } .bult { color: #8be9fd; } .cls { color: #8be9fd; font-style: italic; }
+
+        /* PRINT MEDIA QUERY */
+        @page { size: A4; margin: 0; }
+        @media print {
+            body { background: white; padding: 0; margin: 0; }
+            .a4-page { box-shadow: none; margin: 0; width: 210mm; height: 297mm; border: none; border-radius: 0; page-break-after: always; }
+            .no-print { display: none !important; }
+            * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+        }
+    </style>
+</head>
+<body>
+
+<button class="no-print" onclick="window.print()" style="margin-bottom: 20px; padding: 12px 25px; cursor: pointer; background: var(--accent-blue); color: white; border: none; border-radius: 8px; font-family: 'Battambang'; font-weight: bold; font-size: 16px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); transition: all 0.3s;">
+    <i class="fa-solid fa-print"></i> បោះពុម្ពសៀវភៅមគ្គទ្ទេសក៍ (Print Guidebook)
+</button>
+
+<!-- ================= PAGE 1: COVER ================= -->
+<div class="a4-page cover-page">
+    <img src="https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png" alt="Angkor University Logo" class="cover-logo" onerror="this.src='Logo.png'">
+    <h1 class="cover-uni-kh">សាកលវិទ្យាល័យអង្គរ</h1>
+    <p class="cover-uni-en">ANGKOR UNIVERSITY</p>
+
+    <div class="cover-program">
+        <i class="fa-solid fa-graduation-cap"></i> អនុបណ្ឌិតវិទ្យាសាស្ត្រទិន្នន័យ និងបញ្ញាសិប្បនិម្មិត
+    </div>
+
+    <div class="cover-chapter-badge">សៀវភៅមគ្គទ្ទេសក៍ (Guidebook) | ជំពូកទី ៥</div>
+
+    <h1 class="cover-main-title">រចនាសម្ព័ន្ធទិន្នន័យ Trees និង BST<br>ដើមឈើ និងដើមឈើស្វែងរកទ្វេភាគ</h1>
+    <h2 class="cover-sub-title">(Trees and Binary Search Trees in Python)</h2>
+
+    <div class="cover-author-wrapper">
+        <img src="Lim.jpg" alt="Professor" class="cover-author-img" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'">
+        <div class="cover-author-text">
+            រៀបចំដោយសាស្ត្រាចារ្យ៖ <strong>សឿង លីម (Soeurng LIM)</strong>
+        </div>
+    </div>
+
+    <div class="cover-icons-wrapper">
+        <div class="cover-icon-item">
+            <i class="fa-solid fa-folder-tree" style="font-size: 60px; color: var(--accent-blue); margin-bottom: 8px;"></i>
+            <p>Trees</p>
+        </div>
+        <div class="cover-icon-item">
+            <i class="fa-solid fa-sitemap" style="font-size: 60px; color: var(--accent-green); margin-bottom: 8px;"></i>
+            <p>Binary Search Trees</p>
+        </div>
+    </div>
+</div>
+
+<!-- ================= PAGE 2: Objectives & TOC ================= -->
+<div class="a4-page">
+    <div class="global-header">
+        <div class="header-item"><img src="https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png" onerror="this.src='Logo.png'"><span>សាកលវិទ្យាល័យអង្គរ</span></div>
+        <div class="header-center">
+            <h1>សៀវភៅមគ្គទ្ទេសក៍ (Guidebook) - ជំពូកទី ៥</h1>
+            <p>ADVANCED DATA STRUCTURES AND ALGORITHMS FOR AI</p>
+        </div>
+        <div class="header-item"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg"><span>Python Pro</span></div>
+    </div>
+
+    <div class="page-content">
+        <!-- Banner Image for Chapter 5 -->
+        <img src="https://images.unsplash.com/photo-1516116211223-5c359a36298a?auto=format&fit=crop&w=1200&q=80" class="visual-img" alt="Data Network Tree Banner" style="height: 120px; object-fit: cover; margin-bottom: 15px; border-bottom: 3px solid var(--accent-blue);">
+
+        <!-- Learning Objectives -->
+        <div class="section-title" style="margin-top: 0;"><i class="fa-solid fa-bullseye"></i> វត្ថុបំណងនៃមេរៀន (Learning Objectives)</div>
+        <div class="card green-card" style="margin-bottom: 15px;">
+            <p class="text-block" style="margin-bottom: 10px; font-weight: bold;">បន្ទាប់ពីបញ្ចប់ការសិក្សានៅក្នុងជំពូកទី ៥ នេះ និស្សិតនឹងមានសមត្ថភាព៖</p>
+            <ul style="line-height: 1.7; color: var(--text-main); font-size: 12.5px; padding-left: 25px;">
+                <li><b class="text-blue">យល់ពីរចនាសម្ព័ន្ធ Tree៖</b> ស្គាល់ច្បាស់ពីការរៀបចំទិន្នន័យបែបឋានានុក្រម (Hierarchical) ដែលមិនមែនជាលីនេអ៊ែរ (Non-linear)។</li>
+                <li><b class="text-blue">ចេះវិភាគសទ្ទានុក្រម Tree៖</b> យល់ដឹងពីនិយមន័យ Root, Leaf, Edge, Height, Depth និង Path។</li>
+                <li><b class="text-blue">គ្រប់គ្រង Binary Search Tree (BST)៖</b> យល់ពីច្បាប់ស្នូលរបស់ BST (មែកឆ្វេងតូចជាង Root មែកស្តាំធំជាង Root)។</li>
+                <li><b class="text-blue">សរសេរកូដបញ្ចូល និងស្វែងរក៖</b> អាចបង្កើតកូដ Python សម្រាប់ប្រតិបត្តិការ <code class="text-red">insert()</code> និង <code class="text-red">search()</code>។</li>
+                <li><b class="text-blue">អនុវត្ត Tree Traversals៖</b> យល់ច្បាស់ពីយន្តការរុករកទិន្នន័យ In-order, Pre-order, និង Post-order ព្រមទាំងករណីប្រើប្រាស់។</li>
+                <li><b class="text-blue">ការប្រើប្រាស់ក្នុង AI & Machine Learning៖</b> ស្វែងយល់ពីរបៀបដែល Tree ត្រូវបានប្រើក្នុង Decision Trees, Database Indexing, និង Game AI (Minimax)។</li>
+            </ul>
+        </div>
+
+        <!-- Table of Contents -->
+        <div class="section-title"><i class="fa-solid fa-list"></i> មាតិកា (Table of Contents)</div>
+        <div class="narrative-box" style="padding: 12px 20px; border-left-color: var(--accent-green); margin-bottom: 0;">
+            <div class="grid-2" style="margin-bottom: 0;">
+                <div style="font-size: 13px; line-height: 2.1; color: var(--text-main);">
+                    <div style="border-bottom: 1px dashed #E2E8F0;"><b class="text-blue">១.</b> សេចក្តីផ្តើមអំពី Tree និងការរៀបចំទិន្នន័យបែប Hierarchical</div>
+                    <div style="border-bottom: 1px dashed #E2E8F0;"><b class="text-blue">២.</b> សទ្ទានុក្រម និងលក្ខណៈបច្ចេកទេសរបស់ Tree</div>
+                    <div style="border-bottom: 1px dashed #E2E8F0;"><b class="text-blue">៣.</b> Binary Search Tree (BST) និងច្បាប់តម្រៀបគ្រឹះ</div>
+                    <div style="border-bottom: 1px dashed #E2E8F0;"><b class="text-blue">៤.</b> ការអនុវត្តកូដ BST Insertion ក្នុង Python</div>
+                    <div style="border-bottom: 1px dashed #E2E8F0;"><b class="text-blue">៥.</b> ប្រតិបត្តិការស្វែងរកទិន្នន័យក្នុង BST (Search Operation)</div>
+                    <div style="border-bottom: 1px dashed #E2E8F0;"><b class="text-blue">៦.</b> ការអនុវត្តកូដ BST Search ក្នុង Python</div>
+                </div>
+                <div style="font-size: 13px; line-height: 2.1; color: var(--text-main);">
+                    <div style="border-bottom: 1px dashed #E2E8F0;"><b class="text-blue">៧.</b> គោលការណ៍រុករកបង្ហាញទិន្នន័យ (Tree Traversals)</div>
+                    <div style="border-bottom: 1px dashed #E2E8F0;"><b class="text-blue">៨.</b> ការអនុវត្តកូដ In-order, Pre-order និង Post-order</div>
+                    <div style="border-bottom: 1px dashed #E2E8F0;"><b class="text-blue">៩.</b> ការអនុវត្ត Trees និង BST ក្នុងបច្ចេកវិទ្យា AI & ML</div>
+                    <div style="border-bottom: 1px dashed #E2E8F0;"><b class="text-blue">១០.</b> តារាងវិភាគ និងប្រៀបធៀប Time Complexity</div>
+                    <div style="border-bottom: 1px dashed #E2E8F0;"><b class="text-blue">១១.</b> សំណួររំលឹកមេរៀនប្រចាំជំពូកទី ៥ និងការបកស្រាយ (Q&A)</div>
+                    <div style="border-bottom: 1px dashed #E2E8F0;"><b class="text-blue">១២.</b> សទ្ទានុក្រម និងគន្ថនិទ្ទេសយោង (References)</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="global-footer">
+        <div class="footer-left"><img src="Lim.jpg" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'"><span>សាស្ត្រាចារ្យ៖ សឿង លីម (Soeurng LIM)</span></div>
+        <div class="footer-right">ទំព័រទី ២ នៃ ១៤</div>
+    </div>
+</div>
+
+<!-- ================= PAGE 3: Intro to Trees ================= -->
+<div class="a4-page">
+    <div class="global-header">
+        <div class="header-item"><img src="https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png" onerror="this.src='Logo.png'"><span>សាកលវិទ្យាល័យអង្គរ</span></div>
+        <div class="header-center">
+            <h1>សៀវភៅមគ្គទ្ទេសក៍ (Guidebook) - ជំពូកទី ៥</h1>
+            <p>ADVANCED DATA STRUCTURES AND ALGORITHMS FOR AI</p>
+        </div>
+        <div class="header-item"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg"><span>Python Pro</span></div>
+    </div>
+
+    <div class="page-content">
+        <div class="section-title" style="margin-top: 0;"><i class="fa-solid fa-folder-tree"></i> ១. សេចក្តីផ្តើមអំពី Trees និងការរៀបចំទិន្នន័យបែប Hierarchical</div>
+        <div class="text-block">
+            ខុសប្លែកពីរចនាសម្ព័ន្ធលីនេអ៊ែរ (Linear Data Structures) ដូចជា Arrays, Stacks, Queues ឬ Linked Lists ដែលតម្រៀបទិន្នន័យជាជួរដេកត្រង់ <b>Tree</b> គឺជារចនាសម្ព័ន្ធទិន្នន័យ **មិនលីនេអ៊ែរ (Non-linear)** ដែលរៀបចំទិន្នន័យក្នុងលក្ខណៈជា **ឋានានុក្រម (Hierarchical/Tree-like structure)**។ វាមាន Nodes តភ្ជាប់គ្នាទៅមកដោយប្រើប្រាស់ទំនាក់ទំនងជា មេ-កូន (Parent-Child)។
+        </div>
+
+        <div class="grid-2">
+            <div class="narrative-box">
+                <div class="narrative-header"><i class="fa-solid fa-building"></i> ករណីសិក្សាទី១៖ ឋានានុក្រមក្រុមហ៊ុន (Org Chart)</div>
+                <p class="narrative-text">នៅក្នុងក្រុមហ៊ុនមួយ នាយកប្រតិបត្តិ (CEO) គឺជាចំណុចកំពូលគេបង្អស់ (Root)។ CEO ចាត់ចែងបញ្ជាមកកាន់ប្រធាននាយកដ្ឋាននីមួយៗ (Internal Nodes) ហើយប្រធាននាយកដ្ឋានចាត់ចែងការងារបន្តមកកាន់បុគ្គលិកធម្មតា (Leaf Nodes) ដែលគ្មានបុគ្គលិកក្រោមបង្គាប់បន្តឡើយ។</p>
+            </div>
+            <div class="narrative-box warning">
+                <div class="narrative-header"><i class="fa-solid fa-people-roof"></i> ករណីសិក្សាទី២៖ មែកធាងគ្រួសារ (Family Tree)</div>
+                <p class="narrative-text">ប្រវត្តិគ្រួសារចាប់ផ្តើមដំបូងពីជីដូនជីតា (Root Node) បង្កើតបានជាកូនៗគឺឪពុកម្តាយយើង (Parent Nodes) និងបន្តបង្កើតបានជាជំនាន់ចៅៗ (Child Nodes)។ ទំនាក់ទំនងបែបនេះជួយសម្រួលដល់ការកំណត់អត្តសញ្ញាណ និងប្រភពដើមបានយ៉ាងច្បាស់លាស់។</p>
+            </div>
+        </div>
+
+        <div class="section-title"><i class="fa-solid fa-circle-info"></i> ២. សទ្ទានុក្រម និងលក្ខណៈបច្ចេកទេសរបស់ Tree</div>
+        <div class="text-block" style="margin-bottom: 10px;">
+            ដើម្បីងាយស្រួលយល់ និងសរសេរកូដគ្រប់គ្រង Tree យើងត្រូវចាំពាក្យបច្ចេកទេសសំខាន់ៗទាំងនេះ៖
+        </div>
+        <div class="grid-2" style="margin-bottom: 0;">
+            <div class="card">
+                <p style="font-size: 12px; line-height: 1.6;"><b>• Root (ឫស)៖</b> Node កំពូលគេបង្អស់ដែលគ្មាន Parent ឡើយ។ Tree នីមួយៗមាន Root តែមួយគត់។</p>
+                <p style="font-size: 12px; line-height: 1.6;"><b>• Edge (មែក)៖</b> ខ្សែតភ្ជាប់រវាង Node ពីរ (តំណាងទំនាក់ទំនង Parent-Child)។</p>
+                <p style="font-size: 12px; line-height: 1.6;"><b>• Leaf (ស្លឹក)៖</b> Node នៅចុងខាងក្រោមគេបង្អស់ដែលគ្មានកូន (Child Nodes = 0)។</p>
+            </div>
+            <div class="card">
+                <p style="font-size: 12px; line-height: 1.6;"><b>• Parent & Child៖</b> Node មេ (Parent) ស្ថិតនៅកម្រិតលើ និងចង្អុលទៅកាន់ Node កូន (Child) ដែលស្ថិតនៅកម្រិតក្រោមវា។</p>
+                <p style="font-size: 12px; line-height: 1.6;"><b>• Depth (ជម្រៅ)៖</b> ចំនួន Edge ពី Root មកកាន់ Node នោះ។</p>
+                <p style="font-size: 12px; line-height: 1.6;"><b>• Height (កម្ពស់)៖</b> ចំនួន Edge ពី Node នោះទៅកាន់ Leaf ដែលនៅឆ្ងាយបំផុត។</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="global-footer">
+        <div class="footer-left"><img src="Lim.jpg" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'"><span>សាស្ត្រាចារ្យ៖ សឿង លីម (Soeurng LIM)</span></div>
+        <div class="footer-right">ទំព័រទី ៣ នៃ ១៤</div>
+    </div>
+</div>
+
+<!-- ================= PAGE 4: Binary Search Tree Intro ================= -->
+<div class="a4-page">
+    <div class="global-header">
+        <div class="header-item"><img src="https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png" onerror="this.src='Logo.png'"><span>សាកលវិទ្យាល័យអង្គរ</span></div>
+        <div class="header-center">
+            <h1>សៀវភៅមគ្គទ្ទេសក៍ (Guidebook) - ជំពូកទី ៥</h1>
+            <p>ADVANCED DATA STRUCTURES AND ALGORITHMS FOR AI</p>
+        </div>
+        <div class="header-item"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg"><span>Python Pro</span></div>
+    </div>
+
+    <div class="page-content">
+        <div class="section-title" style="margin-top: 0;"><i class="fa-solid fa-sitemap"></i> ៣. Binary Search Tree (BST) និងច្បាប់តម្រៀបគ្រឹះ</div>
+        <div class="text-block">
+            <b>Binary Search Tree (BST)</b> គឺជាប្រភេទពិសេសនៃ Binary Tree (ដើមឈើដែលមានកូនយ៉ាងច្រើនបំផុតពីរ គឺកូនឆ្វេង និងកូនស្តាំ) ដែលទិន្នន័យទាំងអស់ត្រូវបានតម្រៀបរៀបចំឡើងទៅតាមច្បាប់ស្នូលដ៏តឹងរឹងមួយគឺ៖
+            <br><span class="text-blue" style="font-weight: bold; font-size: 13.5px;">"រាល់តម្លៃទិន្នន័យនៅក្នុងមែកខាងឆ្វេង (Left Subtree) ត្រូវតែតូចជាង Root ជានិច្ច ហើយរាល់តម្លៃនៅក្នុងមែកខាងស្តាំ (Right Subtree) ត្រូវតែធំជាង Root ជានិច្ច។"</span>
+        </div>
+
+        <!-- BST Visual Inline Figure -->
+        <div style="text-align: center; margin: 10px 0;">
+            <svg viewBox="0 0 500 180" style="width: 75%; height: auto; display: inline-block;">
+                <line x1="250" y1="30" x2="150" y2="80" stroke="#64748B" stroke-width="2.5"/>
+                <line x1="250" y1="30" x2="350" y2="80" stroke="#64748B" stroke-width="2.5"/>
+                <line x1="150" y1="80" x2="100" y2="130" stroke="#64748B" stroke-width="2.5"/>
+                <line x1="150" y1="80" x2="200" y2="130" stroke="#64748B" stroke-width="2.5"/>
+                <circle cx="250" cy="30" r="18" fill="#0284C7"/>
+                <text x="250" y="35" font-family="sans-serif" font-size="13" font-weight="bold" fill="#FFF" text-anchor="middle">50</text>
+                <text x="250" y="10" font-family="'Suwannaphum'" font-size="11" fill="#475569" text-anchor="middle">Root (ឫស)</text>
+                
+                <circle cx="150" cy="80" r="18" fill="#0284C7"/>
+                <text x="150" y="85" font-family="sans-serif" font-size="13" font-weight="bold" fill="#FFF" text-anchor="middle">30</text>
+                <text x="110" y="75" font-family="'Battambang'" font-size="10" fill="#DC2626" text-anchor="middle">តូចជាង 50</text>
+                
+                <circle cx="350" cy="80" r="18" fill="#0284C7"/>
+                <text x="350" y="85" font-family="sans-serif" font-size="13" font-weight="bold" fill="#FFF" text-anchor="middle">70</text>
+                <text x="390" y="75" font-family="'Battambang'" font-size="10" fill="#059669" text-anchor="middle">ធំជាង 50</text>
+                
+                <circle cx="100" cy="130" r="18" fill="#059669"/>
+                <text x="100" y="135" font-family="sans-serif" font-size="13" font-weight="bold" fill="#FFF" text-anchor="middle">20</text>
+                <circle cx="200" cy="130" r="18" fill="#059669"/>
+                <text x="200" y="135" font-family="sans-serif" font-size="13" font-weight="bold" fill="#FFF" text-anchor="middle">40</text>
+            </svg>
+        </div>
+
+        <div class="grid-2" style="margin-top: 5px;">
+            <div class="narrative-box">
+                <div class="narrative-header"><i class="fa-solid fa-book-open"></i> ករណីសិក្សាទី១៖ ការស្វែងរកពាក្យក្នុងវចនានុក្រម</div>
+                <p class="narrative-text">ពេលយើងចង់រកពាក្យចាប់ផ្តើមដោយអក្សរ "M" ហើយវចនានុក្រមបើកចំទំព័រអក្សរ "P"។ ដោយសារយើងដឹងថា M មកមុន P យើងមិនបាច់ខ្ជះខ្ជាយពេលឆែកមើលទំព័រខាងស្តាំ (P ដល់ Z) នោះឡើយ គឺយើងកាត់ចោល ៥០% នៃទំព័រដែលសល់ ហើយតម្រង់ទៅឆ្វេងភ្លាមៗ។</p>
+            </div>
+            <div class="narrative-box">
+                <div class="narrative-header"><i class="fa-solid fa-box-open"></i> ករណីសិក្សាទី២៖ ការចាត់ថ្នាក់ប្រព័ន្ធស្តុកទំនិញ</div>
+                <p class="narrative-text">ក្នុងឃ្លាំងទំនិញទំនើប ផលិតផលដែលមានលេខកូដសម្គាល់តូចជាង ៥០ ត្រូវបានរក្សាទុកនៅផ្នែកខាងឆ្វេង ហើយលេខកូដធំជាង ៥០ ដាក់នៅផ្នែកខាងស្តាំ។ ប្រព័ន្ធស្វ័យប្រវត្តិនឹងស្វែងរកផលិតផលឃើញភ្លាមៗ O(log n) ដោយមិនបាច់ដើររាប់ពីដើមឃ្លាំងដល់ចុងឃ្លាំងឡើយ។</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="global-footer">
+        <div class="footer-left"><img src="Lim.jpg" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'"><span>សាស្ត្រាចារ្យ៖ សឿង លីម (Soeurng LIM)</span></div>
+        <div class="footer-right">ទំព័រទី ៤ នៃ ១៤</div>
+    </div>
+</div>
+
+<!-- ================= PAGE 5: BST Insertion Code ================= -->
+<div class="a4-page">
+    <div class="global-header">
+        <div class="header-item"><img src="https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png" onerror="this.src='Logo.png'"><span>សាកលវិទ្យាល័យអង្គរ</span></div>
+        <div class="header-center">
+            <h1>សៀវភៅមគ្គទ្ទេសក៍ (Guidebook) - ជំពូកទី ៥</h1>
+            <p>ADVANCED DATA STRUCTURES AND ALGORITHMS FOR AI</p>
+        </div>
+        <div class="header-item"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg"><span>Python Pro</span></div>
+    </div>
+
+    <div class="page-content">
+        <div class="section-title" style="margin-top: 0;"><i class="fa-solid fa-code"></i> ៤. ការអនុវត្តកូដ BST Insertion ក្នុង Python</div>
+        <div class="text-block" style="margin-bottom: 5px;">
+            ដើម្បីបញ្ចូលទិន្នន័យ (Insert) ទៅក្នុង BST យើងត្រូវប្រៀបធៀបតម្លៃដែលត្រូវបញ្ចូលជាមួយ Node បច្ចុប្បន្ន។ បើតូចជាង ត្រូវរត់ទៅមែកឆ្វេង បើធំជាង ត្រូវរត់ទៅមែកស្តាំ។ ប្រតិបត្តិការនេះធ្វើឡើងបែបដដែលៗ (Recursion) រហូតដល់ជួបកន្លែងទំនេរ (None) ទើបបង្កើត Node ថ្មីនៅទីនោះ។
+        </div>
+
+        <!-- Runnable Code -->
+        <div class="code-wrapper" style="margin-top: 10px; margin-bottom: 10px;">
+            <div class="code-header"><span><i class="fa-brands fa-python"></i> 1_bst_insertion.py</span><span>BST Node and Insertion Code</span></div>
+            <div class="code-content"><pre>
+<span class="kw">class</span> <span class="cls">TreeNode</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="kw">self</span>, key):
+        <span class="kw">self</span>.left = <span class="kw">None</span>   <span class="com"># កូនឆ្វេង</span>
+        <span class="kw">self</span>.right = <span class="kw">None</span>  <span class="com"># កូនស្តាំ</span>
+        <span class="kw">self</span>.val = key     <span class="com"># តម្លៃទិន្នន័យ</span>
+
+<span class="com"># អនុគមន៍បញ្ចូលទិន្នន័យ O(log n)</span>
+<span class="kw">def</span> <span class="fn">insert</span>(root, key):
+    <span class="com"># ១. បើជួបកន្លែងទំនេរ បង្កើត Node ថ្មីត្រង់នោះ</span>
+    <span class="kw">if</span> root <span class="kw">is None</span>:
+        <span class="kw">return</span> TreeNode(key)
+
+    <span class="com"># ២. បើតម្លៃតូចជាង Root ត្រូវតម្រង់ទៅឆ្វេង</span>
+    <span class="kw">if</span> key < root.val:
+        root.left = insert(root.left, key)
+    <span class="com"># ៣. បើតម្លៃធំជាង Root ត្រូវតម្រង់ទៅស្តាំ</span>
+    <span class="kw">elif</span> key > root.val:
+        root.right = insert(root.right, key)
+
+    <span class="kw">return</span> root
+
+<span class="com"># សាងសង់ Tree គំរូ</span>
+root = TreeNode(<span class="num">50</span>)
+insert(root, <span class="num">30</span>)
+insert(root, <span class="num">70</span>)
+insert(root, <span class="num">20</span>)
+
+<span class="fn">print</span>(<span class="str">"--- បញ្ចូលទិន្នន័យ [50, 30, 70, 20] ចូលក្នុង BST បានជោគជ័យ ---"</span>)
+<span class="fn">print</span>(<span class="str">f"តម្លៃ Root កំពូល: {root.val}"</span>)
+<span class="fn">print</span>(<span class="str">f"តម្លៃមែកខាងឆ្វេងរបស់ Root: {root.left.val}"</span>)
+<span class="fn">print</span>(<span class="str">f"តម្លៃមែកខាងស្តាំរបស់ Root: {root.right.val}"</span>)
+</pre></div>
+            <div class="code-output">
+                <div class="code-output-title">>_ Terminal Output</div>
+                <pre>--- បញ្ចូលទិន្នន័យ [50, 30, 70, 20] ចូលក្នុង BST បានជោគជ័យ ---
+តម្លៃ Root កំពូល: 50
+តម្លៃមែកខាងឆ្វេងរបស់ Root: 30
+តម្លៃមែកខាងស្តាំរបស់ Root: 70</pre>
+            </div>
+        </div>
+
+        <div class="highlight-note" style="margin-top: 5px; margin-bottom: 0;">
+            <i class="fa-solid fa-car"></i> <b>ភាពស្រដៀងគ្នានឹងការចតឡាន៖</b> ដំណើរការបញ្ចូលគឺស្រដៀងនឹងការស្វែងរកកន្លែងចតឡានទំនេរ។ ឡានលេខតូចត្រូវតម្រង់ទៅជួរខាងឆ្វេង ឯលេខធំទៅជួរខាងស្តាំ។ បើជួបប្រអប់ទំនេរដំបូងគេបង្អស់ (None) ឡាននោះនឹងចូលចតនៅទីនោះភ្លាមៗ។
+        </div>
+    </div>
+
+    <div class="global-footer">
+        <div class="footer-left"><img src="Lim.jpg" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'"><span>សាស្ត្រាចារ្យ៖ សឿង លីម (Soeurng LIM)</span></div>
+        <div class="footer-right">ទំព័រទី ៥ នៃ ១៤</div>
+    </div>
+</div>
+
+<!-- ================= PAGE 6: BST Search Operation ================= -->
+<div class="a4-page">
+    <div class="global-header">
+        <div class="header-item"><img src="https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png" onerror="this.src='Logo.png'"><span>សាកលវិទ្យាល័យអង្គរ</span></div>
+        <div class="header-center">
+            <h1>សៀវភៅមគ្គទ្ទេសក៍ (Guidebook) - ជំពូកទី ៥</h1>
+            <p>ADVANCED DATA STRUCTURES AND ALGORITHMS FOR AI</p>
+        </div>
+        <div class="header-item"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg"><span>Python Pro</span></div>
+    </div>
+
+    <div class="page-content">
+        <div class="section-title" style="margin-top: 0;"><i class="fa-solid fa-magnifying-glass"></i> ៥. ប្រតិបត្តិការស្វែងរកទិន្នន័យក្នុង BST (Search Operation)</div>
+        <div class="text-block">
+            ចំណុចខ្លាំងបំផុតដែលធ្វើឲ្យ BST មានប្រជាប្រិយភាពខ្ពស់ គឺល្បឿនក្នុងការស្វែងរកទិន្នន័យ (Search Operation)។ នៅក្នុង Linked List ប្រសិនបើមានទិន្នន័យ $n$ ធាតុ យើងត្រូវចំណាយពេលឆែកមើលម្តងមួយៗរហូតដល់ $n$ ដង (O(n))។ ប៉ុន្តែនៅក្នុង BST ដែលមានលំនឹងល្អ (Balanced BST) ការស្វែងរកប្រើពេលត្រឹមតែ <b>O(log n)</b> ប៉ុណ្ណោះ។
+        </div>
+
+        <div class="grid-2">
+            <div class="narrative-box warning">
+                <div class="narrative-header"><i class="fa-solid fa-gamepad"></i> ករណីសិក្សាទី១៖ ល្បែងទាយលេខ (Higher/Lower Game)</div>
+                <p class="narrative-text">ប្រសិនបើគេឲ្យអ្នកទាយលេខពី ១ ដល់ ១០០ វិធីល្អបំផុតគឺទាយលេខកណ្តាលគឺ ៥០។ បើគេប្រាប់ថា "លេខពិតប្រាកដធំជាង ៥០" នោះអ្នកនឹងកាត់ចោលលេខពី ១ ដល់ ៥០ ភ្លាមៗ (កាត់ចោល ៥០% នៃលទ្ធភាពសរុប)។ BST ដើរតួនាទីយ៉ាងល្អឥតខ្ចោះក្នុងការដោះស្រាយបញ្ហានេះក្នុងប្រព័ន្ធកុំព្យូទ័រ។</p>
+            </div>
+            <div class="narrative-box">
+                <div class="narrative-header"><i class="fa-solid fa-folder-open"></i> ករណីសិក្សាទី២៖ ការស្វែងរកថតឯកសារតាមឆ្នាំ</div>
+                <p class="narrative-text">នៅក្នុងប្រព័ន្ធកុំព្យូទ័រ ឯកសារត្រូវបានរៀបចំតាមលំដាប់ឆ្នាំ។ ប្រសិនបើឯកសារ Root គឺឆ្នាំ ២០១៥ ហើយយើងចង់ស្វែងរកឯកសារក្នុងឆ្នាំ ២០២០ ប្រព័ន្ធនឹងតម្រង់ឆ្ពោះទៅកាន់មែកធាងខាងស្តាំភ្លាមៗ ដោយមិនបាច់បើកមើលឯកសារមុនឆ្នាំ ២០១៥ ឡើយ ដែលជួយសន្សំសំចៃពេលវេលាម៉ាស៊ីនយ៉ាងច្រើន។</p>
+            </div>
+        </div>
+
+        <div class="compare-block" style="margin-top: 10px; margin-bottom: 0;">
+            <div class="compare-title" style="text-align: left;"><i class="fa-solid fa-chart-line text-blue"></i> ការប្រៀបធៀបគណិតវិទ្យា៖ ឥទ្ធិពលនៃ O(log n) ធៀបនឹង O(n)</div>
+            <div class="compare-grid" style="grid-template-columns: 1fr;">
+                <div class="compare-col" style="border-right: none;">
+                    ឧបមាថាអ្នកមានទិន្នន័យចំនួន <b>១ លានធាតុ (n = 1,000,000)</b>៖
+                    <br>• ប្រសិនបើប្រើប្រាស់ Linked List ធម្មតា៖ ក្នុងករណីអាក្រក់បំផុត អ្នកត្រូវឆែកមើលរហូតដល់ <b>១,០០០,០០០ ដង</b>។
+                    <br>• ប្រសិនបើប្រើប្រាស់ BST ដែលមានតុល្យភាព៖ ចំនួនដងនៃការស្វែងរកអតិបរមាគឺត្រឹមតែ <b>$\log_2(1,000,000) \approx 20$ ដង</b> ប៉ុណ្ណោះ!
+                    <br><span class="text-green" style="font-weight: bold;">លទ្ធផល៖ BST លឿនជាង Linked List រហូតដល់ទៅ ៥០,០០០ ដង ក្នុងកម្រិតទិន្នន័យធំៗ!</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="global-footer">
+        <div class="footer-left"><img src="Lim.jpg" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'"><span>សាស្ត្រាចារ្យ៖ សឿង លីម (Soeurng LIM)</span></div>
+        <div class="footer-right">ទំព័រទី ៦ នៃ ១៤</div>
+    </div>
+</div>
+
+<!-- ================= PAGE 7: BST Search Code ================= -->
+<div class="a4-page">
+    <div class="global-header">
+        <div class="header-item"><img src="https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png" onerror="this.src='Logo.png'"><span>សាកលវិទ្យាល័យអង្គរ</span></div>
+        <div class="header-center">
+            <h1>សៀវភៅមគ្គទ្ទេសក៍ (Guidebook) - ជំពូកទី ៥</h1>
+            <p>ADVANCED DATA STRUCTURES AND ALGORITHMS FOR AI</p>
+        </div>
+        <div class="header-item"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg"><span>Python Pro</span></div>
+    </div>
+
+    <div class="page-content">
+        <div class="section-title" style="margin-top: 0;"><i class="fa-solid fa-code"></i> ៦. ការអនុវត្តកូដ BST Search ក្នុង Python</div>
+        <div class="text-block" style="margin-bottom: 5px;">
+            ខាងក្រោមនេះជាកូដ Python ក្នុងការបង្កើតអនុគមន៍ស្វែងរកទិន្នន័យ (Search Function) តាមបែបដដែលៗ (Recursion)។ អនុគមន៍នេះនឹងបន្តស្វែងរកដោយច្រោះចោលមែកដែលមិនពាក់ព័ន្ធ ៥០% ចេញរាល់ពេលប្រៀបធៀបម្តងៗ។
+        </div>
+
+        <!-- Runnable Code -->
+        <div class="code-wrapper" style="margin-top: 10px; margin-bottom: 10px;">
+            <div class="code-header"><span><i class="fa-brands fa-python"></i> 2_bst_search.py</span><span>BST Search Function Implementation</span></div>
+            <div class="code-content"><pre>
+<span class="kw">class</span> <span class="cls">TreeNode</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="kw">self</span>, key):
+        <span class="kw">self</span>.left = <span class="kw">None</span>; <span class="kw">self</span>.right = <span class="kw">None</span>
+        <span class="kw">self</span>.val = key
+
+<span class="kw">def</span> <span class="fn">insert</span>(root, key):
+    <span class="kw">if</span> root <span class="kw">is None</span>: <span class="kw">return</span> TreeNode(key)
+    <span class="kw">if</span> key < root.val: root.left = insert(root.left, key)
+    <span class="kw">elif</span> key > root.val: root.right = insert(root.right, key)
+    <span class="kw">return</span> root
+
+<span class="com"># អនុគមន៍ស្វែងរកទិន្នន័យក្នុង BST O(log n)</span>
+<span class="kw">def</span> <span class="fn">search</span>(root, key):
+    <span class="com"># លក្ខខណ្ឌបញ្ចប់ (Base Cases): រកមិនឃើញ (None) ឬ រកឃើញតម្លៃស្មើពិតប្រាកដ</span>
+    <span class="kw">if</span> root <span class="kw">is None or</span> root.val == key:
+        <span class="kw">return</span> root
+
+    <span class="com"># បើតម្លៃដែលរកធំជាង Root ត្រូវទៅរកនៅមែកស្តាំ</span>
+    <span class="kw">if</span> key > root.val:
+        <span class="kw">return</span> search(root.right, key)
+
+    <span class="com"># បើតម្លៃដែលរកតូចជាង Root ត្រូវទៅរកនៅមែកឆ្វេង</span>
+    <span class="kw">return</span> search(root.left, key)
+
+<span class="com"># រៀបចំទិន្នន័យ</span>
+tree = <span class="kw">None</span>
+for val in [<span class="num">50</span>, <span class="num">30</span>, <span class="num">70</span>, <span class="num">20</span>, <span class="num">40</span>]:
+    tree = insert(tree, val)
+
+<span class="com"># សាកល្បងស្វែងរកលេខ ៤០ (មានក្នុង Tree)</span>
+result1 = search(tree, <span class="num">40</span>)
+<span class="fn">print</span>(<span class="str">f"ស្វែងរកលេខ 40: {'រកឃើញ!' if result1 else 'រកមិនឃើញទេ!'}"</span>)
+
+<span class="com"># សាកល្បងស្វែងរកលេខ ៩៩ (គ្មានក្នុង Tree)</span>
+result2 = search(tree, <span class="num">99</span>)
+<span class="fn">print</span>(<span class="str">f"ស្វែងរកលេខ 99: {'រកឃើញ!' if result2 else 'រកមិនឃើញទេ!'}"</span>)
+</pre></div>
+            <div class="code-output">
+                <div class="code-output-title">>_ Terminal Output</div>
+                <pre>ស្វែងរកលេខ 40: រកឃើញ!
+ស្វែងរកលេខ 99: រកមិនឃើញទេ!</pre>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="global-footer">
+        <div class="footer-left"><img src="Lim.jpg" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'"><span>សាស្ត្រាចារ្យ៖ សឿង លីម (Soeurng LIM)</span></div>
+        <div class="footer-right">ទំព័រទី ៧ នៃ ១៤</div>
+    </div>
+</div>
+
+<!-- ================= PAGE 8: Tree Traversals Intro ================= -->
+<div class="a4-page">
+    <div class="global-header">
+        <div class="header-item"><img src="https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png" onerror="this.src='Logo.png'"><span>សាកលវិទ្យាល័យអង្គរ</span></div>
+        <div class="header-center">
+            <h1>សៀវភៅមគ្គទ្ទេសក៍ (Guidebook) - ជំពូកទី ៥</h1>
+            <p>ADVANCED DATA STRUCTURES AND ALGORITHMS FOR AI</p>
+        </div>
+        <div class="header-item"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg"><span>Python Pro</span></div>
+    </div>
+
+    <div class="page-content">
+        <div class="section-title" style="margin-top: 0;"><i class="fa-solid fa-route"></i> ៧. គោលការណ៍រុករកបង្ហាញទិន្នន័យ (Tree Traversals)</div>
+        <div class="text-block">
+            ដោយសារ Tree ជារចនាសម្ព័ន្ធមិនលីនេអ៊ែរ ការដើររុករកដើម្បីទាញយកតម្លៃមកបង្ហាញ (Traversal) មានវិធីសាស្ត្រខុសគ្នាជាច្រើនផ្អែកលើតម្រូវការប្រើប្រាស់ជាក់ស្តែង។ យន្តការធំៗទាំង ៣ រួមមាន៖
+        </div>
+
+        <div class="card" style="margin-bottom: 12px; border-left-color: var(--accent-blue);">
+            <h4 style="font-size: 13.5px;"><i class="fa-solid fa-sort-numeric-down"></i> ១. In-order Traversal (ឆ្វេង -> ឫស -> ស្តាំ)</h4>
+            <p class="text-block" style="font-size: 12px; margin-bottom: 0;">
+                រុករកមែកខាងឆ្វេងឲ្យអស់ជាមុន ទើបបង្ហាញ Root រួចទើបបន្តទៅមែកខាងស្តាំ។ 
+                <br><b>• ករណីសិក្សា៖</b> សម្រាប់ការអានសៀវភៅតាមលំដាប់ទំព័រ ឬការតម្រៀបសិស្សតាមលំដាប់កម្ពស់។ នៅក្នុង BST វិធីសាស្ត្រ In-order នឹងទាញយកទិន្នន័យចេញមកតម្រៀបពី **តូចទៅធំ** បានយ៉ាងស្អាតឥតខ្ចោះជានិច្ច។
+            </p>
+        </div>
+
+        <div class="card" style="margin-bottom: 12px; border-left-color: var(--accent-green);">
+            <h4 style="font-size: 13.5px;"><i class="fa-solid fa-sitemap"></i> ២. Pre-order Traversal (ឫស -> ឆ្វេង -> ស្តាំ)</h4>
+            <p class="text-block" style="font-size: 12px; margin-bottom: 0;">
+                បង្ហាញតម្លៃ Root ជាមុនសិន រួចទើបបន្តទៅរុករកមែកឆ្វេង និងមែកស្តាំតាមលំដាប់។
+                <br><b>• ករណីសិក្សា៖</b> ប្រើប្រាស់សម្រាប់ដំណើរការចម្លងរចនាសម្ព័ន្ធ (Clone/Duplicate Tree) ព្រោះវាត្រូវបង្កើត Node មេជាមុនសិន ទើបអាចបង្កើត Node កូនៗជាបន្តបន្ទាប់នៅពីក្រោមបាន។
+            </p>
+        </div>
+
+        <div class="card" style="margin-bottom: 0; border-left-color: var(--accent-red);">
+            <h4 style="font-size: 13.5px;"><i class="fa-solid fa-trash-can"></i> ៣. Post-order Traversal (ឆ្វេង -> ស្តាំ -> ឫស)</h4>
+            <p class="text-block" style="font-size: 12px; margin-bottom: 0;">
+                រុករកមែកឆ្វេង និងមែកស្តាំឲ្យអស់ជាមុនសិន រួចទើបបង្ហាញតម្លៃ Root នៅចុងក្រោយគេបង្អស់។
+                <br><b>• ករណីសិក្សា៖</b> ប្រើប្រាស់សម្រាប់ការលុប Folder ចេញពីកុំព្យូទ័រ (Directory Deletion)។ យើងមិនអាចលុប Folder មេបានទេ ប្រសិនបើមិនទាន់បានលុបឯកសារកូនៗ (Files) នៅខាងក្នុងឲ្យអស់ជាមុននោះ (លុបពីក្រោមឡើងលើ)។
+            </p>
+        </div>
+    </div>
+
+    <div class="global-footer">
+        <div class="footer-left"><img src="Lim.jpg" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'"><span>សាស្ត្រាចារ្យ៖ សឿង លីម (Soeurng LIM)</span></div>
+        <div class="footer-right">ទំព័រទី ៨ នៃ ១៤</div>
+    </div>
+</div>
+
+<!-- ================= PAGE 9: Tree Traversal Code ================= -->
+<div class="a4-page">
+    <div class="global-header">
+        <div class="header-item"><img src="https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png" onerror="this.src='Logo.png'"><span>សាកលវិទ្យាល័យអង្គរ</span></div>
+        <div class="header-center">
+            <h1>សៀវភៅមគ្គទ្ទេសក៍ (Guidebook) - ជំពូកទី ៥</h1>
+            <p>ADVANCED DATA STRUCTURES AND ALGORITHMS FOR AI</p>
+        </div>
+        <div class="header-item"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg"><span>Python Pro</span></div>
+    </div>
+
+    <div class="page-content">
+        <div class="section-title" style="margin-top: 0;"><i class="fa-solid fa-code"></i> ៨. ការអនុវត្តកូដ Tree Traversals ក្នុង Python</div>
+        <div class="text-block" style="margin-bottom: 5px;">
+            ខាងក្រោមនេះជាកូដ Python ជាក់ស្តែងសម្រាប់ការរុករកទាំង ៣ ទម្រង់ (In-order, Pre-order, Post-order) ដោយប្រើប្រាស់អនុគមន៍ដដែលៗ (Recursion) ដែលមានល្បឿនដំណើរការ O(n) ព្រោះវាដើរឆែកគ្រប់ Node ទាំងឡាយតែម្តងគត់។
+        </div>
+
+        <!-- Runnable Code -->
+        <div class="code-wrapper" style="margin-top: 10px; margin-bottom: 10px;">
+            <div class="code-header"><span><i class="fa-brands fa-python"></i> 3_tree_traversals.py</span><span>In-order, Pre-order and Post-order</span></div>
+            <div class="code-content"><pre>
+<span class="kw">class</span> <span class="cls">Node</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="kw">self</span>, key):
+        <span class="kw">self</span>.left = <span class="kw">None</span>; <span class="kw">self</span>.right = <span class="kw">None</span>
+        <span class="kw">self</span>.val = key
+
+<span class="com"># ១. In-order Traversal (ឆ្វេង -> ឫស -> ស្តាំ)</span>
+<span class="kw">def</span> <span class="fn">print_inorder</span>(root):
+    <span class="kw">if</span> root:
+        print_inorder(root.left)
+        <span class="fn">print</span>(root.val, end=<span class="str">" "</span>)
+        print_inorder(root.right)
+
+<span class="com"># ២. Pre-order Traversal (ឫស -> ឆ្វេង -> ស្តាំ)</span>
+<span class="kw">def</span> <span class="fn">print_preorder</span>(root):
+    <span class="kw">if</span> root:
+        <span class="fn">print</span>(root.val, end=<span class="str">" "</span>)
+        print_preorder(root.left)
+        print_preorder(root.right)
+
+<span class="com"># ៣. Post-order Traversal (ឆ្វេង -> ស្តាំ -> ឫស)</span>
+<span class="kw">def</span> <span class="fn">print_postorder</span>(root):
+    <span class="kw">if</span> root:
+        print_postorder(root.left)
+        print_postorder(root.right)
+        <span class="fn">print</span>(root.val, end=<span class="str">" "</span>)
+
+<span class="com"># បង្កើត BST គំរូ</span>
+root = Node(<span class="num">50</span>)
+root.left = Node(<span class="num">30</span>); root.right = Node(<span class="num">70</span>)
+root.left.left = Node(<span class="num">20</span>); root.left.right = Node(<span class="num">40</span>)
+
+<span class="fn">print</span>(<span class="str">"In-order (តម្រៀបលេខពីតូចទៅធំ):"</span>)
+print_inorder(root)
+<span class="fn">print</span>(<span class="str">"\n\nPre-order (ល្អសម្រាប់ចម្លង Tree):"</span>)
+print_preorder(root)
+<span class="fn">print</span>(<span class="str">"\n\nPost-order (ល្អសម្រាប់លុប Folder):"</span>)
+print_postorder(root)
+</pre></div>
+            <div class="code-output">
+                <div class="code-output-title">>_ Terminal Output</div>
+                <pre>In-order (តម្រៀបលេខពីតូចទៅធំ):
+20 30 40 50 70 
+
+Pre-order (ល្អសម្រាប់ចម្លង Tree):
+50 30 20 40 70 
+
+Post-order (ល្អសម្រាប់លុប Folder):
+20 40 30 70 50 </pre>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="global-footer">
+        <div class="footer-left"><img src="Lim.jpg" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'"><span>សាស្ត្រាចារ្យ៖ សឿង លីម (Soeurng LIM)</span></div>
+        <div class="footer-right">ទំព័រទី ៩ នៃ ១៤</div>
+    </div>
+</div>
+
+<!-- ================= PAGE 10: AI & Real World Applications ================= -->
+<div class="a4-page">
+    <div class="global-header">
+        <div class="header-item"><img src="https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png" onerror="this.src='Logo.png'"><span>សាកលវិទ្យាល័យអង្គរ</span></div>
+        <div class="header-center">
+            <h1>សៀវភៅមគ្គទ្ទេសក៍ (Guidebook) - ជំពូកទី ៥</h1>
+            <p>ADVANCED DATA STRUCTURES AND ALGORITHMS FOR AI</p>
+        </div>
+        <div class="header-item"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg"><span>Python Pro</span></div>
+    </div>
+
+    <div class="page-content">
+        <div class="section-title" style="margin-top: 0;"><i class="fa-solid fa-brain"></i> ៩. ការអនុវត្ត Trees និង BST ក្នុងបច្ចេកវិទ្យា AI & ML</div>
+        <div class="text-block">
+            រចនាសម្ព័ន្ធទិន្នន័យ Trees មិនត្រឹមតែជាទ្រឹស្តីកូដនោះទេ វាគឺជាគ្រឹះស្នូលនៃស្ថាបត្យកម្មប្រព័ន្ធកុំព្យូទ័រ និងបញ្ញាសិប្បនិម្មិតកម្រិតខ្ពស់ជាច្រើន៖
+        </div>
+        
+        <div class="grid-2">
+            <div class="card">
+                <h4><i class="fa-solid fa-database"></i> 1. Database Indexing (MySQL/NoSQL)</h4>
+                <p class="text-block" style="font-size: 11.5px; margin: 0; text-align: justify;">
+                    នៅក្នុងប្រព័ន្ធគ្រប់គ្រងទិន្នន័យខ្នាតយក្ស ដូចជា MySQL គេប្រើប្រាស់រចនាសម្ព័ន្ធ <b>B-Trees & B+ Trees</b> (ដែលជាទម្រង់ពង្រីកខ្ពស់នៃ Binary Search Tree) ដើម្បីធ្វើសន្ទស្សន៍ (Indexing)។ វាជួយឲ្យប្រព័ន្ធស្វែងរកទិន្នន័យរាប់លានជួរ (Records) បានលឿនក្នុងល្បឿន O(log n) ដោយមិនបាច់ដើរ Scan គ្រប់ទិន្នន័យទាំងអស់ក្នុង Disk ឡើយ។
+                </p>
+            </div>
+            <div class="card">
+                <h4><i class="fa-solid fa-diagram-project"></i> 2. Decision Tree Models (ML)</h4>
+                <p class="text-block" style="font-size: 11.5px; margin: 0; text-align: justify;">
+                    នៅក្នុង Machine Learning, <b>Decision Tree (ដើមឈើសម្រេចចិត្ត)</b> គឺជាក្បួនដោះស្រាយដ៏ល្បីល្បាញសម្រាប់ធ្វើចំណាត់ថ្នាក់ទិន្នន័យ (Classification) និងការទស្សន៍ទាយលទ្ធផល (Regression)។ AI នឹងបង្កើតលក្ខខណ្ឌវិនិច្ឆ័យនៅតាម Nodes នីមួយៗ (ឧ. "តើប្រាក់ចំណូល > $៥០០ ឬទេ?") រហូតដល់រកឃើញចម្លើយសម្រេចចិត្តនៅចុងបញ្ចប់ (Leaf Nodes)។
+                </p>
+            </div>
+        </div>
+
+        <div class="grid-2" style="margin-top: 10px;">
+            <div class="card yellow-card">
+                <h4><i class="fa-solid fa-chess"></i> 3. Game AI (Minimax Algorithm)</h4>
+                <p class="text-block" style="font-size: 11.5px; margin: 0; text-align: justify;">
+                    នៅក្នុងការបង្កើត AI លេងហ្គេមឆ្លាតវៃដូចជា ហ្គេមអុក (Chess) ឬ Tic-Tac-Toe គេប្រើប្រាស់ <b>Game Tree & Minimax Algorithm</b>។ AI នឹងបង្កើតទម្រង់ដើមឈើគណនាទឹកដើររបស់គូប្រកួត (Root តំណាងទឹកដើរបច្ចុប្បន្ន ឯកូនៗតំណាងជម្រើសទឹកដើរដែលអាចទៅរួច) រួចធ្វើការជ្រើសរើសទឹកដើរណាដែលអាចឈ្នះ ឬខាតបង់តិចបំផុត។
+                </p>
+            </div>
+            <div class="card green-card">
+                <h4><i class="fa-solid fa-map-location-dot"></i> 4. K-D Trees for Spatial Queries</h4>
+                <p class="text-block" style="font-size: 11.5px; margin: 0; text-align: justify;">
+                    នៅក្នុងប្រព័ន្ធផែនទីភូមិសាស្ត្រ (GIS) និងការស្រាវជ្រាវ AI លើបណ្តាញផែនទី (ដូចជា Google Maps ឬប្រព័ន្ធបើកបរស្វ័យប្រវត្តិនៃឡាន Tesla) គេប្រើប្រាស់ <b>K-Dimensional Trees (K-D Trees)</b> ដើម្បីស្វែងរកចំណុចដែលនៅជិតបំផុត (Nearest Neighbor Search) ជួយឲ្យរ៉ូបូតដឹងពីវត្ថុរារាំងនៅជិតខ្លួនបានលឿនបំផុត O(log n)។
+                </p>
+            </div>
+        </div>
+
+        <img src="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=1200&q=80" class="visual-img" alt="Digital Brain and Nodes" style="height: 100px; margin-top: 10px; border-bottom: 3px solid var(--accent-blue);">
+    </div>
+
+    <div class="global-footer">
+        <div class="footer-left"><img src="Lim.jpg" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'"><span>សាស្ត្រាចារ្យ៖ សឿង លីម (Soeurng LIM)</span></div>
+        <div class="footer-right">ទំព័រទី ១០ នៃ ១៤</div>
+    </div>
+</div>
+
+<!-- ================= PAGE 11: Time Complexity Table ================= -->
+<div class="a4-page">
+    <div class="global-header">
+        <div class="header-item"><img src="https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png" onerror="this.src='Logo.png'"><span>សាកលវិទ្យាល័យអង្គរ</span></div>
+        <div class="header-center">
+            <h1>សៀវភៅមគ្គទ្ទេសក៍ (Guidebook) - ជំពូកទី ៥</h1>
+            <p>ADVANCED DATA STRUCTURES AND ALGORITHMS FOR AI</p>
+        </div>
+        <div class="header-item"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg"><span>Python Pro</span></div>
+    </div>
+
+    <div class="page-content">
+        <div class="section-title" style="margin-top: 0;"><i class="fa-solid fa-scale-balanced"></i> ១០. តារាងវិភាគ និងប្រៀបធៀប Time Complexity</div>
+        <div class="text-block">
+            លក្ខណៈវិនិច្ឆ័យដ៏សំខាន់ក្នុងការជ្រើសរើស Data Structure គឺស្ថិតនៅលើតុល្យភាព (Trade-off) នៃប្រសិទ្ធភាពពេលវេលា។ ខាងក្រោមនេះជាតារាងប្រៀបធៀបរវាង Array, Linked List, និង BST៖
+        </div>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>រចនាសម្ព័ន្ធទិន្នន័យ (DS)</th>
+                    <th style="text-align: center;">ស្វែងរក (Search)</th>
+                    <th style="text-align: center;">បញ្ចូល (Insert)</th>
+                    <th style="text-align: center;">លុប (Delete)</th>
+                    <th>លក្ខណៈសរុប (Conclusion)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><b><i class="fa-solid fa-list-ol text-blue"></i> Array (Sorted)</b></td>
+                    <td align="center"><b class="text-green">O(log n)</b> ⚡ លឿន</td>
+                    <td align="center"><b class="text-red">O(n)</b> 🐌 យឺត</td>
+                    <td align="center"><b class="text-red">O(n)</b> 🐌 យឺត</td>
+                    <td>ស្វែងរកលឿនដោយប្រើ Binary Search តែបញ្ចូល និងលុបយឺតព្រោះត្រូវរុញទិន្នន័យ។</td>
+                </tr>
+                <tr>
+                    <td><b><i class="fa-solid fa-link text-blue"></i> Linked List</b></td>
+                    <td align="center"><b class="text-red">O(n)</b> 🐌 យឺត</td>
+                    <td align="center"><b class="text-green">O(1)</b> ⚡ លឿន</td>
+                    <td align="center"><b class="text-green">O(1)</b> ⚡ លឿន</td>
+                    <td>បញ្ចូលនិងលុបលឿនបំផុតកម្រិតថេរ តែស្វែងរកយឺតព្រោះគ្មាន Index សម្រាប់លោត។</td>
+                </tr>
+                <tr>
+                    <td><b><i class="fa-solid fa-sitemap text-blue"></i> BST (Average Case)</b></td>
+                    <td align="center"><b class="text-green">O(log n)</b> ⚡ លឿន</td>
+                    <td align="center"><b class="text-green">O(log n)</b> ⚡ លឿន</td>
+                    <td align="center"><b class="text-green">O(log n)</b> ⚡ លឿន</td>
+                    <td><b class="text-green">មានលំនឹងល្អបំផុត (Best Balance)</b> ដំណើរការលឿនរហ័សលើគ្រប់ប្រតិបត្តិការទាំងអស់។</td>
+                </tr>
+                <tr>
+                    <td><b><i class="fa-solid fa-sitemap text-blue"></i> BST (Worst Case)</b></td>
+                    <td align="center"><b class="text-red">O(n)</b> 🐌 យឺត</td>
+                    <td align="center"><b class="text-red">O(n)</b> 🐌 យឺត</td>
+                    <td align="center"><b class="text-red">O(n)</b> 🐌 យឺត</td>
+                    <td>កើតឡើងនៅពេល Tree ដុះមែកតែម្ខាង **(Skewed Tree)** ប្រែរចនាសម្ព័ន្ធទៅជា Linked List ធម្មតាវិញ។</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="narrative-box danger" style="margin-bottom: 0;">
+            <div class="narrative-header"><i class="fa-solid fa-triangle-exclamation"></i> បញ្ហានៃ Skewed Tree និងដំណោះស្រាយកម្រិតខ្ពស់ (Self-Balancing Trees)</div>
+            <p class="narrative-text">ប្រសិនបើយើងបញ្ចូលទិន្នន័យតាមលំដាប់លំដោយស្រាប់ ដូចជា [10, 20, 30, 40] ចូលក្នុង BST នោះវានឹងដុះមែកធាងតម្រង់ទៅខាងស្តាំតែម្ខាងរហូត (Skewed Tree)។ វានឹងធ្វើឱ្យល្បឿនស្វែងរកធ្លាក់ចុះមក O(n) ស្មើ Linked List ធម្មតាវិញ។ ដើម្បីដោះស្រាយបញ្ហានេះ វិស្វករបានបង្កើតរចនាសម្ព័ន្ធស្វ័យតុល្យភាព (Self-Balancing Binary Search Trees) ដូចជា <b>AVL Trees</b> និង <b>Red-Black Trees</b> ដែលវាអាចបង្វិលមែកធាងខ្លួនឯងដោយស្វ័យប្រវត្តិដើម្បីរក្សាកម្ពស់ឲ្យមានលំនឹង O(log n) ជានិច្ច។</p>
+        </div>
+    </div>
+
+    <div class="global-footer">
+        <div class="footer-left"><img src="Lim.jpg" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'"><span>សាស្ត្រាចារ្យ៖ សឿង លីម (Soeurng LIM)</span></div>
+        <div class="footer-right">ទំព័រទី ១១ នៃ ១៤</div>
+    </div>
+</div>
+
+<!-- ================= PAGE 12: Q&A 1-4 ================= -->
+<div class="a4-page">
+    <div class="global-header">
+        <div class="header-item"><img src="https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png" onerror="this.src='Logo.png'"><span>សាកលវិទ្យាល័យអង្គរ</span></div>
+        <div class="header-center">
+            <h1>សៀវភៅមគ្គទ្ទេសក៍ (Guidebook) - ជំពូកទី ៥</h1>
+            <p>ADVANCED DATA STRUCTURES AND ALGORITHMS FOR AI</p>
+        </div>
+        <div class="header-item"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg"><span>Python Pro</span></div>
+    </div>
+
+    <div class="page-content">
+        <div class="section-title" style="margin-top: 0;"><i class="fa-solid fa-circle-question"></i> ១១. សំណួររំលឹកមេរៀនប្រចាំជំពូកទី ៥ និងការបកស្រាយ (Review Q&A)</div>
+        <div class="text-block" style="margin-bottom: 8px; font-size:12.5px;">
+            ខាងក្រោមនេះគឺជាសំណួរ និងការបកស្រាយគំរូដ៏សំខាន់ៗដែលត្រូវបានរៀបចំឡើងដើម្បីវាស់ស្ទង់ការយល់ដឹងរបស់និស្សិតលើរចនាសម្ព័ន្ធ Tree & BST៖
+        </div>
+
+        <!-- Question 1 -->
+        <div class="qa-box" style="margin-bottom: 8px;">
+            <div class="qa-question" style="padding: 6px 12px;">
+                <i class="fa-solid fa-q qa-icon-q"></i> 
+                <span>១. តើរចនាសម្ព័ន្ធ Tree ខុសប្លែកពី Linked List យ៉ាងដូចម្តេចពិតប្រាកដ?</span>
+            </div>
+            <div class="qa-answer" style="padding: 6px 12px; font-size:11.5px;">
+                <i class="fa-solid fa-a qa-icon-a"></i>
+                <span>• <b>Linked List:</b> ជារចនាសម្ព័ន្ធបែបលីនេអ៊ែរ (Linear) ដែល Node នីមួយៗភ្ជាប់ទៅកាន់ Node បន្ទាប់ត្រង់តែមួយគត់ (ទំនាក់ទំនងបែប ១ ទៅ ១)។
+                <br>• <b>Tree:</b> ជារចនាសម្ព័ន្ធមិនលីនេអ៊ែរ (Non-linear) បែបឋានានុក្រម ដែល Node មេ (Parent) មួយអាចចង្អុលភ្ជាប់ទៅកាន់ Node កូនៗជាច្រើននៅពីក្រោម (ទំនាក់ទំនងបែប ១ ទៅច្រើន)។</span>
+            </div>
+        </div>
+
+        <!-- Question 2 -->
+        <div class="qa-box" style="margin-bottom: 8px;">
+            <div class="qa-question" style="padding: 6px 12px;">
+                <i class="fa-solid fa-q qa-icon-q"></i> 
+                <span>២. តើច្បាប់ស្នូលក្នុងការរៀបចំទិន្នន័យរបស់ Binary Search Tree (BST) មានអត្ថន័យដូចម្តេច?</span>
+            </div>
+            <div class="qa-answer" style="padding: 6px 12px; font-size:11.5px;">
+                <i class="fa-solid fa-a qa-icon-a"></i>
+                <span><b>ការបកស្រាយ៖</b> នៅក្នុង BST គ្រប់ Node ទាំងអស់ត្រូវគោរពតាមច្បាប់៖ តម្លៃទិន្នន័យនៅមែកខាងឆ្វេង (Left Child) របស់វាទាំងអស់ ត្រូវតែមានតម្លៃ **តូចជាង** ខ្លួនវាជានិច្ច ហើយតម្លៃទិន្នន័យនៅមែកខាងស្តាំ (Right Child) ទាំងអស់ ត្រូវតែមានតម្លៃ **ធំជាង** ខ្លួនវាជានិច្ច។ ច្បាប់នេះជួយឱ្យកុំព្យូទ័រអាចស្វែងរក និងបញ្ចូលទិន្នន័យបានលឿនបំផុតកម្រិត O(log n)។</span>
+            </div>
+        </div>
+
+        <!-- Question 3 -->
+        <div class="qa-box" style="margin-bottom: 8px;">
+            <div class="qa-question" style="padding: 6px 12px;">
+                <i class="fa-solid fa-q qa-icon-q"></i> 
+                <span>៣. ហេតុអ្វីបានជាការរុករកបែប In-order Traversal លើ BST តែងតែបោះពុម្ពតម្លៃចេញមកតម្រៀបពីតូចទៅធំ?</span>
+            </div>
+            <div class="qa-answer" style="padding: 6px 12px; font-size:11.5px;">
+                <i class="fa-solid fa-a qa-icon-a"></i>
+                <span><b>ការបកស្រាយ៖</b> ដោយសារយន្តការ In-order ដំណើរការទៅតាមលំដាប់៖ **(មែកឆ្វេង -> Root -> មែកស្តាំ)**។ យោងតាមច្បាប់ BST តម្លៃតូចបំផុតស្ថិតនៅខាងឆ្វេងបំផុត តម្លៃកណ្តាលគឺ Root ហើយតម្លៃធំបំផុតស្ថិតនៅខាងស្តាំបំផុត។ ដូចនេះនៅពេលអនុវត្តតាម In-order កុំព្យូទ័រនឹងដំណើរការឆ្វេង (តូច) រួចមកកណ្តាល រួចទើបទៅស្តាំ (ធំ) ដែលធ្វើឱ្យលទ្ធផលបោះពុម្ពចេញមកតម្រៀបគ្នាពីតូចទៅធំជានិច្ច។</span>
+            </div>
+        </div>
+
+        <!-- Question 4 -->
+        <div class="qa-box" style="margin-bottom: 0;">
+            <div class="qa-question" style="padding: 6px 12px;">
+                <i class="fa-solid fa-q qa-icon-q"></i> 
+                <span>៤. តើអ្វីទៅជា Skewed Tree នៅក្នុង BST? ហើយតើវាជះឥទ្ធិពលអាក្រក់អ្វីខ្លះដល់ល្បឿនដំណើរការប្រព័ន្ធ?</span>
+            </div>
+            <div class="qa-answer" style="padding: 6px 12px; font-size:11.5px;">
+                <i class="fa-solid fa-a qa-icon-a"></i>
+                <span><b>ការបកស្រាយ៖</b> Skewed Tree គឺជា Tree ដែលដុះមែកតម្រង់ទៅម្ខាងគត់ (ដុះទៅឆ្វេងតែម្ខាង ឬទៅស្តាំតែម្ខាង) ដែលកើតឡើងនៅពេលយើងបញ្ចូលទិន្នន័យដែលតម្រៀបរួចជាស្រេច (Sorted Data) ដូចជា [10, 20, 30, 40]។ ឥទ្ធិពលអាក្រក់គឺវាធ្វើឱ្យកម្ពស់ Tree កើនឡើងស្មើនឹង $n$ ធាតុ បណ្តាលឱ្យល្បឿនស្វែងរកធ្លាក់ចុះមកកម្រិតអាក្រក់បំផុតគឺ O(n) (ស្មើ Linked List ធម្មតា) គឺបាត់បង់ប្រសិទ្ធភាព O(log n) ទាំងស្រុង។</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="global-footer">
+        <div class="footer-left"><img src="Lim.jpg" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'"><span>សាស្ត្រាចារ្យ៖ សឿង លីម (Soeurng LIM)</span></div>
+        <div class="footer-right">ទំព័រទី ១២ នៃ ១៤</div>
+    </div>
+</div>
+
+<!-- ================= PAGE 13: Review Q&A Continued ================= -->
+<div class="a4-page">
+    <div class="global-header">
+        <div class="header-item"><img src="https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png" onerror="this.src='Logo.png'"><span>សាកលវិទ្យាល័យអង្គរ</span></div>
+        <div class="header-center">
+            <h1>សៀវភៅមគ្គទ្ទេសក៍ (Guidebook) - ជំពូកទី ៥</h1>
+            <p>ADVANCED DATA STRUCTURES AND ALGORITHMS FOR AI</p>
+        </div>
+        <div class="header-item"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg"><span>Python Pro</span></div>
+    </div>
+
+    <div class="page-content">
+        <!-- Question 5 -->
+        <div class="qa-box" style="margin-bottom: 8px; margin-top: 0;">
+            <div class="qa-question" style="padding: 6px 12px;">
+                <i class="fa-solid fa-q qa-icon-q"></i> 
+                <span>៥. តើ In-order, Pre-order, និង Post-order ខុសគ្នាយ៉ាងដូចម្តេចក្នុងការសរសេរកូដ Recursion?</span>
+            </div>
+            <div class="qa-answer" style="padding: 6px 12px; font-size:11.5px;">
+                <i class="fa-solid fa-a qa-icon-a"></i>
+                <span><b>ការបកស្រាយ៖</b> ភាពខុសគ្នាគឺស្ថិតនៅលើ **ទីតាំងនៃការបោះពុម្ពតម្លៃ Root** បើធៀបនឹងការហៅអនុគមន៍ដំណើរការឆ្វេង និងស្តាំ៖
+                <br>• <b>In-order:</b> ហៅមែកឆ្វេង រួច **បោះពុម្ព Root (កណ្តាល)** រួចហៅមែកស្តាំ។
+                <br>• <b>Pre-order:</b> **បោះពុម្ព Root (ដំបូងគេ)** រួចហៅមែកឆ្វេង រួចហៅមែកស្តាំ។
+                <br>• <b>Post-order:</b> ហៅមែកឆ្វេង រួចហៅមែកស្តាំ រួចទើប **បោះពុម្ព Root (ចុងក្រោយគេ)**។</span>
+            </div>
+        </div>
+
+        <!-- Question 6 -->
+        <div class="qa-box" style="margin-bottom: 8px;">
+            <div class="qa-question" style="padding: 6px 12px;">
+                <i class="fa-solid fa-q qa-icon-q"></i> 
+                <span>៦. ហេតុអ្វីបានជា Database ល្បីៗដូចជា MySQL ប្រើប្រាស់រចនាសម្ព័ន្ធ B-Tree ជំនួសឱ្យ BST ធម្មតា?</span>
+            </div>
+            <div class="qa-answer" style="padding: 6px 12px; font-size:11.5px;">
+                <i class="fa-solid fa-a qa-icon-a"></i>
+                <span><b>ការបកស្រាយ៖</b> BST ធម្មតាអនុញ្ញាតឲ្យ Node នីមួយៗមានកូនយ៉ាងច្រើនបំផុតតែ ២ គត់ (Binary) ដែលធ្វើឱ្យកម្ពស់ Tree កើនឡើងខ្ពស់ខ្លាំងពេលទិន្នន័យឡើងដល់រាប់លាន នាំឱ្យចំណាយពេលចុះអានទិន្នន័យពី Memory ច្រើនដង។ ផ្ទុយទៅវិញ <b>B-Tree</b> អនុញ្ញាតឲ្យ Node នីមួយៗផ្ទុកទិន្នន័យបានរាប់រយតម្លៃ និងមានកូនរាប់រយមែកធាងក្នុងកម្រិតតែមួយ ជួយកាត់បន្ថយកម្ពស់ Tree មកទាបបំផុត (Flat Tree) ដែលសាកសមបំផុតសម្រាប់ការស្វែងរកទិន្នន័យខ្នាតយក្សក្នុង Hard Disk O(log n)។</span>
+            </div>
+        </div>
+
+        <div class="section-title"><i class="fa-solid fa-spell-check"></i> ១២. សទ្ទានុក្រម និងពាក្យគន្លឹះប្រចាំជំពូកទី ៥ (Glossary)</div>
+        <div class="grid-2" style="margin-bottom: 0;">
+            <div class="card">
+                <p><b>• Tree (ដើមឈើ)៖</b> រចនាសម្ព័ន្ធទិន្នន័យមិនលីនេអ៊ែរបែបឋានានុក្រម តំណាងដោយការតភ្ជាប់គ្នានៃ Nodes។</p>
+                <p><b>• Root Node (ឫស)៖</b> Node កំពូលនៃ Tree ដែលជាចំណុចចាប់ផ្តើមនៃការស្វែងរកទិន្នន័យទាំងអស់។</p>
+                <p><b>• Internal Node៖</b> Node ដែលស្ថិតនៅចន្លោះកណ្តាល (មានទាំង Parent និង Children)។</p>
+                <p><b>• Leaf Node (ស្លឹក)៖</b> Node នៅចុងខាងក្រោមគេបង្អស់ ដែលគ្មានកូនបន្តទៀតឡើយ (Children = 0)។</p>
+            </div>
+            <div class="card">
+                <p><b>• BST (Binary Search Tree)៖</b> Binary Tree ដែលរក្សាច្បាប់៖ មែកឆ្វេងតូចជាង Root មែកស្តាំធំជាង Root ជានិច្ច។</p>
+                <p><b>• Skewed Tree៖</b> ស្ថានភាព Tree អតុល្យភាព ដែលដុះទៅខាងឆ្វេង ឬខាងស្តាំតែម្ខាង នាំឱ្យល្បឿនធ្លាក់ចុះមក O(n)។</p>
+                <p><b>• Traversal (ការរុករក)៖</b> យន្តការដើរឆែកមើលទិន្នន័យគ្រប់ Nodes ទាំងអស់ក្នុង Tree (In-order, Pre-order, Post-order)។</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="global-footer">
+        <div class="footer-left"><img src="Lim.jpg" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'"><span>សាស្ត្រាចារ្យ៖ សឿង លីម (Soeurng LIM)</span></div>
+        <div class="footer-right">ទំព័រទី ១៣ នៃ ១៤</div>
+    </div>
+</div>
+
+<!-- ================= PAGE 14: Conclusion & References ================= -->
+<div class="a4-page">
+    <div class="global-header">
+        <div class="header-item"><img src="https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png" onerror="this.src='Logo.png'"><span>សាកលវិទ្យាល័យអង្គរ</span></div>
+        <div class="header-center">
+            <h1>សៀវភៅមគ្គទ្ទេសក៍ (Guidebook) - ជំពូកទី ៥</h1>
+            <p>ADVANCED DATA STRUCTURES AND ALGORITHMS FOR AI</p>
+        </div>
+        <div class="header-item"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg"><span>Python Pro</span></div>
+    </div>
+
+    <div class="page-content">
+        <div class="section-title" style="margin-top: 0;"><i class="fa-solid fa-clipboard-list"></i> ១៣. សេចក្តីសន្និដ្ឋាននៃជំពូកទី ៥ (Conclusion)</div>
+        <div class="card" style="border-top-color: var(--accent-green); background: #F0FDF4; margin-bottom: 20px;">
+            <ul style="line-height: 1.8; color: var(--text-main); font-size: 13px;">
+                <li><b><i class="fa-solid fa-hand-pointer text-green"></i> ដំណោះស្រាយដ៏ប្រសើរ៖</b> Binary Search Tree (BST) គឺជាការរួមបញ្ចូលគ្នានូវចំណុចខ្លាំងរបស់ Sorted Array (ស្វែងរកលឿន O(log n)) និង Linked List (បញ្ចូលនិងលុបលឿន O(1) បើរកឃើញទីតាំង)។ វាផ្តល់នូវតុល្យភាពដ៏ល្អឥតខ្ចោះសម្រាប់ការដោះស្រាយបញ្ហាស្មុគស្មាញ។</li>
+                <li><b><i class="fa-solid fa-shield-halved text-green"></i> ប្រុងប្រយ័ត្នបញ្ហាលំនឹង៖</b> ដើម្បីធានាបាននូវប្រសិទ្ធភាពស្វែងរក O(log n) ជានិច្ច យើងត្រូវយល់ដឹងពីការវិវត្តនៃ Skewed Tree និងការការពារដោយប្រើប្រាស់ Self-Balancing Trees (AVL/Red-Black Trees)។</li>
+                <li><b><i class="fa-solid fa-brain text-green"></i> កូនសោរឆ្ពោះទៅកាន់ AI៖</b> ការយល់ច្បាស់ពី Tree & BST គឺជាស្ពានចម្លងដ៏សំខាន់ឆ្ពោះទៅកាន់ការយល់ដឹងពីក្បួនដោះស្រាយម៉ាស៊ីនរៀន (Machine Learning Models) ដូចជា Random Forests, Decision Trees និងបណ្តាញណឺរ៉ូនស្មុគស្មាញដទៃទៀត។</li>
+            </ul>
+        </div>
+
+        <div class="section-title"><i class="fa-solid fa-book-bookmark"></i> ១៤. ឯកសារយោង និងគន្ថនិទ្ទេស (References & Further Reading)</div>
+        <div class="text-block">
+            <ul style="list-style: none; padding-left: 0; line-height: 1.8; text-align: left !important;">
+                <li style="margin-bottom: 8px;"><b><i class='fa-solid fa-book text-blue'></i> Goodrich, M. T., Tamassia, R. (2013).</b> <i>Data Structures and Algorithms in Python</i>. Wiley. (Chapter 8: Trees, Chapter 11: Search Trees).</li>
+                <li style="margin-bottom: 8px;"><b><i class='fa-solid fa-book text-blue'></i> Cormen, T. H. (2022).</b> <i>Introduction to Algorithms</i> (4th ed.). MIT Press. (Chapter 12: Binary Search Trees).</li>
+                <li style="margin-bottom: 8px;"><b><i class='fa-solid fa-globe text-blue'></i> GeeksforGeeks៖</b> មេរៀន និងលំហាត់អនុវត្តកូដបន្ថែមលើ Binary Search Trees៖ <a href='https://www.geeksforgeeks.org/binary-search-tree-data-structure/' style='color:var(--accent-blue); text-decoration:none;'>geeksforgeeks.org/binary-search-tree-data-structure/</a></li>
+                <li style="margin-bottom: 8px;"><b><i class='fa-brands fa-youtube text-blue'></i> CS Dojo (YouTube)៖</b> <i>Introduction to Trees and Binary Search Trees</i> - វីដេអូពន្យល់ទ្រឹស្តីជាមួយគំនូរជីវចល។</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="global-footer" style="position: absolute; bottom: 0;">
+        <div class="footer-left"><img src="Lim.jpg" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'"><span>សាស្ត្រាចារ្យ៖ សឿង លីម (Soeurng LIM)</span></div>
+        <div class="footer-right">ទំព័រទី ១៤ នៃ ១៤</div>
+    </div>
+</div>
+
+</body>
+</html>

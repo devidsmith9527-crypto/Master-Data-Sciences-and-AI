@@ -1,0 +1,871 @@
+<!DOCTYPE html>
+<html lang="km">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Workbook Chapter 3 - Linear Data Structures</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Battambang:wght@400;700&family=Suwannaphum:wght@400;700;900&family=Lato:wght@400;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <style>
+        :root {
+            --bg-color: #E2E8F0;
+            --paper-white: #FFFFFF;
+            --text-main: #0F172A;
+            --text-muted: #475569;
+            --accent-blue: #0284C7; 
+            --accent-green: #059669;
+            --answer-color: #0369A1; 
+            --header-footer-bg: #F0F9FF;
+            --code-bg: #111827; 
+            --low: #059669; --mid: #D97706; --high: #DC2626;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            background-color: var(--bg-color);
+            font-family: 'Battambang', sans-serif;
+            color: var(--text-main);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 40px 20px;
+        }
+
+        /* A4 Page Layout - STRICT FIXED HEIGHT */
+        .a4-page {
+            width: 210mm; 
+            height: 297mm; 
+            background: var(--paper-white);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1); 
+            margin-bottom: 30px;
+            display: block; 
+            position: relative; 
+            border-radius: 8px;
+            page-break-after: always;
+            overflow: hidden; 
+        }
+
+        /* COVER PAGE STYLES */
+        .cover-page {
+            display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; 
+            padding: 30mm 20mm;
+            background-image: linear-gradient(to bottom, #F0F9FF, #FFFFFF);
+        }
+        .cover-logo { width: 140px; margin-bottom: 15px; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1)); }
+        .cover-uni-kh { font-family: 'Suwannaphum'; color: var(--accent-blue); font-size: 38px; margin: 0 0 5px 0; font-weight: 900; }
+        .cover-uni-en { font-family: 'Lato'; color: #475569; font-size: 18px; margin: 0 0 40px 0; letter-spacing: 1px; font-weight: bold; }
+        .cover-program { font-family: 'Suwannaphum'; font-size: 20px; color: var(--accent-green); margin-bottom: 25px; font-weight: bold; }
+        .cover-chapter-badge { background: var(--accent-blue); color: white; padding: 10px 40px; border-radius: 50px; font-size: 22px; font-weight: bold; margin-bottom: 40px; font-family: 'Suwannaphum'; box-shadow: 0 5px 15px rgba(2,132,199,0.3); display: inline-block;}
+        .cover-main-title { font-family: 'Suwannaphum'; font-size: 34px; color: var(--text-main); line-height: 1.4; margin-bottom: 10px; font-weight: 900; }
+        .cover-sub-title { font-family: 'Lato'; font-size: 22px; color: var(--accent-blue); margin-bottom: 50px; font-weight: bold; }
+        
+        .cover-author-wrapper { display: flex; flex-direction: column; align-items: center; gap: 15px; margin-bottom: 40px; }
+        .cover-author-img { width: 100px; height: 100px; border-radius: 50%; border: 4px solid var(--accent-blue); object-fit: cover; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        .cover-author-text { font-size: 20px; color: var(--text-muted); font-family: 'Suwannaphum'; }
+        .cover-author-text strong { color: var(--accent-blue); font-size: 24px; }
+
+        .cover-icons-wrapper { display: flex; gap: 60px; justify-content: center; margin-top: auto; border-top: 1px solid #E2E8F0; padding-top: 20px; width: 100%; }
+        .cover-icon-item img { height: 70px; margin-bottom: 10px; object-fit: contain; }
+        .cover-icon-item p { font-size: 16px; font-weight: bold; color: var(--accent-blue); font-family: 'Lato'; }
+
+        /* HEADER */
+        .global-header {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 12px 25px; border-bottom: 3px solid var(--accent-blue); background-color: var(--header-footer-bg);
+            height: 75px; box-sizing: border-box;
+        }
+        .header-item { display: flex; flex-direction: column; align-items: center; gap: 3px; width: 120px; }
+        .header-item img { height: 40px; object-fit: contain; }
+        .header-item span { font-size: 10px; font-weight: bold; color: var(--accent-blue); text-align: center; font-family: 'Suwannaphum'; }
+        .header-center { text-align: center; }
+        .header-center h1 { font-family: 'Suwannaphum'; font-size: 18px; color: var(--accent-blue); margin: 0; }
+        .header-center p { font-family: 'Battambang'; font-size: 11px; color: #64748B; margin: 0; font-weight: bold; text-transform: uppercase;}
+
+        /* CONTENT */
+        .page-content { 
+            padding: 10mm 15mm; 
+            height: calc(297mm - 75px - 55px); 
+            overflow: hidden; 
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .student-info {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px;
+            border: 1px solid #CBD5E1; padding: 12px 18px; border-radius: 8px; background: #F8FAFC;
+            flex-shrink: 0;
+        }
+        .info-line { font-size: 14.5px; display: flex; align-items: flex-end; font-weight: bold;}
+        .info-line span { flex-grow: 1; border-bottom: 1px dotted #94A3B8; margin-left: 10px; height: 18px; color: var(--answer-color); font-weight: normal; padding-left: 10px;}
+
+        .case-title {
+            background: var(--header-footer-bg); border-left: 5px solid var(--accent-blue);
+            padding: 10px 15px; margin: 10px 0 15px 0; font-family: 'Suwannaphum';
+            font-size: 17px; display: flex; align-items: center; gap: 10px; font-weight: bold;
+            border-radius: 0 6px 6px 0; color: var(--accent-blue); flex-shrink: 0;
+        }
+        
+        .exercise-block { margin-bottom: 15px; border: 1px solid #E2E8F0; padding: 12px 15px; border-radius: 8px; background: white; flex-shrink: 0;}
+        .exercise-block p { margin-bottom: 8px; font-size: 14.5px; font-weight: bold; color: #1E293B; display: flex; align-items: center; gap: 8px;}
+        
+        .level-badge { font-size: 12px; color: white; padding: 4px 10px; border-radius: 4px; font-weight: bold; display: inline-block; margin-right: 8px; font-family: 'Battambang';}
+        .bg-low { background-color: var(--low); }
+        .bg-mid { background-color: var(--mid); }
+        .bg-high { background-color: var(--high); }
+
+        /* CODE DISPLAY */
+        .code-container {
+            background: var(--code-bg); border-radius: 6px; padding: 12px 15px; margin: 8px 0;
+            overflow-x: auto; border: 1px solid #374151; position: relative;
+        }
+        .code-header { background: #1F2937; padding: 5px 10px; font-size: 12px; font-family: 'Battambang'; color: #38BDF8; border-bottom: 1px solid #374151; margin: -12px -15px 10px -15px; border-radius: 6px 6px 0 0; display: flex; align-items: center; gap: 8px;}
+        pre { font-family: 'Fira Code', monospace; font-size: 12.5px; line-height: 1.45; color: #f8f8f2; margin: 0; }
+        .kw { color: #ff79c6; font-weight: bold; } 
+        .fn { color: #50fa7b; } 
+        .str { color: #f1fa8c; } 
+        .com { color: #6272a4; font-style: italic; } 
+        .num { color: #bd93f9; } 
+
+        .answer-box { margin-top: 10px; font-size: 14px; display: flex; align-items: flex-start; }
+        .answer-box label { font-family: 'Battambang', sans-serif; font-weight: bold; margin-right: 10px; color: #475569; white-space: nowrap;}
+        .filled-answer { 
+            flex-grow: 1; border-bottom: 1px dotted #94A3B8; color: var(--answer-color); 
+            font-family: 'Battambang', sans-serif; line-height: 1.6; padding-bottom: 2px;
+        }
+
+        /* Note Area */
+        .note-area {
+            flex-grow: 1; border: 1px dashed #CBD5E1; background: #F8FAFC; border-radius: 8px;
+            padding: 15px; margin-top: 5px; color: #94A3B8; font-size: 13.5px; display: flex; flex-direction: column;
+        }
+
+        /* FOOTER - FIXED TO ABSOLUTE BOTTOM */
+        .global-footer {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 10px 25px; border-top: 3px solid var(--accent-blue);
+            background-color: var(--header-footer-bg); 
+            position: absolute; bottom: 0; left: 0; width: 100%; height: 55px; box-sizing: border-box;
+        }
+        .footer-left { display: flex; align-items: center; gap: 10px; }
+        .footer-left img { border-radius: 50%; border: 2px solid var(--accent-blue); width: 30px; height: 30px; object-fit: cover; background-color: #fff; }
+        .footer-left span { font-size: 12px; font-weight: bold; color: var(--text-main); font-family: 'Suwannaphum'; }
+        .footer-right { font-size: 12px; color: var(--accent-blue); font-weight: bold; font-family: 'Battambang'; }
+
+        /* PRINT MEDIA QUERY */
+        @page { size: A4; margin: 0; }
+        @media print {
+            body { background: white; padding: 0; margin: 0; }
+            .a4-page { box-shadow: none; margin: 0; width: 210mm; height: 297mm; border: none; border-radius: 0; page-break-after: always; }
+            .a4-page:last-child { page-break-after: auto; }
+            .no-print { display: none !important; }
+            * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+        }
+    </style>
+</head>
+<body>
+
+<button class="no-print" onclick="window.print()" style="margin-bottom: 20px; padding: 12px 25px; cursor: pointer; background: var(--accent-blue); color: white; border: none; border-radius: 8px; font-family: 'Battambang'; font-weight: bold; font-size: 16px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); transition: all 0.3s;">
+    <i class="fa-solid fa-print"></i> បោះពុម្ពសៀវភៅលំហាត់ (Print as PDF)
+</button>
+
+<!-- COVER PAGE -->
+<div class="a4-page cover-page">
+    <img src="Logo.png" class="cover-logo" onerror="this.src='https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png'">
+    <h1 class="cover-uni-kh">សាកលវិទ្យាល័យអង្គរ</h1>
+    <p class="cover-uni-en">ANGKOR UNIVERSITY</p>
+
+    <div class="cover-program">
+        <i class="fa-solid fa-graduation-cap"></i> អនុបណ្ឌិតវិទ្យាសាស្ត្រទិន្នន័យ និងបញ្ញាសិប្បនិម្មិត (Master of Data Science and AI)
+    </div>
+
+    <div class="cover-chapter-badge">សៀវភៅលំហាត់អនុវត្តន៍ (Workbook) | ២០២៥-២០២៦</div>
+
+    <h1 class="cover-main-title">ជំពូកទី ៣៖ រចនាសម្ព័ន្ធទិន្នន័យជាជួរ</h1>
+    <h2 class="cover-sub-title">(Linear Data Structures - Arrays, Stacks, Queues)</h2>
+
+    <div class="cover-author-wrapper">
+        <img src="Lim.jpg" class="cover-author-img" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'">
+        <div class="cover-author-text">
+            សាស្ត្រាចារ្យ៖
+        </div>
+        <div class="cover-author-text">
+            <strong>សឿង លីម (Soeurng LIM)</strong>
+        </div>
+    </div>
+
+    <div class="cover-icons-wrapper">
+        <div class="cover-icon-item">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg">
+            <p>Pythons</p>
+        </div>
+        <div class="cover-icon-item">
+            <img src="https://cdn-icons-png.flaticon.com/512/2103/2103633.png">
+            <p>DSA in Pythons</p>
+        </div>
+    </div>
+</div>
+
+<!-- PAGE 1 : Arrays Basics -->
+<div class="a4-page">
+    <div class="global-header">
+        <div class="header-item"><img src="Logo.png" onerror="this.src='https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png'"><span>សាកលវិទ្យាល័យអង្គរ</span></div>
+        <div class="header-center">
+            <h1>សៀវភៅលំហាត់អនុវត្តន៍ - ជំពូកទី ៣</h1>
+            <p>ADVANCED DATA STRUCTURES AND ALGORITHMS</p>
+        </div>
+        <div class="header-item"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg"><span>Python Pro</span></div>
+    </div>
+
+    <div class="page-content">
+        <div class="student-info">
+            <div class="info-line">អត្តលេខ (ID): <span>អត្រាកំណែផ្លូវការ</span></div>
+            <div class="info-line">ឈ្មោះ (Name): <span>សន្លឹកចម្លើយ</span></div>
+        </div>
+
+        <div class="case-title"><i class="fa-solid fa-list-ol"></i> ១. ករណីសិក្សា៖ មូលដ្ឋានគ្រឹះនៃ Array (List)</div>
+        
+        <div class="exercise-block">
+            <p><span class="level-badge bg-low">ស្រាល ១</span> ការទាញយកទិន្នន័យ (ដូចករណីប្រអប់សំបុត្រ PO Box)</p>
+            <div class="code-container">
+                <div class="code-header"><i class="fa-brands fa-python"></i> Copy & Run Code</div>
+<pre>arr = [<span class="num">10</span>, <span class="num">20</span>, <span class="num">30</span>, <span class="num">40</span>, <span class="num">50</span>]
+
+<span class="com"># លោតទៅយកទិន្នន័យត្រង់ Index ទី 2 ភ្លាមៗ</span>
+value = arr[<span class="num">2</span>]
+<span class="fn">print</span>(<span class="str">"ប្រអប់លេខ ២ មានតម្លៃ:"</span>, value)</pre>
+            </div>
+            <div class="answer-box">
+                <label>ការពន្យល់ល្បឿន ៖</label> 
+                <div class="filled-answer">លទ្ធផលគឺ 30។ កុំព្យូទ័រមិនបាច់រាប់ពីដើមទេ ព្រោះទីតាំង Index ត្រូវបានគណនាទុកមុនក្នុង Memory (Contiguous Memory) ដូច្នេះវាអាចលោតទៅចាប់យកភ្លាមៗក្នុងល្បឿនថេរ O(1)។</div>
+            </div>
+        </div>
+
+        <div class="exercise-block">
+            <p><span class="level-badge bg-low">ស្រាល ២</span> ការបន្ថែមទិន្នន័យនៅខាងចុងជួរ (Append)</p>
+            <div class="code-container">
+                <div class="code-header"><i class="fa-brands fa-python"></i> Copy & Run Code</div>
+<pre>scores = [<span class="num">85</span>, <span class="num">90</span>]
+
+<span class="com"># បន្ថែមទិន្នន័យទៅចុងបញ្ជី</span>
+scores.append(<span class="num">95</span>)
+<span class="fn">print</span>(<span class="str">"បញ្ជីពិន្ទុថ្មី:"</span>, scores)</pre>
+            </div>
+            <div class="answer-box">
+                <label>ការពន្យល់ល្បឿន ៖</label> 
+                <div class="filled-answer">ការប្រើប្រាស់ <code>append()</code> គ្រាន់តែដាក់ធាតុថ្មីចូលទៅកាន់កៅអីទំនេរខាងចុង ដោយមិនចាំបាច់ប៉ះពាល់ ឬរុញធាតុចាស់ៗឡើយ។ ដូច្នេះវាមានល្បឿនលឿន O(1)។</div>
+            </div>
+        </div>
+
+        <div class="note-area">
+            <i class="fa-solid fa-pen"></i> កន្លែងសម្រាប់កត់ត្រាបន្ថែម (Notes / Scratchpad)...
+        </div>
+    </div>
+
+    <div class="global-footer">
+        <div class="footer-left"><img src="Lim.jpg" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'"><span>សាស្ត្រាចារ្យ៖ សឿង លីម (Soeurng LIM)</span></div>
+        <div class="footer-right">ទំព័រទី ១ នៃ ១០</div>
+    </div>
+</div>
+
+<!-- PAGE 2 : Arrays Insertion & Deletion -->
+<div class="a4-page">
+    <div class="global-header">
+        <div class="header-item"><img src="Logo.png" onerror="this.src='https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png'"><span>សាកលវិទ្យាល័យអង្គរ</span></div>
+        <div class="header-center">
+            <h1>សៀវភៅលំហាត់អនុវត្តន៍ - ជំពូកទី ៣</h1>
+            <p>ADVANCED DATA STRUCTURES AND ALGORITHMS</p>
+        </div>
+        <div class="header-item"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg"><span>Python Pro</span></div>
+    </div>
+
+    <div class="page-content">
+        <div class="case-title"><i class="fa-solid fa-list-ol"></i> ១. ករណីសិក្សា៖ មូលដ្ឋានគ្រឹះនៃ Array (List) - ត</div>
+        
+        <div class="exercise-block">
+            <p><span class="level-badge bg-mid">មធ្យម ១</span> បញ្ហានៃការជ្រែកចូលកណ្តាលជួរ (ដូចកៅអីរោងកុន)</p>
+            <div class="code-container">
+                <div class="code-header"><i class="fa-brands fa-python"></i> Copy & Run Code</div>
+<pre>names = [<span class="str">"Sok"</span>, <span class="str">"Lim"</span>, <span class="str">"Dara"</span>]
+
+<span class="com"># បញ្ចូល "Bopha" ជ្រែកកណ្តាលនៅកៅអីទី 1</span>
+names.insert(<span class="num">1</span>, <span class="str">"Bopha"</span>)
+<span class="fn">print</span>(<span class="str">"បញ្ជីឈ្មោះ:"</span>, names)</pre>
+            </div>
+            <div class="answer-box">
+                <label>ហេតុអ្វីវាមានល្បឿនយឺត? ៖</label> 
+                <div class="filled-answer">ដើម្បីទុកចន្លោះឱ្យ 'Bopha' ប្រព័ន្ធត្រូវបង្ខំចិត្តរុញឈ្មោះ 'Lim' និង 'Dara' ឱ្យថយក្រោយម្នាក់មួយកៅអីសិន។ ប្រសិនបើមានមនុស្ស ១ម៉ឺននាក់ វាត្រូវរុញទាំង ១ម៉ឺនដង ដែលស៊ីពេល O(n)។</div>
+            </div>
+        </div>
+
+        <div class="exercise-block">
+            <p><span class="level-badge bg-mid">មធ្យម ២</span> ការលុបទិន្នន័យចេញពី Array ដោយប្រើតម្លៃ (Remove)</p>
+            <div class="code-container">
+                <div class="code-header"><i class="fa-brands fa-python"></i> Copy & Run Code</div>
+<pre>items = [<span class="str">"Apple"</span>, <span class="str">"Banana"</span>, <span class="str">"Orange"</span>]
+
+<span class="com"># លុបធាតុដែលមានតម្លៃស្មើ "Banana"</span>
+items.remove(<span class="str">"Banana"</span>)
+<span class="fn">print</span>(<span class="str">"បញ្ជីផ្លែឈើដែលនៅសល់:"</span>, items)</pre>
+            </div>
+            <div class="answer-box">
+                <label>ការពន្យល់ពី Time Complexity ៖</label> 
+                <div class="filled-answer">ដំណើរការនេះយឺត O(n) ដោយសារ២ចំណុច៖ ទី១ វាត្រូវចំណាយពេលដើរស្វែងរកពាក្យ Banana សិន។ ទី២ បន្ទាប់ពីលុបហើយ វាត្រូវរុញពាក្យ Orange ឡើងមកមុខវិញដើម្បីជិតប្រហោង។</div>
+            </div>
+        </div>
+
+        <div class="note-area">
+            <i class="fa-solid fa-pen"></i> កន្លែងសម្រាប់កត់ត្រាបន្ថែម (Notes / Scratchpad)...
+        </div>
+    </div>
+
+    <div class="global-footer">
+        <div class="footer-left"><img src="Lim.jpg" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'"><span>សាស្ត្រាចារ្យ៖ សឿង លីម (Soeurng LIM)</span></div>
+        <div class="footer-right">ទំព័រទី ២ នៃ ១០</div>
+    </div>
+</div>
+
+<!-- PAGE 3 : Arrays Advanced -->
+<div class="a4-page">
+    <div class="global-header">
+        <div class="header-item"><img src="Logo.png" onerror="this.src='https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png'"><span>សាកលវិទ្យាល័យអង្គរ</span></div>
+        <div class="header-center">
+            <h1>សៀវភៅលំហាត់អនុវត្តន៍ - ជំពូកទី ៣</h1>
+            <p>ADVANCED DATA STRUCTURES AND ALGORITHMS</p>
+        </div>
+        <div class="header-item"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg"><span>Python Pro</span></div>
+    </div>
+
+    <div class="page-content">
+        <div class="case-title"><i class="fa-solid fa-triangle-exclamation"></i> ២. ករណីសិក្សា៖ បញ្ហា និងបច្ចេកទេសលើ Array</div>
+        
+        <div class="exercise-block">
+            <p><span class="level-badge bg-high">ធ្ងន់ ១</span> បញ្ហានៃការដកទិន្នន័យពីមុខ (Slow Pop Front)</p>
+            <div class="code-container">
+                <div class="code-header"><i class="fa-brands fa-python"></i> Copy & Run Code</div>
+<pre>queue_list = [<span class="num">100</span>, <span class="num">200</span>, <span class="num">300</span>, <span class="num">400</span>]
+
+<span class="com"># ដកចេញពីខាងមុខ (ក្បាលជួរ) ទីតាំងទី 0</span>
+first = queue_list.pop(<span class="num">0</span>)
+<span class="fn">print</span>(<span class="str">"ទិន្នន័យដែលនៅសល់:"</span>, queue_list)</pre>
+            </div>
+            <div class="answer-box">
+                <label>ហេតុអ្វី <code>pop(0)</code> ជាកំហុស? ៖</label> 
+                <div class="filled-answer">ការប្រើ <code>pop(0)</code> លើ List គឺជាកំហុសធំមួយបើមានទិន្នន័យច្រើន ព្រោះក្រោយលុបក្បាលចោល វាត្រូវទាញទិន្នន័យក្រោយៗរាប់លាន ឱ្យងើបមកមុខវិញទាំងអស់ (O(n) time complexity)។</div>
+            </div>
+        </div>
+
+        <div class="exercise-block">
+            <p><span class="level-badge bg-high">ធ្ងន់ ២</span> បច្ចេកទេសបង្វិល Array (Two-Pointers Reverse)</p>
+            <div class="code-container">
+                <div class="code-header"><i class="fa-brands fa-python"></i> Copy & Run Code</div>
+<pre><span class="kw">def</span> <span class="fn">reverse_in_place</span>(arr):
+    left, right = <span class="num">0</span>, <span class="fn">len</span>(arr) - <span class="num">1</span>
+    <span class="kw">while</span> left < right:
+        <span class="com"># ប្តូរទីតាំងគ្នា (Swap values)</span>
+        arr[left], arr[right] = arr[right], arr[left]
+        left += <span class="num">1</span>
+        right -= <span class="num">1</span>
+    <span class="kw">return</span> arr
+
+<span class="fn">print</span>(<span class="str">"បញ្ចីក្រោយបង្វិល:"</span>, reverse_in_place([<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>, <span class="num">4</span>]))</pre>
+            </div>
+            <div class="answer-box">
+                <label>អត្ថប្រយោជន៍នៃ Pointers ៖</label> 
+                <div class="filled-answer">បច្ចេកទេសនេះចំណេញ Memory (Space O(1)) ដោយសារយើងគ្រាន់តែយកតម្លៃខាងឆ្វេងមកឆ្លាស់ជាមួយតម្លៃខាងស្តាំដោយផ្ទាល់ មិនចាំបាច់បង្កើត List ថ្មីមួយទៀតឡើយ។</div>
+            </div>
+        </div>
+
+        <div class="note-area">
+            <i class="fa-solid fa-pen"></i> កន្លែងសម្រាប់កត់ត្រាបន្ថែម (Notes / Scratchpad)...
+        </div>
+    </div>
+
+    <div class="global-footer">
+        <div class="footer-left"><img src="Lim.jpg" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'"><span>សាស្ត្រាចារ្យ៖ សឿង លីម (Soeurng LIM)</span></div>
+        <div class="footer-right">ទំព័រទី ៣ នៃ ១០</div>
+    </div>
+</div>
+
+<!-- PAGE 4 : Stacks Basics -->
+<div class="a4-page">
+    <div class="global-header">
+        <div class="header-item"><img src="Logo.png" onerror="this.src='https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png'"><span>សាកលវិទ្យាល័យអង្គរ</span></div>
+        <div class="header-center">
+            <h1>សៀវភៅលំហាត់អនុវត្តន៍ - ជំពូកទី ៣</h1>
+            <p>ADVANCED DATA STRUCTURES AND ALGORITHMS</p>
+        </div>
+        <div class="header-item"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg"><span>Python Pro</span></div>
+    </div>
+
+    <div class="page-content">
+        <div class="case-title"><i class="fa-solid fa-layer-group"></i> ៣. ករណីសិក្សា៖ រចនាសម្ព័ន្ធ Stack (LIFO)</div>
+        
+        <div class="exercise-block">
+            <p><span class="level-badge bg-low">ស្រាល ១</span> ការដាក់ចូល (Push) - ប្រៀបដូចការត្រួតចានបាយ</p>
+            <div class="code-container">
+                <div class="code-header"><i class="fa-brands fa-python"></i> Copy & Run Code</div>
+<pre>stack = []
+
+<span class="com"># Push (ដាក់ទិន្នន័យត្រួតចូលពីលើគ្នា)</span>
+stack.append(<span class="str">"ចានទី ១"</span>)
+stack.append(<span class="str">"ចានទី ២"</span>)
+stack.append(<span class="str">"ចានទី ៣"</span>)
+
+<span class="fn">print</span>(<span class="str">"Stack បច្ចុប្បន្ន:"</span>, stack)</pre>
+            </div>
+            <div class="answer-box">
+                <label>ការពន្យល់ពី LIFO ៖</label> 
+                <div class="filled-answer">ក្នុង Python យើងអាចប្រើ List ធ្វើជា Stack បានយ៉ាងល្អ។ <code>append()</code> រុញទិន្នន័យចូល។ "ចានទី ៣" ដែលចូលក្រោយគេ វានឹងស្ថិតនៅខាងលើគេបង្អស់ (Top)។</div>
+            </div>
+        </div>
+
+        <div class="exercise-block">
+            <p><span class="level-badge bg-low">ស្រាល ២</span> ការដកទិន្នន័យចេញ (Pop) ពីលើគេ</p>
+            <div class="code-container">
+                <div class="code-header"><i class="fa-brands fa-python"></i> Copy & Run Code</div>
+<pre>stack = [<span class="str">"A"</span>, <span class="str">"B"</span>, <span class="str">"C"</span>]
+
+<span class="com"># Pop (ដកទិន្នន័យចេញពីលើគេ)</span>
+top_item = stack.pop()
+
+<span class="fn">print</span>(<span class="str">"យកចេញនូវ:"</span>, top_item)
+<span class="fn">print</span>(<span class="str">"សល់នៅខាងក្នុង:"</span>, stack)</pre>
+            </div>
+            <div class="answer-box">
+                <label>លទ្ធផល ៖</label> 
+                <div class="filled-answer">យកចេញនូវ: C។ តាមច្បាប់ LIFO (Last In, First Out) អ្នកចូលក្រោយគេគឺ 'C' នឹងត្រូវដកចេញមកប្រើប្រាស់មុនគេបង្អស់ ក្នុងល្បឿន O(1)។</div>
+            </div>
+        </div>
+
+        <div class="note-area">
+            <i class="fa-solid fa-pen"></i> កន្លែងសម្រាប់កត់ត្រាបន្ថែម (Notes / Scratchpad)...
+        </div>
+    </div>
+
+    <div class="global-footer">
+        <div class="footer-left"><img src="Lim.jpg" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'"><span>សាស្ត្រាចារ្យ៖ សឿង លីម (Soeurng LIM)</span></div>
+        <div class="footer-right">ទំព័រទី ៤ នៃ ១០</div>
+    </div>
+</div>
+
+<!-- PAGE 5 : Stacks Applications -->
+<div class="a4-page">
+    <div class="global-header">
+        <div class="header-item"><img src="Logo.png" onerror="this.src='https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png'"><span>សាកលវិទ្យាល័យអង្គរ</span></div>
+        <div class="header-center">
+            <h1>សៀវភៅលំហាត់អនុវត្តន៍ - ជំពូកទី ៣</h1>
+            <p>ADVANCED DATA STRUCTURES AND ALGORITHMS</p>
+        </div>
+        <div class="header-item"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg"><span>Python Pro</span></div>
+    </div>
+
+    <div class="page-content">
+        <div class="case-title"><i class="fa-solid fa-layer-group"></i> ៣. ករណីសិក្សា៖ រចនាសម្ព័ន្ធ Stack (LIFO) - ត</div>
+        
+        <div class="exercise-block">
+            <p><span class="level-badge bg-mid">មធ្យម ១</span> ការមើលធាតុខាងលើគេនៃ Stack (Peek)</p>
+            <div class="code-container">
+                <div class="code-header"><i class="fa-brands fa-python"></i> Copy & Run Code</div>
+<pre>history = [<span class="str">"ទំព័រ ១"</span>, <span class="str">"ទំព័រ ២"</span>, <span class="str">"ទំព័រ ៣"</span>]
+
+<span class="com"># ការមើលទិន្នន័យលើគេ ដោយមិនដកវាចេញ</span>
+current_page = history[-<span class="num">1</span>] 
+
+<span class="fn">print</span>(<span class="str">"ទំព័របច្ចុប្បន្ន:"</span>, current_page)
+<span class="fn">print</span>(<span class="str">"Stack នៅរក្សាដដែល:"</span>, history)</pre>
+            </div>
+            <div class="answer-box">
+                <label>អត្ថប្រយោជន៍នៃ Peek ៖</label> 
+                <div class="filled-answer">វាអនុញ្ញាតឱ្យយើងត្រួតពិនិត្យមើលធាតុចុងក្រោយ (Top) ដោយប្រើ Index <code>[-1]</code> ជាជាងការប្រើ <code>pop()</code> ដែលអាចធ្វើឱ្យបាត់បង់ទិន្នន័យចេញពី Memory។</div>
+            </div>
+        </div>
+
+        <div class="exercise-block">
+            <p><span class="level-badge bg-high">ធ្ងន់ ១</span> ការប្រើ Stack បញ្ច្រាសអក្សរ (String Reversal)</p>
+            <div class="code-container">
+                <div class="code-header"><i class="fa-brands fa-python"></i> Copy & Run Code</div>
+<pre><span class="kw">def</span> <span class="fn">reverse_string</span>(text):
+    stack = []
+    <span class="com"># Push អក្សរចូលម្តងមួយៗ</span>
+    <span class="kw">for</span> char <span class="kw">in</span> text:
+        stack.append(char)
+        
+    result = <span class="str">""</span>
+    <span class="com"># Pop ចេញមកវិញ (LIFO)</span>
+    <span class="kw">while</span> stack:
+        result += stack.pop()
+    <span class="kw">return</span> result
+
+<span class="fn">print</span>(<span class="str">"ពាក្យ HELLO បញ្ច្រាសទៅជា:"</span>, reverse_string(<span class="str">"HELLO"</span>))</pre>
+            </div>
+            <div class="answer-box">
+                <label>គំនិតនៅពីក្រោយកូដនេះ ៖</label> 
+                <div class="filled-answer">ដោយសារ Stack ប្រើច្បាប់ LIFO ពេលយើង Push 'H', 'E', 'L', 'L', 'O' ចូល នោះអក្សរ 'O' ស្ថិតនៅលើគេ។ ពេល Pop មកវិញ វានឹងចេញអក្សរ 'O' មុនគេ រួចបន្តដល់ 'H' ទើបចេញជា 'OLLEH'។</div>
+            </div>
+        </div>
+
+        <div class="note-area">
+            <i class="fa-solid fa-pen"></i> កន្លែងសម្រាប់កត់ត្រាបន្ថែម (Notes / Scratchpad)...
+        </div>
+    </div>
+
+    <div class="global-footer">
+        <div class="footer-left"><img src="Lim.jpg" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'"><span>សាស្ត្រាចារ្យ៖ សឿង លីម (Soeurng LIM)</span></div>
+        <div class="footer-right">ទំព័រទី ៥ នៃ ១០</div>
+    </div>
+</div>
+
+<!-- PAGE 6 : Stacks Advanced -->
+<div class="a4-page">
+    <div class="global-header">
+        <div class="header-item"><img src="Logo.png" onerror="this.src='https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png'"><span>សាកលវិទ្យាល័យអង្គរ</span></div>
+        <div class="header-center">
+            <h1>សៀវភៅលំហាត់អនុវត្តន៍ - ជំពូកទី ៣</h1>
+            <p>ADVANCED DATA STRUCTURES AND ALGORITHMS</p>
+        </div>
+        <div class="header-item"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg"><span>Python Pro</span></div>
+    </div>
+
+    <div class="page-content">
+        <div class="case-title"><i class="fa-solid fa-layer-group"></i> ៤. ករណីសិក្សា៖ ការដោះស្រាយបញ្ហាដោយប្រើ Stack</div>
+        
+        <div class="exercise-block">
+            <p><span class="level-badge bg-high">ធ្ងន់ ១</span> ការប្រើ Stack ឆែកវង់ក្រចក (Balanced Parentheses)</p>
+            <div class="code-container">
+                <div class="code-header"><i class="fa-brands fa-python"></i> Copy & Run Code</div>
+<pre><span class="kw">def</span> <span class="fn">is_balanced</span>(expr):
+    stack = []
+    <span class="kw">for</span> char <span class="kw">in</span> expr:
+        <span class="kw">if</span> char <span class="kw">in</span> <span class="str">"({["</span>: 
+            stack.append(char)
+        <span class="kw">elif</span> char <span class="kw">in</span> <span class="str">")}]"</span>:
+            <span class="kw">if not</span> stack: <span class="kw">return False</span>
+            stack.pop() <span class="com"># ដកអាបើកចុងក្រោយចេញមកផ្ទឹម</span>
+    <span class="kw">return</span> <span class="fn">len</span>(stack) == <span class="num">0</span>
+
+<span class="fn">print</span>(<span class="str">"កូដ (a+b)*[c] ត្រូវទេ?"</span>, is_balanced(<span class="str">"(a+b)*[c]"</span>))
+<span class="fn">print</span>(<span class="str">"កូដ (a+b] ត្រូវទេ?"</span>, is_balanced(<span class="str">"(a+b]"</span>))</pre>
+            </div>
+            <div class="answer-box">
+                <label>តួនាទីរបស់ Stack ទីនេះ៖</label> 
+                <div class="filled-answer">Stack ស័ក្តិសមបំផុតសម្រាប់ដោះស្រាយបញ្ហានេះ។ រាល់ពេលជួបសញ្ញាបើក វា Push ចូល។ ពេលជួបសញ្ញាបិទ វា Pop ចេញ។ បើកូដត្រឹមត្រូវ ចុងក្រោយ Stack ត្រូវតែទទេស្អាត។</div>
+            </div>
+        </div>
+
+        <div class="exercise-block">
+            <p><span class="level-badge bg-mid">មធ្យម ២</span> ការសាកល្បងប្រព័ន្ធ Undo (Ctrl + Z)</p>
+            <div class="code-container">
+                <div class="code-header"><i class="fa-brands fa-python"></i> Copy & Run Code</div>
+<pre>undo_stack = []
+
+<span class="com"># អ្នកប្រើប្រាស់វាយអត្ថបទ</span>
+undo_stack.append(<span class="str">"សរសេរពាក្យ A"</span>)
+undo_stack.append(<span class="str">"លុបពាក្យ B"</span>)
+
+<span class="com"># ចុច Ctrl+Z</span>
+<span class="kw">if</span> undo_stack:
+    last_action = undo_stack.pop()
+    <span class="fn">print</span>(<span class="str">f"បាន Undo សកម្មភាព: {last_action}"</span>)
+<span class="fn">print</span>(<span class="str">"សកម្មភាពនៅសល់:"</span>, undo_stack)</pre>
+            </div>
+            <div class="answer-box">
+                <label>ការអនុវត្តន៍៖</label> 
+                <div class="filled-answer">កម្មវិធីដូចជា MS Word ប្រើប្រាស់ Stack ដើម្បីកត់ត្រារាល់សកម្មភាពរបស់អ្នកប្រើប្រាស់។ ពេលអ្នកចុច Undo វានឹង Pop យកសកម្មភាពចុងក្រោយបំផុតនោះមកលុបចោលវិញ (Revert)។</div>
+            </div>
+        </div>
+
+        <div class="note-area">
+            <i class="fa-solid fa-pen"></i> កន្លែងសម្រាប់កត់ត្រាបន្ថែម (Notes / Scratchpad)...
+        </div>
+    </div>
+
+    <div class="global-footer">
+        <div class="footer-left"><img src="Lim.jpg" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'"><span>សាស្ត្រាចារ្យ៖ សឿង លីម (Soeurng LIM)</span></div>
+        <div class="footer-right">ទំព័រទី ៦ នៃ ១០</div>
+    </div>
+</div>
+
+<!-- PAGE 7 : Queues Basics -->
+<div class="a4-page">
+    <div class="global-header">
+        <div class="header-item"><img src="Logo.png" onerror="this.src='https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png'"><span>សាកលវិទ្យាល័យអង្គរ</span></div>
+        <div class="header-center">
+            <h1>សៀវភៅលំហាត់អនុវត្តន៍ - ជំពូកទី ៣</h1>
+            <p>ADVANCED DATA STRUCTURES AND ALGORITHMS</p>
+        </div>
+        <div class="header-item"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg"><span>Python Pro</span></div>
+    </div>
+
+    <div class="page-content">
+        <div class="case-title"><i class="fa-solid fa-users-line"></i> ៥. ករណីសិក្សា៖ រចនាសម្ព័ន្ធ Queue (FIFO)</div>
+        
+        <div class="exercise-block">
+            <p><span class="level-badge bg-low">ស្រាល ១</span> បង្កើត Queue ដោយប្រើ List ធម្មតា (បញ្ហាយឺត)</p>
+            <div class="code-container">
+                <div class="code-header"><i class="fa-brands fa-python"></i> Copy & Run Code</div>
+<pre>queue_list = []
+
+<span class="com"># ចូលជួរពីខាងក្រោយ</span>
+queue_list.append(<span class="str">"អតិថិជន ១"</span>) 
+queue_list.append(<span class="str">"អតិថិជន ២"</span>)
+
+<span class="com"># ចេញពីជួរ (បម្រើអ្នកមកមុនគេ ដោយដកពី Index 0)</span>
+first = queue_list.pop(<span class="num">0</span>) 
+
+<span class="fn">print</span>(<span class="str">"បានបម្រើ:"</span>, first)</pre>
+            </div>
+            <div class="answer-box">
+                <label>បញ្ហារបស់កូដនេះ ៖</label> 
+                <div class="filled-answer">ទោះបីកូដនេះដើរត្រូវតាមច្បាប់ FIFO តែការប្រើ <code>pop(0)</code> លើ List ធម្មតា គឺយឺតខ្លាំងកម្រិត O(n) ព្រោះកុំព្យូទ័រត្រូវរុញទិន្នន័យក្រោយៗទាំងអស់មកមុខមួយកៅអីម្នាក់ជានិច្ច។</div>
+            </div>
+        </div>
+
+        <div class="exercise-block">
+            <p><span class="level-badge bg-mid">មធ្យម ១</span> ការប្រើប្រាស់ <code>deque</code> សម្រាប់ Queue លឿនបំផុត</p>
+            <div class="code-container">
+                <div class="code-header"><i class="fa-brands fa-python"></i> Copy & Run Code</div>
+<pre><span class="kw">from</span> collections <span class="kw">import</span> deque
+
+fast_q = deque()
+
+<span class="com"># Enqueue (ចូលជួរ)</span>
+fast_q.append(<span class="str">"Customer A"</span>)
+fast_q.append(<span class="str">"Customer B"</span>)
+
+<span class="com"># Dequeue ពីខាងមុខដោយល្បឿន O(1)</span>
+served = fast_q.popleft() 
+
+<span class="fn">print</span>(<span class="str">"Served:"</span>, served)
+<span class="fn">print</span>(<span class="str">"Remaining in Queue:"</span>, fast_q)</pre>
+            </div>
+            <div class="answer-box">
+                <label>អត្ថប្រយោជន៍របស់ deque ៖</label> 
+                <div class="filled-answer"><code>deque</code> (Double-Ended Queue) ជា Data Structure ដែលបង្កើតមកជាពិសេសអនុញ្ញាតឱ្យយើងបន្ថែម និងដកទិន្នន័យពីខាងមុខ (<code>popleft()</code>) បានយ៉ាងរហ័ស ក្នុងល្បឿនថេរ O(1)។</div>
+            </div>
+        </div>
+
+        <div class="note-area">
+            <i class="fa-solid fa-pen"></i> កន្លែងសម្រាប់កត់ត្រាបន្ថែម (Notes / Scratchpad)...
+        </div>
+    </div>
+
+    <div class="global-footer">
+        <div class="footer-left"><img src="Lim.jpg" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'"><span>សាស្ត្រាចារ្យ៖ សឿង លីម (Soeurng LIM)</span></div>
+        <div class="footer-right">ទំព័រទី ៧ នៃ ១០</div>
+    </div>
+</div>
+
+<!-- PAGE 8 : Queues Applications -->
+<div class="a4-page">
+    <div class="global-header">
+        <div class="header-item"><img src="Logo.png" onerror="this.src='https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png'"><span>សាកលវិទ្យាល័យអង្គរ</span></div>
+        <div class="header-center">
+            <h1>សៀវភៅលំហាត់អនុវត្តន៍ - ជំពូកទី ៣</h1>
+            <p>ADVANCED DATA STRUCTURES AND ALGORITHMS</p>
+        </div>
+        <div class="header-item"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg"><span>Python Pro</span></div>
+    </div>
+
+    <div class="page-content">
+        <div class="case-title"><i class="fa-solid fa-users-line"></i> ៦. ករណីសិក្សា៖ ការដោះស្រាយបញ្ហាដោយប្រើ Queue</div>
+        
+        <div class="exercise-block">
+            <p><span class="level-badge bg-mid">មធ្យម ១</span> ការប្រើ Queue បង្កើតម៉ាស៊ីនព្រីន (Printer Queue)</p>
+            <div class="code-container">
+                <div class="code-header"><i class="fa-brands fa-python"></i> Copy & Run Code</div>
+<pre><span class="kw">from</span> collections <span class="kw">import</span> deque
+
+print_jobs = deque([<span class="str">"Doc_Math.pdf"</span>, <span class="str">"Doc_IT.pdf"</span>, <span class="str">"Doc_History.pdf"</span>])
+
+<span class="kw">while</span> print_jobs:
+    <span class="com"># ទាញយកឯកសារទី១ ចេញមកព្រីន</span>
+    job = print_jobs.popleft()
+    <span class="fn">print</span>(<span class="str">f"កំពុងបោះពុម្ព: {job}..."</span>)
+    
+<span class="fn">print</span>(<span class="str">"បញ្ចប់កិច្ចការព្រីន!"</span>)</pre>
+            </div>
+            <div class="answer-box">
+                <label>ដំណើរការនៃ Loop ៖</label> 
+                <div class="filled-answer">Loop នឹងដំណើរការដកឯកសារចេញពីជួរមុខម្តងមួយៗ (FIFO) មករួចព្រីន ទាល់តែអស់ឯកសារពីក្នុង <code>print_jobs</code> ទើបវាលោតចេញមកក្រៅ និងបង្ហាញពាក្យ "បញ្ចប់កិច្ចការព្រីន!"។</div>
+            </div>
+        </div>
+
+        <div class="exercise-block">
+            <p><span class="level-badge bg-mid">មធ្យម ២</span> ការបង្កើតសេវាកម្មធនាគារ (Bank Teller)</p>
+            <div class="code-container">
+                <div class="code-header"><i class="fa-brands fa-python"></i> Copy & Run Code</div>
+<pre><span class="kw">from</span> collections <span class="kw">import</span> deque
+import time
+
+bank_queue = deque([<span class="str">"Tola"</span>, <span class="str">"Bopha"</span>])
+
+<span class="kw">def</span> <span class="fn">serve_customers</span>():
+    <span class="kw">while</span> bank_queue:
+        customer = bank_queue.popleft()
+        <span class="fn">print</span>(<span class="str">f"កំពុងបម្រើសេវាជូន: {customer}"</span>)
+        time.sleep(<span class="num">1</span>) <span class="com"># ចំណាយពេល ១ វិនាទី</span>
+
+serve_customers()</pre>
+            </div>
+            <div class="answer-box">
+                <label>ការអនុវត្តន៍៖</label> 
+                <div class="filled-answer">នេះជាគំរូនៃ Task Scheduling នៅក្នុងប្រព័ន្ធប្រតិបត្តិការ (OS) ដែលបម្រើអ្នកមកដល់មុនគេឱ្យរួចរាល់សិន (FCFS - First Come First Serve)។</div>
+            </div>
+        </div>
+
+        <div class="note-area">
+            <i class="fa-solid fa-pen"></i> កន្លែងសម្រាប់កត់ត្រាបន្ថែម (Notes / Scratchpad)...
+        </div>
+    </div>
+
+    <div class="global-footer">
+        <div class="footer-left"><img src="Lim.jpg" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'"><span>សាស្ត្រាចារ្យ៖ សឿង លីម (Soeurng LIM)</span></div>
+        <div class="footer-right">ទំព័រទី ៨ នៃ ១០</div>
+    </div>
+</div>
+
+<!-- PAGE 9 : Advanced Queue & AI -->
+<div class="a4-page">
+    <div class="global-header">
+        <div class="header-item"><img src="Logo.png" onerror="this.src='https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png'"><span>សាកលវិទ្យាល័យអង្គរ</span></div>
+        <div class="header-center">
+            <h1>សៀវភៅលំហាត់អនុវត្តន៍ - ជំពូកទី ៣</h1>
+            <p>ADVANCED DATA STRUCTURES AND ALGORITHMS</p>
+        </div>
+        <div class="header-item"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg"><span>Python Pro</span></div>
+    </div>
+
+    <div class="page-content">
+        <div class="case-title"><i class="fa-solid fa-brain"></i> ៧. ករណីសិក្សា៖ Queue កម្រិតខ្ពស់ និង AI Applications</div>
+        
+        <div class="exercise-block">
+            <p><span class="level-badge bg-high">ធ្ងន់ ១</span> ការបង្វិលទិន្នន័យក្នុងជួរ Queue (Rotate Queue)</p>
+            <div class="code-container">
+                <div class="code-header"><i class="fa-brands fa-python"></i> Copy & Run Code</div>
+<pre><span class="kw">from</span> collections <span class="kw">import</span> deque
+
+q = deque([<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>, <span class="num">4</span>, <span class="num">5</span>])
+
+<span class="com"># រុញធាតុ 2 គ្រាប់ខាងមុខ ទៅដាក់កន្ទុយក្រោយវិញ</span>
+q.rotate(-<span class="num">2</span>) 
+
+<span class="fn">print</span>(<span class="str">"បន្ទាប់ពី Rotate:"</span>, q)</pre>
+            </div>
+            <div class="answer-box">
+                <label>លទ្ធផល និងការពន្យល់ ៖</label> 
+                <div class="filled-answer">លទ្ធផលគឺ deque([3, 4, 5, 1, 2])។ អនុគមន៍ <code>rotate(-2)</code> បានរុញទិន្នន័យ ២ គ្រាប់ខាងមុខ (លេខ 1 និង 2) អោយទៅនៅចុងជួរខាងក្រោយវិញយ៉ាងងាយស្រួលដោយមិនបាច់សរសេរ Loop ដកដាក់ៗនោះទេ។</div>
+            </div>
+        </div>
+
+        <div class="exercise-block">
+            <p><span class="level-badge bg-mid">មធ្យម ២</span> ការប្រើប្រាស់ Queue ក្នុងក្បួន AI (BFS Concept)</p>
+            <div class="code-container">
+                <div class="code-header"><i class="fa-brands fa-python"></i> Copy & Run Code</div>
+<pre><span class="kw">from</span> collections <span class="kw">import</span> deque
+
+<span class="com"># ក្រាហ្វតំណាងទីក្រុងដែលភ្ជាប់គ្នា</span>
+graph = {<span class="str">'A'</span>: [<span class="str">'B'</span>, <span class="str">'C'</span>], <span class="str">'B'</span>: [<span class="str">'D'</span>], <span class="str">'C'</span>: [], <span class="str">'D'</span>: []}
+
+<span class="kw">def</span> <span class="fn">bfs</span>(start):
+    queue = deque([start])
+    <span class="kw">while</span> queue:
+        node = queue.popleft()
+        <span class="fn">print</span>(node, end=<span class="str">" "</span>)
+        <span class="kw">for</span> neighbor <span class="kw">in</span> graph[node]:
+            queue.append(neighbor)
+
+<span class="fn">print</span>(<span class="str">"លទ្ធផល BFS ស្វែងរកផ្លូវ:"</span>); bfs(<span class="str">'A'</span>)</pre>
+            </div>
+            <div class="answer-box">
+                <label>តួនាទី Queue ក្នុង AI ៖</label> 
+                <div class="filled-answer">ក្បួន Breadth-First Search (BFS) ប្រើ Queue ដើម្បីរុករកផ្លូវដែលជិតជាងគេមុនគេបង្អស់។ វាត្រូវបម្រើការរុករក Node ដែលចូលជួរមុនគេ ទើបអាចរកឃើញផ្លូវខ្លីបំផុត (Shortest Path ក្នុង Google Maps)។</div>
+            </div>
+        </div>
+
+        <div class="note-area">
+            <i class="fa-solid fa-pen"></i> កន្លែងសម្រាប់កត់ត្រាបន្ថែម (Notes / Scratchpad)...
+        </div>
+    </div>
+
+    <div class="global-footer">
+        <div class="footer-left"><img src="Lim.jpg" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'"><span>សាស្ត្រាចារ្យ៖ សឿង លីម (Soeurng LIM)</span></div>
+        <div class="footer-right">ទំព័រទី ៩ នៃ ១០</div>
+    </div>
+</div>
+
+<!-- PAGE 10 : Advanced Operation & Time Complexity Summary -->
+<div class="a4-page">
+    <div class="global-header">
+        <div class="header-item"><img src="Logo.png" onerror="this.src='https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png'"><span>សាកលវិទ្យាល័យអង្គរ</span></div>
+        <div class="header-center">
+            <h1>សៀវភៅលំហាត់អនុវត្តន៍ - ជំពូកទី ៣</h1>
+            <p>ADVANCED DATA STRUCTURES AND ALGORITHMS</p>
+        </div>
+        <div class="header-item"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg"><span>Python Pro</span></div>
+    </div>
+
+    <div class="page-content">
+        <div class="case-title"><i class="fa-solid fa-code-branch"></i> ៨. ករណីសិក្សា៖ ប្រតិបត្តិការចម្រុះ និង Time Complexity</div>
+        
+        <div class="exercise-block">
+            <p><span class="level-badge bg-high">ធ្ងន់ ១</span> បង្កើត Queue មួយ ដោយប្រើប្រាស់ Stacks ពីរ</p>
+            <div class="code-container">
+                <div class="code-header"><i class="fa-brands fa-python"></i> Copy & Run Code</div>
+<pre><span class="kw">class</span> <span class="fn">MyQueue</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="kw">self</span>):
+        <span class="kw">self</span>.s1 = []; <span class="kw">self</span>.s2 = []
+    <span class="kw">def</span> <span class="fn">enqueue</span>(<span class="kw">self</span>, x):
+        <span class="kw">self</span>.s1.append(x)
+    <span class="kw">def</span> <span class="fn">dequeue</span>(<span class="kw">self</span>):
+        <span class="kw">if not self</span>.s2:
+            <span class="kw">while self</span>.s1:
+                <span class="kw">self</span>.s2.append(<span class="kw">self</span>.s1.pop())
+        <span class="kw">return self</span>.s2.pop()
+
+q = MyQueue()
+q.enqueue(<span class="num">10</span>); q.enqueue(<span class="num">20</span>); q.enqueue(<span class="num">30</span>)
+<span class="fn">print</span>(<span class="str">"ទាញចេញមុនគេគឺ:"</span>, q.dequeue()) <span class="com"># លទ្ធផល: 10</span></pre>
+            </div>
+            <div class="answer-box">
+                <label>គំនិតនៅពីក្រោយកូដនេះ ៖</label> 
+                <div class="filled-answer">នេះជាលំហាត់សម្ភាសន៍ទូទៅ (Interview Question)។ យើងបំប្លែង LIFO ទៅជា FIFO ដោយចាក់ធាតុពី Stack ទី១ ចូលទៅក្នុង Stack ទី២ ធ្វើឱ្យទិន្នន័យនៅក្រោមគេ លោតមកនៅខាងលើគេបង្អស់វិញទើបយើង Pop ចេញ។</div>
+            </div>
+        </div>
+
+        <div class="exercise-block">
+            <p><span class="level-badge bg-low">ស្រាល ១</span> ការវិភាគល្បឿន Built-in Function (Sum / Max)</p>
+            <div class="code-container">
+                <div class="code-header"><i class="fa-brands fa-python"></i> Copy & Run Code</div>
+<pre>temperatures = [<span class="num">35</span>, <span class="num">38</span>, <span class="num">32</span>, <span class="num">40</span>, <span class="num">36</span>]
+
+hottest = <span class="fn">max</span>(temperatures)
+total = <span class="fn">sum</span>(temperatures)
+
+<span class="fn">print</span>(<span class="str">"ថ្ងៃក្តៅបំផុត:"</span>, hottest)
+<span class="fn">print</span>(<span class="str">"ផលបូកសរុប:"</span>, total)</pre>
+            </div>
+            <div class="answer-box">
+                <label>ការពន្យល់ពី Big-O ៖</label> 
+                <div class="filled-answer">ទោះបីយើងសរសេរកូដខ្លីត្រឹមតែ ១ បន្ទាត់ តែកុំព្យូទ័រនៅតែត្រូវធ្វើការ Loop កាត់ទិន្នន័យម្តងមួយៗតាំងពីដើមដល់ចប់ដដែល ដើម្បីស្វែងរកលេខធំបំផុត ឬបូកបញ្ចូលគ្នា។ ដូច្នេះល្បឿនរបស់វាគឺនៅតែ O(n)។</div>
+            </div>
+        </div>
+
+        <div class="note-area">
+            <i class="fa-solid fa-pen"></i> កន្លែងសម្រាប់កត់ត្រាបន្ថែម (Notes / Scratchpad)...
+        </div>
+    </div>
+
+    <div class="global-footer">
+        <div class="footer-left"><img src="Lim.jpg" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'"><span>សាស្ត្រាចារ្យ៖ សឿង លីម (Soeurng LIM)</span></div>
+        <div class="footer-right">ទំព័រទី ១០ នៃ ១០</div>
+    </div>
+</div>
+
+</body>
+</html>

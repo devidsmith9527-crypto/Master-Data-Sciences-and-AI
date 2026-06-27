@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="km">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chapter 2 - Object-Oriented Programming & Memory</title>
+    <link href="https://fonts.googleapis.com/css2?family=Battambang:wght@400;700&family=Suwannaphum:wght@400;700;900&family=Lato:wght@400;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        :root {
+            --bg-dark: #0F172A; --bg-card: #F8FAFC; --text-main: #0F172A; --text-muted: #475569;
+            --accent-blue: #0284C7; --accent-green: #059669; --accent-yellow: #D97706; --accent-red: #DC2626;
+            --header-footer-bg: #F0F9FF; --code-bg: #111827;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        /* អនុញ្ញាតឲ្យ Copy អក្សរបានធម្មតា */
+        body { background-color: var(--bg-dark); font-family: 'Battambang', sans-serif; overflow: hidden; height: 100vh; width: 100vw; display: flex; align-items: center; justify-content: center; -webkit-user-select: auto; user-select: auto; }
+        
+        .slide-deck { width: 98vw; height: 95vh; position: relative; background: #FFFFFF; border-radius: 1.5vw; overflow: hidden; box-shadow: 0 40px 100px rgba(0,0,0,0.5); display: flex; flex-direction: column; }
+        .slide-wrapper { flex-grow: 1; position: relative; overflow: hidden; }
+        .slide { display: none; width: 100%; height: 100%; padding: 2vh 4vw; flex-direction: column; justify-content: flex-start; animation: slideIn 0.4s ease-out; position: absolute; top: 0; left: 0; }
+        .slide.active { display: flex; }
+        @keyframes slideIn { from { opacity: 0; transform: translateX(50px); } to { opacity: 1; transform: translateX(0); } }
+
+        /* Navigation Zones */
+        .nav-zone { position: absolute; top: 0; bottom: 0; width: 8%; z-index: 50; cursor: pointer; display: flex; align-items: center; opacity: 0; transition: opacity 0.3s; }
+        .nav-zone:hover { opacity: 1; }
+        .nav-left { left: 0; justify-content: flex-start; padding-left: 1.5vw; background: linear-gradient(to right, rgba(0,0,0,0.05), transparent); }
+        .nav-right { right: 0; justify-content: flex-end; padding-right: 1.5vw; background: linear-gradient(to left, rgba(0,0,0,0.05), transparent); }
+        .nav-zone i { font-size: 3vw; color: var(--accent-blue); filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2)); }
+
+        /* Header Branding */
+        .global-header { display: flex; justify-content: space-between; align-items: center; margin: -2vh -4vw 1.5vh -4vw; padding: 1.2vh 4vw; border-bottom: 3px solid var(--accent-blue); background-color: var(--header-footer-bg); }
+        .header-item { display: flex; flex-direction: column; align-items: center; gap: 4px; width: 15vw; }
+        .header-item img { height: 4vw; object-fit: contain; }
+        .header-item span { font-size: 0.76vw; font-weight: bold; color: var(--accent-blue); text-align: center; }
+        .header-center h1 { font-family: 'Suwannaphum'; font-size: 1.4vw; color: var(--accent-blue); margin: 0; }
+        .header-center p { font-family: 'Lato'; font-size: 0.85vw; color: #64748B; margin: 0; font-weight: bold; text-align: center; }
+
+        /* Typography */
+        h1 { font-family: 'Suwannaphum'; font-size: 3.15vw; text-align: center; color: var(--text-main); font-weight: 900; line-height: 1.3; }
+        h2.slide-title { font-family: 'Suwannaphum'; font-size: 2.2vw; font-weight: 900; border-bottom: 0.3vw solid var(--accent-blue); padding-bottom: 0.5vh; margin-bottom: 1.5vh; color: var(--text-main); display: inline-block; }
+        .content-body { flex-grow: 1; display: flex; flex-direction: column; justify-content: flex-start; gap: 1vh; width: 100%; overflow-y: auto; padding-bottom: 2vh; }
+        p, li, td { font-size: 1.4vw; line-height: 1.7; color: var(--text-main); }
+        
+        .keyword-icon { color: var(--accent-blue); margin-right: 0.5vw; width: 1.5vw; text-align: center; display: inline-block; }
+        .tech-icon { color: var(--accent-blue); margin-right: 6px; font-size: 1.1em; vertical-align: baseline; }
+        b .tech-icon, strong .tech-icon, .card h4 .tech-icon, h2 .tech-icon { color: inherit; } 
+
+        /* Layouts & Cards */
+        .two-column { display: grid; grid-template-columns: 1fr 1fr; gap: 2.5vw; height: 100%; align-items: center; }
+        .two-column-equal { display: grid; grid-template-columns: 1fr 1fr; gap: 2vw; height: 100%; align-items: start; }
+        .card-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5vw; }
+        .card { background: var(--bg-card); padding: 1.5vh 2.5vw; border-radius: 1vw; border-left: 0.8vw solid var(--accent-blue); box-shadow: 0 4px 10px rgba(0,0,0,0.05); display: flex; flex-direction: column; justify-content: center; }
+        .card h4 { font-size: 1.5vw; color: var(--accent-blue); margin-bottom: 0.5vh; font-family: 'Suwannaphum'; display: flex; align-items: center; gap: 10px;}
+
+        /* Visual Frame */
+        .visual-frame { background: #FFFFFF; border-radius: 1vw; border: 1px solid #CBD5E1; display: flex; align-items: center; justify-content: center; height: 100%; min-height: 250px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.05); position: relative;}
+        .visual-frame img { width: 100%; height: 100%; object-fit: cover; }
+        .visual-frame svg { width: 100%; height: 100%; max-height: 35vh; object-fit: contain; padding: 2vw;}
+
+        /* Case Study Narrative Box */
+        .narrative-box { background: #F8FAFC; border-radius: 0.6vw; border: 1px solid #CBD5E1; padding: 1vh 1.5vw; margin-bottom: 1vh; box-shadow: 0 2px 6px rgba(0,0,0,0.05); }
+        .narrative-header { font-weight: bold; color: var(--accent-blue); font-size: 1.2vw; border-bottom: 1px solid #E2E8F0; padding-bottom: 0.5vh; margin-bottom: 0.8vh; font-family: 'Suwannaphum'; }
+        .narrative-text { font-size: 1.25vw; color: var(--text-main); line-height: 1.6; margin: 0; }
+        
+        .narrative-box.danger { background: #FEF2F2; border-color: #FECACA; }
+        .narrative-box.danger .narrative-header { color: var(--accent-red); border-color: #FCA5A5; }
+
+        /* Code Block Wrapper */
+        .code-wrapper { background: var(--code-bg); border-radius: 0.6vw; border: 1px solid #374151; overflow: hidden; width: 100%; box-shadow: 0 5px 15px rgba(0,0,0,0.1); margin-top: 1vh;}
+        .code-header { background: #1F2937; padding: 0.6vh 1.2vw; font-size: 0.9vw; font-family: 'Battambang', sans-serif; color: #9CA3AF; border-bottom: 1px solid #374151; display: flex; justify-content: space-between; }
+        .code-header span { font-weight: bold; color: #38BDF8; font-size: 1vw; }
+        .code-content { padding: 1vh 1.5vw; overflow-x: auto; }
+        .code-content pre { font-family: 'Fira Code', monospace; font-size: 1.1vw; line-height: 1.5; color: #f8f8f2; margin: 0; }
+        .kw { color: #ff79c6; font-weight: bold; } .fn { color: #50fa7b; } .str { color: #f1fa8c; } .com { color: #6272a4; font-style: italic; } .num { color: #bd93f9; } .cls { color: #8be9fd; font-style: italic; }
+
+        /* Highlight Note */
+        .highlight-note { background-color: #FEF9C3; border-left: 4px solid var(--accent-yellow); padding: 1.5vh 1.5vw; border-radius: 0.5vw; margin-top: 1vh; font-weight: bold; color: #854D0E; font-size: 1.25vw; display: block; border: 1px dashed var(--accent-yellow); box-shadow: 0 2px 5px rgba(217,119,6,0.1); line-height: 1.7;}
+
+        /* Main Footer */
+        .global-footer { display: flex; justify-content: space-between; align-items: center; width: 100%; padding: 1vh 4vw; border-top: 3px solid var(--accent-blue); background-color: var(--header-footer-bg); z-index: 10; }
+        .footer-left { display: flex; align-items: center; gap: 1.5vw; }
+        .footer-left img { border-radius: 50%; border: 2px solid var(--accent-blue); width: 3vw; height: 3vw; object-fit: cover; }
+        .footer-left span { font-size: 1.2vw; font-weight: bold; color: var(--text-main); font-family: 'Suwannaphum'; }
+        .slide-counter { font-size: 1.1vw; color: var(--accent-blue); font-family: 'Suwannaphum'; font-weight: 900; background: #FFFFFF; padding: 0.5vh 1.5vw; border-radius: 5vw; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        
+        .print-only-footer { display: none; }
+
+        /* PRINT STYLES */
+        @media print {
+            @page { size: A4 landscape; margin: 0; }
+            html, body { display: block !important; width: 100% !important; height: auto !important; background: white !important; overflow: visible !important; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; margin: 0 !important; padding: 0 !important; }
+            .slide-deck { display: block !important; width: 100% !important; height: auto !important; box-shadow: none !important; border: none !important; border-radius: 0 !important; }
+            .slide-wrapper { display: block !important; overflow: visible !important; }
+            .slide { display: flex !important; flex-direction: column !important; width: 297mm !important; height: 209mm !important; page-break-after: always !important; page-break-inside: avoid !important; position: relative !important; opacity: 1 !important; transform: none !important; animation: none !important; padding: 10mm 15mm !important; box-sizing: border-box !important; }
+            .nav-zone { display: none !important; }
+            .global-header { margin: -10mm -15mm 5mm -15mm !important; padding: 5mm 15mm !important; border-bottom: 2px solid var(--accent-blue) !important;}
+            .global-footer#mainFooter { display: none !important; }
+            .print-only-footer { display: flex !important; margin: auto -15mm -10mm -15mm !important; padding: 5mm 15mm !important; border-top: 2px solid var(--accent-blue) !important; background: var(--header-footer-bg) !important; width: 297mm !important; box-sizing: border-box !important; }
+            .card { box-shadow: 0 2px 5px rgba(0,0,0,0.05) !important; border: 1px solid #E2E8F0 !important; border-left-width: 0.8vw !important; page-break-inside: avoid !important;}
+            .visual-frame img { object-fit: contain !important; background: #fff !important; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="slide-deck" id="deck">
+
+    <!-- Navigation Overlays -->
+    <div class="nav-zone nav-left" title="ថយក្រោយ (Previous)">
+        <i class="fa-solid fa-chevron-left"></i>
+    </div>
+    <div class="nav-zone nav-right" title="ទៅមុខ (Next)">
+        <i class="fa-solid fa-chevron-right"></i>
+    </div>
+
+    <!-- Header Template applied dynamically to slides -->
+    <template id="headerTemplate">
+        <div class="global-header">
+            <div class="header-item">
+                <img src="Logo.png" onerror="this.src='https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png'">
+                <span>សាកលវិទ្យាល័យអង្គរ</span>
+            </div>
+            <div class="header-center" style="text-align: center;">
+                <h1 style="font-size: 1.4vw;">រចនាសម្ព័ន្ធទិន្នន័យកម្រិតខ្ពស់ និងក្បួនដោះស្រាយ (Advanced Data Structures and Algorithms - DSA)</h1>
+                <p>អនុបណ្ឌិតវិទ្យាសាស្ត្រទិន្នន័យ និងបញ្ញាសិប្បនិម្មិត (Master of Data Science & Artificial Intelligence)</p>
+            </div>
+            <div class="header-item">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg">
+                <span>Python Pro</span>
+            </div>
+        </div>
+    </template>
+
+    <div class="slide-wrapper" id="slideWrapper">
+        
+        <!-- Cover Slide -->
+        <div class="slide active">
+            <div style="text-align: center; margin: auto; width: 100%;">
+                <div style="display: flex; align-items: center; justify-content: center; gap: 3vw; margin-bottom: 2vh;">
+                    <img src="Logo.png" style="height: 12vw;" alt="AU Logo" onerror="this.src='https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png'">
+                    <div style="text-align: center;">
+                        <h2 style="font-family: 'Suwannaphum'; color: var(--accent-blue); font-size: 3.6vw; margin: 0;">សាកលវិទ្យាល័យអង្គរ</h2>
+                        <p style="font-family: 'Lato'; color: var(--text-muted); font-size: 1.8vw; margin: 0; font-weight: bold;">ANGKOR UNIVERSITY</p>
+                    </div>
+                </div>
+                
+                <div style="margin-bottom: 2vh;">
+                    <h3 style="font-family: 'Suwannaphum'; font-size: 1.7vw; color: var(--accent-green);"><i class="fa-solid fa-graduation-cap"></i> អនុបណ្ឌិតវិទ្យាសាស្ត្រទិន្នន័យ និងបញ្ញាសិប្បនិម្មិត (Master of Data Science and AI)</h3>
+                </div>
+
+                <div style="background: var(--accent-blue); color: white; padding: 1vh 5vw; border-radius: 5vw; display: inline-block; font-size: 2.2vw; font-weight: bold; margin-bottom: 3vh;">ជំពូកទី២ | Chapter 2</div>
+                
+                <h1 style="line-height: 1.5;">ការសរសេរកម្មវិធីតម្រង់ទិសវត្ថុ និង ការគ្រប់គ្រងអង្គចងចាំ<br>
+                <span style="color:var(--accent-blue); font-size: 2.2vw; font-family:'Lato'">(Object-Oriented Programming & <i class='fa-solid fa-memory tech-icon'></i>Memory Management)</span></h1>
+                
+                <div style="margin-top: 3vh; display: flex; gap: 5vw; justify-content: center; align-items: center;">
+                    <div style="text-align: center;">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg" style="height: 6vw;">
+                        <p style="font-size: 1.1vw; font-weight: bold; color: var(--accent-blue);">Python OOP</p>
+                    </div>
+                    <div style="text-align: center;">
+                        <i class="fa-solid fa-microchip" style="font-size: 6vw; color: #059669;"></i>
+                        <p style="font-size: 1.1vw; font-weight: bold; color: var(--accent-green);">Memory Allocation</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Instructor Slide -->
+        <div class="slide">
+            <div id="h-placeholder-1"></div>
+            <h2 class="slide-title"><i class="fa-solid fa-user-tie"></i> ព័ត៌មានសាស្ត្រាចារ្យ និងមុខវិជ្ជា</h2>
+            <div class="content-body two-column">
+                <div style="position: relative; width: 20vw; height: 28vw; margin: auto;">
+                    <div style="position: absolute; top: 1.5vw; left: -1.5vw; width: 100%; height: 100%; background: rgba(2, 132, 199, 0.1); border-radius: 2vw; z-index: 0;"></div>
+                    <img src="Lim.jpg" style="position: relative; width: 100%; height: 100%; border-radius: 2vw; object-fit: cover; box-shadow: 0 15px 35px rgba(0,0,0,0.15); z-index: 1; border: 4px solid white;" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'">
+                </div>
+                <div style="padding-left: 2vw;">
+                    <h3 style="font-size: 2.8vw; color: var(--accent-blue); font-family: 'Suwannaphum'; margin-bottom: 2vh;">សាស្ត្រាចារ្យ៖ សឿង លីម <span style="font-size: 1.8vw; color: var(--text-muted);">(Soeurng LIM)</span></h3>
+                    <div class="card" style="border-left: none; border-top: 4px solid var(--accent-blue); padding: 3vh; background: #FFFFFF;">
+                        <p><b><i class="fa-solid fa-graduation-cap text-blue"></i> គុណវុឌ្ឍិ៖</b> បរិញ្ញាបត្រជាន់ខ្ពស់ (Master's Degree) - ព័ត៌មានវិទ្យា</p>
+                        <p><b><i class="fa-solid fa-phone text-blue"></i> ទូរស័ព្ទ៖</b> ០៦១ ២២៧ ៩៣៣</p>
+                        <p><b><i class="fa-solid fa-envelope text-blue"></i> អ៊ីម៉ែល៖</b> soeurnglim@gmail.com</p>
+                        <hr style="margin: 2vh 0; border: 1px solid #E2E8F0;">
+                        <p><b><i class="fa-solid fa-star text-blue"></i> ក្រេឌីត៖</b> ៣ ក្រេឌីត (3 Credits)</p>
+                        <p><b><i class="fa-solid fa-clipboard-check text-blue"></i> មុខវិជ្ជាមុន (Prerequisite)៖</b> ការសរសេរកម្មវិធី Python មូលដ្ឋាន</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Main Footer for Screen View -->
+    <div class="global-footer" id="mainFooter">
+        <div class="footer-left">
+            <img src="Lim.jpg" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'" alt="Professor">
+            <span>សាស្ត្រាចារ្យ៖ សឿង លីម (Soeurng LIM)</span>
+        </div>
+        <div class="slide-counter" id="screenSlideCounter">កំពុងរៀបចំ...</div>
+    </div>
+
+</div>
+
+<script>
+    const slideWrapper = document.getElementById('slideWrapper');
+    const headerHTML = document.getElementById('headerTemplate').innerHTML;
+    const khNums = ["០", "១", "២", "៣", "៤", "៥", "៦", "៧", "៨", "៩"];
+    function toKh(n) { return n.toString().split('').map(d => khNums[parseInt(d)]).join(''); }
+
+    // Memory SVG
+    const memorySVG = `
+        <svg viewBox="0 0 600 300" xmlns="http://www.w3.org/2000/svg" style="width:100%; height:100%;">
+            <defs>
+                <marker id="arrow-green" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                    <path d="M 0 0 L 10 5 L 0 10 z" fill="#059669" />
+                </marker>
+            </defs>
+            <!-- Stack -->
+            <rect x="30" y="40" width="180" height="220" rx="8" fill="#F8FAFC" stroke="#475569" stroke-width="3"/>
+            <text x="120" y="70" font-family="'Suwannaphum', sans-serif" font-size="20" font-weight="bold" fill="#0F172A" text-anchor="middle">Stack (References)</text>
+            <rect x="60" y="100" width="120" height="40" rx="4" fill="#E2E8F0"/>
+            <text x="120" y="125" font-family="'Fira Code', monospace" font-size="16" font-weight="bold" fill="#0F172A" text-anchor="middle">list_A</text>
+            <rect x="60" y="180" width="120" height="40" rx="4" fill="#E2E8F0"/>
+            <text x="120" y="205" font-family="'Fira Code', monospace" font-size="16" font-weight="bold" fill="#0F172A" text-anchor="middle">list_B</text>
+
+            <!-- Heap -->
+            <rect x="350" y="40" width="220" height="220" rx="8" fill="#F0FDF4" stroke="#059669" stroke-width="3"/>
+            <text x="460" y="70" font-family="'Suwannaphum', sans-serif" font-size="20" font-weight="bold" fill="#059669" text-anchor="middle">Heap (Actual Objects)</text>
+            <rect x="380" y="120" width="160" height="60" rx="6" fill="#D1FAE5" stroke="#059669" stroke-width="2"/>
+            <text x="460" y="145" font-family="'Fira Code', monospace" font-size="14" fill="#064E3B" text-anchor="middle">Object ID: x10F</text>
+            <text x="460" y="165" font-family="'Fira Code', monospace" font-size="18" font-weight="bold" fill="#065F46" text-anchor="middle">[10, 20, 30]</text>
+
+            <!-- Pointers -->
+            <path d="M 180 120 C 250 120, 300 140, 370 140" fill="none" stroke="#059669" stroke-width="3" marker-end="url(#arrow-green)"/>
+            <path d="M 180 200 C 250 200, 300 160, 370 160" fill="none" stroke="#059669" stroke-width="3" marker-end="url(#arrow-green)"/>
+            
+            <text x="270" y="110" font-family="'Fira Code', monospace" font-size="12" fill="#64748B" text-anchor="middle">ចង្អុលទៅ (Points to)</text>
+            <text x="270" y="210" font-family="'Fira Code', monospace" font-size="12" fill="#64748B" text-anchor="middle">list_B = list_A</text>
+        </svg>
+    `;
+
+    const chapter2Data = [
+        // 1. Syllabus Recap
+        { t: "១. គម្រោងបង្រៀនប្រចាំឆមាស (Course Syllabus)", type: "grid", c: [
+            { h: "<i class='fa-solid fa-list-ol keyword-icon'></i> ពាក់កណ្តាលឆមាសទី ១", p: `
+                <ul style='list-style:none; line-height: 2.2; margin-left: 0; padding-left: 0;'>
+                    <li style='font-size: 1.35vw;'><i class='fa-solid fa-check text-main' style='margin-right: 8px;'></i> ជំពូក១: រំលឹកពី <b>Advanced Data Structures and Algorithms (DSA)</b></li>
+                    <li style='color: var(--accent-red); font-size: 1.35vw; font-weight: bold;'><i class='fa-solid fa-arrow-right text-red' style='margin-right: 8px;'></i> ជំពូក២: ការសរសេរកម្មវិធីតម្រង់ទិសវត្ថុ (OOP) & Memory (ថ្ងៃនេះ)</li>
+                    <li style='font-size: 1.35vw;'><i class='fa-regular fa-circle text-main' style='margin-right: 8px;'></i> ជំពូក៣: <b>Linear Data Structures</b> (Arrays, Stacks, Queues)</li>
+                    <li style='font-size: 1.35vw;'><i class='fa-regular fa-circle text-main' style='margin-right: 8px;'></i> ជំពូក៤: <b>Linked Lists</b> (Singly, Doubly)</li>
+                </ul>` 
+            },
+            { h: "<i class='fa-solid fa-network-wired keyword-icon'></i> ពាក់កណ្តាលឆមាសទី ២", p: `
+                <ul style='list-style:none; line-height: 2.2; margin-left: 0; padding-left: 0;'>
+                    <li style='font-size: 1.35vw;'><i class='fa-regular fa-circle text-main' style='margin-right: 8px;'></i> ជំពូក៥: <b>Trees</b> & Binary Search Trees</li>
+                    <li style='font-size: 1.35vw;'><i class='fa-regular fa-circle text-main' style='margin-right: 8px;'></i> ជំពូក៦: <b>Graphs</b> & Hashing Tables</li>
+                    <li style='font-size: 1.35vw;'><i class='fa-regular fa-circle text-main' style='margin-right: 8px;'></i> ជំពូក៧: Sorting & Searching Algorithms</li>
+                    <li style='font-size: 1.35vw;'><i class='fa-regular fa-circle text-main' style='margin-right: 8px;'></i> ជំពូក៨: Dynamic Programming & <b>Artificial Intelligence (AI)</b></li>
+                </ul>` 
+            }
+        ]},
+
+        // 2. Objectives
+        { t: "២. វត្ថុបំណងនៃជំពូកទី ២ (Chapter Objectives)", type: "grid", c: [
+            { h: "<i class='fa-solid fa-cubes keyword-icon'></i> ស្វែងយល់ពីគោលការណ៍ OOP", p: "យល់ច្បាស់ពីទំនាក់ទំនងរវាង <b><i class='fa-solid fa-cube tech-icon'></i>Class</b> (គំរូ) និង <b><i class='fa-solid fa-cubes tech-icon'></i>Object</b> (វត្ថុ) ព្រមទាំងសសរទ្រូងទាំង ៤ របស់វា។" },
+            { h: "<i class='fa-brands fa-python keyword-icon'></i> អនុវត្តកូដរៀបចំ DSA", p: "ចេះបង្កើត <b><i class='fa-solid fa-cube tech-icon'></i>Class</b> សាមញ្ញ (ដូចជា <code>Node</code>) ដែលជាគ្រឹះមិនអាចខ្វះបានសម្រាប់បង្កើត Linked Lists និង Trees ក្នុង Python។" },
+            { h: "<i class='fa-solid fa-memory keyword-icon'></i> ការគ្រប់គ្រង Memory", p: "យល់ពីយន្តការរក្សាទុកទិន្នន័យ (<b><i class='fa-solid fa-layer-group tech-icon'></i>Stack</b> ធៀបនឹង <b><i class='fa-solid fa-database tech-icon'></i>Heap</b>) និងរបៀបដែល Variables ចង្អុលទៅកាន់ Objects។" },
+            { h: "<i class='fa-solid fa-trash-can keyword-icon'></i> ប្រព័ន្ធសម្អាតស្វ័យប្រវត្តិ", p: "ដឹងពីរបៀបដែល Python ធ្វើ <b>Garbage Collection</b> ដើម្បីទាញយក Memory មកវិញនៅពេលលែងមានការប្រើប្រាស់។" }
+        ]},
+
+        // 3. ToC
+        { t: "៣. មាតិកានៃជំពូក (Table of Contents)", type: "card", c: `
+            <ul style="list-style: none; padding-left: 2vw; line-height: 2.1;">
+                <li><i class="fa-solid fa-boxes-stacked text-blue" style="width:2vw;"></i> ៤ ដល់ ៥. សេចក្តីផ្តើមអំពី <b>Object-Oriented Programming (OOP)</b></li>
+                <li><i class="fa-solid fa-cubes text-blue" style="width:2vw;"></i> ៦ ដល់ ៩. សសរទ្រូងទាំង ៤ នៃ OOP <b>(Encapsulation, Inheritance, Polymorphism, Abstraction)</b></li>
+                <li><i class="fa-solid fa-memory text-blue" style="width:2vw;"></i> ១០ ដល់ ១១. ការគ្រប់គ្រងអង្គចងចាំ និងករណីសិក្សា <b>(Memory Management: <i class='fa-solid fa-layer-group tech-icon'></i>Stack vs <i class='fa-solid fa-database tech-icon'></i>Heap)</b></li>
+                <li><i class="fa-solid fa-clone text-blue" style="width:2vw;"></i> ១២ ដល់ ១៣. ការចម្លងទិន្នន័យ និងករណីសិក្សា <b>(Shallow Copy vs Deep Copy)</b></li>
+                <li><i class="fa-solid fa-book-open-reader text-blue" style="width:2vw;"></i> ១៤ ដល់ ១៦. សទ្ទានុក្រម (Key Terms) និងសង្ខេបមេរៀន</li>
+                <li><i class="fa-solid fa-book-bookmark text-blue" style="width:2vw;"></i> ១៧. ឯកសារយោង និងគន្ថនិទ្ទេស (References)</li>
+            </ul>
+        `},
+        
+        // 4. OOP Intro
+        { t: "៤. សេចក្តីផ្តើមអំពី <b><i class='fa-solid fa-boxes-stacked tech-icon'></i>OOP</b>", type: "split", img: "https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&w=800&q=80", c: `
+            <div style="display:flex; flex-direction:column; height:100%; justify-content:center;">
+                <p><b><i class='fa-solid fa-boxes-stacked keyword-icon'></i> Object-Oriented Programming (OOP):</b> គឺជាក្បួនសរសេរកម្មវិធី ដោយបែងចែកកូដជាចំណាត់ថ្នាក់ក្រុម (<b><i class='fa-solid fa-cube tech-icon'></i>Class</b>) ដើម្បីបង្កើតជាវត្ថុ (<b><i class='fa-solid fa-cubes tech-icon'></i>Objects</b>) ដែលមានទិន្នន័យ (Properties) និងមុខងារ (Methods) ច្បាស់លាស់។</p>
+                <div class="narrative-box">
+                    <div class="narrative-header"><i class="fa-solid fa-book-open"></i> ករណីសិក្សា៖ ប្លង់ផ្ទះ និងផ្ទះពិតប្រាកដ</div>
+                    <p class="narrative-text"><b><i class='fa-solid fa-cube tech-icon'></i>Class</b> គឺដូចជាប្លង់ផ្ទះ (Blueprint) ដែលត្រឹមជាគំនូរមិនទាន់អាចចូលនៅបានទេ។ ពេលយើងយកប្លង់នោះទៅសាងសង់ចេញជាផ្ទះជាក់ស្តែង នោះទើបហៅថា <b><i class='fa-solid fa-cubes tech-icon'></i>Object</b> (ឬ Instance) ដែលមានរូបរាងអាចរស់នៅបាន។</p>
+                </div>
+                <p style="margin-top:1vh;">នៅក្នុងមុខវិជ្ជា DSA យើងតែងតែបង្កើត <b><i class='fa-solid fa-cube tech-icon'></i>Class</b> ឈ្មោះថា <code>Node</code> ដើម្បីធ្វើជាប្លង់សម្រាប់ផ្ទុកទិន្នន័យ។</p>
+            </div>
+        `},
+
+        // 5. OOP Code (Node)
+        { t: "៥. ការអនុវត្តកូដ <b><i class='fa-solid fa-cube tech-icon'></i>Class</b> សម្រាប់បង្កើតរចនាសម្ព័ន្ធទិន្នន័យ", type: "card", c: `
+            <div class="two-column-equal">
+                <div>
+                    <div class="narrative-box">
+                        <div class="narrative-header"><i class="fa-solid fa-network-wired"></i> ហេតុអ្វីត្រូវការ Class Node?</div>
+                        <p class="narrative-text">ដើម្បីរៀបចំទិន្នន័យភ្ជាប់គ្នាជាបណ្តាញ (ឧ. Linked List) យើងត្រូវការប្រអប់ផ្ទុកមួយ (Node) ដែលមានតួនាទី ២ យ៉ាងគឺ៖ <br>១. <b><i class='fa-solid fa-tag tech-icon'></i>Data:</b> ផ្ទុកតម្លៃទិន្នន័យ<br>២. <b><i class='fa-solid fa-arrow-pointer tech-icon'></i>Next:</b> ចង្អុលទៅកាន់ប្រអប់បន្ទាប់</p>
+                    </div>
+                </div>
+                <div>
+                    <div class="code-wrapper">
+                        <div class="code-header"><span><i class="fa-brands fa-python"></i> កូដអនុវត្តទី ១៖ ការបង្កើត Class ក្នុង Python</span></div>
+                        <div class="code-content"><pre>
+<span class="kw">class</span> <span class="cls">Node</span>:
+    <span class="com"># Constructor (អនុគមន៍បង្កើតវត្ថុ)</span>
+    <span class="kw">def</span> __init__(<span class="kw">self</span>, value):
+        <span class="kw">self</span>.data = value
+        <span class="kw">self</span>.next = <span class="kw">None</span>
+
+<span class="com"># បង្កើត Objects (Instances) ចេញពី Class</span>
+node1 = Node(<span class="num">10</span>)
+node2 = Node(<span class="num">20</span>)
+
+<span class="com"># ភ្ជាប់ Object ទី១ ទៅកាន់ Object ទី២</span>
+node1.next = node2</pre></div>
+                    </div>
+                </div>
+            </div>
+            <div class="highlight-note"><i class="fa-brands fa-python" style="font-size: 1.5vw; vertical-align: middle;"></i> ប្រអប់នេះគ្រាន់តែជាគំរូ។ សូមអនុវត្តកូដជាក់ស្តែងនៅក្នុងសៀវភៅលំហាត់ (Workbook) ជំពូកទី ២។</div>
+        `},
+
+        // 6. Pillar 1: Encapsulation
+        { t: "៦. សសរទ្រូងទី១ នៃ OOP៖ <b><i class='fa-solid fa-box-archive tech-icon'></i> Encapsulation</b>", type: "split", img: "https://images.unsplash.com/photo-1555949963-ff9fe0c870eb?auto=format&fit=crop&w=800&q=80", c: `
+            <div style="display:flex; flex-direction:column; justify-content:center; height:100%;">
+                <p><b>(ការវិចខ្ចប់):</b> ការលាក់បាំងទិន្នន័យ (<b><i class='fa-solid fa-tag tech-icon'></i>Private Variables</b>) និងមុខងារនៅក្នុង Class មិនឱ្យខាងក្រៅចូលកែប្រែដោយផ្ទាល់បាន ក្រៅពីការប្រើប្រាស់តាម <b><i class='fa-solid fa-gear tech-icon'></i>Methods</b> ដែលបានអនុញ្ញាត។</p>
+                <div class="narrative-box">
+                    <div class="narrative-header"><i class="fa-solid fa-lock"></i> គោលការណ៍សុវត្ថិភាព</div>
+                    <p class="narrative-text">ប្រៀបដូចជាទូដែក (Safe Box) ដែលមានតែម្ចាស់កូដសម្ងាត់ (Methods) ប៉ុណ្ណោះទើបអាចដកឬដាក់លុយបាន។ ក្នុង Python យើងប្រើសញ្ញា <code>__</code> (Double Underscore) ពីមុខឈ្មោះអញ្ញាត ដើម្បីធ្វើវាជា Private មិនឱ្យគេលួចចូលកែ។</p>
+                </div>
+                <div class="highlight-note"><i class="fa-solid fa-laptop-code"></i> លំហាត់៖ បង្កើត Class <code>BankAccount</code> ដែលមាន <code>__balance</code> និងប្រើទម្រង់ <code>deposit()</code> នៅក្នុងកូដរបស់អ្នក។</div>
+            </div>
+        `},
+
+        // 7. Pillar 2: Inheritance
+        { t: "៧. សសរទ្រូងទី២ នៃ OOP៖ <b><i class='fa-solid fa-diagram-project tech-icon'></i> Inheritance</b>", type: "split", img: "https://images.unsplash.com/photo-1548247416-ec66f4900b2e?auto=format&fit=crop&w=800&q=80", c: `
+            <div style="display:flex; flex-direction:column; justify-content:center; height:100%;">
+                <p><b>(ការទទួលមរតក):</b> ការបង្កើត Class ថ្មីដោយយកលក្ខណៈសម្បត្តិពី Class ចាស់មកប្រើបន្ត (Reuse Code) ដោយមិនបាច់សរសេរឡើងវិញ (ឧទាហរណ៍ <code>class Dog(Animal):</code>)។</p>
+                <div class="narrative-box">
+                    <div class="narrative-header"><i class="fa-solid fa-paw"></i> ករណីសិក្សា៖ សត្វ (Animal)</div>
+                    <p class="narrative-text">សត្វឆ្កែ និងឆ្មា សុទ្ធតែទទួលបានមរតកពី Class "Animal"។ ពួកវាមាន Method ទូទៅដូចជា <code>eat()</code> ឬ <code>sleep()</code> ដូចគ្នា ដែលយើងមិនចាំបាច់សរសេរវាម្តងទៀតសម្រាប់សត្វនីមួយៗនោះទេ។</p>
+                </div>
+                <div class="highlight-note"><i class="fa-solid fa-laptop-code"></i> លំហាត់៖ បង្កើត Class <code>Animal</code> ជាមេ រួចបង្កើត <code>Dog</code> និង <code>Cat</code> ដើម្បីទទួលមរតកបន្ត។</div>
+            </div>
+        `},
+
+        // 8. Pillar 3: Polymorphism
+        { t: "៨. សសរទ្រូងទី៣ នៃ OOP៖ <b><i class='fa-solid fa-shapes tech-icon'></i> Polymorphism</b>", type: "split", img: "https://images.unsplash.com/photo-1589332308967-df4dd2f0c7cc?auto=format&fit=crop&w=800&q=80", c: `
+            <div style="display:flex; flex-direction:column; justify-content:center; height:100%;">
+                <p><b>(ពហុរូបរាង):</b> សមត្ថភាពដែល <b><i class='fa-solid fa-cubes tech-icon'></i>Objects</b> ផ្សេងៗគ្នា អាចឆ្លើយតបទៅនឹងឈ្មោះ Method តែមួយ ក្នុងទម្រង់ប្រតិបត្តិការខុសៗគ្នាទៅតាមប្រភេទរបស់វា។</p>
+                <div class="narrative-box">
+                    <div class="narrative-header"><i class="fa-solid fa-microphone"></i> ករណីសិក្សា៖ ការបញ្ចេញសំឡេង</div>
+                    <p class="narrative-text">ពេលយើងហៅបញ្ជា <code>speak()</code> ទៅកាន់សត្វឆ្កែ វានឹងព្រុស (Woof!) តែបើហៅទៅកាន់សត្វឆ្មា វានឹងស្រែក (Meow!) ទោះបីជាឈ្មោះបញ្ជាដូចគ្នាក៏ដោយ ក៏លទ្ធផលចេញមកខុសគ្នាដែរ។</p>
+                </div>
+                <div class="highlight-note"><i class="fa-solid fa-laptop-code"></i> លំហាត់៖ សរសេរ Method <code>speak()</code> ក្នុង Class ខុសគ្នា ហើយប្រើ <code>For Loop</code> ដើម្បីហៅវា។</div>
+            </div>
+        `},
+
+        // 9. Pillar 4: Abstraction
+        { t: "៩. សសរទ្រូងទី៤ នៃ OOP៖ <b><i class='fa-solid fa-eye-slash tech-icon'></i> Abstraction</b>", type: "split", img: "https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?auto=format&fit=crop&w=800&q=80", c: `
+            <div style="display:flex; flex-direction:column; justify-content:center; height:100%;">
+                <p><b>(អរូបីកម្ម):</b> ការលាក់បាំងភាពស្មុគស្មាញនៃកូដខាងក្នុង ដោយបង្ហាញតែមុខងារចាំបាច់ (Interface) ឱ្យអ្នកប្រើប្រាស់ហៅប្រើប៉ុណ្ណោះ។</p>
+                <div class="narrative-box">
+                    <div class="narrative-header"><i class="fa-solid fa-car"></i> ករណីសិក្សា៖ ការបើកបររថយន្ត</div>
+                    <p class="narrative-text">អ្នកបើកបរគ្រាន់តែចេះបញ្ជាចង្កូត និងជាន់ហ្គែរដើម្បីឱ្យឡានរត់ (Interface) ដោយមិនចាំបាច់ដឹងពីក្បួនមេកានិច ឬរបៀបម៉ាស៊ីនចំហេះក្នុងធ្វើការនោះទេ (Complexity Hiding)។</p>
+                </div>
+                <div class="highlight-note"><i class="fa-solid fa-laptop-code"></i> លំហាត់៖ ប្រើប្រាស់ Module <code>abc</code> ក្នុង Python ដើម្បីបង្កើត Abstract Class <code>Shape</code>។</div>
+            </div>
+        `},
+
+        // 10. Memory Management (Concept)
+        { t: "១០. ការគ្រប់គ្រងអង្គចងចាំ <b>(<i class='fa-solid fa-layer-group tech-icon'></i>Stack vs <i class='fa-solid fa-database tech-icon'></i>Heap)</b>", type: "split", svg: memorySVG, c: `
+            <div style="display:flex; flex-direction:column; height:100%; justify-content:center;">
+                <p><b><i class='fa-solid fa-memory keyword-icon'></i> Memory Management ក្នុង Python:</b></p>
+                <div class="narrative-box">
+                    <div class="narrative-header"><i class="fa-solid fa-diagram-project"></i> Variables គឺជាអ្នកចង្អុល (References)</div>
+                    <p class="narrative-text">ក្នុង Python អញ្ញាត (<b><i class='fa-solid fa-tag tech-icon'></i>Variables</b>) មិនផ្ទុកទិន្នន័យដោយផ្ទាល់ទេ។ វាគ្រាន់តែជាឈ្មោះដែលរក្សាទុកក្នុង <b><i class='fa-solid fa-layer-group tech-icon'></i>Stack</b> ហើយចង្អុល (<b><i class='fa-solid fa-arrow-pointer tech-icon'></i>Reference</b>) ទៅកាន់ Object ពិតប្រាកដដែលរក្សាទុកក្នុងទំហំធំ <b><i class='fa-solid fa-database tech-icon'></i>Heap Memory</b> ប៉ុណ្ណោះ។</p>
+                </div>
+                <div class="narrative-box danger" style="margin-top: 1vh;">
+                    <div class="narrative-header"><i class="fa-solid fa-trash-can"></i> Garbage Collection (ការសម្អាតស្វ័យប្រវត្តិ)</div>
+                    <p class="narrative-text">នៅពេលដែល Object មួយក្នុង Heap លែងមាន Variable ណាមួយចង្អុលទៅវា (Reference Count = 0) នោះប្រព័ន្ធនឹងលុបវាចោលពី Memory ដោយស្វ័យប្រវត្តិ។</p>
+                </div>
+            </div>
+        `},
+
+        // 11. Memory Management (Case Study)
+        { t: "១១. ករណីសិក្សា និងលំហាត់៖ <b>Memory Management</b>", type: "card", c: `
+            <div class="two-column-equal">
+                <div>
+                    <div class="narrative-box">
+                        <div class="narrative-header"><i class="fa-solid fa-code-compare"></i> ករណីសិក្សា៖ ការបញ្ជូនទិន្នន័យចូល Function</div>
+                        <p class="narrative-text">នៅពេលអ្នកបញ្ជូន List មួយទៅកាន់ Function (ឧទាហរណ៍ <code>def modify_list(arr):</code>) ក្នុង Python វាបញ្ជូនតែ <b>Reference</b> ប៉ុណ្ណោះ។ បើអ្នកកែប្រែ <code>arr</code> ក្នុង Function វានឹងធ្វើឱ្យ List ដើមនៅខាងក្រៅផ្លាស់ប្តូរដែរ ព្រោះវាចង្អុលទៅកាន់ Object តែមួយក្នុង Heap។</p>
+                    </div>
+                </div>
+                <div>
+                    <div class="highlight-note">
+                        <p style="margin-bottom: 1vh;"><i class="fa-solid fa-laptop-code"></i> <b>លំហាត់អនុវត្តន៍៖</b></p>
+                        <ul style="margin-left: 2vw; font-size: 1.15vw; color: var(--text-main); font-weight: normal;">
+                            <li>សរសេរកូដបង្កើត <code>List</code> មួយ រួចបញ្ជូនវាទៅ Function ដើម្បីបន្ថែមទិន្នន័យថ្មី។</li>
+                            <li>ពិនិត្យមើលលទ្ធផលដើមនៅក្រៅ Function ដើម្បីបញ្ជាក់ថា Reference ពិតជាចង្អុលទីតាំងតែមួយមែន។</li>
+                        </ul>
+                        <p style="margin-top: 1vh; font-size: 1.1vw; color: var(--text-muted); font-weight: normal;">(មានកូដគំរូក្នុង Workbook ជំពូកទី២)</p>
+                    </div>
+                </div>
+            </div>
+        `},
+
+        // 12. Shallow vs Deep Copy (Concept)
+        { t: "១២. ការចម្លងទិន្នន័យ <b>(Shallow vs Deep Copy)</b>", type: "split", img: "https://images.unsplash.com/photo-1618042164219-62c820f10723?auto=format&fit=crop&w=800&q=80", c: `
+            <div style="display:flex; flex-direction:column; height:100%; justify-content:center;">
+                <div class="narrative-box">
+                    <div class="narrative-header"><i class="fa-solid fa-link"></i> Assignment (=)</div>
+                    <p class="narrative-text"><code>list_B = list_A</code> មិនមែនជាការបង្កើតទិន្នន័យថ្មីទេ។ គ្រាន់តែឲ្យ <code>B</code> ចង្អុលទៅកាន់ Object តែមួយ។ បើកែ <code>B</code> នោះ <code>A</code> ក៏ប្រែប្រួលដែរ។</p>
+                </div>
+                <div class="narrative-box">
+                    <div class="narrative-header"><i class="fa-regular fa-copy"></i> Shallow Copy</div>
+                    <p class="narrative-text">បង្កើត Object ថ្មីមួយ ប៉ុន្តែបើទិន្នន័យខាងក្នុងជា Nested Objects វានៅតែចង្អុលទៅកាន់ Reference ចាស់ដដែល។ (ប្រើ <code>copy.copy()</code>)</p>
+                </div>
+                <div class="narrative-box" style="background:#F0FDF4; border-color:#86EFAC;">
+                    <div class="narrative-header" style="color:var(--accent-green);"><i class="fa-solid fa-clone"></i> Deep Copy (ក្លូនរូបរាងកាយ)</div>
+                    <p class="narrative-text">បង្កើត Object ថ្មីទាំងស្រុង និងចម្លងទិន្នន័យកូនៗខាងក្នុងទាំងអស់ផ្តាច់ចេញពីដើម។ ការកែប្រែថ្មី គ្មានផលប៉ះពាល់ដល់ចាស់ទេ។ (ប្រើ <code>copy.deepcopy()</code>)</p>
+                </div>
+            </div>
+        `},
+
+        // 13. Shallow vs Deep Copy (Case Study)
+        { t: "១៣. ករណីសិក្សា និងលំហាត់៖ <b>Shallow vs Deep Copy</b>", type: "card", c: `
+            <div class="two-column-equal">
+                <div>
+                    <div class="narrative-box">
+                        <div class="narrative-header"><i class="fa-solid fa-table-cells"></i> ករណីសិក្សា៖ តារាងពិន្ទុសិស្ស (2D List)</div>
+                        <p class="narrative-text">ឧបមាថាអ្នកមានតារាងពិន្ទុ (List នៅក្នុង List)។ បើអ្នកប្រើ <b>Shallow Copy</b> ដើម្បីថតចម្លងទុកជាឯកសារបម្រុង (Backup) ពេលអ្នកកែពិន្ទុសិស្សណាម្នាក់ក្នុងតារាងថ្មី តារាងចាស់ក៏ប្រែប្រួលដែរ ព្រោះ List កូនៗនៅខាងក្នុងនៅតែ Share Reference គ្នា។ ករណីនេះដាច់ខាតត្រូវប្រើ <b>Deep Copy</b>។</p>
+                    </div>
+                </div>
+                <div>
+                    <div class="highlight-note">
+                        <p style="margin-bottom: 1vh;"><i class="fa-solid fa-laptop-code"></i> <b>លំហាត់អនុវត្តន៍៖</b></p>
+                        <ul style="margin-left: 2vw; font-size: 1.15vw; color: var(--text-main); font-weight: normal;">
+                            <li>ប្រើប្រាស់ <code>import copy</code> ដើម្បីធ្វើ <code>copy.deepcopy()</code> លើ 2D Matrix។</li>
+                            <li>សាកល្បងកែទិន្នន័យក្នុងច្បាប់ចម្លង ហើយ Print ផ្ទៀងផ្ទាត់ជាមួយច្បាប់ដើម ដើម្បីប្រាកដថាទិន្នន័យដាច់ចេញពីគ្នាស្រឡះ។</li>
+                        </ul>
+                        <p style="margin-top: 1vh; font-size: 1.1vw; color: var(--text-muted); font-weight: normal;">(មានកូដគំរូក្នុង Workbook ជំពូកទី២)</p>
+                    </div>
+                </div>
+            </div>
+        `},
+
+        // 14. Practice Note (General Recap)
+        { t: "១៤. សរុបផ្នែកអនុវត្តន៍ (Practice Overview)", type: "card", c: `
+            <div style="text-align:center; padding: 4vh 2vw;">
+                <i class="fa-solid fa-book-open-reader" style="font-size: 6vw; color: var(--accent-blue); margin-bottom: 2vh;"></i>
+                <h3 style="font-size: 2.5vw; color: var(--accent-blue); font-family: 'Suwannaphum'; margin-bottom: 1.5vh;">ផ្នែកអនុវត្តន៍ជាក់ស្តែងសរុបប្រចាំជំពូកទី ២</h3>
+                <p style="font-size: 1.8vw; color: var(--text-main); margin-bottom: 3vh;">បន្ទាប់ពីយល់ទ្រឹស្តី និស្សិតត្រូវអនុវត្តការបង្កើត <b><i class='fa-solid fa-cubes tech-icon'></i>Classes</b> ការកំណត់ Properties និងសាកល្បងការប្រើប្រាស់ <b><i class='fa-solid fa-clone tech-icon'></i>Deep Copy</b> នៅក្នុងកូដ Python ដោយផ្ទាល់។</p>
+                <div class="highlight-note" style="display:inline-block; text-align: left; padding: 2vh;">
+                    <p style="margin: 0; font-size: 1.6vw;">
+                        <i class="fa-solid fa-bell"></i> ចំណាំ៖ លំហាត់អនុវត្តន៍កូដ Python និងការបកស្រាយលម្អិត ត្រូវបានរៀបចំនៅក្នុង <br><b>"សៀវភៅលំហាត់អនុវត្តន៍ (Workbook) - ជំពូកទី ២"</b>។
+                    </p>
+                </div>
+            </div>
+        `},
+
+        // 15. Key Terms
+        { t: "១៥. សទ្ទានុក្រម និងពាក្យគន្លឹះ (Key Terms)", type: "grid", c: [
+            { h: "<i class='fa-solid fa-cube keyword-icon'></i> <b>Class & Object</b>", p: "<b><i class='fa-solid fa-cube tech-icon'></i>Class:</b> គំរូឬប្លង់ដើមសម្រាប់ការបង្កើតវត្ថុ។<br><b><i class='fa-solid fa-cubes tech-icon'></i>Object (Instance):</b> វត្ថុជាក់ស្តែងដែលកើតចេញពី Class និងប្រើប្រាស់ទំហំនៅក្នុង Memory ពិតៗ។" },
+            { h: "<i class='fa-solid fa-sitemap keyword-icon'></i> <b>Inheritance</b>", p: "<b>(ការទទួលមរតក)</b> លទ្ធភាពដែល Class កូនអាចទាញយក Properties និង <b><i class='fa-solid fa-gear tech-icon'></i>Methods</b> ពី Class ឪពុកម្តាយមកប្រើការបន្ត។" },
+            { h: "<i class='fa-solid fa-arrow-pointer keyword-icon'></i> <b>Reference / Pointer</b>", p: "អញ្ញាត (<b><i class='fa-solid fa-tag tech-icon'></i>Variable</b>) ក្នុង Python ដែលមានតួនាទីជាអ្នកចង្អុលទីតាំង (Address) ទៅកាន់ Object ណាមួយនៅក្នុង Heap Memory។" },
+            { h: "<i class='fa-solid fa-trash-can keyword-icon'></i> <b>Garbage Collection</b>", p: "ដំណើរការស្វ័យប្រវត្តិរបស់ប្រព័ន្ធកុំព្យូទ័រក្នុងការតាមដាន និងសម្អាត Memory ចោលនៅពេលដែលទិន្នន័យនោះលែងមានអ្នកចង្អុលទៅរក (Reference Count = 0)។" }
+        ]},
+
+        // 16. Summary
+        { t: "១៦. សង្ខេបជំពូកទី ២ (Chapter Summary)", type: "card", c: `
+            <div style="line-height:1.8;">
+                <p><i class="fa-solid fa-check text-blue"></i> <b>OOP គឺជាគ្រឹះនៃ DSA កម្រិតខ្ពស់:</b> ការចេះបង្កើត <b><i class='fa-solid fa-cube tech-icon'></i>Class</b> អនុញ្ញាតឱ្យយើងសាងសង់រចនាសម្ព័ន្ធទិន្នន័យផ្ទាល់ខ្លួន (Custom Data Structures) ដូចជា Linked Lists ជាដើម។</p>
+                <p><i class="fa-solid fa-check text-blue"></i> <b>Variables មិនមែនជាប្រអប់ផ្ទុកទេ:</b> ក្នុង Python <b><i class='fa-solid fa-tag tech-icon'></i>Variables</b> ប្រៀបបាននឹងផ្លាកឈ្មោះ (Labels) ដែលបិទចង្អុលលើ <b><i class='fa-solid fa-cubes tech-icon'></i>Objects</b> នៅក្នុង Memory តែប៉ុណ្ណោះ។</p>
+                <p><i class="fa-solid fa-check text-blue"></i> <b>ប្រយ័ត្នពេលចម្លងទិន្នន័យ (Copy):</b> នៅក្នុងមុខវិជ្ជា Data Science ត្រូវដឹងច្បាស់ថាពេលណាគួរសរសេរសញ្ញាស្មើ <code>=</code> (ចែករំលែក Reference) និងពេលណាគួរប្រើ <b><i class='fa-solid fa-clone tech-icon'></i>Deep Copy</b> ដើម្បីការពារកុំឱ្យមានកំហុសទិន្នន័យ។</p>
+            </div>
+        `},
+
+        // 17. References
+        { t: "១៧. ឯកសារយោង និងគន្ថនិទ្ទេស (References)", type: "list", c: [
+            "<b><i class='fa-solid fa-book text-blue' style='margin-right:0.5vw;'></i> Goodrich, M. T. (2013).</b> <i>Data Structures and Algorithms in Python</i>. Wiley. (ជំពូកទី ២: Object-Oriented Programming).",
+            "<b><i class='fa-brands fa-python text-blue' style='margin-right:0.5vw;'></i> Python Docs:</b> <i>Classes and OOP:</i> <a href='https://docs.python.org/3/tutorial/classes.html' style='color:var(--accent-blue); text-decoration:none;'>docs.python.org/3/tutorial/classes.html</a>",
+            "<b><i class='fa-brands fa-python text-blue' style='margin-right:0.5vw;'></i> Python Docs:</b> <i>Memory Management:</i> <a href='https://docs.python.org/3/c-api/memory.html' style='color:var(--accent-blue); text-decoration:none;'>docs.python.org/3/c-api/memory.html</a>",
+            "<b><i class='fa-brands fa-youtube text-blue' style='margin-right:0.5vw;'></i> Corey Schafer:</b> Python OOP Tutorials (Youtube Video Series)."
+        ]}
+    ];
+
+    const container = document.getElementById('slideWrapper');
+
+    // Create main slides dynamically
+    chapter2Data.forEach((item, index) => {
+        const slide = document.createElement('div');
+        slide.className = 'slide';
+        
+        let bodyContent = '';
+        if(item.type === "split") {
+            let visual = item.img ? `<img src="${item.img}">` : (item.svg ? item.svg : '');
+            bodyContent = `<div class="two-column"><div class="card" style="height:100%; border:none; padding:0; background:transparent; justify-content:start;">${item.c}</div><div class="visual-frame">${visual}</div></div>`;
+        } else if(item.type === "two-equal") {
+            bodyContent = `<div class="two-column-equal">${item.c}</div>`;
+        } else if(item.type === "grid") {
+            bodyContent = `<div class="card-grid">${item.c.map(c => `<div class="card"><h4>${c.h}</h4><p style="margin:0;">${c.p}</p></div>`).join('')}</div>`;
+        } else if(item.type === "card") {
+            bodyContent = `<div class="card" style="height: 100%; justify-content: center; background:#FFFFFF;">${item.c}</div>`;
+        } else if(item.type === "table") {
+            let th = `<tr>${item.rows[0].map(h => `<th style="text-align:center;">${h}</th>`).join('')}</tr>`;
+            let trs = item.rows.slice(1).map(r => `<tr>${r.map((td, i) => `<td ${i>0 ? 'align="center"' : ''}>${td}</td>`).join('')}</tr>`).join('');
+            bodyContent = `<table><thead>${th}</thead><tbody>${trs}</tbody></table>`;
+        } else if(item.type === "list") {
+            bodyContent = `<div class="card" style="padding: 3vh 4vw; background:#FFFFFF;"><ul style="list-style:none; padding-left:1vw; line-height:2.2;">${item.c.map(l => `<li>${l}</li>`).join('')}</ul></div>`;
+        }
+
+        slide.innerHTML = `<div id="h-placeholder-${index}"></div> <h2 class="slide-title">${item.t}</h2> <div class="content-body">${bodyContent}</div>`;
+        container.appendChild(slide);
+    });
+
+    // Create Q&A Slide
+    const qaSlide = document.createElement('div');
+    qaSlide.className = 'slide';
+    qaSlide.innerHTML = `
+        <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; text-align: center;">
+            <h1 style="font-size: 5.4vw; color: var(--accent-blue); margin-bottom: 2vh;"><i class="fa-solid fa-comments"></i> សំណួរ និងការពិភាក្សា</h1>
+            <p style="font-size: 2.25vw; color: var(--text-muted); margin-bottom: 5vh;">សូមអរគុណនិស្សិតទាំងអស់សម្រាប់ការយកចិត្តទុកដាក់!</p>
+            <div style="display: flex; gap: 2vw; justify-content: center;">
+                <div style="background: #FFFFFF; padding: 2vh 3vw; border-radius: 5vw; border: 2px solid var(--accent-blue); box-shadow: 0 10px 20px rgba(0,0,0,0.05);">
+                    <p style="margin: 0; font-weight: bold; font-size: 1.8vw; color: var(--accent-blue);"><i class="fa-solid fa-envelope"></i> soeurnglim@gmail.com</p>
+                </div>
+                <div style="background: #FFFFFF; padding: 2vh 3vw; border-radius: 5vw; border: 2px solid #0088cc; box-shadow: 0 10px 20px rgba(0,0,0,0.05);">
+                    <p style="margin: 0; font-weight: bold; font-size: 1.8vw; color: #0088cc;"><i class="fa-brands fa-telegram"></i> ០៦១ ២២៧ ៩៣៣</p>
+                </div>
+            </div>
+        </div>
+    `;
+    container.appendChild(qaSlide);
+
+    // Create End Slide
+    const endSlide = document.createElement('div');
+    endSlide.className = 'slide';
+    endSlide.innerHTML = `
+        <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; text-align: center;">
+            <i class="fa-solid fa-flag-checkered" style="font-size: 5vw; color: var(--accent-green); margin-bottom: 2vh;"></i>
+            <h1 style="font-size: 4.5vw; color: var(--accent-blue); margin-bottom: 1vh;">បញ្ចប់ជំពូកទី ២</h1>
+            <p style="font-size: 2vw; color: var(--text-muted); margin-bottom: 5vh;">សូមអរគុណនិស្សិតទាំងអស់សម្រាប់ការយកចិត្តទុកដាក់!</p>
+            <div style="display: flex; gap: 2vw; justify-content: center;">
+                <div style="background: #FFFFFF; padding: 2vh 3vw; border-radius: 5vw; border: 2px solid var(--accent-blue); box-shadow: 0 10px 20px rgba(0,0,0,0.05);">
+                    <p style="margin: 0; font-weight: bold; font-size: 1.8vw; color: var(--accent-blue);"><i class="fa-solid fa-envelope"></i> soeurnglim@gmail.com</p>
+                </div>
+                <div style="background: #FFFFFF; padding: 2vh 3vw; border-radius: 5vw; border: 2px solid #0088cc; box-shadow: 0 10px 20px rgba(0,0,0,0.05);">
+                    <p style="margin: 0; font-weight: bold; font-size: 1.8vw; color: #0088cc;"><i class="fa-brands fa-telegram"></i> ០៦១ ២២៧ ៩៣៣</p>
+                </div>
+            </div>
+        </div>
+    `;
+    container.appendChild(endSlide);
+
+    // Create Next Chapter Slide
+    const nextChapSlide = document.createElement('div');
+    nextChapSlide.className = 'slide';
+    nextChapSlide.innerHTML = `
+        <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; text-align: center;">
+            <h2 style="font-size: 2.5vw; color: var(--text-muted); margin-bottom: 2vh;"><i class="fa-solid fa-forward-step"></i> ត្រៀមសម្រាប់សប្តាហ៍បន្ទាប់</h2>
+            <div class="card" style="background: #FFFFFF; border-left: 1vw solid var(--accent-yellow); padding: 4vh 6vw; box-shadow: 0 15px 30px rgba(0,0,0,0.1); border-radius: 1.5vw; margin-top: 2vh;">
+                <h1 style="font-size: 3.5vw; color: var(--accent-blue); margin-bottom: 1.5vh; font-family: 'Suwannaphum';">ជំពូកទី ៣</h1>
+                <h2 style="font-size: 2.5vw; color: var(--text-main); margin: 0; font-family: 'Suwannaphum';">រចនាសម្ព័ន្ធទិន្នន័យជាជួរ<br><span style="font-size: 1.8vw; color: var(--text-muted); font-family: 'Lato';">(Linear Data Structures - Arrays, Stacks, Queues)</span></h2>
+            </div>
+            <p style="font-size: 1.6vw; color: var(--text-muted); margin-top: 4vh;"><i class="fa-solid fa-book-open"></i> សូមអានសៀវភៅគោលជំពូកទី៣ ជាមុន ដើម្បីងាយស្រួលក្នុងការអនុវត្តកូដ!</p>
+        </div>
+    `;
+    container.appendChild(nextChapSlide);
+
+    // -----------------------------------------------------
+    // Initialize Navigation and Print Layouts (BUG FIXED)
+    // -----------------------------------------------------
+
+    // 1. Apply Global Header to all slides
+    document.querySelectorAll('[id^="h-placeholder"]').forEach(p => p.outerHTML = headerHTML);
+
+    // 2. Count Total Slides AFTER all dynamic injections are done
+    const slides = document.querySelectorAll('.slide');
+    const totalSlides = slides.length;
+    
+    // 3. Setup Print Footers & Avoid ID Duplication Bug
+    const mainFooter = document.getElementById('mainFooter');
+    const screenCounter = document.getElementById('screenSlideCounter'); // យកអត្តសញ្ញាណមេ មុនពេល Clone
+
+    slides.forEach((slide, index) => {
+        let printFooter = mainFooter.cloneNode(true);
+        printFooter.id = ''; // Remove ID from the wrapper
+        
+        let printCounter = printFooter.querySelector('.slide-counter');
+        if (printCounter) {
+            printCounter.id = ''; // ដក ID ចេញពី Clone ដើម្បីកុំឲ្យជាន់គ្នា
+            printCounter.innerHTML = `ស្លាយទី ${toKh(index + 1)} នៃ ${toKh(totalSlides)}`; // ប្រើ "ស្លាយទី" ទាំងព្រីន ទាំងអេក្រង់
+        }
+        
+        printFooter.className = 'global-footer print-only-footer';
+        slide.appendChild(printFooter);
+    });
+
+    // 4. Update function for Screen display
+    let currentIdx = 0;
+    function update(idx) { 
+        slides.forEach(s => s.classList.remove('active')); 
+        slides[idx].classList.add('active'); 
+        currentIdx = idx; 
+        
+        // បញ្ចូលលេខទៅកាន់អេក្រង់មេដោយផ្ទាល់ (ធានាថាមិនខុសកន្លែង)
+        if (screenCounter) {
+            screenCounter.innerHTML = `ស្លាយទី ${toKh(idx + 1)} នៃ ${toKh(totalSlides)}`;
+        }
+    }
+
+    // 5. Allow Navigation by Clicking ONLY the arrows (So users can copy text elsewhere)
+    document.querySelector('.nav-right').addEventListener('click', (e) => { 
+        e.stopPropagation(); 
+        if (currentIdx < totalSlides - 1) update(currentIdx + 1); 
+    });
+    
+    document.querySelector('.nav-left').addEventListener('click', (e) => { 
+        e.stopPropagation(); 
+        if (currentIdx > 0) update(currentIdx - 1); 
+    });
+
+    // 6. Keyboard Navigation Support
+    document.addEventListener('keydown', (e) => {
+        if (e.key === "ArrowRight" || e.key === " " || e.key === "PageDown") { 
+            if (currentIdx < totalSlides - 1) update(currentIdx + 1); 
+        } else if (e.key === "ArrowLeft" || e.key === "PageUp") { 
+            if (currentIdx > 0) update(currentIdx - 1); 
+        }
+    });
+
+    // Start presentation at Slide 0
+    update(0); 
+
+</script>
+</body>
+</html>
