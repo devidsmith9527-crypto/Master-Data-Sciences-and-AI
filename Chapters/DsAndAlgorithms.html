@@ -39,26 +39,26 @@
 
         /* Typography */
         h1 { font-family: 'Suwannaphum'; font-size: 3.6vw; text-align: center; color: var(--text-main); font-weight: 900; line-height: 1.3; }
-        h2.slide-title { font-family: 'Suwannaphum'; font-size: 2.8vw; font-weight: 900; border-bottom: 0.3vw solid var(--accent-blue); padding-bottom: 0.3vh; margin-bottom: 1.2vh; color: var(--text-main); display: inline-block; }
+        h2.slide-title { font-family: 'Suwannaphum'; font-size: 2.5vw; font-weight: 900; border-bottom: 0.3vw solid var(--accent-blue); padding-bottom: 0.3vh; margin-bottom: 1.2vh; color: var(--text-main); display: inline-block; }
         .content-body { flex-grow: 1; display: flex; flex-direction: column; justify-content: flex-start; gap: 0.8vh; width: 100%; overflow-y: auto; padding-bottom: 1vh; }
-        p, li, td { font-size: 1.55vw; line-height: 1.55; color: var(--text-main); }
+        p, li, td { font-size: 1.4vw; line-height: 1.6; color: var(--text-main); }
         
         .keyword-icon { color: var(--accent-blue); margin-right: 0.5vw; width: 2vw; text-align: center; display: inline-block; }
         .tech-icon { color: var(--accent-blue); margin-right: 6px; font-size: 1.1em; vertical-align: baseline; }
         b .tech-icon, strong .tech-icon, .card h4 .tech-icon, h2 .tech-icon { color: inherit; } 
 
         /* Layouts & Cards */
-        .two-column { display: grid; grid-template-columns: 1.15fr 0.85fr; gap: 2vw; height: 100%; align-items: center; }
+        .two-column { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 2vw; height: 100%; align-items: center; }
         .two-column-equal { display: grid; grid-template-columns: 1fr 1fr; gap: 2vw; height: 100%; align-items: start; }
         .card-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1vw; }
         .card { background: var(--bg-card); padding: 1.2vh 2.2vw; border-radius: 0.8vw; border-left: 0.8vw solid var(--accent-blue); box-shadow: 0 4px 8px rgba(0,0,0,0.04); display: flex; flex-direction: column; justify-content: center; }
-        .card h4 { font-size: 1.8vw; color: var(--accent-blue); margin-bottom: 0.4vh; font-family: 'Suwannaphum'; display: flex; align-items: center; gap: 8px;}
+        .card h4 { font-size: 1.7vw; color: var(--accent-blue); margin-bottom: 0.4vh; font-family: 'Suwannaphum'; display: flex; align-items: center; gap: 8px;}
 
         /* Tables */
         table { width: 100%; border-collapse: collapse; background: white; border-radius: 0.8vw; overflow: hidden; box-shadow: 0 4px 8px rgba(0,0,0,0.04); }
         th, td { border: 1px solid #E2E8F0; padding: 0.8vh 1.2vw; text-align: left; }
-        th { background: var(--accent-blue); color: white; font-family: 'Suwannaphum'; font-size: 1.5vw; }
-        td { font-size: 1.35vw; }
+        th { background: var(--accent-blue); color: white; font-family: 'Suwannaphum'; font-size: 1.4vw; }
+        td { font-size: 1.25vw; }
 
         /* Visual Frame */
         .visual-frame { background: #FFFFFF; border-radius: 0.8vw; border: 1px solid #CBD5E1; padding: 1vw; display: flex; align-items: center; justify-content: center; height: 100%; min-height: 220px; overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.04); }
@@ -66,15 +66,15 @@
 
         /* Narrative Box & Analogy Box */
         .narrative-box { background: #F8FAFC; border-radius: 0.6vw; border: 1px solid #CBD5E1; padding: 0.8vh 1.2vw; margin-bottom: 0.8vh; box-shadow: 0 2px 4px rgba(0,0,0,0.04); }
-        .narrative-header { font-weight: bold; color: var(--accent-blue); font-size: 1.4vw; border-bottom: 1px solid #E2E8F0; padding-bottom: 0.3vh; margin-bottom: 0.6vh; font-family: 'Suwannaphum'; display: flex; align-items: center; gap: 8px;}
-        .narrative-text { font-size: 1.3vw; color: var(--text-main); line-height: 1.5; margin: 0; }
+        .narrative-header { font-weight: bold; color: var(--accent-blue); font-size: 1.35vw; border-bottom: 1px solid #E2E8F0; padding-bottom: 0.3vh; margin-bottom: 0.6vh; font-family: 'Suwannaphum'; display: flex; align-items: center; gap: 8px;}
+        .narrative-text { font-size: 1.25vw; color: var(--text-main); line-height: 1.5; margin: 0; }
         
         .analogy-box { background: #FFFBEB; border-left: 0.4vw solid var(--accent-yellow); border-radius: 0.5vw; padding: 0.8vh 1.2vw; margin-bottom: 0.6vh; box-shadow: 0 2px 4px rgba(0,0,0,0.04); }
-        .analogy-header { font-weight: bold; color: var(--accent-yellow); font-size: 1.4vw; margin-bottom: 0.3vh; font-family: 'Suwannaphum'; display: flex; align-items: center; gap: 6px;}
-        .analogy-text { font-size: 1.3vw; color: var(--text-main); line-height: 1.5; margin: 0; }
+        .analogy-header { font-weight: bold; color: var(--accent-yellow); font-size: 1.35vw; margin-bottom: 0.3vh; font-family: 'Suwannaphum'; display: flex; align-items: center; gap: 6px;}
+        .analogy-text { font-size: 1.25vw; color: var(--text-main); line-height: 1.5; margin: 0; }
 
         /* Highlight Note */
-        .highlight-note { background-color: #F0FDF4; border-left: 4px solid var(--accent-green); padding: 1vh 2vw; border-radius: 0.5vw; margin-top: 0.8vh; font-weight: bold; color: var(--accent-green); font-size: 1.5vw; display: flex; align-items: center; gap: 8px; border: 2px dashed var(--accent-green); justify-content: center;}
+        .highlight-note { background-color: #F0FDF4; border-left: 4px solid var(--accent-green); padding: 1vh 2vw; border-radius: 0.5vw; margin-top: 0.8vh; font-weight: bold; color: var(--accent-green); font-size: 1.4vw; display: flex; align-items: center; gap: 8px; border: 2px dashed var(--accent-green); justify-content: center;}
 
         /* Main Footer */
         .global-footer { display: flex; justify-content: space-between; align-items: center; width: 100%; padding: 1vh 4vw; border-top: 3px solid var(--accent-blue); background-color: var(--header-footer-bg); z-index: 10; }
@@ -434,7 +434,7 @@
         // 7. Chapter 5: Binary Search Tree (BST)
         { t: "៧. ជំពូកទី ៥៖ រចនាសម្ព័ន្ធមែកធាង <b>Binary Search Tree (BST)</b>", type: "split", svg: bstSVG, c: `
             <div style="display:flex; flex-direction:column; height:100%; justify-content:center;">
-                <p><b><i class='fa-solid fa-sitemap keyword-icon'></i> Binary Search Tree:</b> ជារចនាសម្ព័ន្ធឋានានុក្រម ដែលកំណត់ឱ្យកូនខាងឆ្វេងតូចជាងមេ (Left < Root) និងកូនខាងស្តាំធំជាងមេ (Right > Root) ជានិច្ច។</p>
+                <p><b><i class='fa-solid fa-sitemap keyword-icon'></i> Binary Search Tree:</b> ជារចនាសម្ព័ន្ធឋានានុក្រម ដែលកំណត់ឱ្យកូនខាងឆ្វេងតូចជាងមេ (Left < Root) និងកូនខាងស្តាំធំជាងមេ (Right > Root) ជានិច្ច。</p>
                 <div class="analogy-box" style="margin-top:1.5vh;">
                     <div class="analogy-header"><i class="fa-solid fa-bolt"></i> ប្រសិទ្ធភាពនៃការស្វែងរក O(log n)</div>
                     <p class="analogy-text">ការស្វែងរកទិន្នន័យក្នុង BST មានល្បឿនលឿនខ្លាំង ព្រោះរាល់ការប្រៀបធៀបម្តង យើងអាចកាត់ចោលមែកធាងដែលមិនត្រូវចំនួនពាក់កណ្តាលចោលភ្លាមៗ។</p>

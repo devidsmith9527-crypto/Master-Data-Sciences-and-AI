@@ -1,9 +1,9 @@
-def simple_hash(key_string, array_size):
-    total = 0
-    for char in key_string:
-        total += ord(char)  # យកតម្លៃ ASCII របស់អក្សរមួួយៗមកបូកបញ្ចូលគ្នា
-    return total % array_size  # ចែកយកសំណល់ដើម្បីកុំឱ្យហួសទំហំ Array
+import bisect
 
+# ១. តម្រៀបទិន្នន័យដោយប្រើ Timsort
+data = [38, 27, 43, 30, 9]
+data.sort()  # data ក្លាយជា [9, 27, 30, 38, 43]
 
-print("ពាក្យ Sok ធ្លាក់ចូលប្រអប់ទី:", simple_hash("Sok", 20))
-print("ពាក្យ Lim ធ្លាក់ចូលប្រអប់ទី:", simple_hash("Lim", 20))
+# ២. ស្វែងរកទីតាំងស៊កបញ្ចូលដោយប្រើ bisect
+idx = bisect.bisect_left(data, 27)
+print(idx)  # Output: 1
