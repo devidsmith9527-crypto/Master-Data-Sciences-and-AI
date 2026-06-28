@@ -158,7 +158,7 @@
     <i class="fa-solid fa-print"></i> បោះពុម្ពឯកសារមេរៀន (Print Handout)
 </button>
 
-<!-- COVER PAGE -->
+<!-- PAGE 1: COVER -->
 <div class="a4-page cover-page">
     <img src="Logo.png" class="cover-logo" onerror="this.src='https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png'">
     <h1 class="cover-uni-kh">សាកលវិទ្យាល័យអង្គរ</h1>
@@ -195,7 +195,7 @@
     </div>
 </div>
 
-<!-- PAGE 1: Searching - Exercises 1 to 4 -->
+<!-- PAGE 2: EXERCISES 1 - 3 -->
 <div class="a4-page">
     <div class="global-header">
         <div class="header-item"><img src="Logo.png" onerror="this.src='https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png'"><span>សាកលវិទ្យាល័យអង្គរ</span></div>
@@ -207,7 +207,7 @@
     </div>
 
     <div class="page-content">
-        <div class="case-title"><i class="fa-solid fa-magnifying-glass"></i> ១. ក្បួនស្វែងរកទិន្នន័យ (លំហាត់ ១ ដល់ ៤)</div>
+        <div class="case-title"><i class="fa-solid fa-magnifying-glass"></i> ១. ក្បួនស្វែងរកទិន្នន័យ (លំហាត់ ១ ដល់ ៣)</div>
         
         <div class="theory-block">
             <h3><span class="level-badge bg-low">លំហាត់ ១</span> Linear Search (ការស្វែងរកឈ្មោះក្នុងបញ្ជីទូរស័ព្ទដែលមិនទាន់តម្រៀប)</h3>
@@ -227,9 +227,22 @@ result = linear_search(contacts, <span class="str">"Bona"</span>)
 
         <div class="theory-block">
             <h3><span class="level-badge bg-low">លំហាត់ ២</span> ការគណនាចំនួនប្រៀបធៀបក្នុងករណីអាក្រក់បំផុត (Worst Case Analysis)</h3>
+            <div class="code-container">
+                <div class="code-header"><i class="fa-brands fa-python"></i> Worst Case Simulation for Linear Search</div>
+<pre><span class="kw">def</span> <span class="fn">linear_search_count</span>(arr, target):
+    steps = <span class="num">0</span>
+    <span class="kw">for</span> i <span class="kw">in range</span>(<span class="fn">len</span>(arr)):
+        steps += <span class="num">1</span>
+        <span class="kw">if</span> arr[i] == target: <span class="kw">return</span> steps
+    <span class="kw">return</span> steps <span class="com"># ករណីអាក្រក់បំផុត</span>
+
+contacts = <span class="fn">list</span>(<span class="fn">range</span>(<span class="num">5000</span>)) <span class="com"># បង្កើតបញ្ជីមាន 5000 នាក់</span>
+<span class="fn">print</span>(<span class="str">"ប្រៀបធៀបករណីអាក្រក់បំផុត:"</span>, linear_search_count(contacts, -<span class="num">1</span>), <span class="str">"ដង"</span>) 
+<span class="com"># Expected Output: 5000 ដង</span></pre>
+            </div>
             <div class="explanation-box">
                 <b>ដំណោះស្រាយ ៖</b><br>
-                បើបញ្ជីទំនាក់ទំនងមានទិន្នន័យទូរស័ព្ទចំនួន $N = 5,000$ នាក់ នោះក្បួន Linear Search ត្រូវធ្វើការប្រៀបធៀបយ៉ាងច្រើនបំផុតគឺ <b>5,000 ដង</b> ($O(n)$)។ ស្ថានភាពនេះកើតឡើងនៅពេលធាតុដែលស្វែងរកស្ថិតនៅខាងចុងគេបង្អស់នៃបញ្ជី ឬគ្មាននៅក្នុងបញ្ជីសោះ។
+                បើបញ្ជីទំនាក់ទំនងមានទិន្នន័យទូរស័ព្ទចំនួន <i>N = 5,000</i> នាក់ នោះក្បួន Linear Search ត្រូវធ្វើការប្រៀបធៀបយ៉ាងច្រើនបំផុតគឺ <b>5,000 ដង</b> (<i>O(n)</i>)។ ស្ថានភាពនេះកើតឡើងនៅពេលធាតុដែលស្វែងរកស្ថិតនៅខាងចុងគេបង្អស់នៃបញ្ជី ឬគ្មាននៅក្នុងបញ្ជីសោះ។
             </div>
         </div>
 
@@ -254,24 +267,15 @@ result = binary_search(words, <span class="str">"Durian"</span>)
 <span class="fn">print</span>(<span class="str">"ទីតាំង Durian គឺ Index ទី:"</span>, result) <span class="com"># Expected Output: 3</span></pre>
             </div>
         </div>
-
-        <div class="theory-block">
-            <h3><span class="level-badge bg-low">លំហាត់ ៤</span> ការគណនាចំនួនប្រៀបធៀបច្រើនបំផុត (Max Steps Calculation)</h3>
-            <div class="explanation-box">
-                <b>ដំណោះស្រាយ ៖</b><br>
-                បើទិន្នន័យមានចំនួន $1,000,000$ ជួរ នោះ Binary Search ត្រូវប្រៀបធៀបយ៉ាងច្រើនបំផុតត្រឹមតែ <b>20 ដង</b> ប៉ុណ្ណោះ។<br>
-                $$\text{គណនា៖ } \log_2(1,000,000) \approx 19.93 \rightarrow \text{យកតម្លៃបង្គត់ឡើងគឺ } 20 \text{ ជំហាន។}$$
-            </div>
-        </div>
     </div>
 
     <div class="global-footer">
         <div class="footer-left"><img src="Lim.jpg" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'"><span>សាស្ត្រាចារ្យណែនាំ៖ សឿង លីម (Soeurng LIM)</span></div>
-        <div class="footer-right">ទំព័រទី ១ នៃ ៨</div>
+        <div class="footer-right">ទំព័រទី ១ នៃ ១០</div>
     </div>
 </div>
 
-<!-- PAGE 2: Searching - Exercises 5 to 6 -->
+<!-- PAGE 3: EXERCISES 4 - 5 -->
 <div class="a4-page">
     <div class="global-header">
         <div class="header-item"><img src="Logo.png" onerror="this.src='https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png'"><span>សាកលវិទ្យាល័យអង្គរ</span></div>
@@ -283,7 +287,25 @@ result = binary_search(words, <span class="str">"Durian"</span>)
     </div>
 
     <div class="page-content">
-        <div class="case-title"><i class="fa-solid fa-magnifying-glass-plus"></i> ២. ការស្វែងរកពុះកណ្តាលកម្រិតខ្ពស់ (លំហាត់ ៥ ដល់ ៦)</div>
+        <div class="case-title"><i class="fa-solid fa-magnifying-glass-plus"></i> ២. ការស្វែងរកពុះកណ្តាលកម្រិតខ្ពស់ (លំហាត់ ៤ ដល់ ៥)</div>
+
+        <div class="theory-block">
+            <h3><span class="level-badge bg-low">លំហាត់ ៤</span> ការគណនាចំនួនប្រៀបធៀបច្រើនបំផុត (Max Steps Calculation)</h3>
+            <div class="code-container">
+                <div class="code-header"><i class="fa-brands fa-python"></i> Max Steps Calculation using Math</div>
+<pre><span class="kw">import</span> math
+
+n = <span class="num">1000000</span> <span class="com"># ចំនួនទិន្នន័យសរុប 1 លាន</span>
+max_steps = math.<span class="fn">ceil</span>(math.<span class="fn">log2</span>(n))
+<span class="fn">print</span>(<span class="str">f"សម្រាប់ទិន្នន័យ {n} Binary Search ត្រូវការប្រៀបធៀបត្រឹម: {max_steps} ដង"</span>)
+<span class="com"># Expected Output: 20 ដង</span></pre>
+            </div>
+            <div class="explanation-box">
+                <b>ដំណោះស្រាយ ៖</b><br>
+                បើទិន្នន័យមានចំនួន 1,000,000 ជួរ នោះ Binary Search ត្រូវប្រៀបធៀបយ៉ាងច្រើនបំផុតត្រឹមតែ <b>20 ដង</b> ប៉ុណ្ណោះ។<br>
+                $$\text{គណនា៖ } \log_2(1,000,000) \approx 19.93 \rightarrow \text{យកតម្លៃបង្គត់ឡើងគឺ } 20 \text{ ជំហាន។}$$
+            </div>
+        </div>
         
         <div class="theory-block">
             <h3><span class="level-badge bg-mid">លំហាត់ ៥</span> Search Insert Position (ការរកមើលទីតាំងដែលត្រូវស៊កបញ្ចូលតម្លៃពិន្ទុសិស្ស)</h3>
@@ -310,6 +332,27 @@ result = search_insert_position(sorted_grades, <span class="num">80</span>)
                 នៅពេលដែលរាវរកមិនឃើញតម្លៃ <code>new_grade</code> នៅក្នុង array នោះ loop នឹងត្រូវបញ្ចប់។ ខណៈនោះ pointer <code>left</code> នឹងរំកិលទៅឈរនៅទីតាំង index នៃធាតុដំបូងដែលមានតម្លៃធំជាង <code>new_grade</code>។ ទីតាំង index នេះហើយគឺជាកន្លែងត្រឹមត្រូវដែលត្រូវស៊កបញ្ចូលតម្លៃថ្មីដើម្បីរក្សាភាព Sorted។
             </div>
         </div>
+    </div>
+
+    <div class="global-footer">
+        <div class="footer-left"><img src="Lim.jpg" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'"><span>សាស្ត្រាចារ្យណែនាំ៖ សឿង លីម (Soeurng LIM)</span></div>
+        <div class="footer-right">ទំព័រទី ២ នៃ ១០</div>
+    </div>
+</div>
+
+<!-- PAGE 4: EXERCISES 6 - 7 -->
+<div class="a4-page">
+    <div class="global-header">
+        <div class="header-item"><img src="Logo.png" onerror="this.src='https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png'"><span>សាកលវិទ្យាល័យអង្គរ</span></div>
+        <div class="header-center">
+            <h1>ឯកសារមេរៀនសង្ខេប - ជំពូកទី ៧</h1>
+            <p>ADVANCED DATA STRUCTURES AND ALGORITHMS</p>
+        </div>
+        <div class="header-item"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg"><span>Python Pro</span></div>
+    </div>
+
+    <div class="page-content">
+        <div class="case-title"><i class="fa-solid fa-arrow-down-short-wide"></i> ៣. ក្បួនតម្រៀបកម្រិតមូលដ្ឋាន (លំហាត់ ៦ ដល់ ៧)</div>
 
         <div class="theory-block">
             <h3><span class="level-badge bg-mid">លំហាត់ ៦</span> Recursive Binary Search (ក្បួនស្វែងរកពុះកណ្តាលបែប Recursive)</h3>
@@ -333,30 +376,9 @@ result = binary_search_rec(numbers, <span class="num">50</span>, <span class="nu
             </div>
             <div class="explanation-box">
                 <b>វិភាគ Space Complexity ៖</b><br>
-                ក្បួនដោះស្រាយបែប Recursion ត្រូវការទំហំផ្ទុកបន្ថែម <b>$O(\log n)$</b> សម្រាប់ផ្ទុកសន្លឹក Stack Frames នៃអនុគមន៍ដែលហៅខ្លួនឯងជាបន្តបន្ទាប់ ខណៈដែលក្បួនដោះស្រាយបែប Iterative ត្រូវការត្រឹមតែ <b>$O(1)$</b> ប៉ុណ្ណោះ។
+                ក្បួនដោះស្រាយបែប Recursion ត្រូវការទំហំផ្ទុកបន្ថែម <b><i>O(log n)</i></b> សម្រាប់ផ្ទុកសន្លឹក Stack Frames នៃអនុគមន៍ដែលហៅខ្លួនឯងជាបន្តបន្ទាប់ ខណៈដែលក្បួនដោះស្រាយបែប Iterative ត្រូវការត្រឹមតែ <b><i>O(1)</i></b> ប៉ុណ្ណោះ។
             </div>
         </div>
-    </div>
-
-    <div class="global-footer">
-        <div class="footer-left"><img src="Lim.jpg" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'"><span>សាស្ត្រាចារ្យណែនាំ៖ សឿង លីម (Soeurng LIM)</span></div>
-        <div class="footer-right">ទំព័រទី ២ នៃ ៨</div>
-    </div>
-</div>
-
-<!-- PAGE 3: Sorting - Exercises 7 to 9 -->
-<div class="a4-page">
-    <div class="global-header">
-        <div class="header-item"><img src="Logo.png" onerror="this.src='https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png'"><span>សាកលវិទ្យាល័យអង្គរ</span></div>
-        <div class="header-center">
-            <h1>ឯកសារមេរៀនសង្ខេប - ជំពូកទី ៧</h1>
-            <p>ADVANCED DATA STRUCTURES AND ALGORITHMS</p>
-        </div>
-        <div class="header-item"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg"><span>Python Pro</span></div>
-    </div>
-
-    <div class="page-content">
-        <div class="case-title"><i class="fa-solid fa-arrow-down-short-wide"></i> ៣. ក្បួនតម្រៀបកម្រិតមូលដ្ឋាន (លំហាត់ ៧ ដល់ ៩)</div>
         
         <div class="theory-block">
             <h3><span class="level-badge bg-low">លំហាត់ ៧</span> Selection Sort (តម្រៀបទំហំឯកសាររូបថតពីតូចទៅធំ)</h3>
@@ -378,12 +400,47 @@ result = selection_sort(file_sizes)
 <span class="fn">print</span>(<span class="str">"ទំហំឯកសារតម្រៀបរួច:"</span>, result) <span class="com"># Expected Output: [11, 12, 23, 45, 89]</span></pre>
             </div>
         </div>
+    </div>
 
+    <div class="global-footer">
+        <div class="footer-left"><img src="Lim.jpg" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'"><span>សាស្ត្រាចារ្យណែនាំ៖ សឿង លីម (Soeurng LIM)</span></div>
+        <div class="footer-right">ទំព័រទី ៣ នៃ ១០</div>
+    </div>
+</div>
+
+<!-- PAGE 5: EXERCISES 8 - 9 -->
+<div class="a4-page">
+    <div class="global-header">
+        <div class="header-item"><img src="Logo.png" onerror="this.src='https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png'"><span>សាកលវិទ្យាល័យអង្គរ</span></div>
+        <div class="header-center">
+            <h1>ឯកសារមេរៀនសង្ខេប - ជំពូកទី ៧</h1>
+            <p>ADVANCED DATA STRUCTURES AND ALGORITHMS</p>
+        </div>
+        <div class="header-item"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg"><span>Python Pro</span></div>
+    </div>
+
+    <div class="page-content">
+        <div class="case-title"><i class="fa-solid fa-chart-line"></i> ៣. ក្បួនតម្រៀបកម្រិតមូលដ្ឋាន (លំហាត់ ៨ ដល់ ៩)</div>
+        
         <div class="theory-block">
             <h3><span class="level-badge bg-low">លំហាត់ ៨</span> ការវិភាគភាពស្មុគស្មាញរបស់ Selection Sort</h3>
+            <div class="code-container">
+                <div class="code-header"><i class="fa-brands fa-python"></i> Prove Selection Sort always <i>O(n<sup>2</sup>)</i></div>
+<pre><span class="kw">def</span> <span class="fn">selection_sort_steps</span>(arr):
+    n = <span class="fn">len</span>(arr)
+    steps = <span class="num">0</span>
+    <span class="kw">for</span> i <span class="kw">in range</span>(n):
+        <span class="kw">for</span> j <span class="kw">in range</span>(i + <span class="num">1</span>, n):
+            steps += <span class="num">1</span> <span class="com"># រាប់ចំនួននៃការប្រៀបធៀបទោះជាគ្មាន swap ក៏ដោយ</span>
+    <span class="kw">return</span> steps
+
+sorted_arr = [<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>, <span class="num">4</span>, <span class="num">5</span>]
+<span class="fn">print</span>(<span class="str">"ទោះ Array តម្រៀបរួច ក៏ត្រូវការប្រៀបធៀប:"</span>, selection_sort_steps(sorted_arr), <span class="str">"ដង"</span>)
+<span class="com"># Expected Output: 10 ដង (5*4/2)</span></pre>
+            </div>
             <div class="explanation-box">
                 <b>ហេតុអ្វីបានជា Selection Sort មានល្បឿន O(n²) គ្រប់ករណីទាំងអស់?</b><br>
-                ពីព្រោះក្បួនដោះស្រាយនេះមិនមានយន្តការត្រួតពិនិត្យភាពមានលំដាប់រួចរាល់របស់ទិន្នន័យឡើយ។ ទោះជា array ចូលមកត្រូវបាន Sorted រួចរាល់ ១០០% ក៏ដោយ ក៏ loop ខាងក្នុងនៅតែដំណើរការ scan ប្រៀបធៀបស្វែងរកតម្លៃអប្បបរមាពី i+1 ដល់ n គ្រប់ចំនួនដងជានិច្ច នាំឱ្យល្បឿន Best, Avg, Worst ស្មើនឹង <b>$O(n^2)$</b>។
+                ពីព្រោះក្បួនដោះស្រាយនេះមិនមានយន្តការត្រួតពិនិត្យភាពមានលំដាប់រួចរាល់របស់ទិន្នន័យឡើយ។ ទោះជា array ចូលមកត្រូវបាន Sorted រួចរាល់ ១០០% ក៏ដោយ ក៏ loop ខាងក្នុងនៅតែដំណើរការ scan ប្រៀបធៀបស្វែងរកតម្លៃអប្បបរមាពី i+1 ដល់ n គ្រប់ចំនួនដងជានិច្ច នាំឱ្យល្បឿន Best, Avg, Worst ស្មើនឹង <b><i>O(n<sup>2</sup>)</i></b>។
             </div>
         </div>
 
@@ -401,7 +458,7 @@ result = selection_sort(file_sizes)
                 swapped = <span class="kw">True</span>
         <span class="kw">if not</span> swapped: 
             <span class="kw">break</span>  <span class="com"># បញ្ឈប់ការរត់ loop ប្រសិនបើគ្មានការ Swap សោះ</span>
-    return arr
+    <span class="kw">return</span> arr
 
 student_heights = [<span class="num">155</span>, <span class="num">170</span>, <span class="num">162</span>, <span class="num">150</span>, <span class="num">168</span>]
 result = bubble_sort_optimized(student_heights)
@@ -412,11 +469,11 @@ result = bubble_sort_optimized(student_heights)
 
     <div class="global-footer">
         <div class="footer-left"><img src="Lim.jpg" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'"><span>សាស្ត្រាចារ្យណែនាំ៖ សឿង លីម (Soeurng LIM)</span></div>
-        <div class="footer-right">ទំព័រទី ៣ នៃ ៨</div>
+        <div class="footer-right">ទំព័រទី ៤ នៃ ១០</div>
     </div>
 </div>
 
-<!-- PAGE 4: Sorting - Exercises 10 to 12 -->
+<!-- PAGE 6: EXERCISES 10 - 12 -->
 <div class="a4-page">
     <div class="global-header">
         <div class="header-item"><img src="Logo.png" onerror="this.src='https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png'"><span>សាកលវិទ្យាល័យអង្គរ</span></div>
@@ -432,6 +489,23 @@ result = bubble_sort_optimized(student_heights)
         
         <div class="theory-block">
             <h3><span class="level-badge bg-low">លំហាត់ ១០</span> វិភាគគណនាចំនួនរង្វិលជុំ (Passes) របស់ Optimized Bubble Sort</h3>
+            <div class="code-container">
+                <div class="code-header"><i class="fa-brands fa-python"></i> Bubble Sort Passes Simulation</div>
+<pre><span class="kw">def</span> <span class="fn">bubble_sort_passes</span>(arr):
+    passes = <span class="num">0</span>
+    <span class="kw">for</span> i <span class="kw">in range</span>(<span class="fn">len</span>(arr)):
+        passes += <span class="num">1</span>
+        swapped = <span class="kw">False</span>
+        <span class="kw">for</span> j <span class="kw">in range</span>(<span class="num">0</span>, <span class="fn">len</span>(arr) - i - <span class="num">1</span>):
+            <span class="kw">if</span> arr[j] > arr[j + <span class="num">1</span>]:
+                arr[j], arr[j + <span class="num">1</span>] = arr[j + <span class="num">1</span>], arr[j]
+                swapped = <span class="kw">True</span>
+        <span class="kw">if not</span> swapped: <span class="kw">break</span>
+    <span class="kw">return</span> passes
+
+<span class="fn">print</span>(<span class="str">"ចំនួនរង្វិលជុំ (Passes) លើទិន្នន័យ Sorted:"</span>, bubble_sort_passes([<span class="num">150</span>, <span class="num">155</span>, <span class="num">160</span>, <span class="num">165</span>]))
+<span class="com"># Expected Output: 1</span></pre>
+            </div>
             <div class="explanation-box">
                 <b>ដំណោះស្រាយ ៖</b><br>
                 ប្រសិនបើបញ្ចូលបញ្ជីកម្ពស់សិស្សដែលរៀបរយរួចស្រេចគឺ <code>[150, 155, 160, 165]</code> នោះ loop ខាងក្រៅនឹងដំណើរការត្រឹមតែ <b>១ ដង (1 Pass)</b> ប៉ុណ្ណោះ។<br>
@@ -462,21 +536,34 @@ result = insertion_sort(cards)
 
         <div class="theory-block">
             <h3><span class="level-badge bg-low">លំហាត់ ១២</span> ការប្រៀបធៀប Selection vs Insertion Sort លើ Nearly Sorted Array</h3>
-            <div class="explanation-box">
-                <b>ដំណោះស្រាយប្រៀបធៀប ៖</b><br>
-                នៅលើ Nearly Sorted Array ក្បួនដោះស្រាយ <b>Insertion Sort</b> ដំណើរការល្អ និងលឿនជាង <b>Selection Sort</b> យ៉ាងខ្លាំង។<br>
-                <b>ព្រោះថា ៖</b> នៅក្នុងលក្ខខណ្ឌ nearly sorted ធាតុភាគច្រើនមានលំដាប់លំដោយរួចស្រេច នាំឱ្យ loop ខាងក្នុងរបស់ Insertion Sort (ខណៈពេល check លក្ខខណ្ឌ while) មិនសូវដំណើរការរុញធាតុឡើយ ដែលនាំឱ្យល្បឿនរបស់វាខិតជិត $O(n)$។ ចំណែកឯ Selection Sort នៅតែដំណើរការ nested loop ពេញលេញគ្រប់ករណី នាំឱ្យល្បឿនធ្លាក់ចុះដល់ $O(n^2)$ ជានិច្ច។
+            <div class="code-container">
+                <div class="code-header"><i class="fa-brands fa-python"></i> Comparison on Nearly Sorted Array</div>
+<pre><span class="kw">def</span> <span class="fn">insertion_sort_steps</span>(arr):
+    steps = <span class="num">0</span>
+    <span class="kw">for</span> i <span class="kw">in range</span>(<span class="num">1</span>, <span class="fn">len</span>(arr)):
+        key = arr[i]
+        j = i - <span class="num">1</span>
+        <span class="kw">while</span> j >= <span class="num">0</span> <span class="kw">and</span> arr[j] > key:
+            steps += <span class="num">1</span> <span class="com"># រាប់ពេលមានការរុញ (shift)</span>
+            arr[j + <span class="num">1</span>] = arr[j]
+            j -= <span class="num">1</span>
+        steps += <span class="num">1</span> 
+        arr[j + <span class="num">1</span>] = key
+    <span class="kw">return</span> steps
+
+nearly_sorted = [<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>, <span class="num">5</span>, <span class="num">4</span>]
+<span class="fn">print</span>(<span class="str">"Insertion Sort ត្រូវការប្រៀបធៀបសរុប:"</span>, insertion_sort_steps(nearly_sorted), <span class="str">"ដង"</span>)</pre>
             </div>
         </div>
     </div>
 
     <div class="global-footer">
         <div class="footer-left"><img src="Lim.jpg" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'"><span>សាស្ត្រាចារ្យណែនាំ៖ សឿង លីម (Soeurng LIM)</span></div>
-        <div class="footer-right">ទំព័រទី ៤ នៃ ៨</div>
+        <div class="footer-right">ទំព័រទី ៥ នៃ ១០</div>
     </div>
 </div>
 
-<!-- PAGE 5: Sorting - Exercises 13 to 14 -->
+<!-- PAGE 7: EXERCISES 13 - 15 -->
 <div class="a4-page">
     <div class="global-header">
         <div class="header-item"><img src="Logo.png" onerror="this.src='https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png'"><span>សាកលវិទ្យាល័យអង្គរ</span></div>
@@ -488,11 +575,10 @@ result = insertion_sort(cards)
     </div>
 
     <div class="page-content">
-        <div class="case-title"><i class="fa-solid fa-code-branch"></i> ៥. គ្រឹះនៃក្បួន Merge Sort (លំហាត់ ១៣ ដល់ ១៤)</div>
+        <div class="case-title"><i class="fa-solid fa-code-branch"></i> ៥. គ្រឹះនៃក្បួន Merge Sort (លំហាត់ ១៣ ដល់ ១៥)</div>
         
         <div class="theory-block">
             <h3><span class="level-badge bg-mid">លំហាត់ ១៣</span> Merge Sort: Tracing ដំណើរការបំបែកទិន្នន័យ (Divide Phase)</h3>
-            <p class="theory-text">កូដបង្ហាញគន្លងនៃការបំបែក (Divide) ទិន្នន័យជាចំណែកតូចៗរហូតដល់សល់ ១ ធាតុ៖</p>
             <div class="code-container">
                 <div class="code-header"><i class="fa-brands fa-python"></i> Divide Phase Tracing Code</div>
 <pre><span class="kw">def</span> <span class="fn">divide_trace</span>(arr):
@@ -507,18 +593,12 @@ result = insertion_sort(cards)
     divide_trace(left_half)
     divide_trace(right_half)
 
-<span class="com"># សាកល្បងដំណើរការ tracing</span>
-divide_trace([<span class="num">101</span>, <span class="num">105</span>, <span class="num">103</span>, <span class="num">102</span>])
-<span class="com"># Expected Output printed:</span>
-<span class="com"># ពុះចែក៖ [101, 105] | [103, 102]</span>
-<span class="com"># ពុះចែក៖ [101] | [105]</span>
-<span class="com"># ពុះចែក៖ [103] | [102]</span></pre>
+divide_trace([<span class="num">101</span>, <span class="num">105</span>, <span class="num">103</span>, <span class="num">102</span>])</pre>
             </div>
         </div>
 
         <div class="theory-block">
             <h3><span class="level-badge bg-high">លំហាត់ ១៤</span> Merge Arrays (ដំណើរការច្របាច់បញ្ចូល list ដែល Sorted ពីរចូលគ្នា)</h3>
-            <p class="theory-text">កូដគំរូនៃ Merge Helper Function ដែលច្របាច់បញ្ចូលគ្នា៖</p>
             <div class="code-container">
                 <div class="code-header"><i class="fa-brands fa-python"></i> Merge Arrays Helper Function</div>
 <pre><span class="kw">def</span> <span class="fn">merge_arrays</span>(left, right):
@@ -532,41 +612,17 @@ divide_trace([<span class="num">101</span>, <span class="num">105</span>, <span 
             res.append(right[j])
             j += <span class="num">1</span>
             
-    <span class="com"># កើបយកទិន្នន័យដែលនៅសល់ (បើមាន)</span>
     res.extend(left[i:])
     res.extend(right[j:])
     <span class="kw">return</span> res
 
-<span class="com"># សាកល្បងដំណើរការ merging </span>
 result = merge_arrays([<span class="num">101</span>, <span class="num">105</span>], [<span class="num">102</span>, <span class="num">103</span>])
-<span class="fn">print</span>(<span class="str">"ច្របាច់បញ្ចូលរួច:"</span>, result) <span class="com"># Expected Output: [101, 102, 103, 105]</span></pre>
+<span class="fn">print</span>(<span class="str">"ច្របាច់បញ្ចូលរួច:"</span>, result)</pre>
             </div>
         </div>
-    </div>
 
-    <div class="global-footer">
-        <div class="footer-left"><img src="Lim.jpg" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'"><span>សាស្ត្រាចារ្យណែនាំ៖ សឿង លីម (Soeurng LIM)</span></div>
-        <div class="footer-right">ទំព័រទី ៥ នៃ ៨</div>
-    </div>
-</div>
-
-<!-- PAGE 6: Sorting - Exercises 15 to 16 -->
-<div class="a4-page">
-    <div class="global-header">
-        <div class="header-item"><img src="Logo.png" onerror="this.src='https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png'"><span>សាកលវិទ្យាល័យអង្គរ</span></div>
-        <div class="header-center">
-            <h1>ឯកសារមេរៀនសង្ខេប - ជំពូកទី ៧</h1>
-            <p>ADVANCED DATA STRUCTURES AND ALGORITHMS</p>
-        </div>
-        <div class="header-item"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg"><span>Python Pro</span></div>
-    </div>
-
-    <div class="page-content">
-        <div class="case-title"><i class="fa-solid fa-compress-arrows-arrows"></i> ៦. ក្បួនតម្រៀប Merge Sort ពេញលេញ (លំហាត់ ១៥ ដល់ ១៦)</div>
-        
         <div class="theory-block">
             <h3><span class="level-badge bg-high">លំហាត់ ១៥</span> Full Merge Sort (តម្រៀបតម្លៃផលិតផល e-commerce Shopee/Lazada)</h3>
-            <p class="theory-text">កូដភ្ជាប់ទំនាក់ទំនងរវាងដំណើរការ Divide និង Helper function ដើម្បីតម្រៀបតម្លៃផលិតផល៖</p>
             <div class="code-container">
                 <div class="code-header"><i class="fa-brands fa-python"></i> Full Merge Sort Algorithm</div>
 <pre><span class="kw">def</span> <span class="fn">merge_sort</span>(arr):
@@ -574,37 +630,25 @@ result = merge_arrays([<span class="num">101</span>, <span class="num">105</span
         <span class="kw">return</span> arr
     
     mid = <span class="fn">len</span>(arr) // <span class="num">2</span>
-    <span class="com"># ដំណាក់កាលបំបែកទិន្នន័យ (Divide Phase)</span>
     left = merge_sort(arr[:mid])
     right = merge_sort(arr[mid:])
     
-    <span class="com"># ដំណាក់កាលច្របាច់បញ្ចូល និងតម្រៀប (Conquer &amp; Merge Phase)</span>
-    <span class="kw">return</span> merge_arrays(left, right) <span class="com"># ហៅ Helper Function ពីទំព័រទី ៥</span>
+    <span class="kw">return</span> merge_arrays(left, right)
 
 prices = [<span class="num">45.5</span>, <span class="num">12.0</span>, <span class="num">89.9</span>, <span class="num">3.5</span>, <span class="num">25.0</span>]
 result = merge_sort(prices)
-<span class="fn">print</span>(<span class="str">"តម្លៃផលិតផលតម្រៀបរួច:"</span>, result) 
-<span class="com"># Expected Output: [3.5, 12.0, 25.0, 45.5, 89.9]</span></pre>
-            </div>
-        </div>
-
-        <div class="theory-block">
-            <h3><span class="level-badge bg-high">លំហាត់ ១៦</span> ការវិភាគ Space Complexity របស់ Merge Sort</h3>
-            <div class="explanation-box">
-                <b>ដំណោះស្រាយវិភាគ ៖</b><br>
-                Merge Sort មានទំហំ Space Complexity ស្មើនឹង <b>$O(n)$</b>។<br>
-                <b>មូលហេតុ ៖</b> នៅពេលដែលក្បួននេះដំណើរការច្របាច់បញ្ចូលគ្នា (Merging Phase) វាមិនអាចដូរទីតាំងផ្ទាល់ (In-place swap) នៅក្នុង array ចាស់ដើម្បីរក្សាភាព Stable បានឡើយ។ វាទាមទារដាច់ខាតនូវការបង្កើត array ថ្មីជាបណ្តោះអាសន្នទំហំ $n$ ដើម្បីផ្ទុកទិន្នន័យដែលបានច្របាច់បញ្ចូលគ្នា រួចចម្លងទិន្នន័យទាំងនោះបោះចូលទៅក្នុង array ដើមវិញ។
+<span class="fn">print</span>(<span class="str">"តម្លៃផលិតផលតម្រៀបរួច:"</span>, result)</pre>
             </div>
         </div>
     </div>
 
     <div class="global-footer">
         <div class="footer-left"><img src="Lim.jpg" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'"><span>សាស្ត្រាចារ្យណែនាំ៖ សឿង លីម (Soeurng LIM)</span></div>
-        <div class="footer-right">ទំព័រទី ៦ នៃ ៨</div>
+        <div class="footer-right">ទំព័រទី ៦ នៃ ១០</div>
     </div>
 </div>
 
-<!-- PAGE 7: Sorting - Exercises 17 to 18 -->
+<!-- PAGE 8: EXERCISES 16 - 18 -->
 <div class="a4-page">
     <div class="global-header">
         <div class="header-item"><img src="Logo.png" onerror="this.src='https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png'"><span>សាកលវិទ្យាល័យអង្គរ</span></div>
@@ -616,18 +660,33 @@ result = merge_sort(prices)
     </div>
 
     <div class="page-content">
-        <div class="case-title"><i class="fa-solid fa-bolt"></i> ៧. ក្បួនតម្រៀបរហ័ស Quick Sort (លំហាត់ ១៧ ដល់ ១៨)</div>
+        <div class="case-title"><i class="fa-solid fa-compress-arrows-arrows"></i> ៦. ក្បួនតម្រៀបរហ័ស Quick Sort (លំហាត់ ១៦ ដល់ ១៨)</div>
         
         <div class="theory-block">
-            <h3><span class="level-badge bg-high">លំហាត់ ១៧</span> Quick Sort (តម្រៀបទំហំអាវយឺត S, M, L, XL - Pythonic Way)</h3>
-            <p class="theory-text">កូដសម្រាយងាយស្រួលយល់ដោយប្រើប្រាស់ List Comprehension៖</p>
+            <h3><span class="level-badge bg-high">លំហាត់ ១៦</span> ការវិភាគ Space Complexity របស់ Merge Sort</h3>
+            <div class="code-container">
+                <div class="code-header"><i class="fa-brands fa-python"></i> Merge Sort Space Complexity Demo</div>
+<pre><span class="kw">def</span> <span class="fn">merge_space_demo</span>(left, right):
+    temp_array = [] <span class="com"># នេះហើយជាទីតាំងដែលស៊ី Space បន្ថែម O(n)</span>
+    <span class="fn">print</span>(<span class="str">f"កំពុងបង្កើត Array ថ្មីទំហំ {len(left) + len(right)} ដើម្បីផ្ទុកទិន្នន័យបណ្តោះអាសន្ន"</span>)
+    <span class="kw">return</span> temp_array
+
+merge_space_demo([<span class="num">1</span>, <span class="num">3</span>], [<span class="num">2</span>, <span class="num">4</span>])</pre>
+            </div>
+            <div class="explanation-box">
+                <b>ដំណោះស្រាយវិភាគ ៖</b><br>
+                Merge Sort មានទំហំ Space Complexity ស្មើនឹង <b><i>O(n)</i></b>។ វាមិនអាចដូរទីតាំងផ្ទាល់ (In-place swap) នៅក្នុង array ចាស់ដើម្បីរក្សាភាព Stable បានឡើយ។ វាទាមទារដាច់ខាតនូវការបង្កើត array ថ្មីជាបណ្តោះអាសន្នទំហំ <i>n</i> ដើម្បីផ្ទុកទិន្នន័យដែលបានច្របាច់បញ្ចូលគ្នា រួចចម្លងទិន្នន័យទាំងនោះបោះចូលទៅក្នុង array ដើមវិញ។
+            </div>
+        </div>
+
+        <div class="theory-block">
+            <h3><span class="level-badge bg-high">លំហាត់ ១៧</span> Quick Sort (តម្រៀបទំហំអាវ S, M, L, XL - Pythonic Way)</h3>
             <div class="code-container">
                 <div class="code-header"><i class="fa-brands fa-python"></i> Pythonic Quick Sort</div>
 <pre><span class="kw">def</span> <span class="fn">quick_sort</span>(arr):
     <span class="kw">if</span> <span class="fn">len</span>(arr) <= <span class="num">1</span>: 
         <span class="kw">return</span> arr
     
-    <span class="com"># រើសយកធាតុចំកណ្តាលធ្វើជា Pivot (ជួយកាត់បន្ថយ Worst Case លើ Sorted Array)</span>
     pivot = arr[<span class="fn">len</span>(arr) // <span class="num">2</span>]
     
     left = [x <span class="kw">for</span> x <span class="kw">in</span> arr <span class="kw">if</span> x < pivot]
@@ -636,30 +695,46 @@ result = merge_sort(prices)
     
     <span class="kw">return</span> quick_sort(left) + middle + quick_sort(right)
 
-sizes_val = [<span class="num">3</span>, <span class="num">1</span>, <span class="num">4</span>, <span class="num">2</span>]  <span class="com"># លេខតំណាងទំហំអាវ៖ S=1, M=2, L=3, XL=4</span>
+sizes_val = [<span class="num">3</span>, <span class="num">1</span>, <span class="num">4</span>, <span class="num">2</span>]
 result = quick_sort(sizes_val)
-<span class="fn">print</span>(<span class="str">"ទំហំអាវតម្រៀបរួច:"</span>, result) <span class="com"># Expected Output: [1, 2, 3, 4]</span></pre>
+<span class="fn">print</span>(<span class="str">"ទំហំអាវតម្រៀបរួច:"</span>, result)</pre>
             </div>
         </div>
 
         <div class="theory-block">
-            <h3><span class="level-badge bg-high">លំហាត់ ១៨</span> មូលហេតុដែលនាំឱ្យ Quick Sort ពេញនិយមក្នុងឧស្សាហកម្មជាក់ស្តែង</h3>
-            <div class="explanation-box">
-                <b>ដំណោះស្រាយវិភាគ ៖</b><br>
-                ទោះបីជាល្បឿនមធ្យមរបស់វាស្មើ Merge Sort ($O(n \log n)$) ក៏ដោយ តែ Quick Sort ពេញនិយមជាងព្រោះ៖<br>
-                <b>១. In-place Sorting៖</b> Quick Sort កំណែស្តង់ដារ (ដូចជា Hoare ឬ Lomuto partition) ដំណើរការតម្រៀបដូរទីតាំងលើ Array ដើមផ្ទាល់ នាំឱ្យប្រើប្រាស់ទំហំផ្ទុកបន្ថែមតិចតួចបំផុត <b>$O(\log n)$</b> ធៀបនឹង Merge Sort ដែលត្រូវការ $O(n)$។<br>
-                <b>២. Cache Friendly៖</b> វាមាន Locality of Reference ខ្ពស់ ធ្វើឱ្យ CPU ងាយស្រួលទាញយកទិន្នន័យពី Cache Memory ដែលបង្កើនល្បឿនរត់ជាក់ស្តែងលឿនជាង Merge Sort។
+            <h3><span class="level-badge bg-high">លំហាត់ ១៨</span> In-Place Quick Sort (Lomuto Partition Scheme)</h3>
+            <div class="code-container">
+                <div class="code-header"><i class="fa-brands fa-python"></i> In-Place Quick Sort</div>
+<pre><span class="kw">def</span> <span class="fn">partition</span>(arr, low, high):
+    pivot = arr[high]
+    i = low - <span class="num">1</span>
+    <span class="kw">for</span> j <span class="kw">in range</span>(low, high):
+        <span class="kw">if</span> arr[j] < pivot:
+            i += <span class="num">1</span>
+            arr[i], arr[j] = arr[j], arr[i] <span class="com"># In-place swap (មិនស៊ីទំហំថ្មី)</span>
+    arr[i + <span class="num">1</span>], arr[high] = arr[high], arr[i + <span class="num">1</span>]
+    <span class="kw">return</span> i + <span class="num">1</span>
+
+<span class="kw">def</span> <span class="fn">quick_sort_inplace</span>(arr, low, high):
+    <span class="kw">if</span> low < high:
+        pi = partition(arr, low, high)
+        quick_sort_inplace(arr, low, pi - <span class="num">1</span>)
+        quick_sort_inplace(arr, pi + <span class="num">1</span>, high)
+
+arr = [<span class="num">10</span>, <span class="num">7</span>, <span class="num">8</span>, <span class="num">9</span>, <span class="num">1</span>, <span class="num">5</span>]
+quick_sort_inplace(arr, <span class="num">0</span>, <span class="fn">len</span>(arr)-<span class="num">1</span>)
+<span class="fn">print</span>(<span class="str">"តម្រៀបដោយមិនប្រើ Array ថ្មី:"</span>, arr)</pre>
             </div>
         </div>
     </div>
 
     <div class="global-footer">
         <div class="footer-left"><img src="Lim.jpg" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'"><span>សាស្ត្រាចារ្យណែនាំ៖ សឿង លីម (Soeurng LIM)</span></div>
-        <div class="footer-right">ទំព័រទី ៧ នៃ ៨</div>
+        <div class="footer-right">ទំព័រទី ៧ នៃ ១០</div>
     </div>
 </div>
 
-<!-- PAGE 8: Sorting - Exercises 19 to 20 -->
+<!-- PAGE 9: EXERCISES 19 - 20 -->
 <div class="a4-page">
     <div class="global-header">
         <div class="header-item"><img src="Logo.png" onerror="this.src='https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png'"><span>សាកលវិទ្យាល័យអង្គរ</span></div>
@@ -671,11 +746,10 @@ result = quick_sort(sizes_val)
     </div>
 
     <div class="page-content">
-        <div class="case-title"><i class="fa-solid fa-music"></i> ៨. ក្បួនតម្រៀបកម្រិតខ្ពស់ និង Timsort (លំហាត់ ១៩ ដល់ ២០)</div>
+        <div class="case-title"><i class="fa-solid fa-music"></i> ៧. ក្បួនតម្រៀបកម្រិតខ្ពស់ និង Timsort (លំហាត់ ១៩ ដល់ ២០)</div>
         
         <div class="theory-block">
             <h3><span class="level-badge bg-high">លំហាត់ ១៩</span> Custom Object Sorting (តម្រៀបបទចម្រៀងក្នុង Spotify តាម Views ច្រើនបំផុត)</h3>
-            <p class="theory-text">កូដតម្រៀបទិន្នន័យស្មុគស្មាញ (List of Dictionaries) ដោយប្រើប្រាស់ Lambda Expression៖</p>
             <div class="code-container">
                 <div class="code-header"><i class="fa-brands fa-python"></i> Python Timsort Custom Key Sorting</div>
 <pre>songs = [
@@ -684,20 +758,23 @@ result = quick_sort(sizes_val)
     {<span class="str">"title"</span>: <span class="str">"Song C"</span>, <span class="str">"views"</span>: <span class="num">230000</span>}
 ]
 
-<span class="com"># តម្រៀបពី Views ច្រើនទៅតិច (reverse=True) ដោយប្រើ Built-in Timsort របស់ Python</span>
 songs.sort(key=<span class="kw">lambda</span> x: x[<span class="str">"views"</span>], reverse=<span class="kw">True</span>)
 
 <span class="kw">for</span> song <span class="kw">in</span> songs:
-    <span class="fn">print</span>(<span class="str">f"{song['title']}: {song['views']} views"</span>)
-<span class="com"># Expected Output:</span>
-<span class="com"># Song B: 500000 views</span>
-<span class="com"># Song C: 230000 views</span>
-<span class="com"># Song A: 150000 views</span></pre>
+    <span class="fn">print</span>(<span class="str">f"{song['title']}: {song['views']} views"</span>)</pre>
             </div>
         </div>
 
         <div class="theory-block">
             <h3><span class="level-badge bg-low">លំហាត់ ២០</span> ការសង្ខេប Time Complexity នៃក្បួនដោះស្រាយទាំងអស់</h3>
+            <div class="code-container">
+                <div class="code-header"><i class="fa-brands fa-python"></i> Algorithm Performance Benchmarking (Timeit)</div>
+<pre><span class="kw">import</span> timeit
+
+code = <span class="str">"sorted([5, 2, 9, 1, 5, 6, 8, 3, 7, 4])"</span>
+execution_time = timeit.<span class="fn">timeit</span>(code, number=<span class="num">100000</span>)
+<span class="fn">print</span>(<span class="str">f"ល្បឿនរត់ Timsort 10 ម៉ឺនដង: {execution_time:.4f} វិនាទី"</span>)</pre>
+            </div>
             <table style="width: 100%; border-collapse: collapse; margin-top: 4px;">
                 <thead>
                     <tr style="background-color: var(--accent-blue); color: white; font-size: 11px;">
@@ -758,7 +835,133 @@ songs.sort(key=<span class="kw">lambda</span> x: x[<span class="str">"views"</sp
 
     <div class="global-footer">
         <div class="footer-left"><img src="Lim.jpg" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'"><span>សាស្ត្រាចារ្យណែនាំ៖ សឿង លីម (Soeurng LIM)</span></div>
-        <div class="footer-right">ទំព័រទី ៨ នៃ ៨</div>
+        <div class="footer-right">ទំព័រទី ៨ នៃ ១០</div>
+    </div>
+</div>
+
+<!-- PAGE 10: EXERCISES 21 - 22 -->
+<div class="a4-page">
+    <div class="global-header">
+        <div class="header-item"><img src="Logo.png" onerror="this.src='https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png'"><span>សាកលវិទ្យាល័យអង្គរ</span></div>
+        <div class="header-center">
+            <h1>ឯកសារមេរៀនសង្ខេប - ជំពូកទី ៧</h1>
+            <p>ADVANCED DATA STRUCTURES AND ALGORITHMS</p>
+        </div>
+        <div class="header-item"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg"><span>Python Pro</span></div>
+    </div>
+
+    <div class="page-content">
+        <div class="case-title"><i class="fa-solid fa-calculator"></i> ៨. ក្បួនស្វែងរកកម្រិតខ្ពស់ និងការអនុវត្ត (លំហាត់ ២១ ដល់ ២២)</div>
+        
+        <div class="theory-block">
+            <h3><span class="level-badge bg-mid">លំហាត់ ២១</span> Interpolation Search (ការស្វែងរកបែបប៉ាន់ស្មានលើទិន្នន័យដែលចែករំលែកស្មើគ្នា)</h3>
+            <div class="code-container">
+                <div class="code-header"><i class="fa-brands fa-python"></i> Interpolation Search Algorithm</div>
+<pre><span class="kw">def</span> <span class="fn">interpolation_search</span>(arr, target):
+    low, high = <span class="num">0</span>, <span class="fn">len</span>(arr) - <span class="num">1</span>
+    <span class="kw">while</span> low <= high <span class="kw">and</span> target >= arr[low] <span class="kw">and</span> target <= arr[high]:
+        <span class="kw">if</span> low == high:
+            <span class="kw">if</span> arr[low] == target: <span class="kw">return</span> low
+            <span class="kw">return</span> -<span class="num">1</span>
+        
+        pos = low + <span class="fn">int</span>(((high - low) / (arr[high] - arr[low])) * (target - arr[low]))
+        
+        <span class="kw">if</span> arr[pos] == target: <span class="kw">return</span> pos
+        <span class="kw">if</span> arr[pos] < target: low = pos + <span class="num">1</span>
+        <span class="kw">else</span>: high = pos - <span class="num">1</span>
+    <span class="kw">return</span> -<span class="num">1</span>
+
+uniform_data = [<span class="num">10</span>, <span class="num">20</span>, <span class="num">30</span>, <span class="num">40</span>, <span class="num">50</span>, <span class="num">60</span>, <span class="num">70</span>, <span class="num">80</span>, <span class="num">90</span>]
+<span class="fn">print</span>(<span class="str">"ទីតាំងលេខ 70 គឺ Index ទី:"</span>, interpolation_search(uniform_data, <span class="num">70</span>))</pre>
+            </div>
+            <div class="explanation-box">
+                <b>វិភាគការអនុវត្ត ៖</b><br>
+                ល្បឿនមធ្យមរបស់ Interpolation Search គឺលឿនរហូតដល់ <b><i>O(log(log n))</i></b> ដែលលឿនជាង Binary Search (<i>O(log n)</i>) នៅលើទិន្នន័យដែលចែកចែកចាយស្មើគ្នា (Uniform Distribution) ព្រោះវាគណនាស្វែងរកចំគោលដៅប្រហាក់ប្រហែល។
+            </div>
+        </div>
+
+        <div class="theory-block">
+            <h3><span class="level-badge bg-high">លំហាត់ ២២</span> Searching in 2D Matrix (ការស្វែងរកតម្លៃក្នុង matrix ២ វិមាត្រដែលបានតម្រៀបរួច)</h3>
+            <div class="code-container">
+                <div class="code-header"><i class="fa-brands fa-python"></i> 2D Matrix Binary Search</div>
+<pre><span class="kw">def</span> <span class="fn">search_2d_matrix</span>(matrix, target):
+    <span class="kw">if not</span> matrix <span class="kw">or not</span> matrix[<span class="num">0</span>]: <span class="kw">return</span> <span class="kw">False</span>
+    rows, cols = <span class="fn">len</span>(matrix), <span class="fn">len</span>(matrix[<span class="num">0</span>])
+    low, high = <span class="num">0</span>, rows * cols - <span class="num">1</span>
+    
+    <span class="kw">while</span> low <= high:
+        mid = (low + high) // <span class="num">2</span>
+        mid_val = matrix[mid // cols][mid % cols]
+        
+        <span class="kw">if</span> mid_val == target: <span class="kw">return</span> <span class="kw">True</span>
+        <span class="kw">elif</span> mid_val < target: low = mid + <span class="num">1</span>
+        <span class="kw">else</span>: high = mid - <span class="num">1</span>
+    <span class="kw">return</span> <span class="kw">False</span>
+
+matrix = [[<span class="num">1</span>, <span class="num">3</span>, <span class="num">5</span>], [<span class="num">10</span>, <span class="num">11</span>, <span class="num">16</span>], [<span class="num">23</span>, <span class="num">30</span>, <span class="num">34</span>]]
+<span class="fn">print</span>(<span class="str">"តើមានលេខ 16 ដែរឬទេ?:"</span>, search_2d_matrix(matrix, <span class="num">16</span>))</pre>
+            </div>
+        </div>
+    </div>
+
+    <div class="global-footer">
+        <div class="footer-left"><img src="Lim.jpg" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'"><span>សាស្ត្រាចារ្យណែនាំ៖ សឿង លីម (Soeurng LIM)</span></div>
+        <div class="footer-right">ទំព័រទី ៩ នៃ ១០</div>
+    </div>
+</div>
+
+<!-- PAGE 11: EXERCISES 23 - 24 -->
+<div class="a4-page">
+    <div class="global-header">
+        <div class="header-item"><img src="Logo.png" onerror="this.src='https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png'"><span>សាកលវិទ្យាល័យអង្គរ</span></div>
+        <div class="header-center">
+            <h1>ឯកសារមេរៀនសង្ខេប - ជំពូកទី ៧</h1>
+            <p>ADVANCED DATA STRUCTURES AND ALGORITHMS</p>
+        </div>
+        <div class="header-item"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg"><span>Python Pro</span></div>
+    </div>
+
+    <div class="page-content">
+        <div class="case-title"><i class="fa-solid fa-code-compare"></i> ១០. ភាពនឹងនរ និងការអនុវត្តជាក់ស្តែង (លំហាត់ ២៣ ដល់ ២៤)</div>
+        
+        <div class="theory-block">
+            <h3><span class="level-badge bg-mid">លំហាត់ ២៣</span> Stable vs Unstable Sorting (ការយល់ដឹងអំពីស្ថេរភាពនៃក្បួនតម្រៀប)</h3>
+            <div class="code-container">
+                <div class="code-header"><i class="fa-brands fa-python"></i> Sorting Stability Demonstration</div>
+<pre>students = [
+    {<span class="str">"name"</span>: <span class="str">"Sok"</span>, <span class="str">"grade"</span>: <span class="num">85</span>},
+    {<span class="str">"name"</span>: <span class="str">"Dara"</span>, <span class="str">"grade"</span>: <span class="num">90</span>},
+    {<span class="str">"name"</span>: <span class="str">"Nita"</span>, <span class="str">"grade"</span>: <span class="num">85</span>}  
+]
+
+students.sort(key=<span class="kw">lambda</span> x: x[<span class="str">"grade"</span>])
+<span class="kw">for</span> s <span class="kw">in</span> students:
+    <span class="fn">print</span>(<span class="str">f"{s['name']}: {s['grade']}"</span>)</pre>
+            </div>
+            <div class="explanation-box">
+                <b>តើក្បួនតម្រៀបមានស្ថេរភាព (Stable Sort) ផ្តល់ប្រយោជន៍អ្វីខ្លះ?</b><br>
+                ក្បួនតម្រៀបត្រូវបានចាត់ទុកថាមាន <b>ស្ថេរភាព (Stable)</b> កាលណាវាធានារក្សាទីតាំងដើមនៃធាតុទាំងឡាយណាដែលមានគន្លឹះ (key) ស្មើគ្នា។<br>
+                - <b>Stable Sorts:</b> Bubble Sort, Insertion Sort, Merge Sort, Timsort។<br>
+                - <b>Unstable Sorts:</b> Selection Sort, Quick Sort, Heap Sort។
+            </div>
+        </div>
+
+        <div class="theory-block">
+            <h3><span class="level-badge bg-low">លំហាត់ ២៤</span> Practical Guidelines (គោលការណ៍ជ្រើសរើសក្បួនតម្រៀបក្នុងឧស្សាហកម្ម)</h3>
+            <div class="explanation-box" style="background-color: white; border: 1px solid #CBD5E1;">
+                <ul style="padding-left: 20px; font-size: 11.5px; line-height: 1.6;">
+                    <li><b>១. ប្រើប្រាស់ Built-in Functions (Timsort):</b> ក្នុងការអភិវឌ្ឍន៍កម្មវិធីទូទៅ សូមប្រើប្រាស់ <code>.sort()</code> ឬ <code>sorted()</code> របស់ Python ជានិច្ច ព្រោះវាជាប្រភេទក្បួនកាត់កូនកាត់កម្រិតខ្ពស់ដែលមានប្រសិទ្ធភាពខ្ពស់ និងរត់បានលឿនបំផុតលើទិន្នន័យពិភពលោកពិត (<i>O(n log n)</i>)។</li>
+                    <li><b>២. នៅពេលទំហំ Memory មានកំណត់ខ្លាំង (In-place Optimization):</b> ប្រសិនបើប្រព័ន្ធជា Embedded Systems ឬ IoT ដែលគ្មានទំហំ RAM បន្ថែមទេនោះ <b>Quick Sort (In-place)</b> ឬ <b>Heap Sort</b> គឺជាជម្រើសដ៏ល្អប្រសើរ (<i>O(1)</i> Extra Space) ធៀបនឹង Merge Sort (<i>O(n)</i> Extra Space)។</li>
+                    <li><b>៣. លើទិន្នន័យដែលជិតមានលំដាប់រួចរាល់ (Nearly Sorted Data):</b> <b>Insertion Sort</b> ដំណើរការបានយ៉ាងល្អអស្ចារ្យ ព្រោះវាប្រើពេលវេលាត្រឹមតែ <i>O(n)</i> និងមិនតម្រូវឱ្យបង្កើត space បន្ថែមឡើយ។</li>
+                    <li><b>៤. ករណីចង់បានដំណើរការថេរ និងមិនប្រែប្រួលទោះស្ថានភាពទិន្នន័យបែបណា (Guaranteed Performance):</b> <b>Merge Sort</b> ធានាល្បឿន <i>O(n log n)</i> ជានិច្ច ទោះបីជា Worst Case យ៉ាងណាក៏ដោយ ដែលស័ក្តិសមសម្រាប់ប្រព័ន្ធធំៗត្រូវការពេលវេលាឆ្លើយតបច្បាស់លាស់ (Real-time systems)។</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="global-footer">
+        <div class="footer-left"><img src="Lim.jpg" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'"><span>សាស្ត្រាចារ្យណែនាំ៖ សឿង លីម (Soeurng LIM)</span></div>
+        <div class="footer-right">ទំព័រទី ១០ នៃ ១០</div>
     </div>
 </div>
 
