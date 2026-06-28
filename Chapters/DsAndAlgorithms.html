@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="km">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unified DSA Reference Guide - Chapters 1 to 7</title>
+    <link href="https://fonts.googleapis.com/css2?family=Battambang:wght@400;700&family=Suwannaphum:wght@400;700;900&family=Lato:wght@400;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        :root {
+            --bg-dark: #0F172A; --bg-card: #F8FAFC; --text-main: #0F172A; --text-muted: #475569;
+            --accent-blue: #0284C7; --accent-green: #059669; --accent-yellow: #D97706; --accent-red: #DC2626;
+            --header-footer-bg: #F0F9FF; --code-bg: #111827;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        body { background-color: var(--bg-dark); font-family: 'Battambang', sans-serif; overflow: hidden; height: 100vh; width: 100vw; display: flex; align-items: center; justify-content: center; -webkit-user-select: auto; user-select: auto; }
+        
+        .slide-deck { width: 98vw; height: 95vh; position: relative; background: #FFFFFF; border-radius: 1.5vw; overflow: hidden; box-shadow: 0 40px 100px rgba(0,0,0,0.5); display: flex; flex-direction: column; }
+        .slide-wrapper { flex-grow: 1; position: relative; overflow: hidden; }
+        .slide { display: none; width: 100%; height: 100%; padding: 1.5vh 3.5vw; flex-direction: column; justify-content: flex-start; animation: slideIn 0.3s ease-out; position: absolute; top: 0; left: 0; }
+        .slide.active { display: flex; }
+        @keyframes slideIn { from { opacity: 0; transform: translateX(40px); } to { opacity: 1; transform: translateX(0); } }
+
+        /* Navigation Zones */
+        .nav-zone { position: absolute; top: 0; bottom: 0; width: 8%; z-index: 50; cursor: pointer; display: flex; align-items: center; opacity: 0.15; transition: all 0.3s ease; }
+        .nav-zone:hover { opacity: 1; background: rgba(0,0,0,0.02); }
+        .nav-left { left: 0; justify-content: flex-start; padding-left: 1.5vw; background: linear-gradient(to right, rgba(0,0,0,0.03), transparent); }
+        .nav-right { right: 0; justify-content: flex-end; padding-right: 1.5vw; background: linear-gradient(to left, rgba(0,0,0,0.03), transparent); }
+        .nav-zone i { font-size: 3vw; color: var(--accent-blue); filter: drop-shadow(0 2px 4px rgba(0,0,0,0.15)); background: white; border-radius: 50%; padding: 0.8vw; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+
+        /* Header Branding */
+        .global-header { display: flex; justify-content: space-between; align-items: center; margin: -1.5vh -3.5vw 1vh -3.5vw; padding: 1vh 3.5vw; border-bottom: 3px solid var(--accent-blue); background-color: var(--header-footer-bg); }
+        .header-item { display: flex; flex-direction: column; align-items: center; gap: 2px; width: 15vw; }
+        .header-item img { height: 3.5vw; object-fit: contain; }
+        .header-item span { font-size: 0.85vw; font-weight: bold; color: var(--accent-blue); text-align: center; }
+        .header-center h1 { font-family: 'Suwannaphum'; font-size: 1.65vw; color: var(--accent-blue); margin: 0; }
+        .header-center p { font-family: 'Lato'; font-size: 0.95vw; color: #64748B; margin: 0; font-weight: bold; text-align: center; }
+
+        /* Typography */
+        h1 { font-family: 'Suwannaphum'; font-size: 3.6vw; text-align: center; color: var(--text-main); font-weight: 900; line-height: 1.3; }
+        h2.slide-title { font-family: 'Suwannaphum'; font-size: 2.8vw; font-weight: 900; border-bottom: 0.3vw solid var(--accent-blue); padding-bottom: 0.3vh; margin-bottom: 1.2vh; color: var(--text-main); display: inline-block; }
+        .content-body { flex-grow: 1; display: flex; flex-direction: column; justify-content: flex-start; gap: 0.8vh; width: 100%; overflow-y: auto; padding-bottom: 1vh; }
+        p, li, td { font-size: 1.55vw; line-height: 1.55; color: var(--text-main); }
+        
+        .keyword-icon { color: var(--accent-blue); margin-right: 0.5vw; width: 2vw; text-align: center; display: inline-block; }
+        .tech-icon { color: var(--accent-blue); margin-right: 6px; font-size: 1.1em; vertical-align: baseline; }
+        b .tech-icon, strong .tech-icon, .card h4 .tech-icon, h2 .tech-icon { color: inherit; } 
+
+        /* Layouts & Cards */
+        .two-column { display: grid; grid-template-columns: 1.15fr 0.85fr; gap: 2vw; height: 100%; align-items: center; }
+        .two-column-equal { display: grid; grid-template-columns: 1fr 1fr; gap: 2vw; height: 100%; align-items: start; }
+        .card-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1vw; }
+        .card { background: var(--bg-card); padding: 1.2vh 2.2vw; border-radius: 0.8vw; border-left: 0.8vw solid var(--accent-blue); box-shadow: 0 4px 8px rgba(0,0,0,0.04); display: flex; flex-direction: column; justify-content: center; }
+        .card h4 { font-size: 1.8vw; color: var(--accent-blue); margin-bottom: 0.4vh; font-family: 'Suwannaphum'; display: flex; align-items: center; gap: 8px;}
+
+        /* Tables */
+        table { width: 100%; border-collapse: collapse; background: white; border-radius: 0.8vw; overflow: hidden; box-shadow: 0 4px 8px rgba(0,0,0,0.04); }
+        th, td { border: 1px solid #E2E8F0; padding: 0.8vh 1.2vw; text-align: left; }
+        th { background: var(--accent-blue); color: white; font-family: 'Suwannaphum'; font-size: 1.5vw; }
+        td { font-size: 1.35vw; }
+
+        /* Visual Frame */
+        .visual-frame { background: #FFFFFF; border-radius: 0.8vw; border: 1px solid #CBD5E1; padding: 1vw; display: flex; align-items: center; justify-content: center; height: 100%; min-height: 220px; overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.04); }
+        .visual-frame svg { width: 100%; height: auto; max-height: 38vh; filter: drop-shadow(0 3px 5px rgba(0,0,0,0.04));}
+
+        /* Narrative Box & Analogy Box */
+        .narrative-box { background: #F8FAFC; border-radius: 0.6vw; border: 1px solid #CBD5E1; padding: 0.8vh 1.2vw; margin-bottom: 0.8vh; box-shadow: 0 2px 4px rgba(0,0,0,0.04); }
+        .narrative-header { font-weight: bold; color: var(--accent-blue); font-size: 1.4vw; border-bottom: 1px solid #E2E8F0; padding-bottom: 0.3vh; margin-bottom: 0.6vh; font-family: 'Suwannaphum'; display: flex; align-items: center; gap: 8px;}
+        .narrative-text { font-size: 1.3vw; color: var(--text-main); line-height: 1.5; margin: 0; }
+        
+        .analogy-box { background: #FFFBEB; border-left: 0.4vw solid var(--accent-yellow); border-radius: 0.5vw; padding: 0.8vh 1.2vw; margin-bottom: 0.6vh; box-shadow: 0 2px 4px rgba(0,0,0,0.04); }
+        .analogy-header { font-weight: bold; color: var(--accent-yellow); font-size: 1.4vw; margin-bottom: 0.3vh; font-family: 'Suwannaphum'; display: flex; align-items: center; gap: 6px;}
+        .analogy-text { font-size: 1.3vw; color: var(--text-main); line-height: 1.5; margin: 0; }
+
+        /* Highlight Note */
+        .highlight-note { background-color: #F0FDF4; border-left: 4px solid var(--accent-green); padding: 1vh 2vw; border-radius: 0.5vw; margin-top: 0.8vh; font-weight: bold; color: var(--accent-green); font-size: 1.5vw; display: flex; align-items: center; gap: 8px; border: 2px dashed var(--accent-green); justify-content: center;}
+
+        /* Main Footer */
+        .global-footer { display: flex; justify-content: space-between; align-items: center; width: 100%; padding: 1vh 4vw; border-top: 3px solid var(--accent-blue); background-color: var(--header-footer-bg); z-index: 10; }
+        .footer-left { display: flex; align-items: center; gap: 1.5vw; }
+        .footer-left img { border-radius: 50%; border: 2px solid var(--accent-blue); width: 3vw; height: 3vw; object-fit: cover; }
+        .footer-left span { font-size: 1.2vw; font-weight: bold; color: var(--text-main); font-family: 'Suwannaphum'; }
+        .slide-counter { font-size: 1.1vw; color: var(--accent-blue); font-family: 'Suwannaphum'; font-weight: 900; background: #FFFFFF; padding: 0.5vh 1.5vw; border-radius: 5vw; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        
+        .print-only-footer { display: none; }
+
+        /* PRINT STYLES */
+        @media print {
+            @page { size: A4 landscape; margin: 0; }
+            html, body { display: block !important; width: 100% !important; height: auto !important; background: white !important; overflow: visible !important; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; margin: 0 !important; padding: 0 !important; }
+            .slide-deck { display: block !important; width: 100% !important; height: auto !important; box-shadow: none !important; border: none !important; border-radius: 0 !important; }
+            .slide-wrapper { display: block !important; overflow: visible !important; }
+            .slide { display: flex !important; flex-direction: column !important; width: 297mm !important; height: 209mm !important; page-break-after: always !important; page-break-inside: avoid !important; position: relative !important; opacity: 1 !important; transform: none !important; animation: none !important; padding: 8mm 12mm !important; box-sizing: border-box !important; }
+            .nav-zone { display: none !important; }
+            .global-header { margin: -10mm -15mm 5mm -15mm !important; padding: 5mm 15mm !important; border-bottom: 2px solid var(--accent-blue) !important;}
+            .global-footer#mainFooter { display: none !important; }
+            .print-only-footer { display: flex !important; margin: auto -15mm -10mm -15mm !important; padding: 5mm 15mm !important; border-top: 2px solid var(--accent-blue) !important; background: var(--header-footer-bg) !important; width: 297mm !important; box-sizing: border-box !important; }
+            .card { box-shadow: 0 2px 4px rgba(0,0,0,0.04) !important; border: 1px solid #E2E8F0 !important; border-left-width: 0.8vw !important; page-break-inside: avoid !important;}
+            .visual-frame svg { object-fit: contain !important; background: #fff !important; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="slide-deck" id="deck">
+
+    <!-- Navigation Overlays -->
+    <div class="nav-zone nav-left" title="ថយក្រោយ (Previous)">
+        <i class="fa-solid fa-chevron-left"></i>
+    </div>
+    <div class="nav-zone nav-right" title="ទៅមុខ (Next)">
+        <i class="fa-solid fa-chevron-right"></i>
+    </div>
+
+    <!-- Header Template -->
+    <template id="headerTemplate">
+        <div class="global-header">
+            <div class="header-item">
+                <img src="Logo.png" onerror="this.src='https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png'">
+                <span>សាកលវិទ្យាល័យអង្គរ</span>
+            </div>
+            <div class="header-center" style="text-align: center;">
+                <h1 style="font-size: 1.5vw;">រចនាសម្ព័ន្ធទិន្នន័យកម្រិតខ្ពស់ និងក្បួនដោះស្រាយ (Advanced Data Structures and Algorithms - DSA)</h1>
+                <p>អនុបណ្ឌិតវិទ្យាសាស្ត្រទិន្នន័យ និងបញ្ញាសិប្បនិម្មិត (Master of Data Science & AI)</p>
+            </div>
+            <div class="header-item">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg">
+                <span>Python Pro</span>
+            </div>
+        </div>
+    </template>
+
+    <div class="slide-wrapper" id="slideWrapper">
+        
+        <!-- Cover Slide -->
+        <div class="slide active">
+            <div style="text-align: center; margin: auto; width: 100%;">
+                <div style="display: flex; align-items: center; justify-content: center; gap: 3vw; margin-bottom: 2vh;">
+                    <img src="Logo.png" style="height: 12vw;" alt="AU Logo" onerror="this.src='https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png'">
+                    <div style="text-align: center;">
+                        <h2 style="font-family: 'Suwannaphum'; color: var(--accent-blue); font-size: 3.6vw; margin: 0;">សាកលវិទ្យាល័យអង្គរ</h2>
+                        <p style="font-family: 'Lato'; color: var(--text-muted); font-size: 1.8vw; margin: 0;">ANGKOR UNIVERSITY</p>
+                    </div>
+                </div>
+                
+                <div style="margin-bottom: 2vh;">
+                    <h3 style="font-family: 'Suwannaphum'; font-size: 1.7vw; color: var(--accent-green);"><i class="fa-solid fa-graduation-cap"></i> អនុបណ្ឌិតវិទ្យាសាស្ត្រទិន្នន័យ និងបញ្ញាសិប្បនិម្មិត (Master of Data Science and AI)</h3>
+                </div>
+
+                <div style="background: var(--accent-blue); color: white; padding: 1vh 5vw; border-radius: 5vw; display: inline-block; font-size: 2.2vw; font-weight: bold; margin-bottom: 3vh;">មគ្គុទ្ទេសក៍សង្ខេបរួម | Unified DSA Reference Guide</div>
+                
+                <h1 style="line-height: 1.5;">ការបូកសង្ខេបរចនាសម្ព័ន្ធទិន្នន័យ និងក្បួនដោះស្រាយ<br>
+                <span style="color:var(--accent-blue); font-size: 2.4vw; font-family:'Lato'">(Summary of Core DSA Concepts - Chapters 1 to 7)</span></h1>
+                
+                <div style="margin-top: 3vh; display: flex; gap: 5vw; justify-content: center; align-items: center;">
+                    <div style="text-align: center;">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg" style="height: 6vw;">
+                        <p style="font-size: 1.1vw; font-weight: bold; color: var(--accent-blue);">Python Integration</p>
+                    </div>
+                    <div style="text-align: center;">
+                        <img src="https://cdn-icons-png.flaticon.com/512/2103/2103633.png" style="height: 6vw;">
+                        <p style="font-size: 1.1vw; font-weight: bold; color: var(--accent-blue);">Advanced Analysis</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Instructor Slide -->
+        <div class="slide">
+            <div id="h-placeholder-1"></div>
+            <h2 class="slide-title"><i class="fa-solid fa-user-tie"></i> ព័ត៌មានសាស្ត្រាចារ្យ និងមុខវិជ្ជា</h2>
+            <div class="content-body two-column">
+                <div style="position: relative; width: 20vw; height: 28vw; margin: auto;">
+                    <div style="position: absolute; top: 1.5vw; left: -1.5vw; width: 100%; height: 100%; background: rgba(2, 132, 199, 0.1); border-radius: 2vw; z-index: 0;"></div>
+                    <img src="Lim.jpg" style="position: relative; width: 100%; height: 100%; border-radius: 2vw; object-fit: cover; box-shadow: 0 15px 35px rgba(0,0,0,0.15); z-index: 1; border: 4px solid white;" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'">
+                </div>
+                <div style="padding-left: 2vw;">
+                    <h3 style="font-size: 3vw; color: var(--accent-blue); font-family: 'Suwannaphum'; margin-bottom: 2vh;">សាស្ត្រាចារ្យ៖ សឿង លីម <span style="font-size: 2vw; color: var(--text-muted);">(Soeurng LIM)</span></h3>
+                    <div class="card" style="border-left: none; border-top: 4px solid var(--accent-blue); padding: 3vh; background: #FFFFFF;">
+                        <p><b><i class="fa-solid fa-graduation-cap text-blue"></i> គុណវុឌ្ឍិ៖</b> បរិញ្ញាបត្រជាន់ខ្ពស់ (Master's Degree) - ព័ត៌មានវិទ្យា</p>
+                        <p><b><i class="fa-solid fa-phone text-blue"></i> ទូរស័ព្ទ៖</b> ០៦១ ២២៧ ៩៣៣</p>
+                        <p><b><i class="fa-solid fa-envelope text-blue"></i> អ៊ីម៉ែល៖</b> soeurnglim@gmail.com</p>
+                        <hr style="margin: 2vh 0; border: 1px solid #E2E8F0;">
+                        <p><b><i class="fa-solid fa-star text-blue"></i> ក្រេឌីត៖</b> ៣ ក្រេឌីត (3 Credits)</p>
+                        <p><b><i class="fa-solid fa-clipboard-check text-blue"></i> មុខវិជ្ជា៖</b> រចនាសម្ព័ន្ធទិន្នន័យកម្រិតខ្ពស់ និងក្បួនដោះស្រាយ</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Main Footer for Screen View -->
+    <div class="global-footer" id="mainFooter">
+        <div class="footer-left">
+            <img src="Lim.jpg" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'" alt="Professor">
+            <span>សាស្ត្រាចារ្យ៖ សឿង លីម (Soeurng LIM)</span>
+        </div>
+        <div class="slide-counter" id="screenSlideCounter">កំពុងរៀបចំ...</div>
+    </div>
+
+</div>
+
+<script>
+    const slideWrapper = document.getElementById('slideWrapper');
+    const headerHTML = document.getElementById('headerTemplate').innerHTML;
+    const khNums = ["០", "១", "២", "៣", "៤", "៥", "៦", "៧", "៨", "៩"];
+    function toKh(n) { return n.toString().split('').map(d => khNums[parseInt(d)]).join(''); }
+
+    // --- SVGs definitions ---
+    const bigOSVG = `
+        <svg viewBox="0 0 600 280" xmlns="http://www.w3.org/2000/svg">
+            <line x1="50" y1="240" x2="550" y2="240" stroke="#CBD5E1" stroke-width="2"/>
+            <line x1="50" y1="30" x2="50" y2="240" stroke="#475569" stroke-width="3"/>
+            <line x1="50" y1="240" x2="550" y2="240" stroke="#475569" stroke-width="3"/>
+            <text x="35" y="130" transform="rotate(-90, 35, 130)" font-size="14" font-weight="bold" fill="#475569" text-anchor="middle">ប្រតិបត្តិការ (Time)</text>
+            <text x="300" y="270" font-size="14" font-weight="bold" fill="#475569" text-anchor="middle">ទំហំទិន្នន័យ (Elements 'n')</text>
+            <line x1="50" y1="220" x2="540" y2="220" stroke="#059669" stroke-width="4"/>
+            <text x="500" y="210" font-size="16" font-weight="bold" fill="#059669">O(1)</text>
+            <path d="M 50 240 Q 150 180 540 160" fill="none" stroke="#0284C7" stroke-width="4"/>
+            <text x="500" y="150" font-size="16" font-weight="bold" fill="#0284C7">O(log n)</text>
+            <line x1="50" y1="240" x2="450" y2="50" stroke="#D97706" stroke-width="4"/>
+            <text x="400" y="70" font-size="16" font-weight="bold" fill="#D97706">O(n)</text>
+            <path d="M 50 240 Q 150 240 250 40" fill="none" stroke="#DC2626" stroke-width="4"/>
+            <text x="210" y="60" font-size="16" font-weight="bold" fill="#DC2626">O(n²)</text>
+        </svg>
+    `;
+
+    const memorySVG = `
+        <svg viewBox="0 0 600 280" xmlns="http://www.w3.org/2000/svg">
+            <rect x="30" y="40" width="220" height="200" rx="8" fill="#F8FAFC" stroke="#475569" stroke-width="3"/>
+            <text x="140" y="70" font-size="18" font-weight="bold" fill="#0F172A" text-anchor="middle">Stack (References)</text>
+            <rect x="60" y="100" width="160" height="40" rx="4" fill="#E2E8F0"/>
+            <text x="140" y="125" font-family="monospace" font-size="14" font-weight="bold" fill="#0F172A" text-anchor="middle">list_reference</text>
+            <rect x="350" y="40" width="220" height="200" rx="8" fill="#F0FDF4" stroke="#059669" stroke-width="3"/>
+            <text x="460" y="70" font-size="18" font-weight="bold" fill="#059669" text-anchor="middle">Heap (Actual Objects)</text>
+            <rect x="380" y="110" width="160" height="60" rx="6" fill="#D1FAE5" stroke="#059669" stroke-width="2"/>
+            <text x="460" y="145" font-family="monospace" font-size="16" font-weight="bold" fill="#065F46" text-anchor="middle">[10, 20, 30]</text>
+            <path d="M 220 120 C 270 120, 300 140, 370 140" fill="none" stroke="#059669" stroke-width="3" marker-end="url(#arrow)"/>
+            <defs>
+                <marker id="arrow" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                    <path d="M 0 0 L 10 5 L 0 10 z" fill="#059669" />
+                </marker>
+            </defs>
+        </svg>
+    `;
+
+    const arraySVG = `
+        <svg viewBox="0 0 600 240" xmlns="http://www.w3.org/2000/svg">
+            <g transform="translate(50, 70)">
+                <rect x="0" y="0" width="90" height="70" rx="8" fill="#E0F2FE" stroke="#0284C7" stroke-width="3"/>
+                <rect x="100" y="0" width="90" height="70" rx="8" fill="#E0F2FE" stroke="#0284C7" stroke-width="3"/>
+                <rect x="200" y="0" width="90" height="70" rx="8" fill="#E0F2FE" stroke="#0284C7" stroke-width="3"/>
+                <rect x="300" y="0" width="90" height="70" rx="8" fill="#E0F2FE" stroke="#0284C7" stroke-width="3"/>
+                <text x="45" y="42" font-size="24" font-weight="bold" fill="#0F172A" text-anchor="middle">10</text>
+                <text x="145" y="42" font-size="24" font-weight="bold" fill="#0F172A" text-anchor="middle">20</text>
+                <text x="245" y="42" font-size="24" font-weight="bold" fill="#0F172A" text-anchor="middle">30</text>
+                <text x="345" y="42" font-size="24" font-weight="bold" fill="#0F172A" text-anchor="middle">40</text>
+                <text x="45" y="100" font-size="16" fill="#64748B" font-weight="bold" text-anchor="middle">idx 0</text>
+                <text x="145" y="100" font-size="16" fill="#64748B" font-weight="bold" text-anchor="middle">idx 1</text>
+                <text x="245" y="100" font-size="16" fill="#64748B" font-weight="bold" text-anchor="middle">idx 2</text>
+                <text x="345" y="100" font-size="16" fill="#64748B" font-weight="bold" text-anchor="middle">idx 3</text>
+            </g>
+        </svg>
+    `;
+
+    const singlySVG = `
+        <svg viewBox="0 0 600 240" xmlns="http://www.w3.org/2000/svg">
+            <g transform="translate(40, 70)">
+                <rect x="0" y="0" width="100" height="60" rx="8" fill="#E0F2FE" stroke="#0284C7" stroke-width="3"/>
+                <line x1="70" y1="0" x2="70" y2="60" stroke="#0284C7" stroke-width="2"/>
+                <text x="35" y="38" font-size="22" font-weight="bold" fill="#0F172A" text-anchor="middle">10</text>
+                <circle cx="85" cy="30" r="5" fill="#0284C7"/>
+                <path d="M 85 30 L 155 30" fill="none" stroke="#059669" stroke-width="3" marker-end="url(#arrow)"/>
+                
+                <rect x="160" y="0" width="100" height="60" rx="8" fill="#BAE6FD" stroke="#0284C7" stroke-width="3"/>
+                <line x1="230" y1="0" x2="230" y2="60" stroke="#0284C7" stroke-width="2"/>
+                <text x="195" y="38" font-size="22" font-weight="bold" fill="#0F172A" text-anchor="middle">20</text>
+                <circle cx="245" cy="30" r="5" fill="#0284C7"/>
+                <path d="M 245 30 L 315 30" fill="none" stroke="#059669" stroke-width="3" marker-end="url(#arrow)"/>
+
+                <rect x="320" y="0" width="100" height="60" rx="8" fill="#7DD3FC" stroke="#0284C7" stroke-width="3"/>
+                <line x1="390" y1="0" x2="390" y2="60" stroke="#0284C7" stroke-width="2"/>
+                <text x="355" y="38" font-size="22" font-weight="bold" fill="#0F172A" text-anchor="middle">30</text>
+                <line x1="390" y1="60" x2="420" y2="0" stroke="#DC2626" stroke-width="3"/>
+                <text x="445" y="38" font-size="16" font-weight="bold" fill="#DC2626" text-anchor="middle">Null</text>
+            </g>
+        </svg>
+    `;
+
+    const bstSVG = `
+        <svg viewBox="0 0 600 280" xmlns="http://www.w3.org/2000/svg">
+            <line x1="300" y1="50" x2="200" y2="120" stroke="#64748B" stroke-width="3"/>
+            <line x1="300" y1="50" x2="400" y2="120" stroke="#64748B" stroke-width="3"/>
+            <line x1="200" y1="120" x2="140" y2="190" stroke="#64748B" stroke-width="3"/>
+            <line x1="200" y1="120" x2="260" y2="190" stroke="#64748B" stroke-width="3"/>
+            
+            <circle cx="300" cy="50" r="28" fill="#0284C7"/>
+            <text x="300" y="56" font-size="18" font-weight="bold" fill="#FFF" text-anchor="middle">50</text>
+            
+            <circle cx="200" cy="120" r="28" fill="#059669"/>
+            <text x="200" y="126" font-size="18" font-weight="bold" fill="#FFF" text-anchor="middle">30</text>
+            
+            <circle cx="400" cy="120" r="28" fill="#059669"/>
+            <text x="400" y="126" font-size="18" font-weight="bold" fill="#FFF" text-anchor="middle">70</text>
+            
+            <circle cx="140" cy="190" r="28" fill="#D97706"/>
+            <text x="140" y="196" font-size="18" font-weight="bold" fill="#FFF" text-anchor="middle">20</text>
+            
+            <circle cx="260" cy="190" r="28" fill="#D97706"/>
+            <text x="260" y="196" font-size="18" font-weight="bold" fill="#FFF" text-anchor="middle">40</text>
+        </svg>
+    `;
+
+    const graphSVG = `
+        <svg viewBox="0 0 600 280" xmlns="http://www.w3.org/2000/svg">
+            <line x1="150" y1="100" x2="300" y2="70" stroke="#475569" stroke-width="4"/>
+            <line x1="300" y1="70" x2="450" y2="150" stroke="#475569" stroke-width="4"/>
+            <line x1="150" y1="100" x2="250" y2="210" stroke="#475569" stroke-width="4"/>
+            <line x1="300" y1="70" x2="250" y2="210" stroke="#475569" stroke-width="4"/>
+            <line x1="450" y1="150" x2="250" y2="210" stroke="#475569" stroke-width="4"/>
+            
+            <circle cx="150" cy="100" r="30" fill="#0284C7"/>
+            <text x="150" y="105" font-size="14" font-weight="bold" fill="#FFF" text-anchor="middle">PP</text>
+            
+            <circle cx="300" cy="70" r="30" fill="#0284C7"/>
+            <text x="300" y="75" font-size="14" font-weight="bold" fill="#FFF" text-anchor="middle">SR</text>
+            
+            <circle cx="450" cy="150" r="30" fill="#0284C7"/>
+            <text x="450" y="155" font-size="14" font-weight="bold" fill="#FFF" text-anchor="middle">BTB</text>
+            
+            <circle cx="250" cy="210" r="30" fill="#0284C7"/>
+            <text x="250" y="215" font-size="14" font-weight="bold" fill="#FFF" text-anchor="middle">SHV</text>
+        </svg>
+    `;
+
+    const hashSVG = `
+        <svg viewBox="0 0 600 280" xmlns="http://www.w3.org/2000/svg">
+            <rect x="40" y="60" width="100" height="40" rx="6" fill="#FEF3C7" stroke="#D97706" stroke-width="2"/>
+            <text x="90" y="85" font-size="14" font-weight="bold" fill="#B45309" text-anchor="middle">"Key_1"</text>
+            <path d="M 140 80 L 210 115" stroke="#475569" stroke-width="2" marker-end="url(#arrow)"/>
+            <rect x="220" y="80" width="120" height="100" rx="8" fill="#E0F2FE" stroke="#0284C7" stroke-width="2"/>
+            <text x="280" y="125" font-size="16" font-weight="bold" fill="#0284C7" text-anchor="middle">Hash</text>
+            <text x="280" y="145" font-size="14" fill="#0284C7" text-anchor="middle">Function</text>
+            <path d="M 340 130 L 410 100" stroke="#059669" stroke-width="2" marker-end="url(#arrow)"/>
+            <rect x="420" y="70" width="140" height="45" fill="#F3F4F6" stroke="#475569" stroke-width="1.5"/>
+            <text x="490" y="97" font-size="14" font-weight="bold" fill="#0F172A" text-anchor="middle">"Value_1"</text>
+        </svg>
+    `;
+
+    // --- Core Dynamic Guide Slide Data ---
+    const unifiedData = [
+        // 1. Table of Contents
+        { t: "១. មាតិកានៃសៀវភៅមគ្គុទ្ទេសក៍ (Table of Contents)", type: "card", c: `
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 3vw; line-height: 2.1;">
+                <ul style="list-style: none; padding-left: 1vw;">
+                    <li><i class="fa-solid fa-chart-line text-blue" style="width:2vw;"></i> ជំពូកទី ១. សេចក្តីផ្តើម និងការវិភាគ <b>Big-O Notation</b></li>
+                    <li><i class="fa-solid fa-boxes-stacked text-blue" style="width:2vw;"></i> ជំពូកទី ២. ការសរសេរកម្មវិធី <b>OOP</b> &amp; <b>Memory</b></li>
+                    <li><i class="fa-solid fa-list-ol text-blue" style="width:2vw;"></i> ជំពូកទី ៣. រចនាសម្ព័ន្ធទិន្នន័យ <b>Dynamic Arrays</b></li>
+                    <li><i class="fa-solid fa-layer-group text-blue" style="width:2vw;"></i> ជំពូកទី ៣. រចនាសម្ព័ន្ធទិន្នន័យ <b>Stacks</b> &amp; <b>Queues</b></li>
+                </ul>
+                <ul style="list-style: none; padding-left: 1vw;">
+                    <li><i class="fa-solid fa-link text-blue" style="width:2vw;"></i> ជំពូកទី ៤. បណ្តាញតភ្ជាប់ <b>Singly &amp; Doubly Linked Lists</b></li>
+                    <li><i class="fa-solid fa-sitemap text-blue" style="width:2vw;"></i> ជំពូកទី ៥. រចនាសម្ព័ន្ធមែកធាង <b>Binary Search Tree (BST)</b></li>
+                    <li><i class="fa-solid fa-network-wired text-blue" style="width:2vw;"></i> ជំពូកទី ៦. រចនាសម្ព័ន្ធបណ្តាញ <b>Graphs</b> &amp; <b>Hash Tables</b></li>
+                    <li><i class="fa-solid fa-magnifying-glass text-blue" style="width:2vw;"></i> ជំពូកទី ៧. <b>Searching</b> &amp; <b>Sorting Algorithms</b></li>
+                </ul>
+            </div>
+        `},
+
+        // 2. Chapter 1: Big-O
+        { t: "២. ជំពូកទី ១៖ ការវិភាគប្រសិទ្ធភាពកូដ <b>(Big-O Notation)</b>", type: "split", svg: bigOSVG, c: `
+            <div style="display:flex; flex-direction:column; height:100%; justify-content:center;">
+                <p><b><i class='fa-solid fa-chart-line keyword-icon'></i> Big-O Notation:</b> គឺជាភាសាគណិតវិទ្យាដែលប្រើសម្រាប់វាស់វែងល្បឿន (Time) និងការស៊ីមេម៉ូរី (Space Complexity) របស់កូដក្នុងករណីអាក្រក់បំផុត <b>(Worst-case Scenario)</b>។</p>
+                <div class="analogy-box" style="margin-top:1.5vh;">
+                    <div class="analogy-header"><i class="fa-solid fa-layer-group"></i> កម្រិតល្បឿនរបស់កូដ (ពីលឿនទៅយឺត)</div>
+                    <ul style="margin-left:2vw; margin-top:0.5vh; font-size:1.25vw; line-height:1.7;">
+                        <li><b style="color:var(--accent-green);">O(1):</b> ល្បឿនថេរ មិនប្រែប្រួលតាមទំហំទិន្នន័យ (Constant)</li>
+                        <li><b style="color:var(--accent-blue);">O(log n):</b> ល្បឿនពុះពាក់កណ្តាល (Logarithmic)</li>
+                        <li><b style="color:var(--accent-yellow);">O(n):</b> ល្បឿនសមាមាត្រផ្ទាល់នឹងទិន្នន័យ (Linear)</li>
+                        <li><b style="color:var(--accent-red);">O(n²):</b> ល្បឿនយឺតខ្លាំងគុណទ្វេដង (Quadratic)</li>
+                    </ul>
+                </div>
+            </div>
+        `},
+
+        // 3. Chapter 2: OOP & Memory
+        { t: "៣. ជំពូកទី ២៖ ការសរសេរកម្មវិធី OOP និងការគ្រប់គ្រង Memory", type: "split", svg: memorySVG, c: `
+            <div style="display:flex; flex-direction:column; height:100%; justify-content:center;">
+                <p><b><i class='fa-solid fa-cubes keyword-icon'></i> Python OOP &amp; Memory Allocation:</b></p>
+                <div class="narrative-box" style="margin-top:1.5vh;">
+                    <div class="narrative-header"><i class="fa-solid fa-microchip"></i> Stack vs Heap Memory</div>
+                    <p class="narrative-text">អថេរ (Variables) ត្រូវបានរក្សាទុកក្នុង <b>Stack Memory</b> ដោយផ្ទុកនូវអាសយដ្ឋាន (Reference Pointer) ចង្អុលទៅកាន់ Object ពិតប្រាកដដែលរក្សាទុកក្នុង <b>Heap Memory</b>។</p>
+                </div>
+                <div class="analogy-box">
+                    <div class="analogy-header"><i class="fa-solid fa-lock"></i> គោលការណ៍គ្រឹះទាំង៤ នៃ OOP</div>
+                    <p class="analogy-text">១. Encapsulation ២. Inheritance ៣. Polymorphism ៤. Abstraction។ គោលការណ៍ទាំងនេះជាគ្រឹះសម្រាប់សាងសង់រចនាសម្ព័ន្ធទិន្នន័យកម្រិតខ្ពស់។</p>
+                </div>
+            </div>
+        `},
+
+        // 4. Chapter 3: Arrays
+        { t: "៤. ជំពូកទី ៣៖ រចនាសម្ព័ន្ធទិន្នន័យបែបលីនេអ៊ែរ <b>(Arrays)</b>", type: "split", svg: arraySVG, c: `
+            <div style="display:flex; flex-direction:column; height:100%; justify-content:center;">
+                <p><b><i class='fa-solid fa-list-ol keyword-icon'></i> Array (Contiguous Memory):</b> ជារចនាសម្ព័ន្ធទិន្នន័យដែលផ្ទុកធាតុជាបន្តបន្ទាប់គ្នានៅក្នុងអង្គចងចាំ។</p>
+                <div class="narrative-box" style="margin-top:2vh;">
+                    <div class="narrative-header"><i class="fa-solid fa-arrow-up-right-dots"></i> គុណសម្បត្តិ និងការវិភាគពេលវេលា</div>
+                    <p class="narrative-text">
+                        - <b>Access (O(1)):</b> លោតទៅយកទិន្នន័យបានភ្លាមៗតាមរយៈលេខរៀង (Index)។<br>
+                        - <b>Insert/Delete (O(n)):</b> យឺតយ៉ាវនៅពេលបញ្ចូល ឬលុបទិន្នន័យនៅចំកណ្តាលជួរ ព្រោះត្រូវរុញធាតុផ្សេងទៀត។
+                    </p>
+                </div>
+            </div>
+        `},
+
+        // 5. Chapter 3: Stacks & Queues
+        { t: "៥. ជំពូកទី ៣៖ រចនាសម្ព័ន្ធទិន្នន័យ <b>Stacks</b> និង <b>Queues</b>", type: "grid", c: [
+            { h: "<i class='fa-solid fa-layer-group keyword-icon'></i> Stacks (LIFO)", p: "<b>Last In, First Out:</b> ធាតុដែលបញ្ចូលក្រោយគេ ត្រូវយកចេញមកមុនគេ។<br><br><b>- ប្រតិបត្តិការស្នូល៖</b> <code>Push()</code> (ដាក់ចូល) និង <code>Pop()</code> (ដកចេញ) ក្នុងល្បឿនលឿន O(1)។<br><b>- ករណីសិក្សា៖</b> ប្រព័ន្ធលុបសកម្មភាពវិញ (Undo / Ctrl+Z) ក្នុង Microsoft Word។" },
+            { h: "<i class='fa-solid fa-users-line keyword-icon'></i> Queues (FIFO)", p: "<b>First In, First Out:</b> ធាតុដែលបញ្ចូលមុនគេ ត្រូវយកចេញមកមុនគេ។<br><br><b>- ប្រតិបត្តិការស្នូល៖</b> <code>Enqueue()</code> (ចូលជួរ) និង <code>Dequeue()</code> (ចេញជួរ) ក្នុងល្បឿន O(1)។<br><b>- ករណីសិក្សា៖</b> ការតម្រង់ជួររង់ចាំបំពេញការងាររបស់ម៉ាស៊ីនបោះពុម្ព (Printer Queue)។" }
+        ]},
+
+        // 6. Chapter 4: Linked Lists
+        { t: "៦. ជំពូកទី ៤៖ រចនាសម្ព័ន្ធតភ្ជាប់ <b>Singly Linked List</b>", type: "split", svg: singlySVG, c: `
+            <div style="display:flex; flex-direction:column; height:100%; justify-content:center;">
+                <p><b><i class='fa-solid fa-link keyword-icon'></i> Linked List:</b> ជារចនាសម្ព័ន្ធទិន្នន័យដែលផ្ទុកធាតុ (Nodes) រាយប៉ាយក្នុង Memory (Scattered Memory) ដោយតភ្ជាប់គ្នាទៅវិញទៅមកតាមរយៈខ្សែចង្អុល (Pointers)។</p>
+                <div class="narrative-box" style="margin-top:2vh;">
+                    <div class="narrative-header"><i class="fa-solid fa-circle-check"></i> គុណសម្បត្តិធៀបនឹង Array</div>
+                    <p class="narrative-text">អាចបន្ថែម ឬលុបធាតុនៅខាងមុខ (Head) ឬចំកណ្តាលជួរបានយ៉ាងលឿនក្នុងកម្រិត <b>O(1)</b> ដោយគ្រាន់តែប្តូរខ្សែចង្អុល Pointer មិនបាច់រុញទិន្នន័យក្នុង Memory ឡើយ។</p>
+                </div>
+            </div>
+        `},
+
+        // 7. Chapter 5: Binary Search Tree (BST)
+        { t: "៧. ជំពូកទី ៥៖ រចនាសម្ព័ន្ធមែកធាង <b>Binary Search Tree (BST)</b>", type: "split", svg: bstSVG, c: `
+            <div style="display:flex; flex-direction:column; height:100%; justify-content:center;">
+                <p><b><i class='fa-solid fa-sitemap keyword-icon'></i> Binary Search Tree:</b> ជារចនាសម្ព័ន្ធឋានានុក្រម ដែលកំណត់ឱ្យកូនខាងឆ្វេងតូចជាងមេ (Left < Root) និងកូនខាងស្តាំធំជាងមេ (Right > Root) ជានិច្ច។</p>
+                <div class="analogy-box" style="margin-top:1.5vh;">
+                    <div class="analogy-header"><i class="fa-solid fa-bolt"></i> ប្រសិទ្ធភាពនៃការស្វែងរក O(log n)</div>
+                    <p class="analogy-text">ការស្វែងរកទិន្នន័យក្នុង BST មានល្បឿនលឿនខ្លាំង ព្រោះរាល់ការប្រៀបធៀបម្តង យើងអាចកាត់ចោលមែកធាងដែលមិនត្រូវចំនួនពាក់កណ្តាលចោលភ្លាមៗ។</p>
+                </div>
+            </div>
+        `},
+
+        // 8. Chapter 6: Graphs
+        { t: "៨. ជំពូកទី ៦៖ រចនាសម្ព័ន្ធបណ្តាញខ្វាត់ខ្វែង <b>(Graphs)</b>", type: "split", svg: graphSVG, c: `
+            <div style="display:flex; flex-direction:column; height:100%; justify-content:center;">
+                <p><b><i class='fa-solid fa-network-wired keyword-icon'></i> Graph (Many-to-Many):</b> ជារចនាសម្ព័ន្ធដែលតំណាងឱ្យបណ្តាញទំនាក់ទំនងស្មុគស្មាញ រវាងចំណុច (Vertices) និងខ្សែតភ្ជាប់ (Edges)។</p>
+                <div class="narrative-box" style="margin-top:1.5vh;">
+                    <div class="narrative-header"><i class="fa-solid fa-route"></i> ក្បួនរុករកក្នុង Graph (BFS vs DFS)</div>
+                    <p class="narrative-text">
+                        - <b>BFS (Breadth-First):</b> រុករកតាមលំដាប់រាបស្មើ (Level-by-Level) ដោយប្រើ Queue ល្អសម្រាប់ការស្វែងរកផ្លូវខ្លីបំផុត។<br>
+                        - <b>DFS (Depth-First):</b> រុករកតាមលំដាប់ស៊ីជម្រៅ ដោយប្រើ Stack/Recursion។
+                    </p>
+                </div>
+            </div>
+        `},
+
+        // 9. Chapter 6: Hash Tables
+        { t: "៩. ជំពូកទី ៦៖ រចនាសម្ព័ន្ធតារាងគណនាសោ <b>(Hash Tables)</b>", type: "split", svg: hashSVG, c: `
+            <div style="display:flex; flex-direction:column; height:100%; justify-content:center;">
+                <p><b><i class='fa-solid fa-hashtag keyword-icon'></i> Hash Table:</b> ផ្ទុកទិន្នន័យជាគូ Key-Value ក្នុងល្បឿនស្វែងរកលឿនបំផុត <b>O(1)</b> តាមរយៈរូបមន្តគណនាទីតាំង Index ស្វ័យប្រវត្ត។</p>
+                <div class="narrative-box" style="margin-top:1.5vh;">
+                    <div class="narrative-header"><i class="fa-solid fa-triangle-exclamation"></i> បញ្ហាបុកគ្នា (Collision) និងវិធីដោះស្រាយ</div>
+                    <p class="narrative-text">នៅពេល Key ពីរផ្សេងគ្នា គណនាទៅឃើញទីតាំង Index ដូចគ្នា។ យើងដោះស្រាយតាមរយៈវិធីសាស្ត្រ <b>Chaining</b> (ចងភ្ជាប់ជា Linked List) ឬ <b>Open Addressing</b> (ស្វែងរកប្រអប់ទំនេរក្បែរនោះ)។</p>
+                </div>
+            </div>
+        `},
+
+        // 10. Chapter 7: Searching Algorithms
+        { t: "១០. ជំពូកទី ៧៖ ក្បួនដោះស្រាយស្វែងរក <b>(Searching Algorithms)</b>", type: "grid", c: [
+            { h: "<i class='fa-solid fa-magnifying-glass keyword-icon'></i> Linear Search", p: "<b>ការស្វែងរកតាមលំដាប់៖</b><br>ដើរឆែកមើលធាតុទិន្នន័យម្តងមួយៗពីដើមរហូតដល់ចប់ជួរ។<br><br><b>- ល្បឿន៖</b> Worst-case គឺ O(n)។<br><b>- លក្ខខណ្ឌ៖</b> ដំណើរការបានលើគ្រប់ទិន្នន័យទាំងអស់ (ទោះមិនទាន់តម្រៀបក៏ដោយ)។" },
+            { h: "<i class='fa-solid fa-arrows-split-up-and-left keyword-icon'></i> Binary Search", p: "<b>ការស្វែងរកដោយពុះកណ្តាល៖</b><br>ឆែកមើលចំចំណុចកណ្តាល រួចកាត់បន្ថយទិន្នន័យពាក់កណ្តាលចោលជានិច្ច។<br><br><b>- ល្បឿន៖</b> Worst-case គឺ O(log n) លឿនបំផុត។<br><b>- លក្ខខណ្ឌ៖</b> ដំណើរការបានតែលើទិន្នន័យដែល <b>តម្រៀបរួចជាស្រេចប៉ុណ្ណោះ</b>។" }
+        ]},
+
+        // 11. Chapter 7: Sorting Algorithms
+        { t: "១១. ជំពូកទី ៧៖ ក្បួនដោះស្រាយតម្រៀប <b>(Sorting Algorithms)</b>", type: "grid", c: [
+            { h: "<i class='fa-solid fa-filter keyword-icon'></i> ក្បួនតម្រៀបកម្រិតមូលដ្ឋាន (O(n²))", p: "<ul><li><b>Bubble Sort:</b> ប្រៀបធៀប និង Swap ធាតុជាប់គ្នាជាគូៗ រហូតដល់ធាតុធំបំផុតអណ្តែតទៅចុងជួរ។</li><li><b>Selection Sort:</b> ស្កែនស្វែងរកធាតុដែលតូចបំផុត រួចយកមក Swap ជំនួសនៅដើមជួរ។</li><li><b>Insertion Sort:</b> ស៊កបញ្ចូលធាតុថ្មីទៅក្នុងចំណែកទិន្នន័យដែលបានរៀបចំរួចរាល់។</li></ul>" },
+            { h: "<i class='fa-solid fa-compress-arrows-arrows keyword-icon'></i> ក្បួនតម្រៀបកម្រិតខ្ពស់ (O(n log n))", p: "<ul><li><b>Merge Sort:</b> ប្រើទ្រឹស្តី Divide & Conquer បំបែកទិន្នន័យជាផ្នែកតូចៗ រួចច្របាច់បញ្ចូលគ្នា (Merge) វិញតាមលំដាប់។</li><li><b>Quick Sort:</b> ជ្រើសរើស Pivot រួចបែងចែកទិន្នន័យជាពីរក្រុម (តូចជាង និងធំជាង Pivot)។</li></ul>" }
+        ]},
+
+        // 12. Time Complexity Summary Table
+        { t: "១២. តារាងប្រៀបធៀបប្រសិទ្ធភាពពេលវេលា (Time Complexity)", type: "table", rows: [
+            ["រចនាសម្ព័ន្ធ (DS) / ក្បួនដោះស្រាយ", "ស្វែងរក (Search)", "បញ្ចូល (Insert)", "លុប (Delete)", "ការប្រើប្រាស់ល្អបំផុត"],
+            ["<b>Array (លីសសកម្ម)</b>", "<b style='color:var(--accent-red)'>O(n)</b>", "<b style='color:var(--accent-red)'>O(n)</b>", "<b style='color:var(--accent-red)'>O(n)</b>", "ទាញយកទិន្នន័យលឿនតាម Index O(1)"],
+            ["<b>Linked List</b>", "<b style='color:var(--accent-red)'>O(n)</b>", "<b style='color:var(--accent-green)'>O(1)</b>", "<b style='color:var(--accent-green)'>O(1)</b>", "ត្រូវការបញ្ចូល ឬលុបទិន្នន័យនៅខាងមុខ"],
+            ["<b>Binary Search Tree (BST)</b>", "<b style='color:var(--accent-green)'>O(log n)</b>", "<b style='color:var(--accent-green)'>O(log n)</b>", "<b style='color:var(--accent-green)'>O(log n)</b>", "ប្រព័ន្ធរក្សាទុកទិន្នន័យលំដាប់លំដោយ"],
+            ["<b>Hash Table</b>", "<b style='color:var(--accent-green)'>O(1)</b>", "<b style='color:var(--accent-green)'>O(1)</b>", "<b style='color:var(--accent-green)'>O(1)</b>", "ប្រព័ន្ធស្វែងរកឈ្មោះម្ចាស់គណនី ABA ភ្លាមៗ"],
+            ["<b>Graph</b>", "O(V + E)", "O(1)", "O(E)", "បណ្តាញសង្គម, ប្រព័ន្ធ GPS / ផែនទីដឹកជញ្ជូន"]
+        ]},
+
+        // 13. AI Applications
+        { t: "១៣. ការអនុវត្តរចនាសម្ព័ន្ធទិន្នន័យក្នុងប្រព័ន្ធ AI", type: "card", c: `
+            <div style="line-height:1.8;">
+                <p><i class="fa-solid fa-check text-blue"></i> <b>Decision Trees ក្នុង Machine Learning:</b> AI ប្រើប្រាស់រចនាសម្ព័ន្ធ Tree ដើម្បីបំបែកលក្ខខណ្ឌវិនិច្ឆ័យ (ឧទាហរណ៍៖ ការវាយតម្លៃផ្តល់ឥណទានធនាគារ)។</p>
+                <p><i class="fa-solid fa-check text-blue"></i> <b>Trie Trees ក្នុង Natural Language Processing (NLP):</b> ប្រើប្រាស់ដើមឈើអក្សរដើម្បីសាងសង់ប្រព័ន្ធស្វែងរកពាក្យ Autocomplete ឬប្រព័ន្ធត្រួតពិនិត្យអក្ខរាវិរុទ្ធភាសាខ្មែរ។</p>
+                <p><i class="fa-solid fa-check text-blue"></i> <b>Graphs ក្នុងប្រព័ន្ធណែនាំផលិតផល (Recommendation Engines):</b> បណ្តាញ Neural Networks ប្រើប្រាស់ Graph ដើម្បីបង្ហាញលំហូរទំនាក់ទំនងរវាងអ្នកប្រើប្រាស់ និងទំនិញដែលពួកគេចូលចិត្ត។</p>
+            </div>
+        `},
+
+        // 14. References
+        { t: "១៤. ឯកសារយោង និងគន្ថនិទ្ទេស (References)", type: "list", c: [
+            "<b><i class='fa-solid fa-book text-blue' style='margin-right:0.5vw;'></i> Goodrich, M. T. (2013).</b> <i>Data Structures and Algorithms in Python</i>. Wiley.",
+            "<b><i class='fa-solid fa-book text-blue' style='margin-right:0.5vw;'></i> Cormen, T. H. (2022).</b> <i>Introduction to Algorithms</i> (4th ed.). MIT Press.",
+            "<b><i class='fa-solid fa-globe text-blue' style='margin-right:0.5vw;'></i> GeeksforGeeks:</b> Tutorials on Data Structures: <a href='#' style='color:var(--accent-blue); text-decoration:none;'>geeksforgeeks.org</a>",
+            "<b><i class='fa-solid fa-desktop text-blue' style='margin-right:0.5vw;'></i> Visualgo.net:</b> Interactive Animations of Data Structures and Algorithms."
+        ]}
+    ];
+
+    const container = document.getElementById('slideWrapper');
+
+    // Generate slides dynamically
+    unifiedData.forEach((item, index) => {
+        const slide = document.createElement('div');
+        slide.className = 'slide';
+        
+        let bodyContent = '';
+        if(item.type === "split") {
+            let visual = item.img ? `<img src="${item.img}">` : (item.svg ? item.svg : '');
+            bodyContent = `<div class="two-column"><div class="card" style="height:100%; border:none; padding:0; background:transparent; justify-content:start;">${item.c}</div><div class="visual-frame">${visual}</div></div>`;
+        } else if(item.type === "two-equal") {
+            bodyContent = `<div class="two-column-equal">${item.c}</div>`;
+        } else if(item.type === "grid") {
+            bodyContent = `<div class="card-grid">${item.c.map(c => `<div class="card"><h4>${c.h}</h4><div style="margin:0; font-size: 1.4vw;">${c.p}</div></div>`).join('')}</div>`;
+        } else if(item.type === "card") {
+            bodyContent = `<div class="card" style="height: 100%; justify-content: center; background:#FFFFFF;">${item.c}</div>`;
+        } else if(item.type === "table") {
+            let th = `<tr>${item.rows[0].map(h => `<th style="text-align:center;">${h}</th>`).join('')}</tr>`;
+            let trs = item.rows.slice(1).map(r => `<tr>${r.map((td, i) => `<td ${i>0 ? 'align="left"' : ''}>${td}</td>`).join('')}</tr>`).join('');
+            bodyContent = `<table><thead>${th}</thead><tbody>${trs}</tbody></table>`;
+        } else if(item.type === "list") {
+            bodyContent = `<div class="card" style="padding: 2vh 4vw; background:#FFFFFF;"><ul style="list-style:none; padding-left:1vw; line-height:2.2;">${item.c.map(l => `<li style="font-size: 1.6vw;">${l}</li>`).join('')}</ul></div>`;
+        }
+
+        slide.innerHTML = `<div id="h-placeholder-${index}"></div> <h2 class="slide-title">${item.t}</h2> <div class="content-body">${bodyContent}</div>`;
+        container.appendChild(slide);
+    });
+
+    // Create Q&A Slide
+    const qaSlide = document.createElement('div');
+    qaSlide.className = 'slide';
+    qaSlide.innerHTML = `
+        <div id="h-placeholder-qa"></div>
+        <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; text-align: center;">
+            <h1 style="font-size: 5.4vw; color: var(--accent-blue); margin-bottom: 2vh;"><i class="fa-solid fa-comments"></i> សំណួរ និងការពិភាក្សា</h1>
+            <p style="font-size: 2.25vw; color: var(--text-muted); margin-bottom: 5vh;">សូមអរគុណនិស្សិតទាំងអស់សម្រាប់ការយកចិត្តទុកដាក់!</p>
+            <div style="display: flex; gap: 2vw; justify-content: center;">
+                <div style="background: #FFFFFF; padding: 2vh 3vw; border-radius: 5vw; border: 2px solid var(--accent-blue); box-shadow: 0 10px 20px rgba(0,0,0,0.05);">
+                    <p style="margin: 0; font-weight: bold; font-size: 1.8vw; color: var(--accent-blue);"><i class="fa-solid fa-envelope"></i> soeurnglim@gmail.com</p>
+                </div>
+                <div style="background: #FFFFFF; padding: 2vh 3vw; border-radius: 5vw; border: 2px solid #0088cc; box-shadow: 0 10px 20px rgba(0,0,0,0.05);">
+                    <p style="margin: 0; font-weight: bold; font-size: 1.8vw; color: #0088cc;"><i class="fa-brands fa-telegram"></i> ០៦១ ២២៧ ៩៣៣</p>
+                </div>
+            </div>
+        </div>
+    `;
+    container.appendChild(qaSlide);
+
+    // Create End Slide
+    const endSlide = document.createElement('div');
+    endSlide.className = 'slide';
+    endSlide.innerHTML = `
+        <div id="h-placeholder-end"></div>
+        <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; text-align: center;">
+            <i class="fa-solid fa-flag-checkered" style="font-size: 5vw; color: var(--accent-green); margin-bottom: 2vh;"></i>
+            <h1 style="font-size: 4.5vw; color: var(--accent-blue); margin-bottom: 1vh;">បញ្ចប់សៀវភៅមគ្គុទ្ទេសក៍សង្ខេប</h1>
+            <p style="font-size: 2vw; color: var(--text-muted); margin-bottom: 5vh;">សូមជូនពរនិស្សិតទាំងអស់ទទួលបានជោគជ័យក្នុងការប្រឡង!</p>
+        </div>
+    `;
+    container.appendChild(endSlide);
+
+    // -----------------------------------------------------
+    // Navigation & Printing System Initialization
+    // -----------------------------------------------------
+
+    // 1. Apply Global Header to all slides
+    document.querySelectorAll('[id^="h-placeholder"]').forEach(p => p.outerHTML = headerHTML);
+
+    // 2. Count Total Slides
+    const slides = document.querySelectorAll('.slide');
+    const totalSlides = slides.length;
+    
+    // 3. Setup Print Footers
+    const mainFooter = document.getElementById('mainFooter');
+    const screenCounter = document.getElementById('screenSlideCounter'); 
+
+    slides.forEach((slide, index) => {
+        let printFooter = mainFooter.cloneNode(true);
+        printFooter.id = ''; 
+        
+        let printCounter = printFooter.querySelector('.slide-counter');
+        if (printCounter) {
+            printCounter.id = ''; 
+            printCounter.innerHTML = `ស្លាយទី ${toKh(index + 1)} នៃ ${toKh(totalSlides)}`; 
+        }
+        
+        printFooter.className = 'global-footer print-only-footer';
+        slide.appendChild(printFooter);
+    });
+
+    // 4. Update function for Screen display
+    let currentIdx = 0;
+    function update(idx) { 
+        slides.forEach(s => s.classList.remove('active')); 
+        slides[idx].classList.add('active'); 
+        currentIdx = idx; 
+        
+        if (screenCounter) {
+            screenCounter.innerHTML = `ស្លាយទី ${toKh(idx + 1)} នៃ ${toKh(totalSlides)}`;
+        }
+    }
+
+    // 5. Allow Navigation by Clicking the arrows
+    document.querySelector('.nav-right').addEventListener('click', (e) => { 
+        e.stopPropagation(); 
+        if (currentIdx < totalSlides - 1) update(currentIdx + 1); 
+    });
+    
+    document.querySelector('.nav-left').addEventListener('click', (e) => { 
+        e.stopPropagation(); 
+        if (currentIdx > 0) update(currentIdx - 1); 
+    });
+
+    // 6. Keyboard Navigation Support
+    document.addEventListener('keydown', (e) => {
+        if (e.key === "ArrowRight" || e.key === " " || e.key === "PageDown") { 
+            if (currentIdx < totalSlides - 1) update(currentIdx + 1); 
+        } else if (e.key === "ArrowLeft" || e.key === "PageUp") { 
+            if (currentIdx > 0) update(currentIdx - 1); 
+        }
+    });
+
+    // Start presentation at Slide 0
+    update(0); 
+
+</script>
+</body>
+</html>
