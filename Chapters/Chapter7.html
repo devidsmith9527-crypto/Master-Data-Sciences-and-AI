@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chapter 7 - Sorting and Searching Algorithms</title>
+    <title>Chapter 7 - Sorting and Searching Algorithms (Simplified Cases)</title>
     <link href="https://fonts.googleapis.com/css2?family=Battambang:wght@400;700&family=Suwannaphum:wght@400;700;900&family=Lato:wght@400;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
@@ -14,83 +14,84 @@
         }
         * { box-sizing: border-box; margin: 0; padding: 0; }
         
-        /* អនុញ្ញាតឲ្យ Copy អក្សរបានធម្មតា */
         body { background-color: var(--bg-dark); font-family: 'Battambang', sans-serif; overflow: hidden; height: 100vh; width: 100vw; display: flex; align-items: center; justify-content: center; -webkit-user-select: auto; user-select: auto; }
         
         .slide-deck { width: 98vw; height: 95vh; position: relative; background: #FFFFFF; border-radius: 1.5vw; overflow: hidden; box-shadow: 0 40px 100px rgba(0,0,0,0.5); display: flex; flex-direction: column; }
-        .slide-wrapper { flex-grow: 1; position: relative; overflow: hidden; }
+        .slide-wrapper { flex-grow: 1; position: relative; overflow: hidden; z-index: 10; }
         .slide { display: none; width: 100%; height: 100%; padding: 2vh 4vw; flex-direction: column; justify-content: flex-start; animation: slideIn 0.4s ease-out; position: absolute; top: 0; left: 0; }
         .slide.active { display: flex; }
         @keyframes slideIn { from { opacity: 0; transform: translateX(50px); } to { opacity: 1; transform: translateX(0); } }
 
-        /* Navigation Zones (ប៊ូតុងចុចសងខាង) */
-        .nav-zone { position: absolute; top: 0; bottom: 0; width: 10%; z-index: 50; cursor: pointer; display: flex; align-items: center; opacity: 0.2; transition: all 0.3s ease; }
+        /* Navigation Zones - LAYERED ON TOP OF EVERYTHING */
+        .nav-zone { position: absolute; top: 0; bottom: 0; width: 10%; z-index: 1000; cursor: pointer; display: flex; align-items: center; opacity: 0.15; transition: all 0.3s ease; }
         .nav-zone:hover { opacity: 1; background: rgba(0,0,0,0.03); }
-        .nav-left { left: 0; justify-content: flex-start; padding-left: 2vw; background: linear-gradient(to right, rgba(0,0,0,0.05), transparent); }
-        .nav-right { right: 0; justify-content: flex-end; padding-right: 2vw; background: linear-gradient(to left, rgba(0,0,0,0.05), transparent); }
-        .nav-zone i { font-size: 3.5vw; color: var(--accent-blue); filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2)); background: white; border-radius: 50%; padding: 1vw; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        .nav-left { left: 0; justify-content: flex-start; padding-left: 1.5vw; background: linear-gradient(to right, rgba(0,0,0,0.02), transparent); }
+        .nav-right { right: 0; justify-content: flex-end; padding-right: 1.5vw; background: linear-gradient(to left, rgba(0,0,0,0.02), transparent); }
+        .nav-zone i { font-size: 2.8vw; color: var(--accent-blue); filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1)); background: white; border-radius: 50%; padding: 0.7vw; box-shadow: 0 4px 10px rgba(0,0,0,0.08); }
 
         /* Header Branding */
-        .global-header { display: flex; justify-content: space-between; align-items: center; margin: -2vh -4vw 1.5vh -4vw; padding: 1.2vh 4vw; border-bottom: 3px solid var(--accent-blue); background-color: var(--header-footer-bg); }
-        .header-item { display: flex; flex-direction: column; align-items: center; gap: 4px; width: 15vw; }
-        .header-item img { height: 4vw; object-fit: contain; }
-        .header-item span { font-size: 0.76vw; font-weight: bold; color: var(--accent-blue); text-align: center; }
-        .header-center h1 { font-family: 'Suwannaphum'; font-size: 1.5vw; color: var(--accent-blue); margin: 0; }
-        .header-center p { font-family: 'Lato'; font-size: 0.85vw; color: #64748B; margin: 0; font-weight: bold; text-align: center; }
+        .global-header { display: flex; justify-content: space-between; align-items: center; margin: -2vh -4vw 1.5vh -4vw; padding: 1vh 4vw; border-bottom: 3px solid var(--accent-blue); background-color: var(--header-footer-bg); }
+        .header-item { display: flex; flex-direction: column; align-items: center; gap: 2px; width: 15vw; }
+        .header-item img { height: 3.5vw; object-fit: contain; }
+        .header-item span { font-size: 0.8vw; font-weight: bold; color: var(--accent-blue); text-align: center; }
+        .header-center h1 { font-family: 'Suwannaphum'; font-size: 1.7vw; color: var(--accent-blue); margin: 0; }
+        .header-center p { font-family: 'Lato'; font-size: 0.9vw; color: #64748B; margin: 0; font-weight: bold; text-align: center; }
 
-        /* Typography */
-        h1 { font-family: 'Suwannaphum'; font-size: 3.15vw; text-align: center; color: var(--text-main); font-weight: 900; line-height: 1.3; }
-        h2.slide-title { font-family: 'Suwannaphum'; font-size: 2.25vw; font-weight: 900; border-bottom: 0.3vw solid var(--accent-blue); padding-bottom: 0.5vh; margin-bottom: 1.5vh; color: var(--text-main); display: inline-block; }
-        .content-body { flex-grow: 1; display: flex; flex-direction: column; justify-content: flex-start; gap: 1vh; width: 100%; overflow-y: auto; padding-bottom: 2vh; }
-        p, li, td { font-size: 1.45vw; line-height: 1.7; color: var(--text-main); }
+        /* Typography & Sizes */
+        h1 { font-family: 'Suwannaphum'; font-size: 3.2vw; text-align: center; color: var(--text-main); font-weight: 900; line-height: 1.4; }
+        h2.slide-title { font-family: 'Suwannaphum'; font-size: 2.5vw; font-weight: 900; border-bottom: 0.3vw solid var(--accent-blue); padding-bottom: 0.4vh; margin-bottom: 1.2vh; color: var(--text-main); display: inline-block; }
+        .content-body { flex-grow: 1; display: flex; flex-direction: column; justify-content: flex-start; gap: 0.8vh; width: 100%; overflow-y: auto; padding-bottom: 1.5vh; }
         
-        .keyword-icon { color: var(--accent-blue); margin-right: 0.5vw; width: 1.5vw; text-align: center; display: inline-block; }
+        p, li, td { font-size: 1.6vw; line-height: 1.65; color: var(--text-main); }
+        
+        .keyword-icon { color: var(--accent-blue); margin-right: 0.5vw; width: 1.8vw; text-align: center; display: inline-block; }
         .tech-icon { color: var(--accent-blue); margin-right: 6px; font-size: 1.1em; vertical-align: baseline; }
         b .tech-icon, strong .tech-icon, .card h4 .tech-icon, h2 .tech-icon { color: inherit; } 
 
         /* Layouts & Cards */
-        .two-column { display: grid; grid-template-columns: 1fr 1fr; gap: 2.5vw; height: 100%; align-items: center; }
+        .two-column { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 2vw; height: 100%; align-items: center; }
         .two-column-equal { display: grid; grid-template-columns: 1fr 1fr; gap: 2vw; height: 100%; align-items: start; }
-        .card-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5vw; }
-        .card { background: var(--bg-card); padding: 1.5vh 2.5vw; border-radius: 1vw; border-left: 0.8vw solid var(--accent-blue); box-shadow: 0 4px 10px rgba(0,0,0,0.05); display: flex; flex-direction: column; justify-content: center; }
-        .card h4 { font-size: 1.6vw; color: var(--accent-blue); margin-bottom: 0.5vh; font-family: 'Suwannaphum'; display: flex; align-items: center; gap: 10px;}
+        .card-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.2vw; }
+        .card { background: var(--bg-card); padding: 1.2vh 2.2vw; border-radius: 0.8vw; border-left: 0.8vw solid var(--accent-blue); box-shadow: 0 4px 10px rgba(0,0,0,0.05); display: flex; flex-direction: column; justify-content: center; }
+        .card h4 { font-size: 1.8vw; color: var(--accent-blue); margin-bottom: 0.5vh; font-family: 'Suwannaphum'; display: flex; align-items: center; gap: 8px;}
 
         /* Tables */
-        table { width: 100%; border-collapse: collapse; background: white; border-radius: 1vw; overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
-        th, td { border: 1px solid #E2E8F0; padding: 1.2vh 1.5vw; text-align: left; }
-        th { background: var(--accent-blue); color: white; font-family: 'Suwannaphum'; font-size: 1.35vw; }
+        table { width: 100%; border-collapse: collapse; background: white; border-radius: 0.8vw; overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
+        th, td { border: 1px solid #E2E8F0; padding: 0.8vh 1.2vw; text-align: left; }
+        th { background: var(--accent-blue); color: white; font-family: 'Suwannaphum'; font-size: 1.5vw; }
+        td { font-size: 1.4vw; }
 
         /* Visual Frame for Technical Diagrams */
-        .visual-frame { background: #FFFFFF; border-radius: 1vw; border: 1px solid #CBD5E1; padding: 2vw; display: flex; align-items: center; justify-content: center; height: 100%; min-height: 250px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
-        .visual-frame svg { width: 100%; height: auto; max-height: 35vh; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.05));}
+        .visual-frame { background: #FFFFFF; border-radius: 0.8vw; border: 1px solid #CBD5E1; padding: 1vw; display: flex; align-items: center; justify-content: center; height: 100%; min-height: 290px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+        .visual-frame svg { width: 100%; height: auto; max-height: 38vh; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.04));}
 
         /* Case Study Narrative Box */
-        .narrative-box { background: #F8FAFC; border-radius: 0.6vw; border: 1px solid #CBD5E1; padding: 1vh 1.5vw; margin-bottom: 1vh; box-shadow: 0 2px 6px rgba(0,0,0,0.05); }
-        .narrative-header { font-weight: bold; color: var(--accent-blue); font-size: 1.1vw; border-bottom: 1px solid #E2E8F0; padding-bottom: 0.5vh; margin-bottom: 0.8vh; font-family: 'Suwannaphum'; display: flex; align-items: center; gap: 8px;}
-        .narrative-text { font-size: 1.15vw; color: var(--text-main); line-height: 1.6; margin: 0; }
+        .narrative-box { background: #F0FDF4; border-radius: 0.6vw; border: 1px solid #BBF7D0; padding: 1vh 1.5vw; margin-bottom: 0.8vh; box-shadow: 0 2px 6px rgba(0,0,0,0.03); }
+        .narrative-header { font-weight: bold; color: var(--accent-green); font-size: 1.3vw; border-bottom: 1px solid #E2E8F0; padding-bottom: 0.3vh; margin-bottom: 0.5vh; font-family: 'Suwannaphum'; display: flex; align-items: center; gap: 8px;}
+        .narrative-text { font-size: 1.35vw; color: var(--text-main); line-height: 1.55; margin: 0; }
         
         /* Analogy Box */
-        .analogy-box { background: #FFFBEB; border-left: 0.4vw solid var(--accent-yellow); border-radius: 0.6vw; padding: 1vh 1.5vw; margin-bottom: 1vh; box-shadow: 0 2px 6px rgba(0,0,0,0.05); }
-        .analogy-header { font-weight: bold; color: var(--accent-yellow); font-size: 1.1vw; margin-bottom: 0.5vh; font-family: 'Suwannaphum'; display: flex; align-items: center; gap: 8px;}
-        .analogy-text { font-size: 1.1vw; color: var(--text-main); line-height: 1.6; margin: 0; }
+        .analogy-box { background: #FFFBEB; border-left: 0.4vw solid var(--accent-yellow); border-radius: 0.6vw; padding: 1vh 1.5vw; margin-bottom: 0.8vh; box-shadow: 0 2px 6px rgba(0,0,0,0.03); }
+        .analogy-header { font-weight: bold; color: var(--accent-yellow); font-size: 1.3vw; margin-bottom: 0.3vh; font-family: 'Suwannaphum'; display: flex; align-items: center; gap: 8px;}
+        .analogy-text { font-size: 1.3vw; color: var(--text-main); line-height: 1.55; margin: 0; }
 
         /* Code Block Wrapper */
-        .code-wrapper { background: var(--code-bg); border-radius: 0.6vw; border: 1px solid #374151; overflow: hidden; width: 100%; box-shadow: 0 5px 15px rgba(0,0,0,0.1); margin-top: 0.5vh;}
-        .code-header { background: #1F2937; padding: 0.6vh 1.2vw; font-size: 0.9vw; font-family: 'Battambang', sans-serif; color: #9CA3AF; border-bottom: 1px solid #374151; display: flex; justify-content: space-between; }
-        .code-header span { font-weight: bold; color: #38BDF8; font-size: 1vw; }
-        .code-content { padding: 1vh 1.5vw; overflow-x: auto; }
-        .code-content pre { font-family: 'Fira Code', monospace; font-size: 1vw; line-height: 1.4; color: #f8f8f2; margin: 0; }
+        .code-wrapper { background: var(--code-bg); border-radius: 0.6vw; border: 1px solid #374151; overflow: hidden; width: 100%; box-shadow: 0 5px 15px rgba(0,0,0,0.1); margin-top: 0.3vh;}
+        .code-header { background: #1F2937; padding: 0.5vh 1vw; font-size: 1.1vw; font-family: 'Battambang', sans-serif; color: #9CA3AF; border-bottom: 1px solid #374151; display: flex; justify-content: space-between; }
+        .code-header span { font-weight: bold; color: #38BDF8; font-size: 1.1vw; }
+        .code-content { padding: 0.8vh 1.2vw; overflow-x: auto; }
+        .code-content pre { font-family: 'Fira Code', monospace; font-size: 1.15vw; line-height: 1.4; color: #f8f8f2; margin: 0; }
         .kw { color: #ff79c6; font-weight: bold; } .fn { color: #50fa7b; } .str { color: #f1fa8c; } .com { color: #6272a4; font-style: italic; } .num { color: #bd93f9; }
 
         /* Highlight Note */
-        .highlight-note { background-color: #F0FDF4; border-left: 4px solid var(--accent-green); padding: 1.5vh 2vw; border-radius: 0.5vw; margin-top: 1.5vh; font-weight: bold; color: var(--accent-green); font-size: 1.3vw; display: flex; align-items: center; gap: 10px; border: 2px dashed var(--accent-green); justify-content: center;}
+        .highlight-note { background-color: #F0FDF4; border-left: 4px solid var(--accent-green); padding: 1vh 2vw; border-radius: 0.5vw; margin-top: 1vh; font-weight: bold; color: var(--accent-green); font-size: 1.4vw; display: flex; align-items: center; gap: 8px; border: 2px dashed var(--accent-green); justify-content: center;}
 
         /* Main Footer */
-        .global-footer { display: flex; justify-content: space-between; align-items: center; width: 100%; padding: 1vh 4vw; border-top: 3px solid var(--accent-blue); background-color: var(--header-footer-bg); z-index: 10; }
+        .global-footer { display: flex; justify-content: space-between; align-items: center; width: 100%; padding: 0.8vh 4vw; border-top: 3px solid var(--accent-blue); background-color: var(--header-footer-bg); z-index: 10; }
         .footer-left { display: flex; align-items: center; gap: 1.5vw; }
-        .footer-left img { border-radius: 50%; border: 2px solid var(--accent-blue); width: 3.5vw; height: 3.5vw; object-fit: cover; }
-        .footer-left span { font-size: 1.35vw; font-weight: bold; color: var(--text-main); font-family: 'Suwannaphum'; }
-        .slide-counter { font-size: 1.15vw; color: var(--accent-blue); font-family: 'Suwannaphum'; font-weight: 900; background: #FFFFFF; padding: 0.5vh 1.5vw; border-radius: 5vw; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .footer-left img { border-radius: 50%; border: 2px solid var(--accent-blue); width: 3.2vw; height: 3.2vw; object-fit: cover; }
+        .footer-left span { font-size: 1.3vw; font-weight: bold; color: var(--text-main); font-family: 'Suwannaphum'; }
+        .slide-counter { font-size: 1.1vw; color: var(--accent-blue); font-family: 'Suwannaphum'; font-weight: 900; background: #FFFFFF; padding: 0.4vh 1.2vw; border-radius: 5vw; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
 
         .print-only-footer { display: none; }
 
@@ -100,11 +101,11 @@
             html, body { display: block !important; width: 100% !important; height: auto !important; background: white !important; overflow: visible !important; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; margin: 0 !important; padding: 0 !important; }
             .slide-deck { display: block !important; width: 100% !important; height: auto !important; box-shadow: none !important; border: none !important; border-radius: 0 !important; }
             .slide-wrapper { display: block !important; overflow: visible !important; }
-            .slide { display: flex !important; flex-direction: column !important; width: 297mm !important; height: 209mm !important; page-break-after: always !important; page-break-inside: avoid !important; position: relative !important; opacity: 1 !important; transform: none !important; animation: none !important; padding: 10mm 15mm !important; box-sizing: border-box !important; }
+            .slide { display: flex !important; flex-direction: column !important; width: 297mm !important; height: 209mm !important; page-break-after: always !important; page-break-inside: avoid !important; position: relative !important; opacity: 1 !important; transform: none !important; animation: none !important; padding: 8mm 12mm !important; box-sizing: border-box !important; }
             .nav-zone { display: none !important; }
-            .global-header { margin: -10mm -15mm 5mm -15mm !important; padding: 5mm 15mm !important; border-bottom: 2px solid var(--accent-blue) !important;}
+            .global-header { margin: -8mm -12mm 4mm -12mm !important; padding: 4mm 12mm !important; border-bottom: 2px solid var(--accent-blue) !important;}
             .global-footer#mainFooter { display: none !important; }
-            .print-only-footer { display: flex !important; margin: auto -15mm -10mm -15mm !important; padding: 5mm 15mm !important; border-top: 2px solid var(--accent-blue) !important; background: var(--header-footer-bg) !important; width: 297mm !important; box-sizing: border-box !important; }
+            .print-only-footer { display: flex !important; margin: auto -12mm -8mm -12mm !important; padding: 4mm 12mm !important; border-top: 2px solid var(--accent-blue) !important; background: var(--header-footer-bg) !important; width: 297mm !important; box-sizing: border-box !important; }
             .card { box-shadow: 0 2px 5px rgba(0,0,0,0.05) !important; border: 1px solid #E2E8F0 !important; border-left-width: 0.8vw !important; page-break-inside: avoid !important;}
             .visual-frame svg { object-fit: contain !important; background: #fff !important; }
         }
@@ -114,14 +115,6 @@
 
 <div class="slide-deck" id="deck">
 
-    <!-- Navigation Overlays -->
-    <div class="nav-zone nav-left" title="ថយក្រោយ (Previous)">
-        <i class="fa-solid fa-chevron-left"></i>
-    </div>
-    <div class="nav-zone nav-right" title="ទៅមុខ (Next)">
-        <i class="fa-solid fa-chevron-right"></i>
-    </div>
-
     <!-- Header Template -->
     <template id="headerTemplate">
         <div class="global-header">
@@ -130,7 +123,7 @@
                 <span>សាកលវិទ្យាល័យអង្គរ</span>
             </div>
             <div class="header-center" style="text-align: center;">
-                <h1 style="font-size: 1.5vw;">រចនាសម្ព័ន្ធទិន្នន័យកម្រិតខ្ពស់ និងក្បួនដោះស្រាយ (<i class='fa-solid fa-server tech-icon'></i>DSA)</h1>
+                <h1 style="font-size: 1.7vw;">រចនាសម្ព័ន្ធទិន្នន័យកម្រិតខ្ពស់ និងក្បួនដោះស្រាយ (<i class='fa-solid fa-server tech-icon'></i>DSA)</h1>
                 <p>អនុបណ្ឌិតវិទ្យាសាស្ត្រទិន្នន័យ និងបញ្ញាសិប្បនិម្មិត (Master of Data Science & AI)</p>
             </div>
             <div class="header-item">
@@ -146,30 +139,30 @@
         <div class="slide active">
             <div style="text-align: center; margin: auto; width: 100%;">
                 <div style="display: flex; align-items: center; justify-content: center; gap: 3vw; margin-bottom: 2vh;">
-                    <img src="Logo.png" style="height: 12vw;" alt="AU Logo" onerror="this.src='https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png'">
+                    <img src="Logo.png" style="height: 11vw;" alt="AU Logo" onerror="this.src='https://au.edu.kh/wp-content/uploads/2021/04/Logo-AU.png'">
                     <div style="text-align: center;">
-                        <h2 style="font-family: 'Suwannaphum'; color: var(--accent-blue); font-size: 3.6vw; margin: 0;">សាកលវិទ្យាល័យអង្គរ</h2>
-                        <p style="font-family: 'Lato'; color: var(--text-muted); font-size: 1.8vw; margin: 0;">ANGKOR UNIVERSITY</p>
+                        <h2 style="font-family: 'Suwannaphum'; color: var(--accent-blue); font-size: 3.5vw; margin: 0;">សាកលវិទ្យាល័យអង្គរ</h2>
+                        <p style="font-family: 'Lato'; color: var(--text-muted); font-size: 1.7vw; margin: 0;">ANGKOR UNIVERSITY</p>
                     </div>
                 </div>
                 
                 <div style="margin-bottom: 2vh;">
-                    <h3 style="font-family: 'Suwannaphum'; font-size: 1.7vw; color: var(--accent-green);"><i class="fa-solid fa-graduation-cap"></i> អនុបណ្ឌិតវិទ្យាសាស្ត្រទិន្នន័យ និងបញ្ញាសិប្បនិម្មិត (Master of Data Science and AI)</h3>
+                    <h3 style="font-family: 'Suwannaphum'; font-size: 1.6vw; color: var(--accent-green);"><i class="fa-solid fa-graduation-cap"></i> អនុបណ្ឌិតវិទ្យាសាស្ត្រទិន្នន័យ និងបញ្ញាសិប្បនិម្មិត (Master of Data Science and AI)</h3>
                 </div>
 
-                <div style="background: var(--accent-blue); color: white; padding: 1vh 5vw; border-radius: 5vw; display: inline-block; font-size: 2.2vw; font-weight: bold; margin-bottom: 3vh;">ជំពូកទី៧ | Chapter 7</div>
+                <div style="background: var(--accent-blue); color: white; padding: 0.8vh 4vw; border-radius: 5vw; display: inline-block; font-size: 2vw; font-weight: bold; margin-bottom: 3vh;">ជំពូកទី៧ | Chapter 7</div>
                 
-                <h1 style="line-height: 1.5;">ក្បួនដោះស្រាយតម្រៀប និងស្វែងរក<br>
-                <span style="color:var(--accent-blue); font-size: 2.4vw; font-family:'Lato'">(<i class='fa-solid fa-sort-amount-down tech-icon'></i>Sorting and <i class='fa-solid fa-magnifying-glass tech-icon'></i>Searching Algorithms)</span></h1>
+                <h1 style="line-height: 1.4;">ក្បួនដោះស្រាយតម្រៀប និងស្វែងរកសម្រាប់ Data Science &amp; AI<br>
+                <span style="color:var(--accent-blue); font-size: 2.2vw; font-family:'Lato'">(<i class='fa-solid fa-sort-amount-down tech-icon'></i>Sorting and <i class='fa-solid fa-magnifying-glass tech-icon'></i>Searching Algorithms for DS &amp; AI)</span></h1>
                 
-                <div style="margin-top: 3vh; display: flex; gap: 5vw; justify-content: center; align-items: center;">
+                <div style="margin-top: 2.5vh; display: flex; gap: 5vw; justify-content: center; align-items: center;">
                     <div style="text-align: center;">
-                        <img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg" style="height: 6vw;">
-                        <p style="font-size: 1.1vw; font-weight: bold; color: var(--accent-blue);">Pythons</p>
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg" style="height: 5.5vw;">
+                        <p style="font-size: 1.1vw; font-weight: bold; color: var(--accent-blue);">Python Pro</p>
                     </div>
                     <div style="text-align: center;">
-                        <img src="https://cdn-icons-png.flaticon.com/512/2103/2103633.png" style="height: 6vw;">
-                        <p style="font-size: 1.1vw; font-weight: bold; color: var(--accent-blue);">DSA in Pythons</p>
+                        <img src="https://cdn-icons-png.flaticon.com/512/2103/2103633.png" style="height: 5.5vw;">
+                        <p style="font-size: 1.1vw; font-weight: bold; color: var(--accent-blue);">DSA in Python</p>
                     </div>
                 </div>
             </div>
@@ -180,19 +173,19 @@
             <div id="h-placeholder-1"></div>
             <h2 class="slide-title"><i class="fa-solid fa-user-tie"></i> ព័ត៌មានសាស្ត្រាចារ្យ និងមុខវិជ្ជា</h2>
             <div class="content-body two-column">
-                <div style="position: relative; width: 20vw; height: 28vw; margin: auto;">
+                <div style="position: relative; width: 19vw; height: 26vw; margin: auto;">
                     <div style="position: absolute; top: 1.5vw; left: -1.5vw; width: 100%; height: 100%; background: rgba(2, 132, 199, 0.1); border-radius: 2vw; z-index: 0;"></div>
                     <img src="Lim.jpg" style="position: relative; width: 100%; height: 100%; border-radius: 2vw; object-fit: cover; box-shadow: 0 15px 35px rgba(0,0,0,0.15); z-index: 1; border: 4px solid white;" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'">
                 </div>
-                <div style="padding-left: 2vw;">
-                    <h3 style="font-size: 3vw; color: var(--accent-blue); font-family: 'Suwannaphum'; margin-bottom: 2vh;">សាស្ត្រាចារ្យ៖ សឿង លីម <span style="font-size: 2vw; color: var(--text-muted);">(Soeurng LIM)</span></h3>
-                    <div class="card" style="border-left: none; border-top: 4px solid var(--accent-blue); padding: 3vh; background: #FFFFFF;">
+                <div style="padding-left: 1.5vw;">
+                    <h3 style="font-size: 2.8vw; color: var(--accent-blue); font-family: 'Suwannaphum'; margin-bottom: 1.5vh;">សាស្ត្រាចារ្យ៖ សឿង លីម <span style="font-size: 1.8vw; color: var(--text-muted);">(Soeurng LIM)</span></h3>
+                    <div class="card" style="border-left: none; border-top: 4px solid var(--accent-blue); padding: 2vh; background: #FFFFFF;">
                         <p><b><i class="fa-solid fa-graduation-cap text-blue"></i> គុណវុឌ្ឍិ៖</b> បរិញ្ញាបត្រជាន់ខ្ពស់ (Master's Degree) - ព័ត៌មានវិទ្យា</p>
                         <p><b><i class="fa-solid fa-phone text-blue"></i> ទូរស័ព្ទ៖</b> ០៦១ ២២៧ ៩៣៣</p>
                         <p><b><i class="fa-solid fa-envelope text-blue"></i> អ៊ីម៉ែល៖</b> soeurnglim@gmail.com</p>
-                        <hr style="margin: 2vh 0; border: 1px solid #E2E8F0;">
+                        <hr style="margin: 1.5vh 0; border: 1px solid #E2E8F0;">
                         <p><b><i class="fa-solid fa-star text-blue"></i> ក្រេឌីត៖</b> ៣ ក្រេឌីត (3 Credits)</p>
-                        <p><b><i class="fa-solid fa-clipboard-check text-blue"></i> មុខវិជ្ជាមុន (Prerequisite)៖</b> ការសរសេរកម្មវិធី Python មូលដ្ឋាន</p>
+                        <p><b><i class="fa-solid fa-clipboard-check text-blue"></i> មុខវិជ្ជាមុន (Prerequisite)៖</b> ការសរសេរកម្មវិធី Python កម្រិតខ្ពស់</p>
                     </div>
                 </div>
             </div>
@@ -209,6 +202,14 @@
         <div class="slide-counter" id="screenSlideCounter">កំពុងរៀបចំ...</div>
     </div>
 
+    <!-- Navigation Overlays (Rendered last inside the deck to stay clickable) -->
+    <div class="nav-zone nav-left" title="ថយក្រោយ (Previous)">
+        <i class="fa-solid fa-chevron-left"></i>
+    </div>
+    <div class="nav-zone nav-right" title="ទៅមុខ (Next)">
+        <i class="fa-solid fa-chevron-right"></i>
+    </div>
+
 </div>
 
 <script>
@@ -217,323 +218,712 @@
     const khNums = ["០", "១", "២", "៣", "៤", "៥", "៦", "៧", "៨", "៩"];
     function toKh(n) { return n.toString().split('').map(d => khNums[parseInt(d)]).join(''); }
 
-    // កែច្នៃ SVG ឲ្យប្រើប្រាស់ភាសាខ្មែរ
-    const searchSVG = `
+    // --- Dynamic Inline SVGs ---
+    const linearSearchSVG = `
+        <svg viewBox="0 0 600 200" xmlns="http://www.w3.org/2000/svg" style="width:100%; height:100%;">
+            <defs>
+                <marker id="redArrow" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                    <path d="M 0 0 L 10 5 L 0 10 z" fill="#DC2626" />
+                </marker>
+                <marker id="greenArrow" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                    <path d="M 0 0 L 10 5 L 0 10 z" fill="#059669" />
+                </marker>
+            </defs>
+            <text x="300" y="25" font-family="'Suwannaphum', sans-serif" font-size="20" font-weight="bold" fill="#0284C7" text-anchor="middle">Linear Search (ការស្វែងរកតាមលំដាប់លីនេអ៊ែរ)</text>
+            <text x="300" y="50" font-family="'Battambang', sans-serif" font-size="13" fill="#64748B" text-anchor="middle">ស្វែងរកលេខ = 38 (ពិនិត្យម្តងមួយៗពីឆ្វេងទៅស្តាំ)</text>
+            
+            <g transform="translate(50, 70)">
+                <rect x="0" y="0" width="50" height="50" fill="#F8FAFC" stroke="#DC2626" stroke-width="2"/>
+                <text x="25" y="32" font-family="sans-serif" font-size="16" fill="#9CA3AF" text-anchor="middle">12</text>
+                <text x="25" y="-8" font-family="sans-serif" font-size="11" fill="#DC2626" text-anchor="middle">idx 0 (❌)</text>
+                
+                <rect x="60" y="0" width="50" height="50" fill="#F8FAFC" stroke="#DC2626" stroke-width="2"/>
+                <text x="85" y="32" font-family="sans-serif" font-size="16" fill="#9CA3AF" text-anchor="middle">5</text>
+                <text x="85" y="-8" font-family="sans-serif" font-size="11" fill="#DC2626" text-anchor="middle">idx 1 (❌)</text>
+                
+                <rect x="120" y="0" width="50" height="50" fill="#F8FAFC" stroke="#DC2626" stroke-width="2"/>
+                <text x="145" y="32" font-family="sans-serif" font-size="16" fill="#9CA3AF" text-anchor="middle">91</text>
+                <text x="145" y="-8" font-family="sans-serif" font-size="11" fill="#DC2626" text-anchor="middle">idx 2 (❌)</text>
+                
+                <rect x="180" y="0" width="50" height="50" fill="#E0F2FE" stroke="#059669" stroke-width="3"/>
+                <text x="205" y="32" font-family="sans-serif" font-size="16" font-weight="bold" fill="#059669" text-anchor="middle">38</text>
+                <text x="205" y="-8" font-family="'Battambang', sans-serif" font-size="11" font-weight="bold" fill="#059669" text-anchor="middle">idx 3 (🎯)</text>
+                
+                <rect x="240" y="0" width="50" height="50" fill="#F8FAFC" stroke="#CBD5E1" stroke-width="1"/>
+                <text x="265" y="32" font-family="sans-serif" font-size="16" fill="#9CA3AF" text-anchor="middle">23</text>
+                
+                <rect x="300" y="0" width="50" height="50" fill="#F8FAFC" stroke="#CBD5E1" stroke-width="1"/>
+                <text x="325" y="32" font-family="sans-serif" font-size="16" fill="#9CA3AF" text-anchor="middle">72</text>
+            </g>
+            
+            <line x1="255" y1="170" x2="255" y2="135" stroke="#059669" stroke-width="2" marker-end="url(#greenArrow)"/>
+            <text x="255" y="185" font-family="'Battambang', sans-serif" font-size="13" font-weight="bold" fill="#059669" text-anchor="middle">រកឃើញនៅទីតាំង Index 3!</text>
+        </svg>
+    `;
+
+    const binarySearchSVG = `
         <svg viewBox="0 0 600 200" xmlns="http://www.w3.org/2000/svg" style="width:100%; height:100%;">
             <defs>
                 <marker id="arrow" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
                     <path d="M 0 0 L 10 5 L 0 10 z" fill="#DC2626" />
                 </marker>
             </defs>
-            <text x="300" y="30" font-family="'Suwannaphum', sans-serif" font-size="22" font-weight="bold" fill="#0284C7" text-anchor="middle">Binary Search (ស្វែងរកដោយពុះកណ្តាល)</text>
-            <text x="300" y="55" font-family="'Battambang', sans-serif" font-size="14" fill="#64748B" text-anchor="middle">ស្វែងរកលេខ = 23 (ទិន្នន័យត្រូវតែតម្រៀបរួច)</text>
+            <text x="300" y="25" font-family="'Suwannaphum', sans-serif" font-size="20" font-weight="bold" fill="#0284C7" text-anchor="middle">Binary Search (ស្វែងរកដោយពុះកណ្តាល)</text>
+            <text x="300" y="50" font-family="'Battambang', sans-serif" font-size="13" fill="#64748B" text-anchor="middle">ស្វែងរកលេខ = 23 (ទិន្នន័យត្រូវតែតម្រៀបរួច)</text>
             
-            <g transform="translate(50, 80)">
-                <rect x="0" y="0" width="50" height="50" fill="#F8FAFC" stroke="#CBD5E1" stroke-width="2"/>
-                <text x="25" y="32" font-family="sans-serif" font-size="18" fill="#9CA3AF" text-anchor="middle">2</text>
+            <g transform="translate(50, 70)">
+                <rect x="0" y="0" width="45" height="45" fill="#F8FAFC" stroke="#CBD5E1" stroke-width="1.5"/>
+                <text x="22.5" y="28" font-family="sans-serif" font-size="15" fill="#9CA3AF" text-anchor="middle">2</text>
                 
-                <rect x="50" y="0" width="50" height="50" fill="#F8FAFC" stroke="#CBD5E1" stroke-width="2"/>
-                <text x="75" y="32" font-family="sans-serif" font-size="18" fill="#9CA3AF" text-anchor="middle">5</text>
+                <rect x="50" y="0" width="45" height="45" fill="#F8FAFC" stroke="#CBD5E1" stroke-width="1.5"/>
+                <text x="72.5" y="28" font-family="sans-serif" font-size="15" fill="#9CA3AF" text-anchor="middle">5</text>
                 
-                <rect x="100" y="0" width="50" height="50" fill="#F8FAFC" stroke="#CBD5E1" stroke-width="2"/>
-                <text x="125" y="32" font-family="sans-serif" font-size="18" fill="#9CA3AF" text-anchor="middle">8</text>
+                <rect x="100" y="0" width="45" height="45" fill="#F8FAFC" stroke="#CBD5E1" stroke-width="1.5"/>
+                <text x="122.5" y="28" font-family="sans-serif" font-size="15" fill="#9CA3AF" text-anchor="middle">8</text>
                 
-                <rect x="150" y="0" width="50" height="50" fill="#F8FAFC" stroke="#CBD5E1" stroke-width="2"/>
-                <text x="175" y="32" font-family="sans-serif" font-size="18" fill="#9CA3AF" text-anchor="middle">12</text>
+                <rect x="150" y="0" width="45" height="45" fill="#F8FAFC" stroke="#CBD5E1" stroke-width="1.5"/>
+                <text x="172.5" y="28" font-family="sans-serif" font-size="15" fill="#9CA3AF" text-anchor="middle">12</text>
                 
-                <rect x="200" y="0" width="50" height="50" fill="#FEF2F2" stroke="#DC2626" stroke-width="3"/>
-                <text x="225" y="32" font-family="sans-serif" font-size="18" font-weight="bold" fill="#DC2626" text-anchor="middle">16</text>
+                <rect x="200" y="0" width="45" height="45" fill="#FEF2F2" stroke="#DC2626" stroke-width="2.5"/>
+                <text x="222.5" y="28" font-family="sans-serif" font-size="15" font-weight="bold" fill="#DC2626" text-anchor="middle">16</text>
                 
-                <rect x="250" y="0" width="50" height="50" fill="#E0F2FE" stroke="#0284C7" stroke-width="3"/>
-                <text x="275" y="32" font-family="sans-serif" font-size="18" font-weight="bold" fill="#0284C7" text-anchor="middle">23</text>
+                <rect x="250" y="0" width="45" height="45" fill="#E0F2FE" stroke="#0284C7" stroke-width="2.5"/>
+                <text x="272.5" y="28" font-family="sans-serif" font-size="15" font-weight="bold" fill="#0284C7" text-anchor="middle">23</text>
                 
-                <rect x="300" y="0" width="50" height="50" fill="#F8FAFC" stroke="#CBD5E1" stroke-width="2"/>
-                <text x="325" y="32" font-family="sans-serif" font-size="18" fill="#0F172A" text-anchor="middle">38</text>
+                <rect x="300" y="0" width="45" height="45" fill="#F8FAFC" stroke="#CBD5E1" stroke-width="1.5"/>
+                <text x="322.5" y="28" font-family="sans-serif" font-size="15" fill="#0F172A" text-anchor="middle">38</text>
                 
-                <rect x="350" y="0" width="50" height="50" fill="#F8FAFC" stroke="#CBD5E1" stroke-width="2"/>
-                <text x="375" y="32" font-family="sans-serif" font-size="18" fill="#0F172A" text-anchor="middle">56</text>
+                <rect x="350" y="0" width="45" height="45" fill="#F8FAFC" stroke="#CBD5E1" stroke-width="1.5"/>
+                <text x="372.5" y="28" font-family="sans-serif" font-size="15" fill="#0F172A" text-anchor="middle">56</text>
                 
-                <rect x="400" y="0" width="50" height="50" fill="#F8FAFC" stroke="#CBD5E1" stroke-width="2"/>
-                <text x="425" y="32" font-family="sans-serif" font-size="18" fill="#0F172A" text-anchor="middle">72</text>
+                <rect x="400" y="0" width="45" height="45" fill="#F8FAFC" stroke="#CBD5E1" stroke-width="1.5"/>
+                <text x="422.5" y="28" font-family="sans-serif" font-size="15" fill="#0F172A" text-anchor="middle">72</text>
                 
-                <rect x="450" y="0" width="50" height="50" fill="#F8FAFC" stroke="#CBD5E1" stroke-width="2"/>
-                <text x="475" y="32" font-family="sans-serif" font-size="18" fill="#0F172A" text-anchor="middle">91</text>
+                <rect x="450" y="0" width="45" height="45" fill="#F8FAFC" stroke="#CBD5E1" stroke-width="1.5"/>
+                <text x="472.5" y="28" font-family="sans-serif" font-size="15" fill="#0F172A" text-anchor="middle">91</text>
             </g>
 
-            <line x1="75" y1="160" x2="75" y2="135" stroke="#DC2626" stroke-width="2" marker-end="url(#arrow)"/>
-            <text x="75" y="180" font-family="sans-serif" font-size="16" font-weight="bold" fill="#DC2626" text-anchor="middle">L</text>
+            <line x1="72.5" y1="150" x2="72.5" y2="125" stroke="#DC2626" stroke-width="2" marker-end="url(#arrow)"/>
+            <text x="72.5" y="165" font-family="sans-serif" font-size="14" font-weight="bold" fill="#DC2626" text-anchor="middle">L</text>
             
-            <line x1="275" y1="160" x2="275" y2="135" stroke="#DC2626" stroke-width="2" marker-end="url(#arrow)"/>
-            <text x="275" y="180" font-family="sans-serif" font-size="16" font-weight="bold" fill="#DC2626" text-anchor="middle">Mid</text>
+            <line x1="272.5" y1="150" x2="272.5" y2="125" stroke="#DC2626" stroke-width="2" marker-end="url(#arrow)"/>
+            <text x="272.5" y="165" font-family="sans-serif" font-size="14" font-weight="bold" fill="#DC2626" text-anchor="middle">Mid</text>
             
-            <line x1="525" y1="160" x2="525" y2="135" stroke="#DC2626" stroke-width="2" marker-end="url(#arrow)"/>
-            <text x="525" y="180" font-family="sans-serif" font-size="16" font-weight="bold" fill="#DC2626" text-anchor="middle">R</text>
+            <line x1="522.5" y1="150" x2="522.5" y2="125" stroke="#DC2626" stroke-width="2" marker-end="url(#arrow)"/>
+            <text x="522.5" y="165" font-family="sans-serif" font-size="14" font-weight="bold" fill="#DC2626" text-anchor="middle">R</text>
 
-            <rect x="25" y="70" width="225" height="70" fill="rgba(203, 213, 225, 0.5)" rx="4"/>
-            <text x="135" y="100" font-family="'Battambang', sans-serif" font-size="14" font-weight="bold" fill="#64748B" text-anchor="middle">កាត់ចោល (លែងខ្វល់)</text>
+            <rect x="25" y="62" width="220" height="60" fill="rgba(203, 213, 225, 0.45)" rx="4"/>
+            <text x="135" y="95" font-family="'Battambang', sans-serif" font-size="13" font-weight="bold" fill="#475569" text-anchor="middle">កាត់ចោល (លែងខ្វល់)</text>
         </svg>
     `;
 
-    const sortSVG = `
+    const bubbleSortSVG = `
+        <svg viewBox="0 0 600 220" xmlns="http://www.w3.org/2000/svg" style="width:100%; height:100%;">
+            <text x="300" y="25" font-family="'Suwannaphum', sans-serif" font-size="20" font-weight="bold" fill="#0284C7" text-anchor="middle">Bubble Sort: ដំណើរការ Swap គូជាប់គ្នា</text>
+            <text x="300" y="48" font-family="'Battambang', sans-serif" font-size="13" fill="#64748B" text-anchor="middle">ប្រៀបធៀបលេខជាប់គ្នា បើឆ្វេងធំជាងស្តាំ ត្រូវប្តូរទីតាំង (Swap)</text>
+            
+            <g transform="translate(100, 70)">
+                <rect x="0" y="0" width="70" height="70" fill="#FEE2E2" stroke="#EF4444" stroke-width="2.5" rx="8"/>
+                <text x="35" y="42" font-family="sans-serif" font-size="24" font-weight="bold" fill="#EF4444" text-anchor="middle">5</text>
+                
+                <path d="M 80 15 Q 110 -10 140 15" fill="none" stroke="#D97706" stroke-width="2.5" stroke-dasharray="4"/>
+                <path d="M 140 55 Q 110 80 80 55" fill="none" stroke="#D97706" stroke-width="2.5" stroke-dasharray="4"/>
+                <text x="110" y="38" font-family="'Battambang', sans-serif" font-size="13" font-weight="bold" fill="#D97706" text-anchor="middle">Swap</text>
+
+                <rect x="150" y="0" width="70" height="70" fill="#FEF3C7" stroke="#D97706" stroke-width="2.5" rx="8"/>
+                <text x="185" y="42" font-family="sans-serif" font-size="24" font-weight="bold" fill="#D97706" text-anchor="middle">2</text>
+                
+                <rect x="240" y="0" width="70" height="70" fill="#F1F5F9" stroke="#CBD5E1" stroke-width="1.5" rx="8"/>
+                <text x="275" y="42" font-family="sans-serif" font-size="24" fill="#64748B" text-anchor="middle">8</text>
+
+                <rect x="320" y="0" width="70" height="70" fill="#F1F5F9" stroke="#CBD5E1" stroke-width="1.5" rx="8"/>
+                <text x="355" y="42" font-family="sans-serif" font-size="24" fill="#64748B" text-anchor="middle">1</text>
+            </g>
+            <text x="300" y="180" font-family="'Battambang', sans-serif" font-size="13.5" fill="#EF4444" font-weight="bold" text-anchor="middle">លទ្ធផលបន្ទាប់៖ [2, 5, 8, 1] ... លេខធំៗអណ្តែតទៅចុងជួរដូចពពុះទឹក</text>
+        </svg>
+    `;
+
+    const insertionSortSVG = `
+        <svg viewBox="0 0 600 220" xmlns="http://www.w3.org/2000/svg" style="width:100%; height:100%;">
+            <text x="300" y="25" font-family="'Suwannaphum', sans-serif" font-size="20" font-weight="bold" fill="#0284C7" text-anchor="middle">Insertion Sort: ការស៊កបញ្ចូលទៅកន្លែងត្រឹមត្រូវ</text>
+            <text x="300" y="48" font-family="'Battambang', sans-serif" font-size="13" fill="#64748B" text-anchor="middle">ដកយក Key = 3 មកស៊កបញ្ចូលទៅក្នុងបណ្តុំដែលតម្រៀបរួច (Sorted Sublist)</text>
+            
+            <g transform="translate(60, 70)">
+                <rect x="0" y="0" width="65" height="65" fill="#D1FAE5" stroke="#10B981" stroke-width="2" rx="6"/>
+                <text x="32.5" y="38" font-family="sans-serif" font-size="20" font-weight="bold" fill="#047857" text-anchor="middle">2</text>
+                
+                <rect x="75" y="0" width="65" height="65" fill="#D1FAE5" stroke="#10B981" stroke-width="2" rx="6"/>
+                <text x="107.5" y="38" font-family="sans-serif" font-size="20" font-weight="bold" fill="#047857" text-anchor="middle">5</text>
+
+                <rect x="150" y="0" width="65" height="65" fill="#D1FAE5" stroke="#10B981" stroke-width="2" rx="6"/>
+                <text x="182.5" y="38" font-family="sans-serif" font-size="20" font-weight="bold" fill="#047857" text-anchor="middle">8</text>
+                
+                <path d="M 182.5 -5 Q 145 -20 107.5 -5" fill="none" stroke="#EF4444" stroke-width="1.5" stroke-dasharray="3"/>
+                
+                <g transform="translate(240, -15)">
+                    <rect x="0" y="0" width="65" height="65" fill="#FEF3C7" stroke="#D97706" stroke-width="2.5" rx="6"/>
+                    <text x="32.5" y="38" font-family="sans-serif" font-size="20" font-weight="bold" fill="#D97706" text-anchor="middle">3</text>
+                    <text x="32.5" y="80" font-family="'Battambang', sans-serif" font-size="12" font-weight="bold" fill="#D97706" text-anchor="middle">Key</text>
+                </g>
+                
+                <rect x="325" y="0" width="65" height="65" fill="#F1F5F9" stroke="#94A3B8" stroke-width="1.5" rx="6"/>
+                <text x="357.5" y="38" font-family="sans-serif" font-size="20" fill="#475569" text-anchor="middle">1</text>
+                
+                <rect x="400" y="0" width="65" height="65" fill="#F1F5F9" stroke="#94A3B8" stroke-width="1.5" rx="6"/>
+                <text x="432.5" y="38" font-family="sans-serif" font-size="20" fill="#475569" text-anchor="middle">9</text>
+            </g>
+            <text x="300" y="190" font-family="'Battambang', sans-serif" font-size="13" fill="#047857" font-weight="bold" text-anchor="middle">រុញ 5, 8 ទៅស្តាំ រួចស៊ក 3 ចូលចន្លោះ 2 និង 5 -> [2, 3, 5, 8, ...] </text>
+        </svg>
+    `;
+
+    const selectionSortSVG = `
+        <svg viewBox="0 0 600 220" xmlns="http://www.w3.org/2000/svg" style="width:100%; height:100%;">
+            <text x="300" y="25" font-family="'Suwannaphum', sans-serif" font-size="20" font-weight="bold" fill="#0284C7" text-anchor="middle">Selection Sort: រកលេខតូចបំផុតមកដាក់ខាងមុខ</text>
+            <text x="300" y="48" font-family="'Battambang', sans-serif" font-size="13" fill="#64748B" text-anchor="middle">ស្កែនស្វែងរកតម្លៃតូចបំផុត (Minimum) ក្នុងប្រអប់ដែលមិនទាន់តម្រៀប រួចប្តូរវាទៅដើមជួរ</text>
+            
+            <g transform="translate(80, 75)">
+                <rect x="0" y="0" width="60" height="60" fill="#E0F2FE" stroke="#0284C7" stroke-width="2" rx="6"/>
+                <text x="30" y="35" font-family="sans-serif" font-size="18" font-weight="bold" fill="#0284C7" text-anchor="middle">64</text>
+                <text x="30" y="-8" font-family="'Battambang', sans-serif" font-size="11" fill="#0284C7" text-anchor="middle">ដើមជួរ</text>
+
+                <rect x="70" y="0" width="60" height="60" fill="#F1F5F9" stroke="#CBD5E1" stroke-width="1.5" rx="6"/>
+                <text x="100" y="35" font-family="sans-serif" font-size="18" fill="#475569" text-anchor="middle">25</text>
+
+                <rect x="140" y="0" width="60" height="60" fill="#F1F5F9" stroke="#CBD5E1" stroke-width="1.5" rx="6"/>
+                <text x="170" y="35" font-family="sans-serif" font-size="18" fill="#475569" text-anchor="middle">12</text>
+
+                <rect x="210" y="0" width="60" height="60" fill="#F1F5F9" stroke="#CBD5E1" stroke-width="1.5" rx="6"/>
+                <text x="240" y="35" font-family="sans-serif" font-size="18" fill="#475569" text-anchor="middle">22</text>
+
+                <rect x="280" y="0" width="60" height="60" fill="#D1FAE5" stroke="#10B981" stroke-width="2.5" rx="6"/>
+                <text x="310" y="35" font-family="sans-serif" font-size="18" font-weight="bold" fill="#047857" text-anchor="middle">11</text>
+                <text x="310" y="-8" font-family="'Battambang', sans-serif" font-size="11" font-weight="bold" fill="#10B981" text-anchor="middle">តូចបំផុត (Min)</text>
+
+                <path d="M 30 65 Q 170 100 310 65" fill="none" stroke="#D97706" stroke-width="2" stroke-dasharray="4"/>
+            </g>
+            <text x="300" y="195" font-family="'Battambang', sans-serif" font-size="13" fill="#D97706" font-weight="bold" text-anchor="middle">Swap លេខ 64 និង 11 -> 11 នឹងឡើងមកឈរលំដាប់ទី ១</text>
+        </svg>
+    `;
+
+    const mergeSortSVG = `
         <svg viewBox="0 0 600 240" xmlns="http://www.w3.org/2000/svg" style="width:100%; height:100%;">
-            <text x="300" y="30" font-family="'Suwannaphum', sans-serif" font-size="22" font-weight="bold" fill="#059669" text-anchor="middle">Sorting (ការតម្រៀបទិន្នន័យ)</text>
+            <text x="300" y="20" font-family="'Suwannaphum', sans-serif" font-size="18" font-weight="bold" fill="#0284C7" text-anchor="middle">Merge Sort: យុទ្ធសាស្ត្រ Divide &amp; Conquer</text>
             
-            <text x="150" y="70" font-family="'Suwannaphum', sans-serif" font-size="16" fill="#64748B" text-anchor="middle">មិនទាន់តម្រៀប (Unsorted)</text>
-            <g transform="translate(50, 80)">
-                <rect x="0" y="80" width="30" height="40" fill="#EF4444"/>
-                <rect x="40" y="20" width="30" height="100" fill="#EF4444"/>
-                <rect x="80" y="60" width="30" height="60" fill="#EF4444"/>
-                <rect x="120" y="90" width="30" height="30" fill="#EF4444"/>
-                <rect x="160" y="0" width="30" height="120" fill="#EF4444"/>
-                <rect x="200" y="50" width="30" height="70" fill="#EF4444"/>
+            <g transform="translate(180, 40)">
+                <rect x="0" y="0" width="240" height="30" fill="#F1F5F9" stroke="#475569" stroke-width="1.5" rx="4"/>
+                <text x="120" y="20" font-family="sans-serif" font-size="14" font-weight="bold" fill="#1E293B" text-anchor="middle">[38,  27,  43,  3]</text>
             </g>
 
-            <path d="M 300 120 L 330 140 L 300 160 Z" fill="#9CA3AF"/>
+            <path d="M 280 75 L 210 95" fill="none" stroke="#94A3B8" stroke-width="2"/>
+            <path d="M 320 75 L 390 95" fill="none" stroke="#94A3B8" stroke-width="2"/>
+
+            <g transform="translate(100, 100)">
+                <rect x="0" y="0" width="120" height="30" fill="#E0F2FE" stroke="#0284C7" stroke-width="1.5" rx="4"/>
+                <text x="60" y="20" font-family="sans-serif" font-size="13" fill="#0369A1" text-anchor="middle">[38, 27]</text>
+            </g>
+            <g transform="translate(380, 100)">
+                <rect x="0" y="0" width="120" height="30" fill="#E0F2FE" stroke="#0284C7" stroke-width="1.5" rx="4"/>
+                <text x="60" y="20" font-family="sans-serif" font-size="13" fill="#0369A1" text-anchor="middle">[43, 3]</text>
+            </g>
+
+            <path d="M 160 135 L 210 155" fill="none" stroke="#10B981" stroke-width="2"/>
+            <path d="M 440 135 L 390 155" fill="none" stroke="#10B981" stroke-width="2"/>
+
+            <g transform="translate(180, 160)">
+                <rect x="0" y="0" width="240" height="35" fill="#D1FAE5" stroke="#10B981" stroke-width="2" rx="4"/>
+                <text x="120" y="22" font-family="sans-serif" font-size="15" font-weight="bold" fill="#065F46" text-anchor="middle">[3,  27,  38,  43]</text>
+            </g>
+            <text x="300" y="215" font-family="'Battambang', sans-serif" font-size="12" fill="#059669" font-weight="bold" text-anchor="middle">ពុះចែកជាផ្នែកតូចៗរហូតដល់សល់ ១ ធាតុ រួចច្របាច់បញ្ចូលគ្នា (Merge) វិញតាមលំដាប់</text>
+        </svg>
+    `;
+
+    const quickSortSVG = `
+        <svg viewBox="0 0 600 240" xmlns="http://www.w3.org/2000/svg" style="width:100%; height:100%;">
+            <text x="300" y="25" font-family="'Suwannaphum', sans-serif" font-size="18" font-weight="bold" fill="#0284C7" text-anchor="middle">Quick Sort: ការបែងចែកដោយយក Pivot ជាគោល</text>
             
-            <text x="450" y="70" font-family="'Suwannaphum', sans-serif" font-size="16" fill="#059669" font-weight="bold" text-anchor="middle">តម្រៀបរួច (Sorted)</text>
-            <g transform="translate(350, 80)">
-                <rect x="0" y="90" width="30" height="30" fill="#10B981"/>
-                <rect x="40" y="80" width="30" height="40" fill="#10B981"/>
-                <rect x="80" y="60" width="30" height="60" fill="#10B981"/>
-                <rect x="120" y="50" width="30" height="70" fill="#10B981"/>
-                <rect x="160" y="20" width="30" height="100" fill="#10B981"/>
-                <rect x="200" y="0" width="30" height="120" fill="#10B981"/>
+            <g transform="translate(50, 50)">
+                <rect x="50" y="20" width="60" height="50" fill="#F1F5F9" stroke="#CBD5E1" stroke-width="1.5"/>
+                <text x="80" y="50" font-family="sans-serif" font-size="18" fill="#475569" text-anchor="middle">15</text>
+                
+                <rect x="120" y="20" width="60" height="50" fill="#F1F5F9" stroke="#CBD5E1" stroke-width="1.5"/>
+                <text x="150" y="50" font-family="sans-serif" font-size="18" fill="#475569" text-anchor="middle">9</text>
+
+                <rect x="190" y="20" width="80" height="50" fill="#FEF3C7" stroke="#D97706" stroke-width="3"/>
+                <text x="230" y="50" font-family="sans-serif" font-size="18" font-weight="bold" fill="#D97706" text-anchor="middle">23</text>
+                <text x="230" y="-5" font-family="'Battambang', sans-serif" font-size="12" font-weight="bold" fill="#D97706" text-anchor="middle">គោល (Pivot)</text>
+
+                <rect x="280" y="20" width="60" height="50" fill="#F1F5F9" stroke="#CBD5E1" stroke-width="1.5"/>
+                <text x="310" y="50" font-family="sans-serif" font-size="18" fill="#475569" text-anchor="middle">45</text>
+
+                <rect x="350" y="20" width="60" height="50" fill="#F1F5F9" stroke="#CBD5E1" stroke-width="1.5"/>
+                <text x="380" y="50" font-family="sans-serif" font-size="18" fill="#475569" text-anchor="middle">12</text>
+            </g>
+
+            <path d="M 200 130 L 130 160" fill="none" stroke="#475569" stroke-width="2"/>
+            <path d="M 380 130 L 450 160" fill="none" stroke="#475569" stroke-width="2"/>
+
+            <g transform="translate(30, 170)">
+                <rect x="0" y="0" width="160" height="35" fill="#E0F2FE" stroke="#0284C7" stroke-width="1.5" rx="4"/>
+                <text x="80" y="22" font-family="sans-serif" font-size="14" fill="#0369A1" text-anchor="middle">[15,  9,  12] (តូចជាង Pivot)</text>
+            </g>
+            
+            <g transform="translate(210, 170)">
+                <rect x="0" y="0" width="100" height="35" fill="#FEF3C7" stroke="#D97706" stroke-width="1.5" rx="4"/>
+                <text x="50" y="22" font-family="sans-serif" font-size="14" font-weight="bold" fill="#B45309" text-anchor="middle">[23]</text>
+            </g>
+
+            <g transform="translate(330, 170)">
+                <rect x="0" y="0" width="150" height="35" fill="#FEE2E2" stroke="#EF4444" stroke-width="1.5" rx="4"/>
+                <text x="75" y="22" font-family="sans-serif" font-size="14" fill="#991B1B" text-anchor="middle">[45] (ធំជាង Pivot)</text>
             </g>
         </svg>
     `;
 
+    // --- Dynamic Slides Database (Simplifying Case Studies to General, Tangible Examples) ---
     const chapter7Data = [
         // 1. Syllabus Update
         { t: "១. គម្រោងបង្រៀនប្រចាំឆមាស (Course Syllabus)", type: "grid", c: [
-            { h: "<i class='fa-solid fa-list-ol keyword-icon'></i> ពាក់កណ្តាលឆមាសទី ១", p: `
-                <ul style='list-style:none; line-height: 2.2; margin-left: 0; padding-left: 0;'>
-                    <li style='font-size: 1.35vw;'><i class='fa-solid fa-check text-main' style='margin-right: 8px;'></i> ជំពូក១-៤: DSA មូលដ្ឋាន និង Linked Lists</li>
-                    <li style='font-size: 1.35vw;'><i class='fa-solid fa-check text-main' style='margin-right: 8px;'></i> ជំពូក៥: <b><i class='fa-solid fa-folder-tree tech-icon'></i>Trees</b> & <b><i class='fa-solid fa-sitemap tech-icon'></i>BST</b></li>
-                    <li style='font-size: 1.35vw;'><i class='fa-solid fa-check text-main' style='margin-right: 8px;'></i> ជំពូក៦: <b><i class='fa-solid fa-network-wired tech-icon'></i>Graphs</b> & Hash Tables</li>
+            { h: "<i class='fa-solid fa-list-ol keyword-icon'></i> ពាក់កណ្តាលឆមាសទី ១ (បង្រៀនរួច)", p: `
+                <ul style='list-style:none; line-height: 2; margin-left: 0; padding-left: 0;'>
+                    <li><i class='fa-solid fa-check text-green' style='margin-right: 8px;'></i> ជំពូក១-៤: DSA មូលដ្ឋាន និង Linked Lists</li>
+                    <li><i class='fa-solid fa-check text-green' style='margin-right: 8px;'></i> ជំពូក៥: <b>Trees</b> &amp; Binary Search Tree (BST)</li>
+                    <li><i class='fa-solid fa-check text-green' style='margin-right: 8px;'></i> ជំពូក៦: <b>Graphs</b> &amp; Hash Tables</li>
                 </ul>` 
             },
-            { h: "<i class='fa-solid fa-bolt keyword-icon'></i> ពាក់កណ្តាលឆមាសទី ២", p: `
-                <ul style='list-style:none; line-height: 2.2; margin-left: 0; padding-left: 0;'>
-                    <li style='color: var(--accent-red); font-size: 1.35vw; font-weight: bold;'><i class='fa-solid fa-arrow-right text-red' style='margin-right: 8px;'></i> ជំពូក៧: Sorting & Searching (ថ្ងៃនេះ)</li>
-                    <li style='font-size: 1.35vw;'><i class='fa-regular fa-circle text-main' style='margin-right: 8px;'></i> ជំពូក៨: <b><i class='fa-solid fa-brain tech-icon'></i>AI Algorithms</b> (Pathfinding & Minimax)</li>
-                    <li style='font-size: 1.35vw;'><i class='fa-regular fa-circle text-main' style='margin-right: 8px;'></i> បញ្ចប់: ការធ្វើបទបង្ហាញគម្រោង (Final Projects)</li>
+            { h: "<i class='fa-solid fa-bolt keyword-icon'></i> ពាក់កណ្តាលឆមាសទី ២ (បច្ចុប្បន្ន)", p: `
+                <ul style='list-style:none; line-height: 2; margin-left: 0; padding-left: 0;'>
+                    <li style='color: var(--accent-red); font-weight: bold;'><i class='fa-solid fa-arrow-right' style='margin-right: 8px;'></i> ជំពូក៧: Sorting &amp; Searching (ថ្ងៃនេះ)</li>
+                    <li><i class='fa-regular fa-circle' style='margin-right: 8px;'></i> ជំពូក៨: <b>AI Algorithms</b> (Pathfinding &amp; Optimization)</li>
+                    <li><i class='fa-solid fa-graduation-cap' style='margin-right: 8px;'></i> បញ្ចប់: ការធ្វើបទបង្ហាញគម្រោង (Final Projects)</li>
                 </ul>` 
             }
         ]},
 
         // 2. Objectives
         { t: "២. វត្ថុបំណងនៃជំពូកទី ៧ (Chapter Objectives)", type: "grid", c: [
-            { h: "<i class='fa-solid fa-magnifying-glass keyword-icon'></i> ស្វែងយល់ពីក្បួនស្វែងរក", p: "អាចបែងចែកភាពខុសគ្នារវាង Linear Search (ស្វែងរកម្តងមួយៗ) និង Binary Search (ស្វែងរកពុះកណ្តាល)។" },
-            { h: "<i class='fa-solid fa-sort-amount-down keyword-icon'></i> ស្គាល់ក្បួនតម្រៀប (Sorting)", p: "ស្វែងយល់ពីក្បួនតម្រៀបមូលដ្ឋាន (Bubble, Insertion) និងក្បួនតម្រៀបកម្រិតខ្ពស់ (Merge Sort, Quick Sort)។" },
-            { h: "<i class='fa-brands fa-python keyword-icon'></i> ការអនុវត្តកូដជាក់ស្តែង", p: "អាចសរសេរកូដ Python ដើម្បីតម្រៀបទិន្នន័យ (Arrays/Lists) ដោយមិនប្រើប្រាស់ Built-in function <code>.sort()</code>។" },
-            { h: "<i class='fa-solid fa-chart-line keyword-icon'></i> វិភាគប្រសិទ្ធភាព (Big-O)", p: "វិភាគ និងជ្រើសរើស Algorithm ណាដែលដើរលឿនជាងគេ O(n log n) សម្រាប់ដោះស្រាយបញ្ហាក្នុងប្រព័ន្ធធំៗ។" }
+            { h: "<i class='fa-solid fa-magnifying-glass keyword-icon'></i> ស្វែងយល់ពីក្បួនស្វែងរក", p: "អាចបែងចែកភាពខុសគ្នារវាង Linear Search និង Binary Search ព្រមទាំងយល់ដឹងពីរបៀបអនុវត្តលើទិន្នន័យពិត។" },
+            { h: "<i class='fa-solid fa-sort-amount-down keyword-icon'></i> ស្គាល់ក្បួនតម្រៀប (Sorting)", p: "ស្វែងយល់ពីក្បួនតម្រៀបគ្រឹះ (Selection, Bubble, Insertion) និងក្បួនកម្រិតខ្ពស់ (Merge, Quick Sort)។" },
+            { h: "<i class='fa-brands fa-python keyword-icon'></i> ការអនុវត្តកូដជាក់ស្តែង", p: "អាចសរសេរកូដ Python ដើម្បីបង្កើតក្បួនដោះស្រាយទាំងអស់ដោយមិនប្រើប្រាស់ Built-in functions។" },
+            { h: "<i class='fa-solid fa-chart-line keyword-icon'></i> វិភាគប្រសិទ្ធភាព (Big-O)", p: "វិភាគ Time/Space Complexity ដើម្បីជ្រើសរើស Algorithm ដ៏ត្រឹមត្រូវសម្រាប់ប្រព័ន្ធទិន្នន័យធំៗ។" }
         ]},
 
-        // 3. ToC
+        // 3. Table of Contents
         { t: "៣. មាតិកានៃជំពូក (Table of Contents)", type: "card", c: `
-            <ul style="list-style: none; padding-left: 2vw; line-height: 2;">
-                <li><i class="fa-solid fa-magnifying-glass text-blue" style="width:2vw;"></i> ៤. សេចក្តីផ្តើមពី Searching (Linear vs Binary)</li>
-                <li><i class="fa-brands fa-python text-blue" style="width:2vw;"></i> ៥. ការអនុវត្តកូដ <b><i class='fa-solid fa-magnifying-glass tech-icon'></i>Binary Search</b></li>
-                <li><i class="fa-solid fa-sort-amount-down text-blue" style="width:2vw;"></i> ៦. សេចក្តីផ្តើមពី Basic Sorting (Bubble & Insertion Sort)</li>
-                <li><i class="fa-brands fa-python text-blue" style="width:2vw;"></i> ៧. ការអនុវត្តកូដ <b><i class='fa-solid fa-sort tech-icon'></i>Basic Sorting</b></li>
-                <li><i class="fa-solid fa-bolt text-blue" style="width:2vw;"></i> ៨. ក្បួនតម្រៀបកម្រិតខ្ពស់ (Merge & Quick Sort)</li>
-                <li><i class="fa-brands fa-python text-blue" style="width:2vw;"></i> ៩. ការអនុវត្តកូដ <b><i class='fa-solid fa-bolt tech-icon'></i>Quick Sort</b></li>
-                <li><i class="fa-solid fa-scale-balanced text-blue" style="width:2vw;"></i> ១០. ការវិភាគប្រសិទ្ធភាពពេលវេលា (Time Complexity)</li>
-                <li><i class="fa-solid fa-brain text-blue" style="width:2vw;"></i> ១១. ការប្រើប្រាស់ក្នុងជីវិតពិត និងប្រព័ន្ធ AI</li>
-                <li><i class="fa-solid fa-book-bookmark text-blue" style="width:2vw;"></i> ១២ ដល់ ១៤. លំហាត់អនុវត្តន៍ និងសង្ខេបមេរៀន</li>
-            </ul>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2vw; line-height: 1.8;">
+                <ul style="list-style: none;">
+                    <li><b class="text-blue">៤.</b> ហេតុអ្វីបានជាយល់ដឹងពី Sorting &amp; Searching សំខាន់ចំពោះ Data Science &amp; AI?</li>
+                    <li><b class="text-blue">៥-៦.</b> ក្បួនស្វែងរកតាមលំដាប់ (Linear Search)</li>
+                    <li><b class="text-blue">៧-៩.</b> ក្បួនស្វែងរកពុះកណ្តាល (Binary Search)</li>
+                    <li><b class="text-blue">១០-១១.</b> ក្បួនតម្រៀបតាមជម្រើស (Selection Sort)</li>
+                    <li><b class="text-blue">១២-១៣.</b> ក្បួនតម្រៀបបែបពពុះ (Bubble Sort)</li>
+                </ul>
+                <ul style="list-style: none;">
+                    <li><b class="text-blue">១៤-១៥.</b> ក្បួនតម្រៀបបែបស៊កបញ្ចូល (Insertion Sort)</li>
+                    <li><b class="text-blue">១៦-១៧.</b> ក្បួនតម្រៀបច្របាច់បញ្ចូលគ្នា (Merge Sort)</li>
+                    <li><b class="text-blue">១៨-១៩.</b> ក្បួនតម្រៀបរហ័ស (Quick Sort)</li>
+                    <li><b class="text-blue">២០.</b> ការប្រៀបធៀប Big-O Complexity សម្រាប់ AI Engineers</li>
+                    <li><b class="text-blue">២១-២២.</b> ស្វែងយល់ពី Python's Built-in Timsort &amp; ការអនុវត្តផ្ទាល់</li>
+                </ul>
+            </div>
         `},
-        
-        // 4. Searching Algorithms with Local Analogies
-        { t: "៤. ក្បួនដោះស្រាយការស្វែងរក (Linear vs Binary Search)", type: "split", svg: searchSVG, c: `
+
+        // 4. Why Sorting & Searching Matter for Data Science & AI
+        { t: "៤. ហេតុអ្វីបានជា Sorting &amp; Searching សំខាន់ចំពោះ Data Science &amp; AI?", type: "grid", c: [
+            { h: "<i class='fa-solid fa-filter keyword-icon'></i> ការសម្អាតទិន្នន័យ (Pre-processing)", p: "មុននឹងយកទិន្នន័យទៅវិភាគ ឬបង្វឹក AI គេត្រូវការតម្រៀបទិន្នន័យជាមុន ដូចជាតម្រៀបប្រវត្តិនៃការលក់តាមកាលបរិច្ឆេទ ដើម្បីងាយស្រួលមើលនិន្នាការទីផ្សារ។" },
+            { h: "<i class='fa-solid fa-magnifying-glass-chart keyword-icon'></i> ល្បឿនឆ្លើយតបរបស់ប្រព័ន្ធ", p: "នៅពេលដែលប្រព័ន្ធមានទិន្នន័យអ្នកប្រើប្រាស់រាប់លាននាក់ ក្បួនស្វែងរក និងតម្រៀបដ៏មានប្រសិទ្ធភាពជួយឱ្យម៉ាស៊ីនស្វែងរក (Search Engine) ដំណើរការបានរហ័ស និងមិនគាំង។" },
+            { h: "<i class='fa-solid fa-brain keyword-icon'></i> ម៉ូដែលរៀនសូត្រពីទិន្នន័យ", p: "ក្បួនដោះស្រាយសំខាន់ៗជាច្រើនរបស់ AI ដូចជាការស្វែងរកចំណុចទិន្នន័យដែលនៅកៀកគ្នាជាងគេ (K-Nearest Neighbors) គឺត្រូវការក្បួនស្វែងរក និងតម្រៀបនេះជាគ្រឹះ។" },
+            { h: "<i class='fa-solid fa-database keyword-icon'></i> ការសន្សំសំចៃធនធាន (Resources)", p: "ការជ្រើសរើស Algorithm មិនបានល្អ នឹងធ្វើឱ្យម៉ាស៊ីន Server ស៊ីកម្លាំងគណនាខ្លាំង (High CPU Usage) នាំឱ្យខាតបង់ពេលវេលា និងថវិកា។" }
+        ]},
+
+        // 5. Linear Search & Simplified Case Studies
+        { t: "៥. ក្បួនស្វែងរកតាមលំដាប់លីនេអ៊ែរ (Linear Search)", type: "split", svg: linearSearchSVG, c: `
             <div style="display:flex; flex-direction:column; height:100%; justify-content:center;">
-                <p><b><i class='fa-solid fa-magnifying-glass keyword-icon'></i> Searching:</b> គឺជាដំណើរការស្វែងរកទីតាំងនៃទិន្នន័យណាមួយនៅក្នុង Array មួយកន្លែង។</p>
-                <div class="analogy-box">
-                    <div class="analogy-header"><i class="fa-solid fa-shoe-prints"></i> ករណីទី១៖ Linear Search (ដើររកម្តង១)</div>
-                    <p class="analogy-text">ដូចការដើររកផ្ទះមិត្តភក្តិក្នុងភូមិដែលគ្មានលេខរៀងច្បាស់លាស់។ យើងត្រូវដើរសួរបងប្អូនតាមផ្ទះនីមួយៗតាំងពីដើមភូមិរហូតដល់ចុងភូមិ (យឺត O(n))។</p>
+                <p><b><i class='fa-solid fa-magnifying-glass keyword-icon'></i> Linear Search:</b> ស្កែនពិនិត្យទិន្នន័យម្តងមួយៗពីដើមដល់ចប់ (Index 0 ដល់ n-1)។</p>
+                <div class="narrative-box">
+                    <div class="narrative-header"><i class="fa-solid fa-search"></i> ករណីសិក្សា ១៖ ស្វែងរកឈ្មោះក្នុងបញ្ជីដែលមិនរៀបរយ</div>
+                    <p class="narrative-text">ស្វែងរកឈ្មោះអតិថិជនម្នាក់ ក្នុងបញ្ជីឈ្មោះដែលបានកត់ចូលដោយគ្មានសណ្តាប់ធ្នាប់ (Unsorted List)។ យើងគ្មានជម្រើសអ្វីក្រៅពីអានឈ្មោះម្តងម្នាក់ៗពីលើចុះក្រោមឡើយ។</p>
                 </div>
-                <div class="analogy-box">
-                    <div class="analogy-header"><i class="fa-solid fa-book-open"></i> ករណីទី២៖ Binary Search (ស្វែងរកពុះកណ្តាល)</div>
-                    <p class="analogy-text">ដូចការស្វែងរកឈ្មោះក្នុងបញ្ជីបោះឆ្នោត គ.ជ.ប ដែលតម្រៀបតាមអក្ខរក្រមរួចហើយ (ក-អ)។ បើយើងរកឈ្មោះ "មករា" យើងបើកចំកណ្តាលសៀវភៅតែម្តង មិនបាច់មើលតាំងពីអក្សរ "ក" ឡើយ (លឿន O(log n))។</p>
+                <div class="narrative-box" style="background:#ECFDF5; border-color:#A7F3D0;">
+                    <div class="narrative-header" style="color:#065F46;"><i class="fa-solid fa-mobile-screen-button"></i> ករណីសិក្សា ២៖ ការរកមើលលេខទូរស័ព្ទក្នុងកម្មវិធីទំនាក់ទំនង</div>
+                    <p class="narrative-text">ការស្វែងរកលេខទូរស័ព្ទរបស់មិត្តភក្តិម្នាក់ដោយផ្ទាល់ក្នុងទូរស័ព្ទដៃ ដែលប្រព័ន្ធដើរឆែកមើលឈ្មោះគ្រប់ទំនាក់ទំនងម្តងម្នាក់ៗរហូតដល់រកឃើញចម្លើយ។</p>
                 </div>
             </div>
         `},
 
-        // 5. Binary Search Code
-        { t: "៥. ការអនុវត្តកូដ <b><i class='fa-solid fa-magnifying-glass tech-icon'></i>Binary Search</b>", type: "card", c: `
+        // 6. Linear Search Code
+        { t: "៦. ការអនុវត្តកូដ Linear Search ក្នុង Python", type: "card", c: `
             <div class="two-column-equal">
                 <div>
                     <div class="analogy-box">
-                        <div class="analogy-header"><i class="fa-solid fa-exclamation-triangle"></i> លក្ខខណ្ឌតម្រូវការ (ត្រូវតែ Sorted)</div>
-                        <p class="analogy-text">Binary Search អាចដំណើរការបាន <b>លុះត្រាតែទិន្នន័យត្រូវបានតម្រៀប (Sorted)</b> រួចរាល់ជាមុនសិន។ បើទិន្នន័យរាយប៉ាយ យើងមិនអាចពុះកណ្តាលដើម្បីកាត់ចោលទិន្នន័យបានឡើយ។</p>
-                    </div>
-                    <div class="analogy-box">
-                        <div class="analogy-header"><i class="fa-solid fa-arrows-left-right-to-line"></i> យន្តការ Pointer ៣ ចំណុច</div>
-                        <p class="analogy-text">ប្រើអថេរ L (ឆ្វេងបំផុត) R (ស្តាំបំផុត) និង Mid (ចំណុចកណ្តាល)។ បើទិន្នន័យដែលយើងរក (Target) > Mid នោះយើងប្តូរ L = Mid + 1 គឺកាត់ខាងឆ្វេងចោល។</p>
+                        <div class="analogy-header"><i class="fa-solid fa-calculator"></i> ភាពស្មុគស្មាញពេលវេលា O(n)</div>
+                        <p class="analogy-text">• <b>Best Case O(1):</b> រកឃើញភ្លាមនៅ index ដំបូងបង្អស់។<br>• <b>Worst Case O(n):</b> រកឃើញនៅចុងជួរ ឬរកមិនឃើញសោះ។<br>• <b>Space Complexity O(1):</b> មិនប្រើប្រាស់ Memory បន្ថែមឡើយ។</p>
                     </div>
                 </div>
                 <div>
                     <div class="code-wrapper">
-                        <div class="code-header"><span><i class="fa-brands fa-python"></i> កូដទី ១៖ Binary Search (Iterative)</span></div>
+                        <div class="code-header"><span><i class="fa-brands fa-python"></i> Python: Linear Search</span></div>
+                        <div class="code-content"><pre>
+<span class="kw">def</span> <span class="fn">linear_search</span>(arr, target):
+    <span class="kw">for</span> i <span class="kw">in range</span>(<span class="fn">len</span>(arr)):
+        <span class="kw">if</span> arr[i] == target:
+            <span class="kw">return</span> i  <span class="com"># រកឃើញ</span>
+    <span class="kw">return</span> -<span class="num">1</span>         <span class="com"># រកមិនឃើញ</span>
+
+<span class="com"># ឧទាហរណ៍៖ រកមើលលេខ 23 ក្នុងបញ្ជី</span>
+numbers = [<span class="num">12</span>, <span class="num">5</span>, <span class="num">91</span>, <span class="num">38</span>, <span class="num">23</span>, <span class="num">72</span>]
+print(linear_search(numbers, <span class="num">23</span>))  <span class="com"># Output: 4</span></pre></div>
+                    </div>
+                </div>
+            </div>
+        `},
+
+        // 7. Binary Search & Simplified Case Studies
+        { t: "៧. ក្បួនស្វែងរកពុះកណ្តាល (Binary Search)", type: "split", svg: binarySearchSVG, c: `
+            <div style="display:flex; flex-direction:column; height:100%; justify-content:center;">
+                <p><b><i class='fa-solid fa-arrows-split-up-and-left keyword-icon'></i> Binary Search:</b> ស្វែងរកដោយពុះពាក់កណ្តាលទិន្នន័យ (កាត់ផ្នែកដែលមិនត្រូវចោលម្តង ៥០%)។</p>
+                <div class="narrative-box">
+                    <div class="narrative-header"><i class="fa-solid fa-book"></i> ករណីសិក្សា ១៖ ស្វែងរកពាក្យក្នុងវចនានុក្រម (Dictionary)</div>
+                    <p class="narrative-text">ការស្វែងរកពាក្យ "សាលារៀន" ក្នុងវចនានុក្រមក្រដាស។ វចនានុក្រមតម្រៀបពាក្យតាមអក្ខរក្រមរួចជាស្រេច (ក-អ) ដូច្នេះយើងអាចបើកចំកណ្តាលទំព័រ ដើម្បីកាត់ចោលផ្នែកដែលមិនពាក់ព័ន្ធចេញភ្លាមៗ។</p>
+                </div>
+                <div class="narrative-box" style="background:#ECFDF5; border-color:#A7F3D0;">
+                    <div class="narrative-header" style="color:#065F46;"><i class="fa-solid fa-user-graduate"></i> ករណីសិក្សា ២៖ ស្វែងរកពិន្ទុសិស្សក្នុងតារាងតម្រៀបស្រាប់</div>
+                    <p class="narrative-text">ការស្វែងរកពិន្ទុរបស់សិស្សម្នាក់ក្នុងបញ្ជីលទ្ធផលប្រឡងដែលបានតម្រៀបពិន្ទុពីខ្ពស់ទៅទាបរួចជាស្រេច។ គ្រាន់តែឆែកមើលចំកណ្តាលបញ្ជី យើងនឹងដឹងថាត្រូវស្វែងរកទៅខាងលើ ឬខាងក្រោមបន្ត។</p>
+                </div>
+            </div>
+        `},
+
+        // 8. Step-by-Step Binary Search Walkthrough
+        { t: "៨. យន្តការ និងដំណើរការលម្អិតនៃ Binary Search", type: "grid", c: [
+            { h: "<i class='fa-solid fa-compress keyword-icon'></i> ១. កំណត់ Pointer ឆ្វេង-ស្តាំ", p: "ដំបូងយើងបង្កើត Pointer ពីរគឺ <code>left = 0</code> និង <code>right = n - 1</code> ដើម្បីកំណត់ព្រំដែននៃការស្វែងរកក្នុង Array ដែលបានរៀបចំរួច។" },
+            { h: "<i class='fa-solid fa-arrows-left-right keyword-icon'></i> ២. រកចំណុចកណ្តាល", p: "គណនាចំណុចកណ្តាល <code>mid = (left + right) // 2</code> រួចប្រៀបធៀបតម្លៃ <code>arr[mid]</code> ជាមួយ <code>target</code>។" },
+            { h: "<i class='fa-solid fa-scissors keyword-icon'></i> ៣. កាត់បន្ថយទិន្នន័យពាក់កណ្តាល", p: "បើ target ធំជាង <code>mid</code> យើងប្តូរ <code>left = mid + 1</code> (បោះបង់ផ្នែកឆ្វេង)។ បើ target តូចជាង <code>mid</code> យើងប្តូរ <code>right = mid - 1</code> (បោះបង់ផ្នែកស្តាំ)។" },
+            { h: "<i class='fa-solid fa-circle-check keyword-icon'></i> ៤. បញ្ឈប់ និងផ្តល់លទ្ធផល", p: "ដំណើរការនេះនឹងរង្វិលជុំ (loop) រហូតដល់រកឃើញ <code>target == arr[mid]</code> ឬក៏ <code>left > right</code> (រកមិនឃើញ)។" }
+        ]},
+
+        // 9. Binary Search Code
+        { t: "៩. ការអនុវត្តកូដ Binary Search ក្នុង Python", type: "card", c: `
+            <div class="two-column-equal">
+                <div>
+                    <div class="analogy-box" style="margin-top:0;">
+                        <div class="analogy-header"><i class="fa-solid fa-arrow-up-right-dots"></i> ភាពស្មុគស្មាញ O(log n)</div>
+                        <p class="analogy-text">ប្រសិនបើលោកអ្នកមានទិន្នន័យដែលតម្រៀបរួចចំនួន <b>១,០០០,០០០ ជួរ</b>៖<br>
+                        • Linear Search ប្រើពេលស្កែនរហូតដល់ <b>១,០០០,០០០ ដង</b><br>
+                        • Binary Search ប្រើពេលឆែកច្រើនបំផុតត្រឹមតែ <b>២០ ដង</b> ប៉ុណ្ណោះ!</p>
+                    </div>
+                </div>
+                <div>
+                    <div class="code-wrapper">
+                        <div class="code-header"><span><i class="fa-brands fa-python"></i> Python: Binary Search</span></div>
                         <div class="code-content"><pre>
 <span class="kw">def</span> <span class="fn">binary_search</span>(arr, target):
     left, right = <span class="num">0</span>, <span class="fn">len</span>(arr) - <span class="num">1</span>
-    
     <span class="kw">while</span> left <= right:
         mid = (left + right) // <span class="num">2</span>
-        
         <span class="kw">if</span> arr[mid] == target:
-            <span class="kw">return</span> mid <span class="com"># រកឃើញនៅទីតាំង mid</span>
+            <span class="kw">return</span> mid  <span class="com"># រកឃើញ index</span>
         <span class="kw">elif</span> arr[mid] < target:
-            left = mid + <span class="num">1</span> <span class="com"># បោះបង់ផ្នែកខាងឆ្វេងចោល</span>
+            left = mid + <span class="num">1</span>
         <span class="kw">else</span>:
-            right = mid - <span class="num">1</span> <span class="com"># បោះបង់ផ្នែកខាងស្តាំចោល</span>
-    <span class="kw">return</span> -<span class="num">1</span> <span class="com"># បើទាល់ រកមិនឃើញសោះ</span></pre></div>
+            right = mid - <span class="num">1</span>
+    <span class="kw">return</span> -<span class="num">1</span>  <span class="com"># រកមិនឃើញ</span></pre></div>
                     </div>
                 </div>
             </div>
-            <div class="highlight-note green"><i class="fa-solid fa-laptop-code"></i> មានលំហាត់ Python សម្រាប់អនុវត្តសរសេរកូដ Binary Search នេះនៅក្នុងសៀវភៅលំហាត់ (Workbook)។</div>
         `},
 
-        // 6. Intro to Basic Sorting (Bubble, Insertion)
-        { t: "៦. សេចក្តីផ្តើមពីក្បួន <b><i class='fa-solid fa-sort tech-icon'></i>Basic Sorting</b>", type: "grid", c: [
-            { h: "<i class='fa-solid fa-soap keyword-icon'></i> Bubble Sort (តម្រៀបបែបពពុះ)", p: "ក្បួនដ៏សាមញ្ញបំផុត ដោយប្រៀបធៀបលេខជាប់គ្នា (គូៗ)។ បើអ្នកឈរមុខធំជាងអ្នកក្រោយ វានឹងប្តូរទីតាំងគ្នា (Swap)។<br><b><i class='fa-solid fa-lightbulb text-yellow'></i> ករណីសិក្សា ១:</b> តម្រៀបសិស្សឈរតម្រង់ជួរគោរពទង់ជាតិ។ បើអ្នកឈរមុខខ្ពស់ជាងបាំងអ្នកក្រោយ គ្រូឲ្យអ្នកទាំង២ដូរទីតាំងគ្នា រហូតអ្នកខ្ពស់ជាងគេទៅដល់ចុងជួរ។<br><b><i class='fa-solid fa-triangle-exclamation text-red'></i> បញ្ហា:</b> ល្បឿនយឺតខ្លាំង O(n²) បើមានមនុស្សច្រើន។" },
-            { h: "<i class='fa-solid fa-hand-holding-medical keyword-icon'></i> Insertion Sort (តម្រៀបបែបស៊កបញ្ចូល)", p: "ក្បួនដែលដកយកលេខម្តងមួយៗ មកស៊កបញ្ចូលទៅក្នុងទីតាំងដែលត្រឹមត្រូវរបស់វា។<br><b><i class='fa-solid fa-lightbulb text-yellow'></i> ករណីសិក្សា ២:</b> ដូចការលេងបៀរ (ស៊ីគូ ឬ តាក់)។ ពេលអ្នកចាប់បានសន្លឹកបៀរថ្មីមួយសន្លឹក អ្នកតែងតែស៊កវាទៅក្នុងចន្លោះបៀរនៅលើដៃដែលបានតម្រៀបរួចហើយ។<br><b><i class='fa-solid fa-thumbs-up text-green'></i> ចំណុចល្អ:</b> លឿនគួរសម O(n) ពេលទិន្នន័យស្ទើរតែតម្រៀបរួចរាល់។" }
-        ]},
+        // 10. Selection Sort & Simplified Case Studies
+        { t: "១០. ក្បួនតម្រៀបតាមការជ្រើសរើស (Selection Sort)", type: "split", svg: selectionSortSVG, c: `
+            <div style="display:flex; flex-direction:column; height:100%; justify-content:center;">
+                <p><b><i class='fa-solid fa-filter keyword-icon'></i> Selection Sort:</b> ស្វែងរកធាតុដែលតូចបំផុតក្នុង Array រួចយកមកជំនួសកន្លែង (Swap) នៅដើមជួរម្តងមួយៗ។</p>
+                <div class="narrative-box">
+                    <div class="narrative-header"><i class="fa-solid fa-award"></i> ករណីសិក្សា ១៖ ជ្រើសរើសសិស្សឆ្នើមដើម្បីទទួលអាហារូបករណ៍</div>
+                    <p class="narrative-text">ការស្វែងរកសិស្សដែលមានពិន្ទុខ្ពស់ជាងគេបំផុតក្នុងថ្នាក់ ដើម្បីផ្តល់រង្វាន់។ យើងដើរមើលពិន្ទុសិស្សគ្រប់គ្នា រួចជ្រើសរើសយកអ្នកពិន្ទុខ្ពស់ដាច់គេមកឈរនៅមុខគេបង្អស់ រួចបន្តរកអ្នកបន្ទាប់។</p>
+                </div>
+                <div class="narrative-box" style="background:#ECFDF5; border-color:#A7F3D0;">
+                    <div class="narrative-header" style="color:#065F46;"><i class="fa-solid fa-folder-open"></i> ករណីសិក្សា ២៖ ការតម្រៀបទំហំឯកសារក្នុងកុំព្យូទ័រ</div>
+                    <p class="narrative-text">ការតម្រៀបឯកសាររូបថត ឬវីដេអូនៅក្នុងម៉ាស៊ីនកុំព្យូទ័ររបស់អ្នក តាមទំហំឯកសារ (File Size) ពីតូចបំផុតទៅធំបំផុត ដើម្បីងាយស្រួលរកមើលឯកសារណាដែលស៊ីទំហំផ្ទុកខ្លាំង។</p>
+                </div>
+            </div>
+        `},
 
-        // 7. Code Basic Sorting
-        { t: "៧. ការអនុវត្តកូដ <b><i class='fa-solid fa-sort tech-icon'></i>Basic Sorting Algorithms</b>", type: "card", c: `
+        // 11. Selection Sort Python Code
+        { t: "១១. ការអនុវត្តកូដ Selection Sort ក្នុង Python", type: "card", c: `
             <div class="two-column-equal">
                 <div>
+                    <div class="analogy-box">
+                        <div class="analogy-header"><i class="fa-solid fa-gauge-high"></i> លក្ខណៈបច្ចេកទេស O(n²)</div>
+                        <p class="analogy-text">ល្បឿនដំណើរការគឺ <b>O(n²)</b> ជានិច្ច មិនថាទិន្នន័យរៀបចំរួច ឬមិនទាន់រៀបចំឡើយ ព្រោះវាត្រូវដើរស្កែនរកលេខតូចបំផុតគ្រប់ជុំ។ វាសាកសមប្រើសម្រាប់តែបញ្ជីទិន្នន័យតូចៗប៉ុណ្ណោះ។</p>
+                    </div>
+                </div>
+                <div>
                     <div class="code-wrapper">
-                        <div class="code-header"><span><i class="fa-brands fa-python"></i> កូដទី ២៖ Bubble Sort O(n²)</span></div>
+                        <div class="code-header"><span><i class="fa-brands fa-python"></i> Python: Selection Sort</span></div>
+                        <div class="code-content"><pre>
+<span class="kw">def</span> <span class="fn">selection_sort</span>(arr):
+    n = <span class="fn">len</span>(arr)
+    <span class="kw">for</span> i <span class="kw">in range</span>(n):
+        min_idx = i
+        <span class="kw">for</span> j <span class="kw">in range</span>(i + <span class="num">1</span>, n):
+            <span class="kw">if</span> arr[j] < arr[min_idx]:
+                min_idx = j
+        <span class="com"># Swap ធាតុដើមជួរជាមួយតម្លៃតូចបំផុត</span>
+        arr[i], arr[min_idx] = arr[min_idx], arr[i]
+    <span class="kw">return</span> arr</pre></div>
+                    </div>
+                </div>
+            </div>
+        `},
+
+        // 12. Bubble Sort & Simplified Case Studies
+        { t: "១២. ក្បួនតម្រៀបបែបពពុះ (Bubble Sort)", type: "split", svg: bubbleSortSVG, c: `
+            <div style="display:flex; flex-direction:column; height:100%; justify-content:center;">
+                <p><b><i class='fa-solid fa-soap keyword-icon'></i> Bubble Sort:</b> ប្រៀបធៀប និង Swap ធាតុជាប់គ្នាជាគូៗ រហូតដល់ធាតុធំៗអណ្តែតទៅខាងក្រោយបង្អស់។</p>
+                <div class="narrative-box">
+                    <div class="narrative-header"><i class="fa-solid fa-users-line"></i> ករណីសិក្សា ១៖ ការតម្រៀបកម្ពស់សិស្សឈរគោរពទង់ជាតិ</div>
+                    <p class="narrative-text">គ្រូតម្រៀបសិស្សឱ្យឈរតាមកម្ពស់ពីទាបទៅខ្ពស់។ គ្រូឱ្យសិស្សពីរនាក់ដែលឈរជិតគ្នាវាស់កម្ពស់គ្នា បើអ្នកខាងមុខខ្ពស់ជាងអ្នកខាងក្រោយ ត្រូវដូរទីតាំងគ្នា (Swap) រហូតដល់អ្នកខ្ពស់ជាងគេទៅដល់ចុងជួរ។</p>
+                </div>
+                <div class="narrative-box" style="background:#ECFDF5; border-color:#A7F3D0;">
+                    <div class="narrative-header" style="color:#065F46;"><i class="fa-solid fa-gamepad"></i> ករណីសិក្សា ២៖ ការតម្រៀបពិន្ទុហ្គេមកាតលើទូរស័ព្ទ</div>
+                    <p class="narrative-text">ការរៀបចំសន្លឹកបៀរ ឬកាតលេងហ្គេមនៅលើអេក្រង់ទូរស័ព្ទដៃ ដែលប្រព័ន្ធប្រៀបធៀបតម្លៃកាតម្តងមួយគូៗពីឆ្វេងទៅស្តាំ ដើម្បីរៀបលំដាប់ពិន្ទុពីតូចទៅធំ។</p>
+                </div>
+            </div>
+        `},
+
+        // 13. Bubble Sort Python Code
+        { t: "១៣. ការអនុវត្តកូដ Bubble Sort ក្នុង Python", type: "card", c: `
+            <div class="two-column-equal">
+                <div>
+                    <div class="analogy-box">
+                        <div class="analogy-header"><i class="fa-solid fa-clock"></i> ភាពស្មុគស្មាញពេលវេលា O(n²)</div>
+                        <p class="analogy-text">ជាក្បួនដែលយឺតយ៉ាវបំផុតសម្រាប់ទិន្នន័យធំៗ។ ប៉ុន្តែយើងអាចធ្វើការកែលម្អកូដ (Optimized Bubble Sort) ដោយប្រើប្រាស់ flag <code>swapped</code> ដើម្បីបញ្ឈប់ Loop ភ្លាមៗបើទិន្នន័យត្រូវបានតម្រៀបរួចរាល់ជាមុន។</p>
+                    </div>
+                </div>
+                <div>
+                    <div class="code-wrapper">
+                        <div class="code-header"><span><i class="fa-brands fa-python"></i> Python: Optimized Bubble Sort</span></div>
                         <div class="code-content"><pre>
 <span class="kw">def</span> <span class="fn">bubble_sort</span>(arr):
     n = <span class="fn">len</span>(arr)
     <span class="kw">for</span> i <span class="kw">in range</span>(n):
-        <span class="com"># រត់ប្រៀបធៀបអ្នកនៅក្បែរគ្នាជាគូៗ</span>
-        <span class="kw">for</span> j <span class="kw">in range</span>(<span class="num">0</span>, n-i-<span class="num">1</span>):
-            <span class="kw">if</span> arr[j] > arr[j+<span class="num">1</span>]:
-                <span class="com"># ប្តូរទីតាំងគ្នា (Swap) ភ្លាមៗ</span>
+        swapped = <span class="kw">False</span>
+        <span class="kw">for</span> j <span class="kw">in range</span>(<span class="num">0</span>, n - i - <span class="num">1</span>):
+            <span class="kw">if</span> arr[j] > arr[j + <span class="num">1</span>]:
                 arr[j], arr[j+<span class="num">1</span>] = arr[j+<span class="num">1</span>], arr[j]
+                swapped = <span class="kw">True</span>
+        <span class="kw">if</span> <span class="kw">not</span> swapped: <span class="kw">break</span> <span class="com"># បញ្ឈប់បើគ្មានការ Swap</span>
     <span class="kw">return</span> arr</pre></div>
+                    </div>
+                </div>
+            </div>
+        `},
+
+        // 14. Insertion Sort & Simplified Case Studies
+        { t: "១៤. ក្បួនតម្រៀបបែបស៊កបញ្ចូល (Insertion Sort)", type: "split", svg: insertionSortSVG, c: `
+            <div style="display:flex; flex-direction:column; height:100%; justify-content:center;">
+                <p><b><i class='fa-solid fa-hand-holding-hand keyword-icon'></i> Insertion Sort:</b> ស៊កបញ្ចូលទិន្នន័យម្តងមួយៗទៅកាន់ផ្នែកដែលបានតម្រៀបរួចរាល់ជាលំដាប់លំដោយ។</p>
+                <div class="narrative-box">
+                    <div class="narrative-header"><i class="fa-solid fa-clone"></i> ករណីសិក្សា ១៖ ការតម្រៀបសន្លឹកបៀរលេងនៅលើដៃ</div>
+                    <p class="narrative-text">ពេលលោកអ្នកលេងបៀរ ពេលចាប់បានសន្លឹកថ្មីមួយសន្លឹក លោកអ្នកនឹងយកវាទៅស៊កបញ្ចូលទៅក្នុងចន្លោះដែលត្រឹមត្រូវរវាងសន្លឹកបៀរដែលនៅលើដៃលោកអ្នករួចជាស្រេចហើយ។</p>
+                </div>
+                <div class="narrative-box" style="background:#ECFDF5; border-color:#A7F3D0;">
+                    <div class="narrative-header" style="color:#065F46;"><i class="fa-solid fa-user-plus"></i> ករណីសិក្សា ២៖ ការបន្ថែមឈ្មោះសិស្សថ្មីចូលទៅក្នុងបញ្ជីស្រាប់</div>
+                    <p class="narrative-text">ការបន្ថែមឈ្មោះសិស្សថ្មីម្នាក់ ចូលទៅក្នុងបញ្ជីឈ្មោះសិស្សចាស់ដែលបានតម្រៀបតាមលំដាប់អក្សរក្រមរួចជាស្រេច ដោយគ្រាន់តែស៊កឈ្មោះថ្មីទៅក្នុងកន្លែងដែលត្រូវលំដាប់លំដោយ។</p>
+                </div>
+            </div>
+        `},
+
+        // 15. Insertion Sort Python Code
+        { t: "១៥. ការអនុវត្តកូដ Insertion Sort ក្នុង Python", type: "card", c: `
+            <div class="two-column-equal">
+                <div>
+                    <div class="analogy-box">
+                        <div class="analogy-header"><i class="fa-solid fa-bolt"></i> ល្បឿនលឿន O(n) លើទិន្នន័យស្ទើររួចរាល់</div>
+                        <p class="analogy-text">ប្រសិនបើ array ស្ទើរតែត្រូវបានតម្រៀបរួចរាល់ជាលំដាប់ (Nearly Sorted) Insertion Sort មានល្បឿនលឿន និងសន្សំសំចៃកម្លាំងគណនាខ្លាំង ព្រោះវាមិនបាច់ប្រៀបធៀបច្រើនជុំឡើយ។</p>
                     </div>
                 </div>
                 <div>
                     <div class="code-wrapper">
-                        <div class="code-header"><span><i class="fa-brands fa-python"></i> កូដទី ៣៖ Insertion Sort O(n²)</span></div>
+                        <div class="code-header"><span><i class="fa-brands fa-python"></i> Python: Insertion Sort</span></div>
                         <div class="code-content"><pre>
 <span class="kw">def</span> <span class="fn">insertion_sort</span>(arr):
     <span class="kw">for</span> i <span class="kw">in range</span>(<span class="num">1</span>, <span class="fn">len</span>(arr)):
         key = arr[i]
         j = i - <span class="num">1</span>
-        <span class="com"># រុញអ្នកដែលធំជាង key ទៅខាងស្តាំ១ប្រអប់</span>
         <span class="kw">while</span> j >= <span class="num">0</span> <span class="kw">and</span> key < arr[j]:
             arr[j + <span class="num">1</span>] = arr[j]
             j -= <span class="num">1</span>
-        arr[j + <span class="num">1</span>] = key <span class="com"># ស៊កបញ្ចូលកន្លែងទំនេរ</span>
+        arr[j + <span class="num">1</span>] = key
     <span class="kw">return</span> arr</pre></div>
                     </div>
                 </div>
             </div>
-            <div class="highlight-note green"><i class="fa-solid fa-laptop-code"></i> មានលំហាត់ Python សម្រាប់អនុវត្តសរសេរកូដទាំងពីរនេះ នៅក្នុងសៀវភៅលំហាត់ (Workbook)។</div>
         `},
 
-        // 8. Advanced Sorting (Merge & Quick)
-        { t: "៨. ក្បួនតម្រៀបកម្រិតខ្ពស់ (Divide & Conquer)", type: "split", svg: sortSVG, c: `
+        // 16. Merge Sort & Simplified Case Studies
+        { t: "១៦. ក្បួនតម្រៀបច្របាច់បញ្ចូលគ្នា (Merge Sort)", type: "split", svg: mergeSortSVG, c: `
             <div style="display:flex; flex-direction:column; height:100%; justify-content:center;">
-                <p><b><i class='fa-solid fa-bolt keyword-icon'></i> ចែកដើម្បីគ្រប់គ្រង (Divide & Conquer):</b> ជាវិធីសាស្ត្រពុះបំបែកបញ្ហាធំ ទៅជាបញ្ហាតូចៗដោះស្រាយងាយស្រួល រួចទើបយកលទ្ធផលមកផ្គុំគ្នាវិញ។ ល្បឿនលឿន O(n log n)។</p>
-                <div class="analogy-box">
-                    <div class="analogy-header"><i class="fa-solid fa-sitemap"></i> ករណីទី១៖ Merge Sort (ពុះពាក់កណ្តាលរួចផ្គុំ)</div>
-                    <p class="analogy-text">ដូចការរាប់សន្លឹកឆ្នោតឃុំសង្កាត់។ ប្រធានមណ្ឌលចែកសន្លឹកឆ្នោតរាប់ពាន់សន្លឹកជាដុំតូចៗឲ្យមន្ត្រីរាប់រៀងៗខ្លួន។ ពេលរាប់ និងតម្រៀបរួចរាល់ គេទើបយកលទ្ធផលមកបូកបញ្ចូលគ្នាវិញ (Merge)។</p>
+                <p><b><i class='fa-solid fa-compress-arrows-arrows keyword-icon'></i> Merge Sort:</b> ប្រើទ្រឹស្តី Divide &amp; Conquer ដោយពុះ array រហូតដល់តូចបំផុត រួចច្របាច់បញ្ចូលគ្នា (Merge) វិញតាមលំដាប់លំដោយត្រឹមត្រូវ។</p>
+                <div class="narrative-box">
+                    <div class="narrative-header"><i class="fa-solid fa-file-invoice"></i> ករណីសិក្សា ១៖ ការរៀបចំឯកសារវិក្កយបត្ររបស់ការិយាល័យ</div>
+                    <p class="narrative-text">ប្រធានក្រុមហ៊ុនចែកវិក្កយបត្រលក់ដូរជាច្រើនដុំទៅឱ្យបុគ្គលិក ៤ នាក់រៀបចំម្នាក់មួយដុំ។ នៅពេលដែលបុគ្គលិកម្នាក់ៗតម្រៀបដុំរៀងៗខ្លួនរួចរាល់ គេយកដុំទាំងនោះមកផ្គុំបញ្ជូលគ្នា (Merge) វិញ។</p>
                 </div>
-                <div class="analogy-box">
-                    <div class="analogy-header"><i class="fa-solid fa-arrows-split-up-and-left"></i> ករណីទី២៖ Quick Sort (រើសមេក្រុមជាគោល Pivot)</div>
-                    <p class="analogy-text">ដូចការបែងចែកខោអាវក្នុងរោងចក្រកាត់ដេរ។ គេយកអាវទំហំកណ្តាល (Size M) ជាគោល (Pivot)។ អាវតូចជាង M បោះទៅស្តុកឆ្វេង អាវធំជាងបោះទៅស្តាំ រួចបន្តធ្វើបែបនេះរហូតដល់រួចរាល់គ្រប់ទំហំ។</p>
+                <div class="narrative-box" style="background:#ECFDF5; border-color:#A7F3D0;">
+                    <div class="narrative-header" style="color:#065F46;"><i class="fa-solid fa-store"></i> ករណីសិក្សា ២៖ ការតម្រៀបតម្លៃទំនិញលើវេបសាយ Shopee / Lazada</div>
+                    <p class="narrative-text">ការតម្រៀបបញ្ជីផលិតផលរាប់សែនមុខក្នុងវេបសាយលក់ទំនិញអនឡាញ តាមតម្លៃចាប់ពីទាបទៅខ្ពស់បំផុត ដើម្បីឱ្យអ្នកទិញងាយស្រួលជ្រើសរើសទំនិញតម្លៃសមរម្យ។</p>
                 </div>
             </div>
         `},
 
-        // 9. Quick Sort Code
-        { t: "៩. ការអនុវត្តកូដ <b><i class='fa-solid fa-bolt tech-icon'></i>Quick Sort</b>", type: "card", c: `
+        // 17. Merge Sort Python Code
+        { t: "១៧. ការអនុវត្តកូដ Merge Sort ក្នុង Python", type: "card", c: `
             <div class="two-column-equal">
                 <div>
-                    <div class="analogy-box">
-                        <div class="analogy-header"><i class="fa-solid fa-star"></i> លក្ខណៈពិសេស</div>
-                        <p class="analogy-text">Quick Sort គឺជាក្បួនតម្រៀបដែលពេញនិយម និងលឿនជាងគេបំផុតក្នុងការប្រើប្រាស់ជាក់ស្តែង ទោះបីជាឈ្មោះល្បឿនរបស់វាគឺ O(n log n) ដូច Merge Sort ក៏ដោយ ព្រោះវាមិនសូវស៊ី Memory បន្ថែម (In-place sort) ឡើយ។ Function <code>.sort()</code> ដែលមានស្រាប់នៅក្នុងភាសាកម្មវិធីជាច្រើន តែងតែប្រើប្រាស់ Quick Sort នៅពីក្រោយខ្នង។</p>
+                    <div class="code-wrapper" style="margin-top:0;">
+                        <div class="code-header"><span><i class="fa-brands fa-python"></i> Python: Merge Sort</span></div>
+                        <div class="code-content"><pre>
+<span class="kw">def</span> <span class="fn">merge_sort</span>(arr):
+    <span class="kw">if</span> <span class="fn">len</span>(arr) <= <span class="num">1</span>: <span class="kw">return</span> arr
+    mid = <span class="fn">len</span>(arr) // <span class="num">2</span>
+    left = merge_sort(arr[:mid])
+    right = merge_sort(arr[mid:])
+    return merge(left, right)
+
+<span class="kw">def</span> <span class="fn">merge</span>(left, right):
+    res, i, j = [], <span class="num">0</span>, <span class="num">0</span>
+    <span class="kw">while</span> i < <span class="fn">len</span>(left) <span class="kw">and</span> j < <span class="fn">len</span>(right):
+        <span class="kw">if</span> left[i] < right[j]:
+            res.append(left[i]); i += <span class="num">1</span>
+        <span class="kw">else</span>:
+            res.append(right[j]); j += <span class="num">1</span>
+    res.extend(left[i:])
+    res.extend(right[j:])
+    <span class="kw">return</span> res</pre></div>
+                    </div>
+                </div>
+                <div>
+                    <div class="narrative-box" style="height:100%;">
+                        <div class="narrative-header"><i class="fa-solid fa-database"></i> គុណសម្បត្តិលេចធ្លោ</div>
+                        <p class="narrative-text" style="font-size:1.2vw; line-height:1.55;">• <b>Time Complexity:</b> O(n log n) គ្រប់ករណីទាំងអស់ លឿនខ្លាំង និងមានល្បឿនថេរជានិច្ច។<br>• <b>Space Complexity:</b> O(n) ស៊ីទំហំ memory បន្ថែមសម្រាប់ការបង្កើត array ថ្មីក្នុងពេលបំបែក និងច្របាច់បញ្ចូលគ្នា។</p>
+                    </div>
+                </div>
+            </div>
+        `},
+
+        // 18. Quick Sort & Simplified Case Studies
+        { t: "១៨. ក្បួនតម្រៀបរហ័ស (Quick Sort)", type: "split", svg: quickSortSVG, c: `
+            <div style="display:flex; flex-direction:column; height:100%; justify-content:center;">
+                <p><b><i class='fa-solid fa-bolt keyword-icon'></i> Quick Sort:</b> ជ្រើសរើស Pivot រួចបែងចែក array ជាពីរផ្នែក (ផ្នែកតូចជាង Pivot និងផ្នែកធំជាង Pivot) រួចរៀបចំឡើងវិញតាមរយៈ Recursion。</p>
+                <div class="narrative-box">
+                    <div class="narrative-header"><i class="fa-solid fa-shirt"></i> ករណីសិក្សា ១៖ ការតម្រៀបទំហំអាវយឺតក្នុងហាងលក់ខោអាវ</div>
+                    <p class="narrative-text">ការតម្រៀបអាវយឺតក្នុងហាងតាមទំហំ (S, M, L, XL) ដោយយកទំហំ M ជាគោល (Pivot) អាវតូចជាងបោះទៅគំនរខាងឆ្វេង អាវធំជាងបោះទៅគំនរខាងស្តាំ រួចបន្តធ្វើបែបនេះរហូតដល់រួចរាល់។</p>
+                </div>
+                <div class="narrative-box" style="background:#ECFDF5; border-color:#A7F3D0;">
+                    <div class="narrative-header" style="color:#065F46;"><i class="fa-solid fa-music"></i> ករណីសិក្សា ២៖ ការតម្រៀបចម្រៀងក្នុងកម្មវិធី Spotify / Apple Music</div>
+                    <p class="narrative-text">ការតម្រៀបបញ្ជីចម្រៀងរាប់លានបទរបស់អ្នកតាមកាលបរិច្ឆេទចេញផ្សាយ ឬចំនួនដងដែលបានបើកស្តាប់ (Views) ច្រើនជាងគេបំផុតយ៉ាងរហ័ស និងចំណាយពេលតិចបំផុត។</p>
+                </div>
+            </div>
+        `},
+
+        // 19. Quick Sort Python Code
+        { t: "១៩. ការអនុវត្តកូដ Quick Sort ក្នុង Python", type: "card", c: `
+            <div class="two-column-equal">
+                <div>
+                    <div class="analogy-box" style="margin-top:0;">
+                        <div class="analogy-header"><i class="fa-solid fa-gauge-high"></i> ល្បឿនលឿនបំផុតក្នុងឧស្សាហកម្ម O(n log n)</div>
+                        <p class="analogy-text">ទោះបីជា worst case របស់វាអាចធ្លាក់ដល់ <b>O(n²)</b> ក្នុងករណីរើស Pivot មិនបានល្អក៏ដោយ ក៏ក្នុងពិភពពិត Quick Sort ដំណើរការលឿនជាង Merge Sort ឆ្ងាយណាស់ ព្រោះវាមិនសូវចំណាយពេលចម្លងទិន្នន័យចូល memory ថ្មីឡើយ។</p>
                     </div>
                 </div>
                 <div>
                     <div class="code-wrapper">
-                        <div class="code-header"><span><i class="fa-brands fa-python"></i> កូដទី ៤៖ Quick Sort (Pythonic Way)</span></div>
+                        <div class="code-header"><span><i class="fa-brands fa-python"></i> Python: Quick Sort (Elegant recursive)</span></div>
                         <div class="code-content"><pre>
 <span class="kw">def</span> <span class="fn">quick_sort</span>(arr):
     <span class="kw">if</span> <span class="fn">len</span>(arr) <= <span class="num">1</span>:
-        <span class="kw">return</span> arr <span class="com"># Base case (បើមាន១មិនបាច់រៀប)</span>
-        
-    pivot = arr[<span class="fn">len</span>(arr) // <span class="num">2</span>] <span class="com"># រើសចំណុចកណ្តាលជាគោល</span>
+        <span class="kw">return</span> arr
+    pivot = arr[<span class="fn">len</span>(arr) // <span class="num">2</span>] <span class="com"># រើសចំណុចកណ្តាលជា Pivot</span>
     
-    <span class="com"># បំបែកជា ៣ ក្រុម (ឆ្វេង=តូចជាង, កណ្តាល=ស្មើ, ស្តាំ=ធំជាង)</span>
     left = [x <span class="kw">for</span> x <span class="kw">in</span> arr <span class="kw">if</span> x < pivot]
     middle = [x <span class="kw">for</span> x <span class="kw">in</span> arr <span class="kw">if</span> x == pivot]
     right = [x <span class="kw">for</span> x <span class="kw">in</span> arr <span class="kw">if</span> x > pivot]
     
-    <span class="com"># ហៅខ្លួនឯងឡើងវិញ (Recursion) រួចផ្គុំត្រឡប់មកវិញ</span>
     <span class="kw">return</span> quick_sort(left) + middle + quick_sort(right)</pre></div>
                     </div>
                 </div>
             </div>
-            <div class="highlight-note green"><i class="fa-solid fa-laptop-code"></i> មានលំហាត់ Python សម្រាប់សរសេរ Merge Sort និង Quick Sort នៅក្នុងសៀវភៅលំហាត់។</div>
         `},
 
-        // 10. Time Complexity
-        { t: "១០. ការវិភាគប្រសិទ្ធភាពពេលវេលា (Time Complexity)", type: "table", rows: [
-            ["ក្បួនដោះស្រាយ (Algorithm)", "Best Case", "Average Case", "Worst Case", "Space Complexity"],
-            ["<b>Linear Search</b>", "O(1)", "O(n)", "<b style='color:var(--accent-red)'>O(n)</b>", "O(1) (ស៊ី Memory តិច)"],
-            ["<b>Binary Search</b>", "O(1)", "O(log n)", "<b style='color:var(--accent-green)'>O(log n) លឿន</b>", "O(1)"],
-            ["<b>Bubble / Insertion Sort</b>", "O(n)", "O(n²)", "<b style='color:var(--accent-red)'>O(n²) យឺត</b>", "O(1) (In-place)"],
-            ["<b>Merge Sort</b>", "O(n log n)", "O(n log n)", "<b style='color:var(--accent-green)'>O(n log n)</b>", "O(n) (ស៊ី Memory បង្កើត Array ថ្មី)"],
-            ["<b>Quick Sort</b>", "O(n log n)", "O(n log n)", "<b style='color:var(--accent-red)'>O(n²)</b> (កម្រ)", "O(log n) (ស៊ី Memory តិចជាង Merge)"]
+        // 20. Time and Space Complexity Master Class
+        { t: "២០. ការវិភាគប្រសិទ្ធភាព Big-O សម្រាប់ AI Engineers", type: "table", rows: [
+            ["ក្បួនដោះស្រាយ (Algorithm)", "Best Case", "Average Case", "Worst Case", "Space Complexity (Memory)"],
+            ["<b>Linear Search</b>", "O(1)", "O(n)", "<b style='color:var(--accent-red)'>O(n)</b>", "O(1) (In-place)"],
+            ["<b>Binary Search</b>", "O(1)", "O(log n)", "<b style='color:var(--accent-green)'>O(log n)</b>", "O(1) (In-place)"],
+            ["<b>Selection Sort</b>", "O(n²)", "O(n²)", "<b style='color:var(--accent-red)'>O(n²)</b>", "O(1) (In-place)"],
+            ["<b>Bubble Sort</b>", "O(n)", "O(n²)", "<b style='color:var(--accent-red)'>O(n²)</b>", "O(1) (In-place)"],
+            ["<b>Insertion Sort</b>", "O(n)", "O(n²)", "<b style='color:var(--accent-red)'>O(n²)</b>", "O(1) (In-place)"],
+            ["<b>Merge Sort</b>", "O(n log n)", "O(n log n)", "<b style='color:var(--accent-green)'>O(n log n)</b>", "O(n) (ត្រូវការ Memory ច្រើន)"],
+            ["<b>Quick Sort</b>", "O(n log n)", "O(n log n)", "<b style='color:var(--accent-red)'>O(n²) (កម្រ)</b>", "O(log n) (សន្សំសំចៃ Memory)"]
         ]},
 
-        // 11. Real-world Applications
-        { t: "១១. ការប្រើប្រាស់ក្នុងជីវិតពិត និងប្រព័ន្ធ <b><i class='fa-solid fa-brain tech-icon'></i>AI</b>", type: "grid", c: [
-            { h: "<i class='fa-solid fa-sort-amount-down keyword-icon'></i> ការអនុវត្ត Sorting (ការតម្រៀប)", p: "<div class='analogy-box' style='padding:0.5vh 1vw;'><h5 style='margin:0;color:var(--accent-blue);font-size:1.1vw;'><i class='fa-solid fa-burger'></i> ១. កម្មវិធី Nham24 ឬ FoodPanda</h5><p style='margin:0;font-size:1vw;'>ប្រើប្រាស់ Sorting ដើម្បីតម្រៀបហាងអាហារតាមតម្លៃដឹកជញ្ជូនទាបបំផុត ឫតាមហាងដែលទទួលបាន Rating ផ្កាយ៥ ច្រើនជាងគេ។</p></div><div class='analogy-box' style='padding:0.5vh 1vw;'><h5 style='margin:0;color:var(--accent-blue);font-size:1.1vw;'><i class='fa-solid fa-music'></i> ២. កម្មវិធី YouTube</h5><p style='margin:0;font-size:1vw;'>តម្រៀបវីដេអូតាមកាលបរិច្ឆេទ Upload ថ្មីៗបំផុត ឬតាមចំនួនអ្នកចូលមើលច្រើនបំផុត។</p></div>" },
-            { h: "<i class='fa-solid fa-magnifying-glass keyword-icon'></i> ការអនុវត្ត Searching (ការស្វែងរក)", p: "<div class='analogy-box' style='padding:0.5vh 1vw;'><h5 style='margin:0;color:var(--accent-blue);font-size:1.1vw;'><i class='fa-solid fa-car-rear'></i> ១. ប្រព័ន្ធអគ្គនាយកដ្ឋានពន្ធដារ</h5><p style='margin:0;font-size:1vw;'>ប្រើ Binary Search ជាគោល ដើម្បីទាញយកទិន្នន័យម្ចាស់យានយន្តតាមរយៈស្លាកលេខ ក្នុងចំណោមទិន្នន័យឡានរាប់លានគ្រឿងក្នុងល្បឿនពន្លឺ។</p></div><div class='analogy-box' style='padding:0.5vh 1vw;'><h5 style='margin:0;color:var(--accent-blue);font-size:1.1vw;'><i class='fa-solid fa-brain'></i> ២. Machine Learning AI</h5><p style='margin:0;font-size:1vw;'>ក្នុង AI គេតែងប្រើ Binary Search ដើម្បីរកតម្លៃចំណុចកាត់ (Threshold) ដ៏ល្អបំផុត។</p></div>" }
+        // 21. Python's Built-in Timsort & Memory Management
+        { t: "២១. ក្បួនដោះស្រាយ Timsort ក្នុងភាសា Python", type: "grid", c: [
+            { h: "<i class='fa-solid fa-puzzle-piece keyword-icon'></i> ជាក្បួនដោះស្រាយកូនកាត់ (Hybrid Algorithm)", p: "Timsort ត្រូវបានបង្កើតឡើងដោយលោក Tim Peters ក្នុងឆ្នាំ ២០០២ សម្រាប់ប្រើប្រាស់ក្នុងភាសា Python។ វាជាការរួមបញ្ចូលគ្នាដ៏អស្ចារ្យរវាង <b>Merge Sort</b> និង <b>Insertion Sort</b>។" },
+            { h: "<i class='fa-solid fa-gears keyword-icon'></i> របៀបដែលវាដំណើរការ", p: "វាស្វែងរកបំណែកទិន្នន័យដែលតម្រៀបរួចជាស្រេច (ហៅថា Runs) រួចតម្រៀបបំណែកតូចៗទាំងនោះដោយប្រើ <b>Insertion Sort</b> និងច្របាច់បញ្ចូលគ្នាឡើងវិញដោយប្រើ <b>Merge Sort</b>។" },
+            { h: "<i class='fa-solid fa-code keyword-icon'></i> ការប្រើប្រាស់ជាក់ស្តែង", p: "រាល់ពេលលោកអ្នកប្រើប្រាស់ <code>arr.sort()</code> ឬ <code>sorted(arr)</code> នៅក្នុង Python គឺលោកអ្នកកំពុងប្រើប្រាស់ Timsort នៅពីក្រោយខ្នងជានិច្ច ជាមួយនឹងល្បឿនមធ្យម <b>O(n log n)</b>។" },
+            { h: "<i class='fa-solid fa-microchip keyword-icon'></i> ការចងចាំដ៏ឆ្លាតវៃ", p: "វាត្រូវបានរចនាឡើងយ៉ាងពិសេសដើម្បីដោះស្រាយទិន្នន័យក្នុងពិភពពិត (Real-world Data) ដែលតែងតែមានការតម្រៀបរួចជាស្រេចខ្លះៗជានិច្ច ដោយសន្សំសំចៃ Memory បំផុត។" }
         ]},
 
-        // 12. Practice Note
-        { t: "១២. លំហាត់អនុវត្តន៍កូដ (Practice Exercises)", type: "card", c: `
-            <div style="text-align:center; padding: 4vh 2vw;">
-                <i class="fa-solid fa-laptop-code" style="font-size: 6vw; color: var(--accent-blue); margin-bottom: 2vh;"></i>
-                <h3 style="font-size: 2.5vw; color: var(--accent-blue); font-family: 'Suwannaphum'; margin-bottom: 1.5vh;">ដល់ពេលអនុវត្តន៍ជាក់ស្តែងហើយ!</h3>
-                <p style="font-size: 1.8vw; color: var(--text-main); margin-bottom: 3vh;">និស្សិតត្រូវអនុវត្តការសរសេរកូដ Searching និង Sorting ទាំងអស់នេះឡើងវិញដោយខ្លួនឯង ដោយមិនត្រូវប្រើ <code>.sort()</code> ឬ <code>.index()</code> ដែលមានស្រាប់របស់ Python ឡើយ។</p>
-                
-                <div class="highlight-note green" style="display:flex; justify-content: center; text-align: left; padding: 2vh 3vw; border-width: 2px;">
-                    <p style="margin: 0; font-size: 1.8vw;">
-                        <i class="fa-solid fa-bell"></i> <b>បញ្ជាក់៖</b> មានលំហាត់កូដ Python ពេញលេញចំនួន <b>២០ លំហាត់</b> ត្រូវបានរៀបចំយ៉ាងលម្អិតនៅក្នុង <br><b>"សៀវភៅលំហាត់អនុវត្តន៍ (Workbook) - ជំពូកទី ៧"</b> រង់ចាំនិស្សិតយកទៅ Run ផ្ទាល់!
-                    </p>
+        // 22. Python's Built-in Sorting & Binary Search Libraries
+        { t: "២២. ការប្រើប្រាស់ Built-in Libraries ក្នុង Python", type: "card", c: `
+            <div class="two-column-equal">
+                <div>
+                    <div class="narrative-box" style="margin-top:0;">
+                        <div class="narrative-header"><i class="fa-solid fa-cube"></i> បណ្ណាល័យ <code>bisect</code> សម្រាប់ Binary Search</div>
+                        <p class="narrative-text" style="font-size:1.2vw; line-height:1.5;">ក្នុង Python មិនចាំបាច់សរសេរកូដ Binary Search ពីបាតដៃរាល់ដងនោះទេ។ លោកអ្នកអាចប្រើប្រាស់ Module <code>bisect</code> ដែលត្រូវបានអភិវឌ្ឍរួចជាស្រេចជាភាសា C ដំណើរការលឿនអស្ចារ្យ។</p>
+                    </div>
+                </div>
+                <div>
+                    <div class="code-wrapper">
+                        <div class="code-header"><span><i class="fa-brands fa-python"></i> Python: Timsort &amp; Bisect</span></div>
+                        <div class="code-content"><pre>
+<span class="kw">import</span> bisect
+
+<span class="com"># ១. តម្រៀបទិន្នន័យដោយប្រើ Timsort</span>
+data = [<span class="num">38</span>, <span class="num">27</span>, <span class="num">43</span>, <span class="num">3</span>, <span class="num">9</span>]
+data.sort()  <span class="com"># data ក្លាយជា [3, 9, 27, 38, 43]</span>
+
+<span class="com"># ២. ស្វែងរកទីតាំងស៊កបញ្ចូលដោយប្រើ bisect</span>
+idx = bisect.bisect_left(data, <span class="num">27</span>)
+print(idx)  <span class="com"># Output: 2</span></pre></div>
+                    </div>
                 </div>
             </div>
         `},
 
-        // 13. Summary
-        { t: "១៣. សទ្ទានុក្រម និងសង្ខេបជំពូកទី ៧ (Summary)", type: "grid", c: [
-            { h: "<i class='fa-solid fa-spell-check keyword-icon'></i> ពាក្យគន្លឹះ (Key Terms)", p: "<ul><li><b><i class='fa-solid fa-magnifying-glass tech-icon'></i>Binary Search:</b> ក្បួនស្វែងរកពុះកណ្តាល លឿន O(log n) តែត្រូវតម្រៀបទិន្នន័យ (Sorted) សិន។</li><li><b><i class='fa-solid fa-bolt tech-icon'></i>Divide & Conquer:</b> យុទ្ធសាស្ត្រពុះបញ្ហាធំជាបញ្ហាតូច (ប្រើប្រាស់ក្នុង Merge Sort និង Quick Sort)។</li><li><b><i class='fa-solid fa-star tech-icon'></i>Pivot:</b> ចំណុចគោល ឬមេក្រុមដែលត្រូវជ្រើសរើសក្នុង Quick Sort។</li></ul>" },
-            { h: "<i class='fa-solid fa-clipboard-list keyword-icon'></i> សង្ខេបជំពូក (Summary)", p: "<b><i class='fa-solid fa-sort tech-icon'></i>Sorting</b> និង <b><i class='fa-solid fa-magnifying-glass tech-icon'></i>Searching</b> គឺជាបេះដូងនៃមុខវិជ្ជា Computer Science។ ការយល់ច្បាស់ពីភាពខុសគ្នារវាង O(n²) ដ៏យឺតយ៉ាវនៃ Bubble Sort និងភាពរហ័សរហួន O(n log n) នៃ Quick Sort នឹងធ្វើឱ្យនិស្សិតអាចសរសេរកម្មវិធីបានលឿន និងក្លាយជា Software Engineer ដ៏ឆ្នើមម្នាក់នៅថ្ងៃអនាគត។" }
+        // 23. Real-world & AI Industry Use Cases
+        { t: "២៣. ករណីសិក្សាការប្រើប្រាស់ក្នុងឧស្សាហកម្ម AI ទំនើប", type: "grid", c: [
+            { h: "<i class='fa-solid fa-cart-shopping keyword-icon'></i> ១. Recommendation Engines (E-Commerce)", p: "ប្រព័ន្ធណែនាំផលិតផលដូចជា Amazon ឬ Shopee ប្រើប្រាស់ក្បួនតម្រៀបរហ័ស (Merge/Quick) ដើម្បីតម្រៀបទិន្នន័យផលិតផលរាប់សែនមុខតាមតម្លៃ ការវាយតម្លៃ (Rating) ឬកម្រិតស្រដៀងគ្នានឹងអ្នកប្រើប្រាស់ ក្នុងល្បឿនមីលីវិនាទី。" },
+            { h: "<i class='fa-solid fa-magnifying-glass keyword-icon'></i> ២. Search Engines (Google &amp; Maps)", p: "Google Maps ប្រើប្រាស់ការស្វែងរក និងតម្រៀបចម្ងាយផ្លូវលឿនបំផុត (Heuristic-based search &amp; Sorting) ដើម្បីគណនារកផ្លូវធ្វើដំណើរដែលខ្លី និងចំណាយពេលតិចបំផុតជូនអ្នកបើកបរ。" }
         ]},
 
-        // 14. References
-        { t: "១៤. ឯកសារយោង និងគន្ថនិទ្ទេស (References)", type: "list", c: [
-            "<b><i class='fa-solid fa-book text-blue' style='margin-right:0.5vw;'></i> Goodrich, M. T. (2013).</b> <i>Data Structures and Algorithms in Python</i>. Wiley. (ជំពូកទី ៥: Array-Based Sequences, ជំពូកទី ១២: Sorting and Selection).",
-            "<b><i class='fa-solid fa-book text-blue' style='margin-right:0.5vw;'></i> Cormen, T. H. (2022).</b> <i>Introduction to Algorithms</i> (4th ed.). MIT Press.",
-            "<b><i class='fa-solid fa-link text-blue' style='margin-right:0.5vw;'></i> Visualgo:</b> Sorting Algorithms Visualized: <a href='#' style='color:var(--accent-blue); text-decoration:none;'>visualgo.net/en/sorting</a>",
-            "<b><i class='fa-brands fa-youtube text-blue' style='margin-right:0.5vw;'></i> CS Dojo:</b> Sorting Algorithms and Binary Search (YouTube)."
-        ]}
+        // 24. Homework & Student Challenges
+        { t: "២៤. លំហាត់អនុវត្តកូដ និងគម្រោងសិក្សា (Exercises)", type: "card", c: `
+            <div style="text-align:center; padding: 1vh 2vw;">
+                <i class="fa-solid fa-laptop-code" style="font-size: 5vw; color: var(--accent-blue); margin-bottom: 1.5vh;"></i>
+                <h3 style="font-size: 2.2vw; color: var(--accent-blue); font-family: 'Suwannaphum'; margin-bottom: 1vh;">ដល់ពេលបង្ហាញសមត្ថភាពហើយ!</h3>
+                <p style="font-size: 1.6vw; color: var(--text-main); margin-bottom: 2vh;">និស្សិតទាំងអស់ត្រូវអនុវត្តការសរសេរកូដក្បួនតម្រៀប និងស្វែងរកទាំងអស់នេះឡើងវិញដោយខ្លួនឯង ដោយមិនត្រូវប្រើប្រាស់ Built-in functions របស់ Python ឡើយ。</p>
+                
+                <div class="highlight-note green" style="display:flex; justify-content: center; text-align: left; padding: 1.5vh 3vw; border-width: 2px;">
+                    <p style="margin: 0; font-size: 1.5vw; line-height:1.6;">
+                        <i class="fa-solid fa-bell"></i> <b>កិច្ចការផ្ទះ៖</b> បង្កើត Class មួយក្នុង Python ដែលរួមបញ្ចូលទាំងក្បួន <b>Linear Search, Binary Search, Quick Sort</b> និង <b>Merge Sort</b>។ រួចធ្វើការបង្វឹក និងប្រៀបធៀបល្បឿនដំណើរការរវាងក្បួននីមួយៗនៅលើទិន្នន័យចៃដន្យ (Random generated integers) ចំនួន <b>១០០,០០០ ជួរ</b>។ បង្ហាញលទ្ធផលក្នុងរបាយការណ៍សប្តាហ៍ក្រោយ។
+                    </p>
+                </div>
+            </div>
+        `}
     ];
 
     const container = document.getElementById('slideWrapper');
 
+    // Generate dynamic slides (from Index 0 to chapter7Data.length - 1)
     chapter7Data.forEach((item, index) => {
         const slide = document.createElement('div');
         slide.className = 'slide';
@@ -545,34 +935,33 @@
         } else if(item.type === "two-equal") {
             bodyContent = `<div class="two-column-equal">${item.c}</div>`;
         } else if(item.type === "grid") {
-            bodyContent = `<div class="card-grid">${item.c.map(c => `<div class="card"><h4>${c.h}</h4><div style="margin:0; font-size: 1.3vw;">${c.p}</div></div>`).join('')}</div>`;
+            bodyContent = `<div class="card-grid">${item.c.map(c => `<div class="card"><h4>${c.h}</h4><div style="margin:0; font-size: 1.35vw;">${c.p}</div></div>`).join('')}</div>`;
         } else if(item.type === "card") {
             bodyContent = `<div class="card" style="height: 100%; justify-content: center; background:#FFFFFF;">${item.c}</div>`;
         } else if(item.type === "table") {
             let th = `<tr>${item.rows[0].map(h => `<th style="text-align:center;">${h}</th>`).join('')}</tr>`;
             let trs = item.rows.slice(1).map(r => `<tr>${r.map((td, i) => `<td ${i>0 ? 'align="center"' : ''}>${td}</td>`).join('')}</tr>`).join('');
             bodyContent = `<table><thead>${th}</thead><tbody>${trs}</tbody></table>`;
-        } else if(item.type === "list") {
-            bodyContent = `<div class="card" style="padding: 3vh 4vw; background:#FFFFFF;"><ul style="list-style:none; padding-left:1vw; line-height:2.2;">${item.c.map(l => `<li>${l}</li>`).join('')}</ul></div>`;
         }
 
-        slide.innerHTML = `<div id="h-placeholder-${index}"></div> <h2 class="slide-title">${item.t}</h2> <div class="content-body">${bodyContent}</div>`;
+        slide.innerHTML = `<div id="h-placeholder-${index + 2}"></div> <h2 class="slide-title">${item.t}</h2> <div class="content-body">${bodyContent}</div>`;
         container.appendChild(slide);
     });
 
-    // Q&A Slide (Kept as per user prompt values)
+    // Q&A Slide
     const qaSlide = document.createElement('div');
     qaSlide.className = 'slide';
     qaSlide.innerHTML = `
-        <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; text-align: center;">
-            <h1 style="font-size: 5.4vw; color: var(--accent-blue); margin-bottom: 2vh;"><i class="fa-solid fa-comments"></i> សំណួរ និងការពិភាក្សា</h1>
-            <p style="font-size: 2.25vw; color: var(--text-muted); margin-bottom: 5vh;">សូមអរគុណនិស្សិតទាំងអស់សម្រាប់ការយកចិត្តទុកដាក់!</p>
+        <div id="h-placeholder-qa"></div>
+        <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; text-align: center; margin-top: auto; margin-bottom: auto;">
+            <h1 style="font-size: 4.5vw; color: var(--accent-blue); margin-bottom: 2vh;"><i class="fa-solid fa-comments"></i> សំណួរ និងការពិភាក្សា</h1>
+            <p style="font-size: 2vw; color: var(--text-muted); margin-bottom: 5vh;">សូមអរគុណនិស្សិតទាំងអស់សម្រាប់ការយកចិត្តទុកដាក់ និងការចូលរួមយ៉ាងសកម្ម!</p>
             <div style="display: flex; gap: 2vw; justify-content: center;">
-                <div style="background: #FFFFFF; padding: 2vh 3vw; border-radius: 5vw; border: 2px solid var(--accent-blue); box-shadow: 0 10px 20px rgba(0,0,0,0.05);">
-                    <p style="margin: 0; font-weight: bold; font-size: 1.8vw; color: var(--accent-blue);"><i class="fa-solid fa-envelope"></i> soeurnglim@gmail.com</p>
+                <div style="background: #FFFFFF; padding: 1.8vh 2.5vw; border-radius: 5vw; border: 2px solid var(--accent-blue); box-shadow: 0 10px 20px rgba(0,0,0,0.04);">
+                    <p style="margin: 0; font-weight: bold; font-size: 1.6vw; color: var(--accent-blue);"><i class="fa-solid fa-envelope"></i> soeurnglim@gmail.com</p>
                 </div>
-                <div style="background: #FFFFFF; padding: 2vh 3vw; border-radius: 5vw; border: 2px solid #0088cc; box-shadow: 0 10px 20px rgba(0,0,0,0.05);">
-                    <p style="margin: 0; font-weight: bold; font-size: 1.8vw; color: #0088cc;"><i class="fa-brands fa-telegram"></i> ០៦១ ២២៧ ៩៣៣</p>
+                <div style="background: #FFFFFF; padding: 1.8vh 2.5vw; border-radius: 5vw; border: 2px solid #0088cc; box-shadow: 0 10px 20px rgba(0,0,0,0.04);">
+                    <p style="margin: 0; font-weight: bold; font-size: 1.6vw; color: #0088cc;"><i class="fa-brands fa-telegram"></i> ០៦១ ២២៧ ៩៣៣</p>
                 </div>
             </div>
         </div>
@@ -583,44 +972,41 @@
     const endSlide = document.createElement('div');
     endSlide.className = 'slide';
     endSlide.innerHTML = `
-        <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; text-align: center;">
-            <i class="fa-solid fa-flag-checkered" style="font-size: 5vw; color: var(--accent-green); margin-bottom: 2vh;"></i>
+        <div id="h-placeholder-end"></div>
+        <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; text-align: center; margin-top: auto; margin-bottom: auto;">
+            <i class="fa-solid fa-flag-checkered" style="font-size: 6vw; color: var(--accent-green); margin-bottom: 2vh;"></i>
             <h1 style="font-size: 4.5vw; color: var(--accent-blue); margin-bottom: 1vh;">បញ្ចប់ជំពូកទី ៧</h1>
-            <p style="font-size: 2vw; color: var(--text-muted); margin-bottom: 5vh;">ត្រៀមខ្លួនអនុវត្តកូដក្នុងសៀវភៅ Workbook!</p>
+            <p style="font-size: 2vw; color: var(--text-muted); margin-bottom: 5vh;">ត្រៀមខ្លួនរួចរាល់សម្រាប់ការអនុវត្តជាក់ស្តែងក្នុងបន្ទប់ពិសោធន៍!</p>
         </div>
     `;
     container.appendChild(endSlide);
 
-    // Next Chapter Prep (Chapter 8: Final Chapter - Dynamic Programming & AI)
+    // Next Chapter Prep
     const nextChapSlide = document.createElement('div');
     nextChapSlide.className = 'slide';
     nextChapSlide.innerHTML = `
-        <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; text-align: center;">
-            <h2 style="font-size: 2.5vw; color: var(--text-muted); margin-bottom: 2vh;"><i class="fa-solid fa-forward-step"></i> ត្រៀមសម្រាប់សប្តាហ៍បន្ទាប់ (បញ្ចប់)</h2>
-            <div class="card" style="background: #FFFFFF; border-left: 1vw solid var(--accent-yellow); padding: 4vh 6vw; box-shadow: 0 15px 30px rgba(0,0,0,0.1); border-radius: 1.5vw; margin-top: 2vh;">
-                <h1 style="font-size: 3.5vw; color: var(--accent-blue); margin-bottom: 1.5vh; font-family: 'Suwannaphum';">ជំពូកទី ៨</h1>
-                <h2 style="font-size: 2.5vw; color: var(--text-main); margin: 0; font-family: 'Suwannaphum';">Dynamic Programming និងក្បួន AI<br><span style="font-size: 1.8vw; color: var(--text-muted); font-family: 'Lato';">(Dynamic Programming & AI Core Algorithms)</span></h2>
+        <div id="h-placeholder-next"></div>
+        <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; text-align: center; margin-top: auto; margin-bottom: auto;">
+            <h2 style="font-size: 2.2vw; color: var(--text-muted); margin-bottom: 2vh;"><i class="fa-solid fa-forward-step"></i> មេរៀនសម្រាប់សប្តាហ៍បន្ទាប់ (សប្តាហ៍ចុងក្រោយ)</h2>
+            <div class="card" style="background: #FFFFFF; border-left: 1vw solid var(--accent-yellow); padding: 4vh 6vw; box-shadow: 0 15px 30px rgba(0,0,0,0.06); border-radius: 1.5vw; margin-top: 2vh;">
+                <h1 style="font-size: 3.2vw; color: var(--accent-blue); margin-bottom: 1.5vh; font-family: 'Suwannaphum';">ជំពូកទី ៨</h1>
+                <h2 style="font-size: 2.4vw; color: var(--text-main); margin: 0; font-family: 'Suwannaphum';">Dynamic Programming និងក្បួនដោះស្រាយស្នូល AI<br><span style="font-size: 1.7vw; color: var(--text-muted); font-family: 'Lato';">(Dynamic Programming &amp; Core AI Algorithms)</span></h2>
             </div>
-            <p style="font-size: 1.6vw; color: var(--text-muted); margin-top: 4vh;"><i class="fa-solid fa-book-open"></i> សូមអានសៀវភៅគោលជំពូកទី៨ ជាមុន!</p>
+            <p style="font-size: 1.6vw; color: var(--text-muted); margin-top: 4vh;"><i class="fa-solid fa-book-open"></i> សូមអានឯកសារមេរៀនជំពូកទី ៨ ជាមុន!</p>
         </div>
     `;
     container.appendChild(nextChapSlide);
 
-    // -----------------------------------------------------
-    // Initialize Navigation and Print Layouts
-    // -----------------------------------------------------
-
-    // 1. Apply Global Header to all slides
+    // --- Navigation & Initialization System ---
     document.querySelectorAll('[id^="h-placeholder"]').forEach(p => p.outerHTML = headerHTML);
 
-    // 2. Count Total Slides
     const slides = document.querySelectorAll('.slide');
     const totalSlides = slides.length;
     
-    // 3. Setup Print Footers
     const mainFooter = document.getElementById('mainFooter');
     const screenCounter = document.getElementById('screenSlideCounter'); 
 
+    // Setup Footers for Printing Pages
     slides.forEach((slide, index) => {
         let printFooter = mainFooter.cloneNode(true);
         printFooter.id = ''; 
@@ -635,7 +1021,6 @@
         slide.appendChild(printFooter);
     });
 
-    // 4. Update function for Screen display
     let currentIdx = 0;
     function update(idx) { 
         slides.forEach(s => s.classList.remove('active')); 
@@ -647,7 +1032,7 @@
         }
     }
 
-    // 5. Allow Navigation by Clicking ONLY the arrows (So users can copy text)
+    // Navigation Click Handlers (Sitting layered on top of all wrapper content)
     document.querySelector('.nav-right').addEventListener('click', (e) => { 
         e.stopPropagation(); 
         if (currentIdx < totalSlides - 1) update(currentIdx + 1); 
@@ -658,16 +1043,18 @@
         if (currentIdx > 0) update(currentIdx - 1); 
     });
 
-    // 6. Keyboard Navigation Support
+    // Keyboard support with scroll prevention
     document.addEventListener('keydown', (e) => {
         if (e.key === "ArrowRight" || e.key === " " || e.key === "PageDown") { 
+            e.preventDefault();
             if (currentIdx < totalSlides - 1) update(currentIdx + 1); 
         } else if (e.key === "ArrowLeft" || e.key === "PageUp") { 
+            e.preventDefault();
             if (currentIdx > 0) update(currentIdx - 1); 
         }
     });
 
-    // Start presentation
+    // Initial load
     update(0); 
 </script>
 </body>

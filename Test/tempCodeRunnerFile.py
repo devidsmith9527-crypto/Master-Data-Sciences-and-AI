@@ -1,1 +1,1 @@
-print(twitter.prev.prev.url)
+student_scores["Lim"]

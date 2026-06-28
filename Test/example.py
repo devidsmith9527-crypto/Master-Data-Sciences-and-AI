@@ -1,8 +1,9 @@
-def mutual_friends(graph, user1, user2):
-    friends1 = set(graph.get(user1, []))
-    friends2 = set(graph.get(user2, []))
-    return list(friends1 & friends2)
+def simple_hash(key_string, array_size):
+    total = 0
+    for char in key_string:
+        total += ord(char)  # យកតម្លៃ ASCII របស់អក្សរមួួយៗមកបូកបញ្ចូលគ្នា
+    return total % array_size  # ចែកយកសំណល់ដើម្បីកុំឱ្យហួសទំហំ Array
 
 
-g = {"Sok": ["Lim", "Dara", "Bopha"], "Lim": ["Sok", "Dara"]}
-print("មិត្តរួមគ្នារវាង Sok និង Lim:", mutual_friends(g, "Sok", "Lim"))
+print("ពាក្យ Sok ធ្លាក់ចូលប្រអប់ទី:", simple_hash("Sok", 20))
+print("ពាក្យ Lim ធ្លាក់ចូលប្រអប់ទី:", simple_hash("Lim", 20))
